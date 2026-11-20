@@ -3453,9 +3453,17 @@ function localDirectorySearch(q,limit=6){
   }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||(b.item.createdAt||0)-(a.item.createdAt||0));
   return candidates.slice(0,limit).map(x=>x.item);
 }
+function hubaishSubdistrictAnswer(){
+  return "مديرية حبيش تتبع محافظة إب، وتضم 22 عزلة في المرجع الإداري. الأسماء المعتمدة في قائمة دليلنا هي:\n"+HUBAISH_UZ.map((name,n)=>(n+1)+". "+name).join("\n")+"\n\nللتفريق الإداري: محافظة إب تضم 20 مديرية إجمالاً، وحبيش واحدة منها؛ أما 22 فهي عدد عزل مديرية حبيش وليست عدد مديريات المحافظة. مرجع عدد المديريات والعزل: المركز الوطني للمعلومات اليمني. وترد أسماء العزل في المراجع المحلية المنشورة، وقد تختلف كتابة بعض الأسماء محلياً.";
+}
+function asksHubaishSubdistricts(q){
+  const t=normalizeQuery(q);
+  return /حبيش/.test(t)&&/(عزل|عزلات|عزلة|عزله)/.test(t);
+}
 function answerAI(q){
   const raw=String(q||"").trim(),t=normalizeQuery(raw);
   if(!raw)return "اكتب سؤالك وسأبحث في بيانات الدليل الموجودة على هذا الجهاز.";
+  if(asksHubaishSubdistricts(raw))return hubaishSubdistrictAnswer();
   if(/صرف|دولار|سعودي|عمله|ذهب|ريال/.test(t)){
     return `أسعار الصرف المدخلة في هذا الجهاز (قد تحتاج إلى تحديث من الإدارة):\nصنعاء: الدولار شراء ${S.fx.s.usdB} / بيع ${S.fx.s.usdS}، السعودي شراء ${S.fx.s.sarB} / بيع ${S.fx.s.sarS}.\nعدن: الدولار شراء ${S.fx.a.usdB} / بيع ${S.fx.a.usdS}، السعودي شراء ${S.fx.a.sarB} / بيع ${S.fx.a.sarS}.\nلا أستطيع تأكيد أنها أسعار السوق اللحظية.`;
   }
@@ -3528,10 +3536,12 @@ function buildAssistantContext(question=""){
   const scopedGov=scope.startsWith("gov:")?scope.slice(4):scope.startsWith("district:")?scope.slice(9).split("|")[0]:"";
   const refGov=namedGov||scopedGov;
   return {
+    // Put the exact Hubaish list first so it is never truncated from the context budget.
+    hubaishSubdistricts:HUBAISH_UZ,
+    hubaishSubdistrictCount:HUBAISH_UZ.length,
     selectedRegion:scope||"كل اليمن",
     governorates:GOVS,
     districtsForRelevantGovernorate:refGov?({governorate:refGov,districts:YEMEN_DISTRICTS[refGov]||[]}):[],
-    hubaishSubdistricts:HUBAISH_UZ,
     directory:rows.filter(i=>i.categoryId!=="jobs"&&i.categoryId!=="souq"),
     jobs:rows.filter(i=>i.categoryId==="jobs"),
     marketplace:rows.filter(i=>i.categoryId==="souq"),
@@ -3556,6 +3566,9 @@ function assistantApiUrl(){
   return "/api/assistant";
 }
 async function askAssistant(q){
+  // Administrative reference facts with fixed local data are returned deterministically,
+  // so a generative model cannot substitute governorates/districts for Hubaish sub-districts.
+  if(asksHubaishSubdistricts(q))return hubaishSubdistrictAnswer();
   if(S.aiCloudConsent===true&&navigator.onLine){
     try{
       const response=await fetch(assistantApiUrl(),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:String(q).slice(0,1200),context:buildAssistantContext(q)})});
