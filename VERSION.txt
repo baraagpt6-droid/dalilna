@@ -1,6 +1,5 @@
-Dalilna 1.2.3
+Dalilna 1.2.4
 PWA + Android WebView
-Gemini cloud assistant; optional, server-side API key
-Deterministic 22-entry Hubaish sub-district reference response
-Correct distinction: Ibb has 20 districts; Hubaish has 22 sub-districts
+Gemini cloud assistant, optional and server-side
+Deterministic reference answers distinguish Ibb's 20 governorate districts from Hubaish's 22 sub-districts
 Offline local assistant remains available.
