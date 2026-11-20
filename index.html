@@ -3548,10 +3548,17 @@ $("#aiCloudConsent").addEventListener("change",e=>{
     :"المساعد المحلي يبحث في بيانات هذا الجهاز دون إنترنت. المساعد السحابي متوقف ولن تُرسل بيانات الدليل لخدمة خارجية.";
   toast(S.aiCloudConsent?"تم تفعيل المساعد السحابي بموافقتك.":"تم إيقاف المساعد السحابي.");
 });
+function assistantApiUrl(){
+  const host=location.hostname;
+  if(host==="appassets.androidplatform.net"||host.endsWith(".github.io")){
+    return "https://dalilna-oavk.vercel.app/api/assistant";
+  }
+  return "/api/assistant";
+}
 async function askAssistant(q){
-  if(S.aiCloudConsent===true&&navigator.onLine&&location.protocol!=="file:"){
+  if(S.aiCloudConsent===true&&navigator.onLine){
     try{
-      const response=await fetch("/api/assistant",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:String(q).slice(0,1200),context:buildAssistantContext(q)})});
+      const response=await fetch(assistantApiUrl(),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:String(q).slice(0,1200),context:buildAssistantContext(q)})});
       if(response.ok){const data=await response.json();if(data&&typeof data.answer==="string"&&data.answer.trim())return data.answer.trim();}
     }catch(err){/* fall through to local assistant */}
   }
