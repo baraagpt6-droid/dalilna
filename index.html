@@ -3503,7 +3503,7 @@ function answerAI(q){
 }
 function buildAssistantContext(question=""){
   const query=normalizeQuery(question);
-  const tokens=query.split(/\\s+/).filter(w=>w.length>1);
+  const tokens=query.split(/\s+/).filter(w=>w.length>1);
   const all=publicItems();
   const ranked=all.map(i=>{
     const hay=normalizeQuery([i.name,i.desc,i.area,i.village,i.dist,i.gov,CN[i.cat]||i.cat,i.price].filter(Boolean).join(" "));
