@@ -72,6 +72,7 @@ test('actual admin login handler accepts valid test credentials and rejects an i
 
   const runLogin = async suppliedPassword => {
     const { $, elements } = makeElements();
+    $('#roleAdminBtn').hidden = false;
     $('#admEmail').value = email;
     $('#admPass').value = suppliedPassword;
     const state = {
