@@ -1,5 +1,6 @@
-Dalilna 1.2.1
-PWA + Android WebView source
+Dalilna 1.2.2
+PWA + Android WebView
 Cloud AI: Google Gemini Interactions API (optional)
 Default model: gemini-3.8-flash
+Vercel API supports PWA and Android WebView origins.
 Offline local assistant remains available.
