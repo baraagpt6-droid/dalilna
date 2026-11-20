@@ -4,7 +4,7 @@
 
 ## الإصدار
 
-- Version: 1.2.9
+- Version: 1.3.0
 - Web app: PWA (installable from supported browsers)
 - Android: WebView application source included in `android/`
 - Offline: cached application shell and local device storage

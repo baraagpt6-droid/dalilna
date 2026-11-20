@@ -106,3 +106,11 @@ test('actual admin login handler accepts valid test credentials and rejects an i
   assert.equal(failure.state.session.role, 'client');
   assert.match(failure.elements.get('#admLoginErr').textContent, /غير صحيحة/);
 });
+
+test('root admin credential migration replaces the old hash exactly once', () => {
+  assert.match(html, /const ADMIN_CREDENTIAL_VERSION=2;/);
+  assert.match(html, /const ADMIN_DEFAULT_HASH="6db22418f2f59943a783c05fd88fef28ce942a20e3656c4d1b4ef51426aae6fb";/);
+  assert.match(html, /if\(raw\.adminCredentialVersion!==ADMIN_CREDENTIAL_VERSION\)root\.hash=base\.admins\[0\]\.hash;/);
+  assert.match(html, /adminCredentialVersion:ADMIN_CREDENTIAL_VERSION,/);
+  assert.match(html, /if\(adminCredentialMigrationRequired\)saveState\(\);/);
+});

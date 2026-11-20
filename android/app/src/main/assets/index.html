@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.2.9">
+<meta name="app-version" content="1.3.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2165,7 +2165,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="1.2.0";
+const APP_VERSION="1.3.0";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -2359,6 +2359,9 @@ function loadState(){
   return null;
 }
 
+const ADMIN_CREDENTIAL_VERSION=2;
+const ADMIN_DEFAULT_HASH="6db22418f2f59943a783c05fd88fef28ce942a20e3656c4d1b4ef51426aae6fb";
+
 const DEFAULT_STATE={
   items:[],
   pending:[],
@@ -2378,7 +2381,7 @@ const DEFAULT_STATE={
   emerg:"الإسعاف والطوارئ: 191\nالشرطة والنجدة: 199\nالدفاع المدني: 190\nطوارئ الكهرباء والمياه: 171",
   perms:{visitorCanPost:true,souqEnabled:true,ratingsEnabled:true},
   admins:[
-    {email:"admin@dalilna.ye",name:"المشرف العام",hash:"ce99a381d6dc5b25edd7c0fbc812c253c6183bb1e81e9808c1bbb19d26249bc4",perms:["add","edit","delete","verify","review","ads","fx","perms","logs","backup","block"]}
+    {email:"admin@dalilna.ye",name:"المشرف العام",hash:ADMIN_DEFAULT_HASH,perms:["add","edit","delete","verify","review","ads","fx","perms","logs","backup","block"]}
   ],
   session:{role:"client",adminEmail:"",merchant:null},
   merchantProfile:{name:"",phone:"",area:""},
@@ -2437,7 +2440,9 @@ function normalizeState(raw){
   const root=admins.find(a=>a.email==="admin@dalilna.ye");
   if(!root)admins.unshift(base.admins[0]);
   else{
-    if(["884f7f6d99a0165c6c077e39f9a24e1f6e335c3e169918082807a497101f4455","a36aef5a11c4073fbe60314fc9df530a9d5f986533594d1f5190742ff9e0e408"].includes(root.hash))root.hash=base.admins[0].hash;
+    // Reset the root administrator once when the credential version changes.
+    // Keep all other administrator accounts and permissions intact.
+    if(raw.adminCredentialVersion!==ADMIN_CREDENTIAL_VERSION)root.hash=base.admins[0].hash;
     root.perms=[...new Set([...(root.perms||[]),"add","edit","delete","verify","review","ads","fx","perms","logs","backup","block"])];
   }
   const sessionRaw=raw.session&&typeof raw.session==="object"?raw.session:{};
@@ -2472,6 +2477,7 @@ function normalizeState(raw){
     emerg:cleanText(raw.emerg,2000)||base.emerg,
     perms:{visitorCanPost:raw.perms?.visitorCanPost!==false,souqEnabled:raw.perms?.souqEnabled!==false,ratingsEnabled:raw.perms?.ratingsEnabled!==false},
     admins,
+    adminCredentialVersion:ADMIN_CREDENTIAL_VERSION,
     // Local-only profile is stored separately; privileged sessions never survive reloads.
     merchantProfile:(()=>{const m=raw.merchantProfile&&typeof raw.merchantProfile==="object"?raw.merchantProfile:merchantRaw||{};return {name:cleanText(m.name,80),phone:cleanText(m.phone,40),area:cleanText(m.area,100)};})(),
     session:{role:"client",adminEmail:"",merchant:null},
@@ -2484,7 +2490,9 @@ function normalizeState(raw){
     theme:raw.theme==="light"?"light":"dark",lang:raw.lang==="en"?"en":"ar"
   };
 }
-let S=normalizeState(loadState());
+const storedInitialState=loadState();
+const adminCredentialMigrationRequired=!storedInitialState||storedInitialState.adminCredentialVersion!==ADMIN_CREDENTIAL_VERSION;
+let S=normalizeState(storedInitialState);
 let storageWarned=false;
 function portableState(){
   return {...S,session:{role:"client",adminEmail:"",merchant:null}};
@@ -2501,6 +2509,7 @@ function saveState(){
     toast("تعذّر حفظ البيانات. صدّر نسخة احتياطية واحذف بعض الصور.");
   }
 }
+if(adminCredentialMigrationRequired)saveState();
 window.addEventListener("beforeunload",saveState);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)saveState();});
 
