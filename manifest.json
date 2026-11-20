@@ -1,0 +1,53 @@
+{
+  "id": "./",
+  "name": "دليلنا — دليل الخدمات والمحلات والوظائف في اليمن",
+  "short_name": "دليلنا",
+  "description": "دليل محلي للخدمات والمحلات والوظائف والسوق في اليمن، مع عرض إداري واضح لمديريات وعزل حبيش.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#181411",
+  "theme_color": "#181411",
+  "categories": [
+    "business",
+    "shopping",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "سوق البيع والشراء",
+      "short_name": "السوق",
+      "url": "./index.html#souq",
+      "icons": [
+        {
+          "src": "./icons/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "الوظائف",
+      "short_name": "الوظائف",
+      "url": "./index.html#jobs",
+      "icons": [
+        {
+          "src": "./icons/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
+}

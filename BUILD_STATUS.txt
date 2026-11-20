@@ -1,0 +1,26 @@
+Dalilna 1.2.0 — Repository build plan
+====================================
+
+The Android WebView source and PWA files are included.
+
+GitHub Actions:
+- deploy-pages.yml publishes only PWA web assets to GitHub Pages.
+- android-apk.yml builds a debug-signed APK, stores it as an Actions artifact, and publishes it as a GitHub pre-release asset.
+
+To enable public PWA hosting:
+1. Open repository Settings > Pages.
+2. Select GitHub Actions as the build/deployment source.
+3. Run the Deploy Dalilna PWA workflow from Actions.
+
+To obtain the Android installer:
+1. Open Actions > Build Dalilna Android APK.
+2. Run workflow_dispatch or push a relevant source change.
+3. Download the APK from the workflow artifact or Releases > v1.2.0.
+
+Important:
+- The APK is debug-signed for testing, not a Play Store production release.
+- No production signing keystore is committed.
+- The cloud AI endpoint requires OPENAI_API_KEY in Vercel Environment Variables.
+- GitHub Pages is static hosting and cannot execute api/assistant.js.
+- Account roles, moderation and bans stored in local browser storage are not secure server-side authorization. Production multi-user use requires a backend and database.
+- PWA offline mode caches the app shell and local device data; cloud AI requires internet.

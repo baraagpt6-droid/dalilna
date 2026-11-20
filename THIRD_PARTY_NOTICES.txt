@@ -1,0 +1,6 @@
+إشعارات مصادر البيانات والمكونات
+
+- Yemen administrative divisions: Open Admin Data, https://github.com/open-admin-data/yemen-administrative-divisions — License: Creative Commons Attribution 4.0 International (CC BY 4.0). Data file: data/all-district.json (22 governorates, 335 districts).
+- Hubaish sub-district names: تم الاستناد إلى قائمة محلية منشورة لعزل مديرية حبيش؛ عدد العزل (22) يتوافق مع صفحة التقسيم الإداري لمحافظة إب بالمركز الوطني للمعلومات. تهجئة الأسماء قد تختلف بين المصادر والقرى.
+- QR generator: مكتبة QR مضمنة داخل ملف index.html؛ راجع رأس المكتبة/إشعار الترخيص المضمن في المصدر.
+- Cairo / Reem Kufi / Readex Pro fonts: تحميل اختياري من Google Fonts عند توفر الإنترنت؛ يعود التطبيق إلى خطوط النظام عند انقطاعه.

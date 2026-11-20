@@ -1,0 +1,3940 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#181411">
+<meta name="app-version" content="1.2.0">
+<meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="دليلنا">
+<link rel="manifest" href="./manifest.json">
+<script src="./regions-yemen.js"></script>
+<link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+<title>دليلنا | دليل الخدمات والمحلات في اليمن</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23181411'/%3E%3Cpath d='M18 54 A32 32 0 0 1 82 54 Z' fill='none' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M22 54 L36 54 A14 14 0 0 1 42 42 L29 33 A28 28 0 0 0 22 54 Z' fill='%233A7EC2'/%3E%3Cpath d='M29 33 L42 42 A14 14 0 0 1 50 40 L50 26 A28 28 0 0 0 29 33 Z' fill='%23E8A025'/%3E%3Cpath d='M50 26 L50 40 A14 14 0 0 1 58 42 L71 33 A28 28 0 0 0 50 26 Z' fill='%23D6455D'/%3E%3Cpath d='M71 33 L58 42 A14 14 0 0 1 64 54 L78 54 A28 28 0 0 0 71 33 Z' fill='%23E8A025'/%3E%3Ccircle cx='50' cy='54' r='11' fill='%23F2B949' stroke='%23F4EFE6' stroke-width='3'/%3E%3Crect x='18' y='54' width='64' height='24' rx='4' fill='%23181411' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M50 54 v24 M18 66 h64' stroke='%23F4EFE6' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#181411;--card:#231D18;--card2:#2B241E;--ink:#F4EFE6;--mute:#A89F96;
+  --line:#3B322B;--green:#4EBD7A;--sky:#38B6A6;--turq:#268E82;--bar:#120E0C;
+  --acc:#38B6A6;--gold:#E8A025;--chip:#2F2721;--danger:#E05252;
+  --shadow:0 10px 28px -12px rgba(0,0,0,.65);
+}
+body.light{
+  color-scheme:light;
+  --bg:#F6F3EE;--card:#FFFFFF;--card2:#EFECE6;--ink:#1E1916;--mute:#665D55;
+  --line:#DDD5CA;--green:#1E874B;--sky:#14897C;--turq:#14897C;--bar:#FFFFFF;
+  --acc:#14897C;--gold:#C88212;--chip:#EAE4DC;--danger:#C93838;
+  --shadow:0 10px 24px -12px rgba(30,25,22,.14);
+}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:radial-gradient(900px 420px at 85% -10%,#2B231D 0,transparent 60%),var(--bg);
+  color:var(--ink);
+  font:15px/1.6 'Readex Pro',Tahoma,sans-serif;
+  overflow-x:hidden;
+  padding-bottom:calc(84px + env(safe-area-inset-bottom, 0px));
+  transition:background .25s,color .25s;
+}
+body.light{background:radial-gradient(900px 420px at 85% -10%,#E7EFEA 0,transparent 60%),var(--bg)}
+h1,h2,h3{font-family:'Reem Kufi','Readex Pro',sans-serif;margin:0;line-height:1.3}
+
+/* Header & Navigation */
+.app{
+  position:sticky;top:0;z-index:20;
+  background:rgba(18,14,12,.92);
+  backdrop-filter:blur(12px);
+  padding:calc(8px + env(safe-area-inset-top, 0px)) max(4vw,14px) 10px;
+  box-shadow:0 8px 24px -12px rgba(0,0,0,.5);
+  border-bottom:1px solid var(--line);
+}
+body.light .app{background:rgba(255,255,255,.94);box-shadow:0 6px 20px -10px rgba(0,0,0,.1)}
+.brand{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  max-width:1160px;margin:auto;
+}
+.brand-link{
+  display:flex;align-items:center;gap:9px;cursor:pointer;
+  text-decoration:none;color:inherit;flex:1 1 auto;min-width:0;
+}
+.brand-logo{
+  height:42px;width:42px;border-radius:12px;flex:none;
+  box-shadow:0 4px 12px #0006;border:1px solid #ffffff22;
+}
+.brand-title{min-width:0}
+.brand h1{font-size:20px;line-height:1.15;white-space:nowrap}
+.brand small{display:block;font-size:11.5px;color:var(--gold);font-family:'Readex Pro',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-tools{display:flex;align-items:center;gap:6px;flex:none}
+.tbtn{
+  min-height:36px;padding:0 10px;border-radius:10px;font-size:12.5px;font-weight:600;
+  background:var(--chip);color:var(--ink);border:1px solid var(--line);
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;white-space:nowrap;
+}
+.tbtn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.tbtn:hover{border-color:var(--acc)}
+.tbtn.active-role{background:rgba(56,182,166,.16);border-color:var(--acc);color:var(--acc)}
+.tbtn.admin-on{background:rgba(232,160,37,.18);border-color:var(--gold);color:var(--gold)}
+.langb{
+  min-height:36px;padding:0 6px;border-radius:10px;background:var(--chip);
+  border:1px solid var(--line);color:var(--ink);font-weight:600;font-size:12px;width:auto;max-width:74px;
+}
+
+/* Search & Scope Bar */
+.search-bar{max-width:1160px;margin:8px auto 0;display:grid;grid-template-columns:1fr minmax(145px,240px);gap:8px}
+.search{position:relative}
+.search input{
+  background:var(--card);color:var(--ink);border:1px solid var(--line);
+  padding-inline-start:38px;padding-inline-end:44px;min-height:42px;border-radius:12px;
+}
+.search .s-ic{position:absolute;inset-inline-start:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--mute);fill:none;stroke-width:2}
+#mic{
+  position:absolute;inset-inline-end:4px;top:50%;transform:translateY(-50%);
+  width:36px;min-height:34px;padding:0;border-radius:9px;
+  background:var(--gold);display:grid;place-items:center;
+}
+#mic svg{width:17px;height:17px;stroke:#181411;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+#mic.on{background:var(--danger);animation:pulse 1s infinite}
+#mic.on svg{stroke:#fff}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(224,82,82,.25)}}
+.scope-sel{min-height:42px;border-radius:12px;background:var(--card);color:var(--ink);border:1px solid var(--line);padding:0 10px;font-size:13.5px;font-weight:600}
+
+/* Voice Bar */
+.voice-bar{
+  max-width:1160px;margin:8px auto 0;padding:8px 12px;border-radius:12px;
+  background:rgba(232,160,37,.14);border:1px solid var(--gold);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;
+}
+
+main{max-width:1160px;margin:auto;padding:0 14px}
+input,select,textarea{
+  font:inherit;font-size:15px;color:var(--ink);background:var(--bg);
+  border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;
+}
+select{-webkit-appearance:none;appearance:none;background-color:var(--card);color:var(--ink);color-scheme:dark;border-color:var(--line)}
+body.light select{color-scheme:light}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acc);outline-offset:1px}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;min-height:42px;padding:0 14px;color:inherit;transition:transform .12s,opacity .15s}
+button:active{transform:scale(.98)}
+
+/* Slider & Hero */
+.slider{margin-top:12px}
+.track{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:18px}
+.track::-webkit-scrollbar{display:none}
+.slide{
+  flex:0 0 100%;scroll-snap-align:center;position:relative;border-radius:18px;
+  overflow:hidden;min-height:156px;background:var(--card2);text-decoration:none;color:#fff;
+  border:1px solid var(--line);
+}
+.lslide{
+  background:radial-gradient(80% 130% at 85% 20%,#294B46 0,#171310 65%);
+  display:flex;align-items:center;justify-content:center;gap:18px;padding:18px 24px;
+}
+.slide .lpin{width:84px;height:108px;flex:none;filter:drop-shadow(0 8px 18px #0008)}
+.ltx{display:grid;gap:4px;text-align:right}
+.ltx b{font:700 clamp(26px,6vw,40px)/1.05 'Reem Kufi',sans-serif;color:#fff}
+.ltx span{font:600 clamp(14px,3.5vw,19px)/1.3 'Readex Pro',sans-serif;color:#E2ECEA}
+.ltx em{font:600 13px 'Readex Pro',sans-serif;font-style:normal;color:var(--gold)}
+.tslide{
+  background:radial-gradient(400px 200px at 80% 0,#296E65,transparent),linear-gradient(135deg,#2B231D,#181411);
+  display:flex;flex-direction:column;justify-content:center;padding:20px 22px;gap:6px;
+}
+.tslide .gold{align-self:start;background:var(--gold);color:#181411;border-radius:10px;padding:7px 14px;font-weight:700;font-size:13.5px}
+.dots{display:flex;justify-content:center;gap:6px;margin-top:8px}
+.dots i{width:7px;height:7px;border-radius:9px;background:var(--line);transition:width .2s}
+.dots i.on{width:20px;background:var(--acc)}
+
+/* Sections & Smart Categories */
+.sec{font-size:18px;margin:20px 2px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sec span{font:500 13px 'Readex Pro',sans-serif;color:var(--mute)}
+.cat-hub{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;margin-top:14px;box-shadow:var(--shadow)}
+.cat-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.cat-search{max-width:230px;min-height:36px!important;padding:6px 10px!important;font-size:13px!important;border-radius:10px!important}
+.cat-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px;padding-bottom:2px}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tabs button{
+  flex:0 0 auto;min-height:32px;padding:0 11px;border-radius:999px;font-size:12.5px;
+  background:var(--chip);border:1px solid var(--line);color:var(--mute);font-weight:600;
+}
+.cat-tabs button[aria-pressed=true]{background:var(--acc);color:#181411;border-color:var(--acc)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.tile{
+  background:var(--card2);border:1px solid var(--line);color:var(--ink);
+  border-radius:14px;padding:10px 6px 8px;display:flex;flex-direction:column;
+  align-items:center;gap:5px;min-height:94px;text-align:center;transition:border-color .15s,transform .15s;
+}
+.tile:hover{border-color:var(--acc);transform:translateY(-2px)}
+.tile i{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:var(--t,#1E877B)}
+.tile svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tile b{font-size:12px;font-weight:600;line-height:1.25}
+.tile em{font-style:normal;font-size:11px;color:var(--mute)}
+.cat-more-row{display:flex;justify-content:center;margin-top:8px}
+.cat-more-btn{min-height:34px;font-size:12.5px;background:var(--chip);border:1px solid var(--line);padding:0 14px;border-radius:999px}
+
+/* Filter Chips */
+.fchips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:12px 0 8px}
+.fchips::-webkit-scrollbar{display:none}
+.fchips button{
+  flex:0 0 auto;min-height:36px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);padding:0 12px;font-size:13px;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.fchips button svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.fchips button[aria-pressed=true]{background:var(--gold);color:#181411;border-color:var(--gold);font-weight:700}
+
+/* Cards & Grid */
+.list{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+.card{
+  background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);
+  border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:7px;cursor:pointer;
+}
+.card:hover{border-color:var(--acc)}
+.cover{width:calc(100% + 28px);margin:-14px -14px 4px;aspect-ratio:16/9;object-fit:cover;border-radius:16px 16px 0 0;display:block;background:var(--chip)}
+.top{display:flex;justify-content:space-between;gap:8px;align-items:start}
+.card h3{font-size:16.5px}
+.tag{font-size:11.5px;border-radius:999px;padding:2px 9px;background:var(--chip);color:var(--acc);border:1px solid var(--line);white-space:nowrap}
+.where{color:var(--mute);font-size:13px}
+.desc{margin:0;font-size:14px;line-height:1.55}
+.price{font-weight:700;color:var(--green);font-size:14px}
+.ok{font-size:12.5px;color:var(--green);font-weight:600;display:inline-flex;align-items:center;gap:4px}
+.opn{color:var(--green);font-weight:700}
+.cls{color:var(--danger)}
+.dist-badge{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;color:var(--gold);font-weight:600}
+.acts{display:flex;gap:6px;margin-top:auto;padding-top:8px;flex-wrap:wrap;align-items:center}
+.wa{
+  background:var(--green);color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:5px;
+  border-radius:10px;padding:0 12px;min-height:36px;font-weight:600;font-size:13.5px;
+}
+.tel{
+  direction:ltr;unicode-bidi:isolate;color:var(--acc);text-decoration:none;
+  font-weight:600;font-size:13.5px;padding:0 6px;min-height:36px;display:inline-flex;align-items:center;
+}
+.ibtn{
+  min-height:36px;min-width:36px;border-radius:10px;border:1px solid var(--line);
+  background:var(--chip);color:var(--ink);padding:0 9px;font-size:13px;
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+}
+.ibtn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+.ibtn.on{color:var(--gold);border-color:var(--gold)}
+.del{background:none;color:var(--mute);min-height:34px;padding:0 6px;font-size:13px}
+.rep{background:none;color:var(--mute);font-size:12px;min-height:28px;padding:0;text-decoration:underline;align-self:start}
+
+/* Info Panels (Exchange Rates, Emergency, About) */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:16px;box-shadow:var(--shadow)}
+.panel h2{font-size:17px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fxg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px}
+.fxc{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px;overflow:hidden}
+.fxc h3{font-size:14.5px;margin:0 0 8px;color:var(--gold);display:flex;align-items:center;justify-content:space-between;gap:6px}
+.fx-tbl{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px}
+.fx-tbl th{color:var(--mute);font-weight:600;font-size:12px;padding:4px 4px 6px;border-bottom:1px solid var(--line)}
+.fx-tbl th:first-child{width:46%;text-align:start}
+.fx-tbl th:nth-child(2),.fx-tbl th:nth-child(3){width:27%;text-align:center}
+.fx-tbl td{padding:7px 4px;border-top:1px solid var(--line);vertical-align:middle}
+.fx-tbl td:first-child{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fx-tbl td.num{text-align:center;direction:ltr;unicode-bidi:isolate}
+.rate-pill{
+  display:inline-block;width:100%;max-width:86px;padding:3px 6px;border-radius:8px;
+  font-weight:700;font-variant-numeric:tabular-nums;font-size:12.5px;
+}
+.rate-buy{background:rgba(78,189,122,.14);color:var(--green)}
+.rate-sell{background:rgba(232,160,37,.14);color:var(--gold)}
+.fx-calc{margin-top:12px;padding:12px;border-radius:14px;background:var(--bg);border:1px solid var(--line);display:grid;gap:8px}
+.fx-calc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:560px){.fx-calc-grid{grid-template-columns:1fr}}
+.fx-res-box{padding:9px 12px;border-radius:10px;background:var(--chip);font-weight:700;color:var(--acc);text-align:center;font-size:15px}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.lnk{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 12px;border-radius:10px;background:var(--chip);color:var(--ink);text-decoration:none;font-weight:600;font-size:13.5px;border:1px solid var(--line)}
+
+/* Recent Strip */
+.recent-strip{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+.recent-strip::-webkit-scrollbar{display:none}
+.rec-chip{
+  flex:0 0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:8px 12px;display:grid;gap:2px;text-align:start;min-width:150px;
+}
+.rec-chip b{font-size:13px;color:var(--ink)}
+.rec-chip span{font-size:11.5px;color:var(--mute)}
+
+/* Admin Dashboard */
+.admin-panel{background:var(--card);border:2px solid var(--gold);border-radius:18px;padding:14px;margin-top:14px;box-shadow:var(--shadow)}
+.adm-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px}
+.adm-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:6px;margin-bottom:12px}
+.adm-tabs button{flex:0 0 auto;min-height:36px;padding:0 12px;border-radius:10px;background:var(--chip);font-size:13px;font-weight:600}
+.adm-tabs button[aria-selected=true]{background:var(--gold);color:#181411}
+.adm-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px;margin-bottom:12px}
+.adm-stat{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.adm-stat b{display:block;font-size:20px;color:var(--gold);font-family:'Reem Kufi',sans-serif}
+.adm-stat span{font-size:12px;color:var(--mute)}
+.adm-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border-radius:12px;background:var(--bg);border:1px solid var(--line);margin-bottom:8px;flex-wrap:wrap}
+.adm-bulk{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--bg);padding:8px 12px;border-radius:12px;border:1px solid var(--line);margin-bottom:10px}
+.perm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin:6px 0}
+.perm-item{display:flex;align-items:center;gap:6px;font-size:13px;background:var(--bg);padding:6px 10px;border-radius:8px;border:1px solid var(--line)}
+.perm-item input{width:auto}
+
+/* Buttons */
+.add{background:linear-gradient(135deg,var(--acc),var(--turq));color:#fff;font-weight:600}
+.ghost{background:var(--chip);border:1px solid var(--line)}
+.yes{background:var(--green);color:#fff;font-weight:600}
+.danger-btn{background:var(--danger);color:#fff;font-weight:600}
+
+/* Fixed Bottom Navigation */
+.bottom{
+  position:fixed;inset:auto 0 0 0;z-index:30;
+  background:rgba(18,14,12,.97);backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(5,1fr);
+  padding:6px 6px calc(10px + env(safe-area-inset-bottom, 0px));
+}
+body.light .bottom{background:rgba(255,255,255,.97)}
+.bottom button{
+  background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;font-size:11px;color:var(--mute);min-height:50px;padding:4px 2px;border-radius:10px;line-height:1.2;
+}
+.bottom svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.bottom button[aria-current=page]{color:var(--acc);font-weight:700}
+.bottom .plus{color:var(--gold);font-weight:700}
+.bottom .plus .plus-ic{
+  width:24px;height:24px;border-radius:7px;flex:none;
+  background:var(--gold);display:grid;place-items:center;
+}
+.bottom .plus svg{width:15px;height:15px;stroke:#181411;stroke-width:2.5}
+
+/* Custom Picker Button & Bottom Sheet Modal */
+.picker-btn{
+  min-height:42px;border-radius:12px;background:var(--card);color:var(--ink);
+  border:1px solid var(--line);padding:0 12px;font-size:13.5px;font-weight:600;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:start;
+}
+.picker-btn:hover{border-color:var(--acc)}
+.picker-btn svg{width:16px;height:16px;stroke:var(--mute);fill:none;stroke-width:2;flex:none}
+.fx-calc .picker-btn{background:var(--card2)}
+.sheet-list{display:grid;gap:6px;max-height:55vh;overflow-y:auto;padding:2px}
+.sheet-grp{font-size:12px;color:var(--gold);font-weight:700;padding:8px 4px 2px}
+.sheet-opt{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:11px 14px;border-radius:12px;background:var(--bg);border:1px solid var(--line);
+  color:var(--ink);font-size:14px;font-weight:500;text-align:start;width:100%;
+}
+.sheet-opt:hover{border-color:var(--acc)}
+.sheet-opt[aria-selected=true]{background:rgba(56,182,166,.15);border-color:var(--acc);color:var(--acc);font-weight:700}
+.sheet-opt .cnt{font-size:12px;color:var(--mute);background:var(--chip);padding:2px 8px;border-radius:999px}
+.sheet-opt[aria-selected=true] .cnt{background:var(--acc);color:#181411;font-weight:700}
+
+/* Compact Floating AI Assistant Shortcut */
+.ai-fab{
+  position:fixed;inset-inline-end:14px;bottom:76px;z-index:25;
+  background:linear-gradient(135deg,var(--acc),var(--turq));color:#fff;
+  width:46px;height:46px;min-height:46px;border-radius:50%;padding:0;
+  display:grid;place-items:center;
+  box-shadow:0 8px 20px -4px rgba(56,182,166,.55);border:1px solid #ffffff33;
+}
+.ai-fab svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ai-fab span{display:none}
+@media(min-width:900px){
+  .ai-fab{width:auto;height:44px;border-radius:999px;padding:0 16px;display:flex;align-items:center;gap:8px;bottom:24px}
+  .ai-fab span{display:inline;font-weight:700;font-size:13.5px}
+}
+
+/* Dialogs */
+dialog{border:1px solid var(--line);border-radius:20px;padding:0;width:min(560px,94vw);max-height:90vh;background:var(--card);color:var(--ink);box-shadow:0 24px 60px rgba(0,0,0,.75)}
+dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(4px)}
+/* Fallback for older Android WebView versions without HTMLDialogElement.showModal(). */
+dialog.dlg-fallback{position:fixed;inset:5vh 3vw auto;margin:auto;z-index:1000;display:block;overflow:auto}
+body.dialog-fallback-open::before{content:"";position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:999}
+dialog form,.dlg-body{padding:18px;display:grid;gap:12px}
+label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fbtn{display:flex;gap:8px;flex-wrap:wrap}
+.err{color:var(--danger);font-size:13.5px;min-height:1em;margin:0}
+.warn{font-size:13px;background:rgba(232,160,37,.14);color:var(--gold);border:1px solid rgba(232,160,37,.35);border-radius:10px;padding:8px 10px;margin:0}
+.empty{text-align:center;padding:32px 16px;color:var(--mute);background:var(--card);border:1px dashed var(--line);border-radius:16px;grid-column:1/-1}
+.x{position:sticky;top:10px;margin-inline-start:auto;background:var(--chip);color:var(--ink);border-radius:50%;width:36px;min-height:36px;padding:0;display:grid;place-items:center}
+
+/* Role Cards */
+.role-opt{
+  display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;
+  background:var(--bg);border:1px solid var(--line);text-align:start;cursor:pointer;width:100%;
+}
+.role-opt:hover,.role-opt.sel{border-color:var(--acc);background:rgba(56,182,166,.1)}
+.role-ic{width:42px;height:42px;border-radius:11px;background:var(--chip);display:grid;place-items:center;flex:none;color:var(--acc)}
+.role-ic svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* AI Assistant Chat */
+.ai-cloud-consent{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:12px;cursor:pointer}
+.ai-cloud-consent span{display:grid;gap:3px}
+.ai-cloud-consent small{color:var(--mute);font-size:11px;line-height:1.5}
+.msgs{display:grid;gap:8px;max-height:360px;overflow-y:auto;padding:4px}
+.m{max-width:88%;padding:9px 13px;border-radius:14px;font-size:14px;white-space:pre-wrap;line-height:1.55}
+.m.u{justify-self:start;background:var(--acc);color:#181411;font-weight:600;border-end-start-radius:4px}
+.m.a{justify-self:end;background:var(--chip);border:1px solid var(--line);border-end-end-radius:4px}
+
+/* Toast */
+.toast{
+  position:fixed;inset-inline:14px;bottom:82px;max-width:480px;margin:auto;
+  background:var(--ink);color:var(--bg);border-radius:12px;padding:11px 16px;
+  font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50;text-align:center;
+}
+.toast.on{opacity:1}
+
+@media(max-width:600px){
+  .two{grid-template-columns:1fr}
+  .search-bar{grid-template-columns:1fr}
+  .tiles{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .tile{min-height:84px;padding:8px 3px}
+  .tile i{width:34px;height:34px}
+  .tile b{font-size:11px}
+  .tbtn .lbl{display:none}
+  .tbtn{padding:0 9px}
+  .brand h1{font-size:18px}
+  .brand small{font-size:10.5px}
+}
+@media(min-width:900px){
+  body{padding-bottom:calc(28px + env(safe-area-inset-bottom, 0px))}
+  .brand{padding-inline-end:390px;position:relative}
+  .bottom{
+    position:fixed;top:10px;bottom:auto;inset-inline-start:auto;inset-inline-end:max(4vw,14px);
+    width:auto;display:flex;gap:4px;background:transparent;backdrop-filter:none;border:0;padding:0;
+  }
+  .bottom button{flex-direction:row;gap:6px;font-size:13.5px;min-height:38px;padding:0 11px}
+  .toast{bottom:24px}
+}
+
+/* Release additions: onboarding, merchant tools, promotions and support */
+.promo-release{max-width:1160px;margin:12px auto;padding:12px 14px;border:1px solid rgba(232,160,37,.55);border-radius:16px;background:linear-gradient(120deg,rgba(232,160,37,.14),rgba(56,182,166,.10));display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.promo-release h2{font-size:15px;color:var(--gold);margin:0 0 2px}
+.promo-release p{font-size:12px;color:var(--mute);margin:0}
+.promo-release .promo-days{font-weight:800;color:var(--gold);white-space:nowrap}
+.merchant-tools{border-color:var(--acc);margin-top:12px}
+.merchant-tools .merchant-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-top:1px solid var(--line)}
+.merchant-tools .merchant-item:first-child{border-top:0}
+.dialog-hint{font-size:12px;color:var(--mute);margin:0}
+#toggleAdmPass{min-height:34px;padding:0 10px;background:var(--chip);border:1px solid var(--line);border-radius:9px;color:var(--ink)}
+#ticketForm{display:grid;gap:10px}
+#ticketForm textarea{min-height:100px}
+.ticket-row{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px;margin:7px 0}
+.ticket-row p{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0;font-size:13px}
+@media(max-width:600px){.promo-release{margin-inline:14px}.merchant-tools{margin-inline:14px}}
+
+
+.region-info{background:linear-gradient(145deg,rgba(56,182,166,.07),transparent 62%),var(--card);border-color:rgba(56,182,166,.25)}
+.region-info-head h2{font-size:19px;margin:7px 0 2px}
+.region-info-head .where{margin:0}
+.region-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.region-stat{background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:10px 6px;text-align:center}
+.region-stat b{display:block;color:var(--gold);font:700 22px 'Reem Kufi',sans-serif;font-variant-numeric:tabular-nums}
+.region-stat span{display:block;color:var(--mute);font-size:11px}
+.region-meta{margin-top:11px;padding:10px 12px;border-radius:12px;background:var(--bg);border:1px solid var(--line);font-size:12.5px;line-height:1.7}
+.region-breakdown{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.region-breakdown .tag{font-size:11px}
+.region-disclaimer,.region-source{font-size:11px;line-height:1.6;color:var(--mute);margin:10px 0 0}
+.region-source{font-size:10px;opacity:.9}
+.blocked-label{display:inline-flex;padding:2px 8px;border-radius:999px;background:rgba(224,82,82,.14);border:1px solid var(--danger);color:var(--danger);font-size:11px}
+.admin-actions{display:flex;gap:5px;flex-wrap:wrap}
+.admin-actions button{min-height:32px;font-size:11px;padding:0 9px}
+.block-entry{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.block-entry b{display:block;direction:ltr;text-align:right}
+.ai-mode-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:999px;background:rgba(56,182,166,.12);border:1px solid var(--line);font-size:10px;color:var(--acc)}
+@media(max-width:420px){.region-stats{gap:5px}.region-stat{padding:8px 3px}.region-stat b{font-size:19px}}
+
+</style>
+</head>
+<body>
+
+<header class="app">
+  <div class="brand">
+    <a class="brand-link" id="logoHome" href="#home" title="العودة إلى الصفحة الرئيسية">
+      <svg class="brand-logo" viewBox="0 0 120 120" aria-label="شعار دليلنا">
+        <rect width="120" height="120" rx="28" fill="#181411"/>
+        <path d="M20 65 A40 40 0 0 1 100 65" fill="none" stroke="#F4EFE6" stroke-width="5" stroke-linecap="round"/>
+        <path d="M25 65 L41 65 A19 19 0 0 1 46 52 L33 41 A35 35 0 0 0 25 65 Z" fill="#3B82C4"/>
+        <path d="M33 41 L46 52 A19 19 0 0 1 54 47 L46 31 A35 35 0 0 0 33 41 Z" fill="#E8A025"/>
+        <path d="M46 31 L54 47 A19 19 0 0 1 60 46 L60 30 A35 35 0 0 0 46 31 Z" fill="#D94A64"/>
+        <path d="M60 30 L60 46 A19 19 0 0 1 66 47 L74 31 A35 35 0 0 0 60 30 Z" fill="#4EBD7A"/>
+        <path d="M74 31 L66 47 A19 19 0 0 1 74 52 L87 41 A35 35 0 0 0 74 31 Z" fill="#D94A64"/>
+        <path d="M87 41 L74 52 A19 19 0 0 1 79 65 L95 65 A35 35 0 0 0 87 41 Z" fill="#E8A025"/>
+        <path d="M39 65 A21 21 0 0 1 81 65" fill="none" stroke="#F4EFE6" stroke-width="3.5"/>
+        <path d="M41 65 L50 65 A10 10 0 0 1 54 57 L47 49 A21 21 0 0 0 41 65 Z" fill="#E06C82"/>
+        <path d="M47 49 L54 57 A10 10 0 0 1 60 55 L60 44 A21 21 0 0 0 47 49 Z" fill="#2BB5A4"/>
+        <path d="M60 44 L60 55 A10 10 0 0 1 66 57 L73 49 A21 21 0 0 0 60 44 Z" fill="#4EBD7A"/>
+        <path d="M73 49 L66 57 A10 10 0 0 1 70 65 L79 65 A21 21 0 0 0 73 49 Z" fill="#E06C82"/>
+        <path d="M49 65 A11 11 0 0 1 71 65 Z" fill="#F2B949" stroke="#F4EFE6" stroke-width="3"/>
+        <rect x="17" y="64" width="86" height="6" rx="3" fill="#F4EFE6"/>
+        <rect x="21" y="70" width="78" height="26" rx="5" fill="#181411" stroke="#F4EFE6" stroke-width="4.5"/>
+        <path d="M60 70 v26 M21 83 h78" stroke="#F4EFE6" stroke-width="3.5"/>
+      </svg>
+      <div class="brand-title">
+        <h1>دليلنا</h1>
+        <small>دليلك لكل الخدمات في اليمن</small>
+      </div>
+    </a>
+    <div class="top-tools">
+      <button type="button" class="tbtn" id="accountBtn" title="تبديل الحساب">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="lbl" id="accountLbl">عميل</span>
+      </button>
+      <button type="button" class="tbtn" id="themeBtn" aria-label="تبديل المظهر">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <span class="lbl">المظهر</span>
+      </button>
+      <button type="button" class="tbtn" id="langBtn" aria-label="اختيار اللغة">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span id="langLbl">عربي</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <div class="search">
+      <svg class="s-ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <input id="q" type="search" autocomplete="off" placeholder="ابحث عن محل، صيدلية، سباك، وظيفة…">
+      <button id="mic" type="button" aria-label="البحث بالصوت" title="تحدث للبحث بالصوت">
+        <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3M8 22h8"/></svg>
+      </button>
+    </div>
+    <button type="button" class="picker-btn" id="scopeBtn" aria-label="اختر المنطقة">
+      <span id="scopeLbl" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">كل مناطق اليمن</span>
+      <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+  </div>
+
+  <div class="voice-bar" id="voiceBar" hidden>
+    <span id="voiceTxt">جارٍ الاستماع… تحدث الآن</span>
+    <button type="button" class="tbtn" id="voiceStop" style="min-height:30px">إيقاف</button>
+  </div>
+</header>
+
+<section class="promo-release" id="promoRelease">
+  <div>
+    <h2 id="promoReleaseTitle">عرض البداية: 60 يوماً للإعلان المجاني</h2>
+    <p id="promoReleaseText">تبدأ المدة من أول تشغيل للتطبيق على هذا الجهاز. الإعلان يحتاج موافقة الإدارة قبل ظهوره.</p>
+  </div>
+  <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+    <span class="promo-days" id="promoDaysLeft">متبقي 60 يوماً</span>
+    <button type="button" class="add" id="openPromoRelease" style="min-height:36px;font-size:12.5px">اطلب إعلانك المجاني</button>
+  </div>
+</section>
+
+<main>
+  <!-- Admin Control Panel -->
+  <section class="admin-panel" id="adminPanel" hidden>
+    <div class="adm-head">
+      <div>
+        <h2 style="font-size:18px;color:var(--gold)">لوحة تحكم المشرف</h2>
+        <span class="where" id="admRoleInfo"></span>
+      </div>
+      <div class="fbtn">
+        <button type="button" class="add" id="admQuickAdd" style="min-height:36px">+ إضافة موثّقة</button>
+        <button type="button" class="ghost" id="admLogout" style="min-height:36px">خروج</button>
+      </div>
+    </div>
+    <div class="adm-tabs" id="admTabs">
+      <button type="button" data-atab="overview" aria-selected="true">نظرة عامة</button>
+      <button type="button" data-atab="listings">الإدراجات والحذف</button>
+      <button type="button" data-atab="pending">المراجعة</button>
+      <button type="button" data-atab="perms">الصلاحيات</button>
+      <button type="button" data-atab="ads">الإعلانات</button>
+      <button type="button" data-atab="fx">الصرف والطوارئ</button>
+      <button type="button" data-atab="logs">البلاغات والسجل</button>
+      <button type="button" data-atab="blocks">الحظر والإيقاف</button>
+      <button type="button" data-atab="backup">النسخ الاحتياطي</button>
+    </div>
+    <div id="admBody"></div>
+  </section>
+
+  <section class="panel merchant-tools" id="merchantToolsPanel" hidden>
+    <div class="adm-head" style="margin-bottom:8px">
+      <div><h2 style="font-size:17px;color:var(--acc)">إدارة التاجر</h2><span class="where" id="merchantToolsSummary"></span></div>
+      <div class="fbtn"><button type="button" class="add" id="merchantAddBtn" style="min-height:36px">إضافة خدمة</button><button type="button" class="ghost" id="merchantPromoBtn" style="min-height:36px">إعلان مجاني</button></div>
+    </div>
+    <div id="merchantOwnedItems"></div>
+    <p class="dialog-hint">حساب التاجر في هذه النسخة محفوظ محلياً على الجهاز. توثيق رقم الهاتف يحتاج خدمة تحقق على الخادم.</p>
+  </section>
+
+  <!-- Home View -->
+  <section id="vHome">
+    <div class="slider">
+      <div class="track" id="adsBox"></div>
+      <div class="dots" id="dots"></div>
+    </div>
+
+
+    <section class="panel region-info" id="regionInfoCard" aria-live="polite">
+      <div class="region-info-head">
+        <div><span class="tag">معلومات المنطقة</span><h2 id="regionInfoTitle">عن المنطقة المختارة في دليلنا</h2><p id="regionInfoIntro" class="where"></p></div>
+      </div>
+      <div class="region-stats">
+        <div class="region-stat"><b id="regionStatItems">0</b><span>إدراج في دليلنا</span></div>
+        <div class="region-stat"><b id="regionStatCats">0</b><span>أقسام ممثلة</span></div>
+        <div class="region-stat"><b id="regionStatVerified">0</b><span>موثّق</span></div>
+      </div>
+      <div id="regionDistrictMeta" class="region-meta"></div>
+      <div id="regionCategoryBreakdown" class="region-breakdown"></div>
+      <p class="region-disclaimer">الأرقام أعلاه تخص الإدراجات الموجودة في نسخة دليلنا على هذا الجهاز، ولا تمثل إحصاءً رسمياً شاملاً للسكان أو المحلات. المعلومات الإدارية مرجعية وقد تختلف كتابة بعض الأسماء محلياً.</p>
+      <p class="region-source">مصادر التقسيم الإداري: Open Admin Data Yemen (CC BY 4.0). قائمة عزل حبيش: مصدر محلي، وعددها 22 وفق صفحة التقسيم الإداري لمحافظة إب.</p>
+    </section>
+
+    <!-- Smart Categories Hub -->
+    <div class="cat-hub" id="catHub">
+      <div class="cat-head">
+        <h2 style="font-size:17px">الأقسام والخدمات الذكية</h2>
+        <input class="cat-search" id="catFilterQ" type="search" placeholder="ابحث في الأقسام (مثلاً: دواء، سباك)…">
+      </div>
+      <div class="cat-tabs" id="catTabs">
+        <button type="button" data-cg="all" aria-pressed="true">الكل</button>
+        <button type="button" data-cg="top" aria-pressed="false">الأكثر طلباً</button>
+        <button type="button" data-cg="daily" aria-pressed="false">يومية وغذاء</button>
+        <button type="button" data-cg="health" aria-pressed="false">صحة وتعليم</button>
+        <button type="button" data-cg="tech" aria-pressed="false">طاقة وصيانة</button>
+        <button type="button" data-cg="shop" aria-pressed="false">تسوق ومناسبات</button>
+      </div>
+      <div class="tiles" id="tiles"></div>
+      <div class="cat-more-row" id="catMoreRow">
+        <button type="button" class="cat-more-btn" id="catMoreBtn">عرض كل الأقسام</button>
+      </div>
+    </div>
+
+    <!-- Smart Filters & GPS Proximity Radar -->
+    <div class="fchips" id="fltRow"></div>
+
+    <!-- Recently Viewed Strip -->
+    <div id="recentBox" hidden style="margin-top:12px">
+      <h2 class="sec" style="margin:8px 2px 6px;font-size:15.5px"><span>شاهدته مؤخراً</span><button type="button" class="del" id="clrRecent">مسح</button></h2>
+      <div class="recent-strip" id="recentList"></div>
+    </div>
+
+    <h2 class="sec" id="latestT">أُضيف حديثاً</h2>
+    <div class="list" id="list"></div>
+    <div style="display:flex;justify-content:center;margin:12px 0">
+      <button class="ghost" id="more" hidden>عرض المزيد</button>
+    </div>
+
+    <!-- Exchange Rates & Gold -->
+    <section class="panel" id="fxBox">
+      <h2>
+        <span>أسعار الصرف والذهب اليوم</span>
+        <span class="tag" id="fxBadge">محدّث</span>
+      </h2>
+      <div class="fxg" id="fxGrid"></div>
+      <div class="fx-calc">
+        <b style="font-size:14px">حاسبة تحويل العملات الفورية</b>
+        <div class="fx-calc-grid">
+          <input id="calcAmt" type="number" value="100" min="0" step="any" placeholder="المبلغ">
+          <button type="button" class="picker-btn" id="calcFromBtn">
+            <span id="calcFromLbl">دولار أمريكي (USD)</span>
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <button type="button" class="picker-btn" id="calcToBtn">
+            <span id="calcToLbl">إلى ريال يمني (صنعاء)</span>
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+        </div>
+        <div class="fx-res-box" id="calcRes">53,500 ريال يمني</div>
+      </div>
+      <p class="where" id="fxMeta" style="margin:8px 0 0"></p>
+    </section>
+
+    <!-- Important Numbers -->
+    <section class="panel" id="emBox">
+      <h2>أرقام الطوارئ والخدمات</h2>
+      <div class="links" id="emList"></div>
+    </section>
+  </section>
+
+  <!-- Category View -->
+  <section id="vCat" hidden>
+    <div style="display:flex;align-items:center;gap:10px;margin:14px 0 6px">
+      <button class="ghost" id="back" style="min-width:42px;padding:0 12px">رجوع</button>
+      <h2 id="catT" style="font-size:21px"></h2>
+    </div>
+    <div class="fchips" id="catFltRow"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0">
+      <span class="where" id="count"></span>
+      <input type="hidden" id="area" value=""><button type="button" class="picker-btn" id="areaBtn" aria-label="فلترة المنطقة" style="width:auto;min-width:150px;min-height:38px"><span id="areaLbl">كل المناطق</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+    <div class="list" id="clist"></div>
+  </section>
+
+  <!-- Jobs View -->
+  <section id="vJobs" hidden>
+    <div style="display:flex;align-items:center;gap:10px;margin:14px 0 8px">
+      <button class="ghost" data-go="home" style="min-width:42px;padding:0 12px">رجوع</button>
+      <h2 style="font-size:21px">بوابة الوظائف</h2>
+    </div>
+    <p class="warn">تنبيه: لا تدفع أي مبلغ مقابل فيزا أو وظيفة. الدليل يعرض الوظائف مجاناً للتواصل المباشر.</p>
+    <div class="fbtn" style="margin:10px 0">
+      <button class="add" id="addJob">+ أضف وظيفة</button>
+    </div>
+    <div class="list" id="jobs"></div>
+  </section>
+
+  <!-- Souq View -->
+  <section id="vSouq" hidden>
+    <div style="display:flex;align-items:center;gap:10px;margin:14px 0 8px">
+      <button class="ghost" data-go="home" style="min-width:42px;padding:0 12px">رجوع</button>
+      <h2 style="font-size:21px">سوق البيع والشراء</h2>
+    </div>
+    <div class="fbtn" style="margin:8px 0">
+      <button class="add" id="sqSell">+ اعرض غرضاً للبيع</button>
+      <button class="ghost" id="sqBuy">+ اطلب غرضاً</button>
+    </div>
+    <div class="list" id="sqList"></div>
+  </section>
+
+  <!-- AI & Feedback View -->
+  <section id="vFb" hidden>
+    <div style="display:flex;align-items:center;gap:10px;margin:14px 0 8px">
+      <button class="ghost" data-go="home" style="min-width:42px;padding:0 12px">رجوع</button>
+      <h2 style="font-size:21px">مساعد دليلنا الذكي</h2>
+    </div>
+    <div class="panel" style="margin-top:6px">
+      <p class="where" id="aiModeHint" style="margin:0 0 8px">المساعد المحلي يبحث في بيانات هذا الجهاز دون إنترنت. يمكنك تفعيل المساعد السحابي اختيارياً للحصول على إجابات أوسع.</p>
+      <label class="ai-cloud-consent" for="aiCloudConsent">
+        <input type="checkbox" id="aiCloudConsent" style="width:auto;min-width:18px;min-height:18px">
+        <span><b>السماح بالمساعد السحابي</b><small>عند التفعيل، يُرسل سؤالك وبيانات الإدراجات العامة ذات الصلة، بما فيها أرقام التواصل المعروضة، إلى خادم التطبيق ثم إلى مزود الذكاء الاصطناعي لمعالجة السؤال. لا تكتب كلمات مرور أو معلومات خاصة.</small></span>
+      </label>
+      <div class="msgs" id="msgs">
+        <div class="m a">أهلاً بك في مساعد دليلنا الذكي. أستطيع البحث في جميع المحلات والخدمات والأرقام وأسعار الصرف والوظائف. ماذا تبحث عنه؟</div>
+      </div>
+      <div class="fchips" id="sugg">
+        <button type="button">أقرب صيدلية</button>
+        <button type="button">سعر الصرف اليوم</button>
+        <button type="button">محلات طاقة شمسية</button>
+        <button type="button">وظائف متاحة</button>
+      </div>
+      <form id="botf" style="display:flex;gap:8px;margin-top:8px">
+        <input id="botq" placeholder="اكتب سؤالك هنا…">
+        <button class="add" type="submit">إرسال</button>
+      </form>
+      <div class="fbtn" style="margin-top:8px"><button type="button" class="ghost" id="openSupportTicket">تقديم شكوى أو اقتراح</button></div>
+    </div>
+  </section>
+</main>
+
+<!-- Compact Floating AI Shortcut -->
+<button type="button" class="ai-fab" id="aiFab" title="اسأل الذكاء الاصطناعي">
+  <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/></svg>
+  <span>المساعد الذكي</span>
+</button>
+
+<!-- Bottom Navigation Bar -->
+<nav class="bottom" aria-label="التنقل الرئيسي">
+  <button data-go="home" aria-current="page">
+    <svg viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+    <span>الرئيسية</span>
+  </button>
+  <button data-go="souq">
+    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+    <span>السوق</span>
+  </button>
+  <button class="plus" id="navAdd">
+    <i class="plus-ic"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></i>
+    <span>أضف</span>
+  </button>
+  <button data-go="jobs">
+    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+    <span>الوظائف</span>
+  </button>
+  <button data-go="fb">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span>المساعد</span>
+  </button>
+</nav>
+
+<!-- Custom Styled Picker Dialog -->
+<dialog id="pickerDlg">
+  <div class="dlg-body">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 id="pickerTitle" style="font-size:19px">اختر</h2>
+      <button type="button" class="x" id="pickerClose">✕</button>
+    </div>
+    <input id="pickerSearch" type="search" placeholder="ابحث هنا…">
+    <div class="sheet-list" id="pickerList"></div>
+  </div>
+</dialog>
+
+<!-- Smart Account Switcher Modal -->
+<dialog id="accountDlg">
+  <div class="dlg-body">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 style="font-size:20px">اختيار صفة الحساب</h2>
+      <button type="button" class="x" id="accClose">✕</button>
+    </div>
+    <p class="where" style="margin:0">اختر كيف ترغب في استخدام التطبيق الآن:</p>
+
+    <button type="button" class="role-opt" id="roleClientBtn">
+      <div class="role-ic"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <div>
+        <b style="display:block;font-size:15px">مستفيد / عميل</b>
+        <span class="where">تصفح المحلات، البحث الصوتي، التقييم، وحفظ المفضلة.</span>
+      </div>
+    </button>
+
+    <button type="button" class="role-opt" id="roleMerchantBtn">
+      <div class="role-ic"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <div>
+        <b style="display:block;font-size:15px">صاحب محل / بائع</b>
+        <span class="where">إدارة محلاتك وإضافة عروضك وإعلاناتك برقم جوالك.</span>
+      </div>
+    </button>
+
+    <div id="merchantBox" hidden style="background:var(--bg);padding:12px;border-radius:12px;border:1px solid var(--line);display:grid;gap:8px">
+      <label>اسم التاجر أو المحل<input id="merchName" placeholder="مثلاً: محلات الأمل"></label>
+      <label>رقم الجوال / واتساب<input id="merchPhone" dir="ltr" inputmode="tel" placeholder="77xxxxxxx"></label>
+      <button type="button" class="add" id="merchSave">تفعيل حساب التاجر</button>
+    </div>
+
+    <button type="button" class="role-opt" id="roleAdminBtn" hidden>
+      <div class="role-ic" style="color:var(--gold)"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div>
+        <b style="display:block;font-size:15px;color:var(--gold)">مشرف / إدارة الدليل</b>
+        <span class="where">الدخول بالبريد الإلكتروني وكلمة المرور لإدارة الدليل.</span>
+      </div>
+    </button>
+
+    <p class="dialog-hint" id="adminAccessHint" hidden>بوابة الإدارة مخفية عن المستخدمين العاديين. هذه الحماية تقلل الوصول العرضي فقط؛ ولا تغني عن خادم مصادقة قبل النشر العام.</p>
+    <form id="adminLoginForm" hidden style="padding:12px;background:var(--bg);border-radius:12px;border:1px solid var(--gold)">
+      <label>البريد الإلكتروني<input id="admEmail" type="email" dir="ltr" required placeholder="admin@dalilna.ye"></label>
+      <label>كلمة المرور
+        <div style="display:flex;gap:6px;align-items:center">
+          <input id="admPass" type="password" dir="ltr" required placeholder="كلمة مرور الإدارة" style="flex:1">
+          <button type="button" id="toggleAdmPass" aria-label="إظهار أو إخفاء كلمة المرور">إظهار</button>
+        </div>
+      </label>
+      <p class="err" id="admLoginErr"></p>
+      <div class="fbtn"><button type="submit" class="add">دخول المشرف</button></div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="promoReleaseDlg">
+  <form id="promoReleaseForm" class="dlg-body">
+    <div style="display:flex;justify-content:space-between;align-items:center"><h2 style="font-size:19px">طلب إعلان مجاني لمدة 60 يوماً</h2><button type="button" class="x" id="promoReleaseClose">✕</button></div>
+    <p class="dialog-hint">المدة محسوبة من أول تشغيل للتطبيق على هذا الجهاز. يراجع المشرف الإعلان قبل نشره.</p>
+    <label>نوع الإعلان
+      <select id="promoReleaseKind"><option value="متجر أو محل">متجر أو محل</option><option value="منتج أو عرض">منتج أو عرض</option><option value="وظيفة">وظيفة</option></select>
+    </label>
+    <label>عنوان الإعلان<input id="promoReleaseName" maxlength="120" required placeholder="اسم المتجر أو عنوان العرض"></label>
+    <label>تفاصيل الإعلان<textarea id="promoReleaseDesc" maxlength="500" rows="3" required placeholder="اكتب التفاصيل بوضوح"></textarea></label>
+    <label>رقم التواصل<input id="promoReleasePhone" dir="ltr" inputmode="tel" maxlength="20" required placeholder="9677xxxxxxx"></label>
+    <p class="err" id="promoReleaseErr"></p>
+    <div class="fbtn"><button type="submit" class="add">إرسال إلى مراجعة المشرف</button><button type="button" class="ghost" id="promoReleaseWa">إرسال عبر واتساب الإدارة</button></div>
+  </form>
+</dialog>
+
+<dialog id="supportDlg">
+  <form id="ticketForm" class="dlg-body">
+    <div style="display:flex;justify-content:space-between;align-items:center"><h2 style="font-size:19px">شكوى أو اقتراح للإدارة</h2><button type="button" class="x" id="supportClose">✕</button></div>
+    <label>نوع الرسالة<select id="ticketType"><option value="شكوى">شكوى</option><option value="اقتراح تحسين">اقتراح تحسين</option><option value="تحديث بيانات محل">تحديث بيانات محل</option><option value="طلب إعلان">طلب إعلان</option></select></label>
+    <label>الاسم<input id="ticketName" maxlength="80" placeholder="اسمك (اختياري)"></label>
+    <label>رقم التواصل<input id="ticketPhone" dir="ltr" inputmode="tel" maxlength="20" placeholder="رقم الجوال (اختياري)"></label>
+    <label>التفاصيل<textarea id="ticketText" maxlength="1200" rows="4" required placeholder="اكتب التفاصيل التي تريد إرسالها للإدارة"></textarea></label>
+    <p class="err" id="ticketErr"></p>
+    <div class="fbtn"><button type="submit" class="add">إرسال إلى صندوق المشرف</button></div>
+  </form>
+</dialog>
+
+<!-- Add / Edit Listing Dialog -->
+<dialog id="dlg">
+  <form id="f">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 id="dlgTitle" style="font-size:20px">إضافة إلى الدليل</h2>
+      <button type="button" class="x" id="cancel">✕</button>
+    </div>
+    <div class="two">
+      <label>الاسم<input name="name" required maxlength="80" placeholder="مثلاً: صيدلية الشفاء"></label>
+      <label>القسم<input type="hidden" name="cat" id="fcat" value="grocery"><button type="button" class="picker-btn" id="fcatBtn"><span id="fcatLbl">بقالات</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button></label>
+    </div>
+    <div class="two">
+      <label>المحافظة<input type="hidden" name="gov" id="fgov" value="إب"><button type="button" class="picker-btn" id="fgovBtn"><span id="fgovLbl">إب</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button></label>
+      <label>المديرية<input name="dist" value="حبيش" placeholder="مثلاً: حبيش"></label>
+    </div>
+    <div class="two">
+      <label>العزلة / المنطقة<input name="area" required list="areas" placeholder="مثلاً: ربع ظلمة"></label>
+      <label>القرية أو الشارع<input name="village" placeholder="اختياري"></label>
+    </div>
+    <div class="two">
+      <label>رقم الجوال / واتساب<input name="phone" dir="ltr" inputmode="tel" placeholder="77xxxxxxx"></label>
+      <label>أوقات العمل<input name="hours" placeholder="مثلاً: 8 ص - 10 م أو 24 ساعة"></label>
+    </div>
+    <div class="two" id="extraFields" hidden>
+      <label id="priceLbl">السعر / الراتب<input name="price" placeholder="اختياري"></label>
+      <label id="countryLbl">البلد<input name="country" value="اليمن"></label>
+    </div>
+    <label>صورة المحل أو المنتج (تُضغط وتُحفظ تلقائياً في الذاكرة)
+      <input type="file" id="imgInput" accept="image/*">
+    </label>
+    <div id="imgPreviewBox" hidden style="display:flex;align-items:center;gap:10px">
+      <img id="imgPreview" alt="" style="width:72px;height:54px;object-fit:cover;border-radius:10px;border:1px solid var(--line)">
+      <button type="button" class="ghost" id="imgClearBtn" style="min-height:34px;font-size:12.5px">إزالة الصورة</button>
+    </div>
+    <label>وصف مختصر<textarea name="desc" rows="2" maxlength="300" placeholder="الخدمات أو المنتجات المتوفرة"></textarea></label>
+    <p class="err" id="ferr"></p>
+    <div class="fbtn">
+      <button class="add" type="submit" id="save">حفظ ونشر</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Details & QR Business Card Dialog -->
+<dialog id="ddlg">
+  <div class="dlg-body" id="dbody"></div>
+</dialog>
+
+<datalist id="areas"></datalist>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* QR Code encoder: Kazuhiko Arase (2009), MIT License. Bundled offline for Dalilna. */
+(function(global){
+"use strict";
+const modules={
+"QRMode": function(module, exports, require) {
+module.exports = {
+    MODE_NUMBER :       1 << 0,
+    MODE_ALPHA_NUM :    1 << 1,
+    MODE_8BIT_BYTE :    1 << 2,
+    MODE_KANJI :        1 << 3
+};
+
+},
+"QRMaskPattern": function(module, exports, require) {
+module.exports = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+
+},
+"QRMath": function(module, exports, require) {
+var QRMath = {
+
+	glog : function(n) {
+	
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		
+		return QRMath.LOG_TABLE[n];
+	},
+	
+	gexp : function(n) {
+	
+		while (n < 0) {
+			n += 255;
+		}
+	
+		while (n >= 256) {
+			n -= 255;
+		}
+	
+		return QRMath.EXP_TABLE[n];
+	},
+	
+	EXP_TABLE : new Array(256),
+	
+	LOG_TABLE : new Array(256)
+
+};
+	
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+
+module.exports = QRMath;
+
+},
+"QRErrorCorrectLevel": function(module, exports, require) {
+module.exports = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+
+
+},
+"QRUtil": function(module, exports, require) {
+var QRMode = require('./QRMode');
+var QRPolynomial = require('./QRPolynomial');
+var QRMath = require('./QRMath');
+var QRMaskPattern = require('./QRMaskPattern');
+
+var QRUtil = {
+
+    PATTERN_POSITION_TABLE : [
+        [],
+        [6, 18],
+        [6, 22],
+        [6, 26],
+        [6, 30],
+        [6, 34],
+        [6, 22, 38],
+        [6, 24, 42],
+        [6, 26, 46],
+        [6, 28, 50],
+        [6, 30, 54],        
+        [6, 32, 58],
+        [6, 34, 62],
+        [6, 26, 46, 66],
+        [6, 26, 48, 70],
+        [6, 26, 50, 74],
+        [6, 30, 54, 78],
+        [6, 30, 56, 82],
+        [6, 30, 58, 86],
+        [6, 34, 62, 90],
+        [6, 28, 50, 72, 94],
+        [6, 26, 50, 74, 98],
+        [6, 30, 54, 78, 102],
+        [6, 28, 54, 80, 106],
+        [6, 32, 58, 84, 110],
+        [6, 30, 58, 86, 114],
+        [6, 34, 62, 90, 118],
+        [6, 26, 50, 74, 98, 122],
+        [6, 30, 54, 78, 102, 126],
+        [6, 26, 52, 78, 104, 130],
+        [6, 30, 56, 82, 108, 134],
+        [6, 34, 60, 86, 112, 138],
+        [6, 30, 58, 86, 114, 142],
+        [6, 34, 62, 90, 118, 146],
+        [6, 30, 54, 78, 102, 126, 150],
+        [6, 24, 50, 76, 102, 128, 154],
+        [6, 28, 54, 80, 106, 132, 158],
+        [6, 32, 58, 84, 110, 136, 162],
+        [6, 26, 54, 82, 110, 138, 166],
+        [6, 30, 58, 86, 114, 142, 170]
+    ],
+
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
+
+    getBCHTypeInfo : function(data) {
+        var d = data << 10;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+            d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );    
+        }
+        return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+
+    getBCHTypeNumber : function(data) {
+        var d = data << 12;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+            d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );    
+        }
+        return (data << 12) | d;
+    },
+
+    getBCHDigit : function(data) {
+
+        var digit = 0;
+
+        while (data !== 0) {
+            digit++;
+            data >>>= 1;
+        }
+
+        return digit;
+    },
+
+    getPatternPosition : function(typeNumber) {
+        return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+
+    getMask : function(maskPattern, i, j) {
+        
+        switch (maskPattern) {
+            
+        case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
+        case QRMaskPattern.PATTERN001 : return i % 2 === 0;
+        case QRMaskPattern.PATTERN010 : return j % 3 === 0;
+        case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
+        case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
+        case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
+        case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
+        case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
+
+        default :
+            throw new Error("bad maskPattern:" + maskPattern);
+        }
+    },
+
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+
+        var a = new QRPolynomial([1], 0);
+
+        for (var i = 0; i < errorCorrectLength; i++) {
+            a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
+        }
+
+        return a;
+    },
+
+    getLengthInBits : function(mode, type) {
+
+        if (1 <= type && type < 10) {
+
+            // 1 - 9
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 10;
+            case QRMode.MODE_ALPHA_NUM  : return 9;
+            case QRMode.MODE_8BIT_BYTE  : return 8;
+            case QRMode.MODE_KANJI      : return 8;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 27) {
+
+            // 10 - 26
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 12;
+            case QRMode.MODE_ALPHA_NUM  : return 11;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 10;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 41) {
+
+            // 27 - 40
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 14;
+            case QRMode.MODE_ALPHA_NUM  : return 13;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 12;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else {
+            throw new Error("type:" + type);
+        }
+    },
+
+    getLostPoint : function(qrCode) {
+        
+        var moduleCount = qrCode.getModuleCount();
+        var lostPoint = 0;
+        var row = 0; 
+        var col = 0;
+
+        
+        // LEVEL1
+        
+        for (row = 0; row < moduleCount; row++) {
+
+            for (col = 0; col < moduleCount; col++) {
+
+                var sameCount = 0;
+                var dark = qrCode.isDark(row, col);
+
+                for (var r = -1; r <= 1; r++) {
+
+                    if (row + r < 0 || moduleCount <= row + r) {
+                        continue;
+                    }
+
+                    for (var c = -1; c <= 1; c++) {
+
+                        if (col + c < 0 || moduleCount <= col + c) {
+                            continue;
+                        }
+
+                        if (r === 0 && c === 0) {
+                            continue;
+                        }
+
+                        if (dark === qrCode.isDark(row + r, col + c) ) {
+                            sameCount++;
+                        }
+                    }
+                }
+
+                if (sameCount > 5) {
+                    lostPoint += (3 + sameCount - 5);
+                }
+            }
+        }
+
+        // LEVEL2
+
+        for (row = 0; row < moduleCount - 1; row++) {
+            for (col = 0; col < moduleCount - 1; col++) {
+                var count = 0;
+                if (qrCode.isDark(row,     col    ) ) count++;
+                if (qrCode.isDark(row + 1, col    ) ) count++;
+                if (qrCode.isDark(row,     col + 1) ) count++;
+                if (qrCode.isDark(row + 1, col + 1) ) count++;
+                if (count === 0 || count === 4) {
+                    lostPoint += 3;
+                }
+            }
+        }
+
+        // LEVEL3
+
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount - 6; col++) {
+                if (qrCode.isDark(row, col) && 
+                        !qrCode.isDark(row, col + 1) && 
+                         qrCode.isDark(row, col + 2) && 
+                         qrCode.isDark(row, col + 3) && 
+                         qrCode.isDark(row, col + 4) && 
+                        !qrCode.isDark(row, col + 5) && 
+                         qrCode.isDark(row, col + 6) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount - 6; row++) {
+                if (qrCode.isDark(row, col) &&
+                        !qrCode.isDark(row + 1, col) &&
+                         qrCode.isDark(row + 2, col) &&
+                         qrCode.isDark(row + 3, col) &&
+                         qrCode.isDark(row + 4, col) &&
+                        !qrCode.isDark(row + 5, col) &&
+                         qrCode.isDark(row + 6, col) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        // LEVEL4
+        
+        var darkCount = 0;
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount; row++) {
+                if (qrCode.isDark(row, col) ) {
+                    darkCount++;
+                }
+            }
+        }
+        
+        var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+        lostPoint += ratio * 10;
+
+        return lostPoint;       
+    }
+
+};
+
+module.exports = QRUtil;
+
+},
+"QRRSBlock": function(module, exports, require) {
+var QRErrorCorrectLevel = require('./QRErrorCorrectLevel');
+
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+
+QRRSBlock.RS_BLOCK_TABLE = [
+
+	// L
+	// M
+	// Q
+	// H
+
+	// 1
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	
+	// 2
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+
+	// 3
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+
+	// 4		
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	
+	// 5
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	
+	// 6
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	
+	// 7		
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	
+	// 8
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	
+	// 9
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	
+	// 10		
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+
+	// 11
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+
+	// 12
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+
+	// 13
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+
+	// 14
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+
+	// 15
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+
+	// 16
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+
+	// 17
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+
+	// 18
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+
+	// 19
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+
+	// 20
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+
+	// 21
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+
+	// 22
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+
+	// 23
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+
+	// 24
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+
+	// 25
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+
+	// 26
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+
+	// 27
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+
+	// 28
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+
+	// 29
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+
+	// 30
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+
+	// 31
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+
+	// 32
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+
+	// 33
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+
+	// 34
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+
+	// 35
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+
+	// 36
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+
+	// 37
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+
+	// 38
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+
+	// 39
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+
+	// 40
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	
+	if (rsBlock === undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+
+	var length = rsBlock.length / 3;
+	
+	var list = [];
+	
+	for (var i = 0; i < length; i++) {
+
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	
+	return list;
+};
+
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+
+	switch(errorCorrectLevel) {
+	case QRErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case QRErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case QRErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case QRErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+};
+
+module.exports = QRRSBlock;
+
+},
+"QRPolynomial": function(module, exports, require) {
+var QRMath = require('./QRMath');
+
+function QRPolynomial(num, shift) {
+	if (num.length === undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+
+	var offset = 0;
+
+	while (offset < num.length && num[offset] === 0) {
+		offset++;
+	}
+
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+
+QRPolynomial.prototype = {
+
+	get : function(index) {
+		return this.num[index];
+	},
+	
+	getLength : function() {
+		return this.num.length;
+	},
+	
+	multiply : function(e) {
+	
+		var num = new Array(this.getLength() + e.getLength() - 1);
+	
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+			}
+		}
+	
+		return new QRPolynomial(num, 0);
+	},
+	
+	mod : function(e) {
+	
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+	
+		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+	
+		var num = new Array(this.getLength() );
+		
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		
+		for (var x = 0; x < e.getLength(); x++) {
+			num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
+		}
+	
+		// recursive call
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+
+module.exports = QRPolynomial;
+
+},
+"QRBitBuffer": function(module, exports, require) {
+function QRBitBuffer() {
+	this.buffer = [];
+	this.length = 0;
+}
+
+QRBitBuffer.prototype = {
+
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	
+	getLengthInBits : function() {
+		return this.length;
+	},
+	
+	putBit : function(bit) {
+	
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+	
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+	
+		this.length++;
+	}
+};
+
+module.exports = QRBitBuffer;
+
+},
+"QR8bitByte": function(module, exports, require) {
+var QRMode = require('./QRMode');
+
+function QR8bitByte(data) {
+	this.mode = QRMode.MODE_8BIT_BYTE;
+	this.data = data;
+}
+
+QR8bitByte.prototype = {
+
+	getLength : function() {
+		return this.data.length;
+	},
+	
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			// not JIS ...
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+
+module.exports = QR8bitByte;
+
+},
+"index": function(module, exports, require) {
+//---------------------------------------------------------------------
+// QRCode for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//   http://www.opensource.org/licenses/mit-license.php
+//
+// The word "QR Code" is registered trademark of 
+// DENSO WAVE INCORPORATED
+//   http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+// Modified to work in node for this project (and some refactoring)
+//---------------------------------------------------------------------
+
+var QR8bitByte = require('./QR8bitByte');
+var QRUtil = require('./QRUtil');
+var QRPolynomial = require('./QRPolynomial');
+var QRRSBlock = require('./QRRSBlock');
+var QRBitBuffer = require('./QRBitBuffer');
+
+function QRCode(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = [];
+}
+
+QRCode.prototype = {
+	
+	addData : function(data) {
+		var newData = new QR8bitByte(data);
+		this.dataList.push(newData);
+		this.dataCache = null;
+	},
+	
+	isDark : function(row, col) {
+		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+			throw new Error(row + "," + col);
+		}
+		return this.modules[row][col];
+	},
+
+	getModuleCount : function() {
+		return this.moduleCount;
+	},
+	
+	make : function() {
+		// Calculate automatically typeNumber if provided is < 1
+		if (this.typeNumber < 1 ){
+			var typeNumber = 1;
+			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+
+				var buffer = new QRBitBuffer();
+				var totalDataCount = 0;
+				for (var i = 0; i < rsBlocks.length; i++) {
+					totalDataCount += rsBlocks[i].dataCount;
+				}
+
+				for (var x = 0; x < this.dataList.length; x++) {
+					var data = this.dataList[x];
+					buffer.put(data.mode, 4);
+					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+					data.write(buffer);
+				}
+				if (buffer.getLengthInBits() <= totalDataCount * 8)
+					break;
+			}
+			this.typeNumber = typeNumber;
+		}
+		this.makeImpl(false, this.getBestMaskPattern() );
+	},
+	
+	makeImpl : function(test, maskPattern) {
+		
+		this.moduleCount = this.typeNumber * 4 + 17;
+		this.modules = new Array(this.moduleCount);
+		
+		for (var row = 0; row < this.moduleCount; row++) {
+			
+			this.modules[row] = new Array(this.moduleCount);
+			
+			for (var col = 0; col < this.moduleCount; col++) {
+				this.modules[row][col] = null;//(col + row) % 3;
+			}
+		}
+	
+		this.setupPositionProbePattern(0, 0);
+		this.setupPositionProbePattern(this.moduleCount - 7, 0);
+		this.setupPositionProbePattern(0, this.moduleCount - 7);
+		this.setupPositionAdjustPattern();
+		this.setupTimingPattern();
+		this.setupTypeInfo(test, maskPattern);
+		
+		if (this.typeNumber >= 7) {
+			this.setupTypeNumber(test);
+		}
+	
+		if (this.dataCache === null) {
+			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+		}
+	
+		this.mapData(this.dataCache, maskPattern);
+	},
+
+	setupPositionProbePattern : function(row, col)  {
+		
+		for (var r = -1; r <= 7; r++) {
+			
+			if (row + r <= -1 || this.moduleCount <= row + r) continue;
+			
+			for (var c = -1; c <= 7; c++) {
+				
+				if (col + c <= -1 || this.moduleCount <= col + c) continue;
+				
+				if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) || 
+                     (0 <= c && c <= 6 && (r === 0 || r === 6) ) || 
+                     (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+					this.modules[row + r][col + c] = true;
+				} else {
+					this.modules[row + r][col + c] = false;
+				}
+			}		
+		}		
+	},
+	
+	getBestMaskPattern : function() {
+	
+		var minLostPoint = 0;
+		var pattern = 0;
+	
+		for (var i = 0; i < 8; i++) {
+			
+			this.makeImpl(true, i);
+	
+			var lostPoint = QRUtil.getLostPoint(this);
+	
+			if (i === 0 || minLostPoint >  lostPoint) {
+				minLostPoint = lostPoint;
+				pattern = i;
+			}
+		}
+	
+		return pattern;
+	},
+	
+	createMovieClip : function(target_mc, instance_name, depth) {
+	
+		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+		var cs = 1;
+	
+		this.make();
+
+		for (var row = 0; row < this.modules.length; row++) {
+			
+			var y = row * cs;
+			
+			for (var col = 0; col < this.modules[row].length; col++) {
+	
+				var x = col * cs;
+				var dark = this.modules[row][col];
+			
+				if (dark) {
+					qr_mc.beginFill(0, 100);
+					qr_mc.moveTo(x, y);
+					qr_mc.lineTo(x + cs, y);
+					qr_mc.lineTo(x + cs, y + cs);
+					qr_mc.lineTo(x, y + cs);
+					qr_mc.endFill();
+				}
+			}
+		}
+		
+		return qr_mc;
+	},
+
+	setupTimingPattern : function() {
+		
+		for (var r = 8; r < this.moduleCount - 8; r++) {
+			if (this.modules[r][6] !== null) {
+				continue;
+			}
+			this.modules[r][6] = (r % 2 === 0);
+		}
+	
+		for (var c = 8; c < this.moduleCount - 8; c++) {
+			if (this.modules[6][c] !== null) {
+				continue;
+			}
+			this.modules[6][c] = (c % 2 === 0);
+		}
+	},
+	
+	setupPositionAdjustPattern : function() {
+	
+		var pos = QRUtil.getPatternPosition(this.typeNumber);
+		
+		for (var i = 0; i < pos.length; i++) {
+		
+			for (var j = 0; j < pos.length; j++) {
+			
+				var row = pos[i];
+				var col = pos[j];
+				
+				if (this.modules[row][col] !== null) {
+					continue;
+				}
+				
+				for (var r = -2; r <= 2; r++) {
+				
+					for (var c = -2; c <= 2; c++) {
+					
+						if (Math.abs(r) === 2 || 
+                            Math.abs(c) === 2 ||
+                            (r === 0 && c === 0) ) {
+							this.modules[row + r][col + c] = true;
+						} else {
+							this.modules[row + r][col + c] = false;
+						}
+					}
+				}
+			}
+		}
+	},
+	
+	setupTypeNumber : function(test) {
+	
+		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        var mod;
+	
+		for (var i = 0; i < 18; i++) {
+			mod = (!test && ( (bits >> i) & 1) === 1);
+			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+		}
+	
+		for (var x = 0; x < 18; x++) {
+			mod = (!test && ( (bits >> x) & 1) === 1);
+			this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
+		}
+	},
+	
+	setupTypeInfo : function(test, maskPattern) {
+	
+		var data = (this.errorCorrectLevel << 3) | maskPattern;
+		var bits = QRUtil.getBCHTypeInfo(data);
+        var mod;
+	
+		// vertical		
+		for (var v = 0; v < 15; v++) {
+	
+			mod = (!test && ( (bits >> v) & 1) === 1);
+	
+			if (v < 6) {
+				this.modules[v][8] = mod;
+			} else if (v < 8) {
+				this.modules[v + 1][8] = mod;
+			} else {
+				this.modules[this.moduleCount - 15 + v][8] = mod;
+			}
+		}
+	
+		// horizontal
+		for (var h = 0; h < 15; h++) {
+	
+			mod = (!test && ( (bits >> h) & 1) === 1);
+			
+			if (h < 8) {
+				this.modules[8][this.moduleCount - h - 1] = mod;
+			} else if (h < 9) {
+				this.modules[8][15 - h - 1 + 1] = mod;
+			} else {
+				this.modules[8][15 - h - 1] = mod;
+			}
+		}
+	
+		// fixed module
+		this.modules[this.moduleCount - 8][8] = (!test);
+	
+	},
+	
+	mapData : function(data, maskPattern) {
+		
+		var inc = -1;
+		var row = this.moduleCount - 1;
+		var bitIndex = 7;
+		var byteIndex = 0;
+		
+		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+	
+			if (col === 6) col--;
+	
+			while (true) {
+	
+				for (var c = 0; c < 2; c++) {
+					
+					if (this.modules[row][col - c] === null) {
+						
+						var dark = false;
+	
+						if (byteIndex < data.length) {
+							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
+						}
+	
+						var mask = QRUtil.getMask(maskPattern, row, col - c);
+	
+						if (mask) {
+							dark = !dark;
+						}
+						
+						this.modules[row][col - c] = dark;
+						bitIndex--;
+	
+						if (bitIndex === -1) {
+							byteIndex++;
+							bitIndex = 7;
+						}
+					}
+				}
+								
+				row += inc;
+	
+				if (row < 0 || this.moduleCount <= row) {
+					row -= inc;
+					inc = -inc;
+					break;
+				}
+			}
+		}
+		
+	}
+
+};
+
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	
+	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	
+	var buffer = new QRBitBuffer();
+	
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+
+	// calc num max data.
+	var totalDataCount = 0;
+	for (var x = 0; x < rsBlocks.length; x++) {
+		totalDataCount += rsBlocks[x].dataCount;
+	}
+
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. (" + 
+            buffer.getLengthInBits() + 
+            ">" +  
+            totalDataCount * 8 + 
+            ")");
+	}
+
+	// end code
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+
+	// padding
+	while (buffer.getLengthInBits() % 8 !== 0) {
+		buffer.putBit(false);
+	}
+
+	// padding
+	while (true) {
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD0, 8);
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD1, 8);
+	}
+
+	return QRCode.createBytes(buffer, rsBlocks);
+};
+
+QRCode.createBytes = function(buffer, rsBlocks) {
+
+	var offset = 0;
+	
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	
+	for (var r = 0; r < rsBlocks.length; r++) {
+
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		
+		dcdata[r] = new Array(dcCount);
+		
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		
+		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var x = 0; x < ecdata[r].length; x++) {
+            var modIndex = x + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+
+	}
+	
+	var totalCodeCount = 0;
+	for (var y = 0; y < rsBlocks.length; y++) {
+		totalCodeCount += rsBlocks[y].totalCount;
+	}
+
+	var data = new Array(totalCodeCount);
+	var index = 0;
+
+	for (var z = 0; z < maxDcCount; z++) {
+		for (var s = 0; s < rsBlocks.length; s++) {
+			if (z < dcdata[s].length) {
+				data[index++] = dcdata[s][z];
+			}
+		}
+	}
+
+	for (var xx = 0; xx < maxEcCount; xx++) {
+		for (var t = 0; t < rsBlocks.length; t++) {
+			if (xx < ecdata[t].length) {
+				data[index++] = ecdata[t][xx];
+			}
+		}
+	}
+
+	return data;
+
+};
+
+module.exports = QRCode;
+
+}
+};
+const cache={};
+function load(id){
+  if(cache[id])return cache[id].exports;
+  if(!modules[id])throw new Error("QR module not found: "+id);
+  const module={exports:{}};cache[id]=module;
+  modules[id](module,module.exports,function(path){return load(path.replace(/^\.\//,"").replace(/\.js$/, ""));});
+  return module.exports;
+}
+global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel")};
+})(window);
+
+</script>
+<script>
+(()=>{
+const STORE_KEY="dalilna_app_v6";
+const APP_VERSION="1.2.0";
+const CATS=[
+  ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
+  ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
+  ["jobs","وظائف"],["land","أراضٍ وعقارات"],["build","مواد بناء"],["parts","قطع غيار"],
+  ["craft","حرفيون وصيانة"],["transport","نقل ومواصلات"],["telecom","جوالات واتصالات"],["utility","مياه وغاز"],
+  ["farm","زراعة ومواشي"],["mosque","مساجد"],["gold","ذهب ومجوهرات"],["wedding","قاعات أعراس"],
+  ["hotel","فنادق وشقق"],["market","أسواق"],["solar","طاقة شمسية"],["elec","إلكترونيات"],
+  ["clothes","ملابس وأحذية"],["home","أدوات منزلية"],["books","مكتبات وقرطاسية"],["beauty","عطور وتجميل"],
+  ["delivery","توصيل وطلبات"],["salon","حلاقة وكوافير"],["laundry","مغاسل وكوي"],["souq","سوق البيع والشراء"],["other","أخرى"]
+];
+const CN=Object.fromEntries(CATS);
+const CAT_KEYS=new Set(CATS.map(([k])=>k));
+const CN_EN={
+  grocery:"Groceries",food:"Restaurants & Bakeries",cafe:"Cafes & Coffee",edu:"Schools & Education",
+  health:"Hospitals & Centers",pharmacy:"Pharmacies & Clinics",gov:"Government Offices",money:"Exchange & Transfers",
+  jobs:"Jobs",land:"Real Estate & Land",build:"Building Materials",parts:"Spare Parts",
+  craft:"Craftsmen & Repair",transport:"Transport",telecom:"Mobiles & Telecom",utility:"Water & Gas",
+  farm:"Agriculture & Livestock",mosque:"Mosques",gold:"Gold & Jewelry",wedding:"Wedding Halls",
+  hotel:"Hotels & Apartments",market:"Markets",solar:"Solar Energy",elec:"Electronics",
+  clothes:"Clothes & Shoes",home:"Home Appliances",books:"Libraries & Stationery",beauty:"Perfumes & Beauty",
+  delivery:"Delivery",salon:"Barbers & Salons",laundry:"Laundry",souq:"Buy & Sell Souq",other:"Other"
+};
+const I18N={
+  ar:{
+    appName:"دليلنا",appSub:"دليلك لكل الخدمات في اليمن",
+    client:"عميل",merchant:"تاجر",admin:"مشرف",theme:"المظهر",
+    searchPh:"ابحث عن محل، صيدلية، سباك، وظيفة…",allYemen:"كل مناطق اليمن",
+    catHubTitle:"الأقسام والخدمات الذكية",catSearchPh:"ابحث في الأقسام (مثلاً: دواء، سباك)…",
+    cgAll:"الكل",cgTop:"الأكثر طلباً",cgDaily:"يومية وغذاء",cgHealth:"صحة وتعليم",cgTech:"طاقة وصيانة",cgShop:"تسوق ومناسبات",
+    showAllCats:"عرض كل الأقسام",collapseCats:"طي الأقسام",
+    fltNear:"الأقرب لموقعي",fltOpen:"مفتوح الآن",fltVer:"موثّق",fltFav:"المفضلة",
+    recentTitle:"شاهدته مؤخراً",clear:"مسح",latestTitle:"الخدمات والمحلات",searchRes:"نتائج البحث",moreBtn:"عرض المزيد",
+    fxTitle:"أسعار الصرف والذهب اليوم",fxUpdated:"محدّث",fxCalcTitle:"حاسبة تحويل العملات الفورية",fxAmtPh:"المبلغ",
+    emTitle:"أرقام الطوارئ والخدمات",
+    navHome:"الرئيسية",navSouq:"السوق",navAdd:"أضف",navJobs:"الوظائف",navAi:"المساعد",aiFab:"المساعد الذكي",
+    back:"رجوع",jobsTitle:"بوابة الوظائف",addJob:"+ أضف وظيفة",
+    souqTitle:"سوق البيع والشراء",sqSell:"+ اعرض غرضاً للبيع",sqBuy:"+ اطلب غرضاً",
+    aiTitle:"مساعد دليلنا الذكي",aiSub:"مساعد محلي يبحث في بيانات الدليل، ويمكن ربطه بخدمة سحابية عند إعداد الخادم.",
+    aiWelcome:"أهلاً بك في مساعد دليلنا الذكي. أستطيع البحث في جميع المحلات والخدمات والأرقام وأسعار الصرف والوظائف. ماذا تبحث عنه؟",
+    aiPh:"اكتب سؤالك هنا…",send:"إرسال",
+    wa:"واتساب",share:"مشاركة",edit:"تعديل",del:"حذف",verified:"✓ موثّق",community:"إضافة مجتمعية",open:"مفتوح",closed:"مغلق",
+    heroTitle:"دليلنا",heroSub:"كل خدمات مدينتك في جيبك",heroTag:"دليلك الذكي في اليمن السعيد",contactNow:"تواصل الآن",
+    emptyList:"لا توجد نتائج مطابقة لبحثك.",sanaaRates:"صنعاء والمحافظات",adenRates:"عدن والمحافظات",
+    inYer:"بالريال اليمني",currCol:"العملة / العيار",buyCol:"شراء",sellCol:"بيع"
+  },
+  en:{
+    appName:"Dalilna",appSub:"Your Complete Services Directory in Yemen",
+    client:"Client",merchant:"Merchant",admin:"Admin",theme:"Theme",
+    searchPh:"Search shop, pharmacy, plumber, job…",allYemen:"All Regions of Yemen",
+    catHubTitle:"Smart Categories & Services",catSearchPh:"Filter categories (e.g. medicine, plumber)…",
+    cgAll:"All",cgTop:"Most Popular",cgDaily:"Daily & Food",cgHealth:"Health & Edu",cgTech:"Solar & Repair",cgShop:"Shopping & Events",
+    showAllCats:"Show All Categories",collapseCats:"Collapse Categories",
+    fltNear:"Nearest to Me",fltOpen:"Open Now",fltVer:"Verified",fltFav:"Favorites",
+    recentTitle:"Recently Viewed",clear:"Clear",latestTitle:"Services & Shops",searchRes:"Search Results",moreBtn:"Load More",
+    fxTitle:"Exchange & Gold Rates Today",fxUpdated:"Updated",fxCalcTitle:"Instant Currency Converter",fxAmtPh:"Amount",
+    emTitle:"Emergency & Important Numbers",
+    navHome:"Home",navSouq:"Souq",navAdd:"Add",navJobs:"Jobs",navAi:"Assistant",aiFab:"AI Assistant",
+    back:"Back",jobsTitle:"Jobs Portal",addJob:"+ Post a Job",
+    souqTitle:"Buy & Sell Marketplace",sqSell:"+ Sell an Item",sqBuy:"+ Request an Item",
+    aiTitle:"Dalilna Smart AI Assistant",aiSub:"Offline-first assistant searches the local directory. Cloud AI requires server configuration.",
+    aiWelcome:"Welcome to Dalilna AI Assistant! I can search all shops, services, phone numbers, exchange rates, and jobs. How can I help?",
+    aiPh:"Type your question here…",send:"Send",
+    wa:"WhatsApp",share:"Share",edit:"Edit",del:"Delete",verified:"✓ Verified",community:"Community Listing",open:"Open",closed:"Closed",
+    heroTitle:"Dalilna",heroSub:"All Your City Services in Your Pocket",heroTag:"Your Smart Guide in Yemen",contactNow:"Contact Now",
+    emptyList:"No matching results found.",sanaaRates:"Sana'a & Northern Govs",adenRates:"Aden & Southern Govs",
+    inYer:"In YER",currCol:"Currency / Gold",buyCol:"Buy",sellCol:"Sell"
+  }
+};
+let curLang="ar";
+const T=k=>(I18N[curLang]&&I18N[curLang][k])||I18N.ar[k]||k;
+const catLabel=k=>curLang==="en"?(CN_EN[k]||CN[k]||k):(CN[k]||k);
+const CAT_GROUPS={
+  top:["pharmacy","grocery","food","solar","money","craft","telecom","health"],
+  daily:["grocery","food","cafe","utility","delivery","market","laundry"],
+  health:["pharmacy","health","edu","gov","mosque"],
+  tech:["solar","elec","craft","parts","transport","telecom","build"],
+  shop:["clothes","home","gold","beauty","books","wedding","hotel","souq"]
+};
+const CAT_SYN={
+  pharmacy:"دواء علاج صيدلي طبيب عيادة حبوب ادوية مستوصف",
+  grocery:"تموين بقالة مواد غذائية سكر ارز دقيق مياه زيوت",
+  food:"غداء عشاء فطور بروست مندي خبز مطعم مطاعم وجبات",
+  craft:"سباك صحي كهربائي نجار حداد ميكانيكي تصليح صيانة فني",
+  solar:"بطارية لوح الواح انفرتر محول شمس طاقة منظومة شمسيه",
+  money:"حوالة تحويل صرافة صراف صرف دولار سعودي حوالات",
+  telecom:"شريحة رصيد نت انترنت جوال هاتف موبايل اتصالات",
+  health:"مستشفى دكتور طبيب فحص مختبر اسعاف مركز صحي",
+  jobs:"وظيفة عمل وظائف توظيف مطلوب موظف عامل راتب",
+  land:"ارض اراضي عقار عقارات شقة ايجار بيع ارض",
+  build:"اسمنت حديد بلوك مواد بناء سباكة دهان",
+  parts:"قطع غيار سيارات مكينة اطارات كفرات بطارية",
+  transport:"باص نقل مواصلات تاكسي سيارة توصيل",
+  edu:"مدرسة مدارس جامعة معهد تعليم دروس مدرس",
+  gov:"حكومة حكومي مكتب حكومي جوازات احوال مدنية",
+  souq:"حراج سوق للبيع مطلوب مقايضة مجانا مباع",
+  clothes:"ملابس ثياب احذية جزم عبايات",
+  beauty:"عطور بخور تجميل مكياج كوافير",
+  hotel:"فندق شقق سكن استراحة",
+  cafe:"قهوة كوفي مقهى بوفيه كافتيريا",
+  delivery:"توصيل مندوب شحن نقل طلبات",
+  laundry:"مغسلة غسيل كوي ملابس",
+  gold:"ذهب مجوهرات فضة صياغة",
+  farm:"مزارع زراعة مواشي اغنام ابقار دواجن",
+  elec:"الكترونيات تلفزيون شاشة ثلاجة غسالة اجهزة",
+  home:"اثاث منزلي مفروشات مطبخ",
+  books:"قرطاسية مكتبة كتب طباعة تصوير",
+  wedding:"اعراس صالة زواج قاعة مناسبات",
+  salon:"حلاق حلاقة صالون نسائي رجالي",
+  mosque:"مسجد جامع",
+  utility:"غاز ماء مياه وايت وايتات صهريج",
+  market:"سوق خضار فواكه خضروات",
+  other:"خدمات اخرى"
+};
+const IC={
+  grocery:'<path d="M3 9h18l-2 10H5z"/><path d="M8 9l3-5M16 9l-3-5"/>',
+  food:'<path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M8 4v4M12 3v5M16 4v4"/>',
+  pharmacy:'<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/>',
+  land:'<path d="M3 20l5-13 4 7 3-5 6 11z"/>',
+  build:'<rect x="3" y="6" width="18" height="12" rx="1"/><path d="M3 12h18"/>',
+  craft:'<path d="M14.5 5.5a4 4 0 0 0 4.9 4.9L10 19.8 7.2 17l9.4-9.4"/>',
+  transport:'<path d="M2 7h11v9H2zM13 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',
+  farm:'<path d="M12 21V11"/><path d="M12 11c0-4 3-7 8-7 0 5-3 8-8 7z"/>',
+  edu:'<path d="M3 5h7a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H3zM21 5h-7a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h7z"/>',
+  jobs:'<rect x="3" y="8" width="18" height="11" rx="2"/><path d="M8 8V5h8v3"/>',
+  health:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
+  gov:'<path d="M3 9l9-5 9 5M4 20h16M6 10v8M18 10v8"/>',
+  money:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/>',
+  mosque:'<path d="M6 20v-7a6 6 0 0 1 12 0v7zM12 7V3M4 20h16"/>',
+  utility:'<path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>',
+  telecom:'<path d="M5 20h2v-4H5zM10 20h2v-8h-2zM15 20h2V8h-2z"/>',
+  gold:'<path d="M6 9l3-5h6l3 5-6 11z"/>',
+  hotel:'<path d="M3 20V6h11v14M14 10h7v10M3 20h18"/>',
+  wedding:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
+  market:'<path d="M3 10l2-6h14l2 6M5 13v8h14v-8"/>',
+  cafe:'<path d="M4 8h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z"/>',
+  parts:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
+  solar:'<circle cx="12" cy="6" r="2.5"/><path d="M4 21l2-9h12l2 9z"/>',
+  elec:'<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>',
+  clothes:'<path d="M8 3l-5 4 3 3 2-1v12h8V9l2 1 3-3-5-4a4 4 0 0 1-8 0z"/>',
+  home:'<path d="M4 11h16v6H4zM6 17v3M18 17v3"/>',
+  books:'<path d="M4 19V5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/>',
+  beauty:'<path d="M9 3h6v4H9zM7 7h10l-1 14H8z"/>',
+  delivery:'<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',
+  salon:'<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 7.5L20 18M8.5 16.5L20 6"/>',
+  laundry:'<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4"/>',
+  souq:'<path d="M20 12l-8 8-9-9V3h8z"/>',
+  other:'<circle cx="7" cy="7" r="2"/><circle cx="17" cy="7" r="2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>'
+};
+const TC={
+  grocery:"#2B7A4B",food:"#C0522A",pharmacy:"#257A9E",land:"#85662C",build:"#73685C",craft:"#5656A8",
+  transport:"#B87E26",farm:"#49852B",edu:"#3868A6",health:"#B83528",gov:"#455473",money:"#298267",
+  mosque:"#647835",utility:"#2582AD",telecom:"#7345A6",jobs:"#B02E48",cafe:"#8F532F",parts:"#506982",
+  gold:"#BD8D1B",hotel:"#357399",wedding:"#A63F73",market:"#995626",solar:"#C98E12",elec:"#2866B0",
+  clothes:"#963D76",home:"#735237",books:"#3A7685",beauty:"#B54F8F",delivery:"#C97726",salon:"#8054C7",
+  laundry:"#2A96A8",souq:"#D13F35",other:"#5A695D"
+};
+const HUBAISH_UZ=["بني معين", "السلق", "بني شبيب", "بني الضاحيتين", "التفادي", "جبل خضراء", "جبل عنقه", "الجعافرة", "ربع ظلمة", "الزراحي", "شباع", "صائر", "الصدر", "العارضة", "الفراعي", "جحزة", "كومان", "المشيرق", "الناحية", "نقيل العقاب", "وادي العقاب", "الوطنة"];
+const NEARBY_AREAS=["مفرق حبيش","المخادر","مدينة إب"];
+const AREAS=[...HUBAISH_UZ,...NEARBY_AREAS];
+const GOVS=["أمانة العاصمة","صنعاء","عدن","تعز","إب","الحديدة","ذمار","البيضاء","لحج","أبين","الضالع","مأرب","الجوف","صعدة","حجة","عمران","المحويت","ريمة","حضرموت","شبوة","المهرة","سقطرى"];
+const YEMEN_DISTRICTS=(window.DALILNA_YEMEN_DISTRICTS||{"أبين":["احور","المحفد","الوضيع","جيشان","خنفر","رصد","زنجبار","سباح","سرار","لودر","موديه"],"الضالع":["الازارق","الحشاء","الحصين","الشعيب","الضالع","جبن","جحاف","دمت","قعطبه"],"حضرموت":["الديس","الريدة وقصيعر","السوم","الشحر","الضليعه","العبر","القطن","القف","المكلا","بروم ميفع","تريم","ثمود","حجر","حجر الصيعر","حريضه","دوعن","رخيه","رماه","زمخ ومنوخ","ساه","سيئون","شبام","عمد","غيل باوزير","غيل بن يمين","مدينة المكلا","وادي العين","يبعث"],"الحديدة":["التحيتا","الجراحي","الحالي","الحجيله","الحوك","الخوخه","الدريهمي","الزهره","الزيديه","السخنه","الصليف","الضحى","القناوص","اللحيه","المراوعه","المغلاف","المنصوريه","المنيره","الميناء","باجل","برع","بيت الفقيه","جبل راس","حيس","زبيد","كمران"],"صعدة":["الحشوه","الصفراء","الظاهر","باقم","حيدان","رازح","ساقين","سحار","شداء","صعده","غمر","قطابر","كتاف والبقع","مجز","منبه"],"إب":["اب","الرضمه","السبره","السده","السياني","الشعر","الظهار","العدين","القفر","المخادر","المشنه","النادره","بعدان","جبله","حبيش","حزم العدين","ذي السفال","فرع العدين","مذيخره","يريم"],"مأرب":["الجوبه","العبديه","بدبده","جبل مراد","حريب","حريب القرامش","رحبه","رغوان","صرواح","مارب","ماهليه","مجزر","مدغل الجدعان","مدينة مارب"],"البيضاء":["البيضاء","الرياشيه","الزاهر","السواديه","الشريه","الصومعه","الطفه","العرش","القريشيه","الملاجم","ذي ناعم","رداع","ردمان","صباح","مدينة البيضاء","مسوره","مكيراس","ناطع","نعمان","ولدربيع"],"عمران":["السود","السوده","العشه","المدان","بني صريم","ثلاء","جبل عيال يزيد","حرف سفيان","حوث","خارف","خمر","ذيبين","ريده","شهاره","صوير","ظليمة حبور","عمران","عيال سريح","قفلة عذر","مسور"],"عدن":["البريقه","التواهي","الشيخ عثمان","المعلا","المنصوره","خور مكسر","دار سعد","صيره"],"المهرة":["الغيظه","المسيله","حات","حصوين","حوف","سيحوت","شحن","قشن","منعر"],"الجوف":["الحزم","الحميدات","الخلق","الزاهر","الغيل","المتون","المصلوب","المطمه","برط العنان","خب و الشعف","خراب المراشى","رجوزه"],"لحج":["الحد","الحوطه","القبيطه","المسيمير","المضاربة و العاره","المفلحي","المقاطره","الملاح","تبن","حالمين","حبيل جبر","ردفان","طور الباحه","يافع","يهر"],"ذمار":["الحداء","المنار","جبل الشرق","جهران","ضوران انس","عتمه","عنس","مدينة ذمار","مغرب عنس","ميفعة عنس","وصاب السافل","وصاب العالي"],"صنعاء":["ارحب","الحصن","الحيمة الخارجيه","الحيمة الداخليه","الطيال","بلاد الروس","بني حشيش","بني ضبيان","بني مطر","جحانه","خولان","سنحان وبني بهلول","صعفان","مناخه","نهم","همدان"],"ريمة":["الجبين","الجعفريه","السلفيه","بلاد الطعام","كسمه","مزهر"],"المحويت":["الخبت","الرجم","الطويله","المحويت","بني سعد","حفاش","شبام كوكبان","مدينة المحويت","ملحان"],"تعز":["التعزيه","الشمايتين","الصلو","القاهره","المخاء","المسراخ","المظفر","المعافر","المواسط","الوازعيه","باب المندب","جبل حبشي","حيفان","خدير","سامع","شرعب الرونه","شرعب السلام","صاله","صبر الموادم","ماويه","مشرعة وحدنان","مقبنه","موزع"],"أمانة العاصمة":["ازال","التحرير","الثوره","السبعين","الصافيه","الوحده","بني الحارث","شعوب","صنعاء القديمه","ضواحي الامانة سنحان وبني بهلول","ضواحي الامانة همدان","معين"],"شبوة":["الروضه","الصعيد","الطلح","بيحان","جردان","حبان","حطيب","دهر","رضوم","عتق","عرماء","عسيلان","عين","مرخة السفلى","مرخة العليا","ميفعه","نصاب"],"سقطرى":["حديبو","قلنسية وعبد الكوري"],"حجة":["اسلم","افلح الشام","افلح اليمن","الجميمه","الشاهل","الشغادره","المحابشه","المغربه","المفتاح","بكيل المير","بني العوام","بني قيس الطور","حجه","حرض","حيران","خيران المحرق","شرس","عبس","قاره","قفل شمر","كحلان الشرف","كحلان عفار","كشر","كعيدنه","مبين","مدينة حجه","مستباء","ميدي","نجره","وشحه","وضره"]});
+const YEMEN_DISTRICT_TOTAL=window.DALILNA_YEMEN_DISTRICT_TOTAL||335;
+const YEMEN_GOV_TOTAL=window.DALILNA_YEMEN_GOV_TOTAL||22;
+
+const $=s=>document.querySelector(s);
+
+function showDlg(selector){
+  const d=typeof selector==="string"?$(selector):selector;
+  if(!d)return;
+  if(typeof d.showModal==="function")d.showModal();
+  else{d.setAttribute("open","");d.classList.add("dlg-fallback");document.body.classList.add("dialog-fallback-open");}
+}
+function closeDlg(selector){
+  const d=typeof selector==="string"?$(selector):selector;
+  if(!d)return;
+  if(typeof d.close==="function"&&d.open)d.close();
+  else{d.removeAttribute("open");d.classList.remove("dlg-fallback");document.body.classList.remove("dialog-fallback-open");}
+}
+
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const digits=p=>String(p||"").replace(/\D/g,"");
+const waLink=p=>{let d=digits(p);if(d.startsWith("00"))d=d.slice(2);if(d.startsWith("0"))d=d.slice(1);if(d.length===9&&d.startsWith("7"))d="967"+d;return "https://wa.me/"+d;};
+const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove("on"),3200);};
+async function sha256(str){if(!window.crypto||!window.crypto.subtle)throw new Error("secure-context-required");const buf=await window.crypto.subtle.digest("SHA-256",new TextEncoder().encode(str));return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");}
+
+const SEED_ITEMS=[];
+const LEGACY_DEMO_IDS=new Set(["s1","s2","s3","s4","s5","s6","s7","s8","s9"]);
+
+function loadState(){
+  try{const raw=localStorage.getItem(STORE_KEY);if(raw)return JSON.parse(raw);}catch(e){}
+  return null;
+}
+
+const DEFAULT_STATE={
+  items:[],
+  pending:[],
+  ads:[
+    {id:"ad1",title:"أعلن عن محلك أو مشروعك مجاناً",text:"وصل خدماتك لكل أبناء مديرية حبيش والمغتربين",phone:"967777000000"}
+  ],
+  fx:{
+    s:{usdB:535,usdS:538,sarB:140,sarS:141,aedB:144,aedS:146,omrB:1380,omrS:1395,g24B:44000,g24S:46000,g21B:38500,g21S:40500,g18B:33000,g18S:34800},
+    a:{usdB:2040,usdS:2055,sarB:535,sarS:540,aedB:550,aedS:556,omrB:5250,omrS:5310,g24B:165000,g24S:173000,g21B:145000,g21S:152000,g18B:124000,g18S:130000},
+    date:"اليوم"
+  },
+  rates:{},
+  favs:[],
+  recent:[],
+  reports:[],
+  logs:[{at:Date.now(),who:"النظام",act:"تهيئة قاعدة البيانات في الذاكرة المحلية"}],
+  emerg:"الإسعاف والطوارئ: 191\nالشرطة والنجدة: 199\nالدفاع المدني: 190\nطوارئ الكهرباء والمياه: 171",
+  perms:{visitorCanPost:true,souqEnabled:true,ratingsEnabled:true},
+  admins:[
+    {email:"admin@dalilna.ye",name:"المشرف العام",hash:"ce99a381d6dc5b25edd7c0fbc812c253c6183bb1e81e9808c1bbb19d26249bc4",perms:["add","edit","delete","verify","review","ads","fx","perms","logs","backup","block"]}
+  ],
+  session:{role:"client",adminEmail:"",merchant:null},
+  merchantProfile:{name:"",phone:"",area:""},
+  tickets:[],
+  blocks:[],
+  installDate:Date.now(),
+  aiCloudConsent:false,
+  onboarded:false,
+  adminWhatsApp:"967777000000",
+  theme:"dark"
+};
+
+function cleanText(v,max=500){
+  if(v===null||v===undefined)return "";
+  if(typeof v!=="string"&&typeof v!=="number")return "";
+  return String(v).slice(0,max);
+}
+function cleanNumber(v,fallback=0,min=-1e9,max=1e9){
+  const n=Number(v);
+  return Number.isFinite(n)&&n>=min&&n<=max?n:fallback;
+}
+function safeImageData(v){
+  return typeof v==="string"&&v.length<=850000&&/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(v)?v:"";
+}
+function normalizeState(raw){
+  const base=JSON.parse(JSON.stringify(DEFAULT_STATE));
+  raw=raw&&typeof raw==="object"&&!Array.isArray(raw)?raw:{};
+  const items=Array.isArray(raw.items)?raw.items.filter(x=>!LEGACY_DEMO_IDS.has(String(x?.id||""))):base.items;
+  const safeItems=items.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)).map((x,idx)=>({
+    id:cleanText(x.id,80)||("imp_"+idx+"_"+Date.now().toString(36)),
+    name:cleanText(x.name,80),cat:CAT_KEYS.has(x.cat)?x.cat:"other",
+    gov:cleanText(x.gov,80),dist:cleanText(x.dist,80),area:cleanText(x.area,100),village:cleanText(x.village,120),
+    phone:cleanText(x.phone,40),hours:cleanText(x.hours,80),price:cleanText(x.price,80),country:cleanText(x.country,80),
+    desc:cleanText(x.desc,300),img:safeImageData(x.img),ownerPhone:cleanText(x.ownerPhone,40),aiChecked:x.aiChecked===true,
+    hidden:x.hidden===true,hiddenReason:cleanText(x.hiddenReason,240),
+    verifiedAt:x.verifiedAt?cleanNumber(x.verifiedAt,0,1,Number.MAX_SAFE_INTEGER):null,
+    createdAt:cleanNumber(x.createdAt,Date.now(),0,Number.MAX_SAFE_INTEGER),
+    lat:x.lat===null||x.lat===undefined?null:cleanNumber(x.lat,null,-90,90),
+    lng:x.lng===null||x.lng===undefined?null:cleanNumber(x.lng,null,-180,180),
+    status:["available","sold","wanted","barter","free"].includes(x.status)?x.status:"available",
+    ...((typeof x.type==="string"&&["sell","wanted","barter","free"].includes(x.type))?{type:x.type}:{})
+  })).filter(x=>x.name);
+  const fxRaw=raw.fx&&typeof raw.fx==="object"?raw.fx:{};
+  const rateGroup=(key)=>{
+    const def=base.fx[key],got=fxRaw[key]&&typeof fxRaw[key]==="object"?fxRaw[key]:{};
+    const out={};
+    for(const k of Object.keys(def))out[k]=cleanNumber(got[k],def[k],0,1e12);
+    return out;
+  };
+  const adminsRaw=Array.isArray(raw.admins)?raw.admins:base.admins;
+  const admins=adminsRaw.filter(a=>a&&typeof a==="object"&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanText(a.email,160))).map(a=>({
+    email:cleanText(a.email,160).toLowerCase(),name:cleanText(a.name,80)||"مشرف",
+    hash:/^[a-f0-9]{64}$/i.test(cleanText(a.hash,64))?cleanText(a.hash,64).toLowerCase():"",
+    perms:Array.isArray(a.perms)?[...new Set(a.perms.filter(p=>["add","edit","delete","verify","review","ads","fx","perms","logs","backup","block"].includes(p)))]:[]
+  })).filter(a=>a.hash);
+  const root=admins.find(a=>a.email==="admin@dalilna.ye");
+  if(!root)admins.unshift(base.admins[0]);
+  else{
+    if(["884f7f6d99a0165c6c077e39f9a24e1f6e335c3e169918082807a497101f4455","a36aef5a11c4073fbe60314fc9df530a9d5f986533594d1f5190742ff9e0e408"].includes(root.hash))root.hash=base.admins[0].hash;
+    root.perms=[...new Set([...(root.perms||[]),"add","edit","delete","verify","review","ads","fx","perms","logs","backup","block"])];
+  }
+  const sessionRaw=raw.session&&typeof raw.session==="object"?raw.session:{};
+  const role=["client","merchant","admin"].includes(sessionRaw.role)?sessionRaw.role:"client";
+  const merchantRaw=sessionRaw.merchant&&typeof sessionRaw.merchant==="object"?sessionRaw.merchant:null;
+  const ratesRaw=raw.rates&&typeof raw.rates==="object"?raw.rates:{};
+  const rates={};
+  for(const [id,r] of Object.entries(ratesRaw))if(r&&typeof r==="object")rates[cleanText(id,80)]={n:cleanNumber(r.n,0,0,1e9),sum:cleanNumber(r.sum,0,0,5e9)};
+  const arrayOfObjects=(v)=>Array.isArray(v)?v.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)):[];
+  return {
+    ...base,...raw,
+    items:safeItems,
+    pending:arrayOfObjects(raw.pending).map((x,i)=>({
+      id:cleanText(x.id,80)||"pending_"+i,name:cleanText(x.name,80),cat:CAT_KEYS.has(x.cat)?x.cat:"other",
+      gov:cleanText(x.gov,80),dist:cleanText(x.dist,80),area:cleanText(x.area,100),village:cleanText(x.village,120),
+      phone:cleanText(x.phone,40),hours:cleanText(x.hours,80),price:cleanText(x.price,80),country:cleanText(x.country,80),
+      desc:cleanText(x.desc,300),img:safeImageData(x.img),ownerPhone:cleanText(x.ownerPhone,40),aiChecked:x.aiChecked===true,
+      requestType:["ad","listing"].includes(x.requestType)?x.requestType:"listing",
+      adText:cleanText(x.adText,500),reason:cleanText(x.reason,300),
+      adExpiresAt:cleanNumber(x.adExpiresAt,0,0,Number.MAX_SAFE_INTEGER),
+      verifiedAt:null,createdAt:cleanNumber(x.createdAt,Date.now(),0,Number.MAX_SAFE_INTEGER),
+      lat:x.lat===null||x.lat===undefined?null:cleanNumber(x.lat,null,-90,90),
+      lng:x.lng===null||x.lng===undefined?null:cleanNumber(x.lng,null,-180,180),
+      submittedAt:cleanNumber(x.submittedAt,Date.now(),0,Number.MAX_SAFE_INTEGER)
+    })).filter(x=>x.name),
+    ads:arrayOfObjects(raw.ads).map((a,i)=>({id:cleanText(a.id,80)||"ad_"+i,title:cleanText(a.title,120),text:cleanText(a.text,400),phone:cleanText(a.phone,40),expiresAt:cleanNumber(a.expiresAt,0,0,Number.MAX_SAFE_INTEGER)})).filter(a=>a.title),
+    fx:{s:rateGroup("s"),a:rateGroup("a"),date:cleanText(fxRaw.date,40)||base.fx.date},
+    rates,favs:Array.isArray(raw.favs)?[...new Set(raw.favs.filter(x=>typeof x==="string").map(x=>x.slice(0,80)))]:[],
+    recent:Array.isArray(raw.recent)?raw.recent.filter(x=>typeof x==="string").slice(0,8):[],
+    reports:arrayOfObjects(raw.reports).slice(0,500).map(r=>({id:cleanText(r.id,80),itemId:cleanText(r.itemId,80),reason:cleanText(r.reason,300),at:cleanNumber(r.at,Date.now(),0,Number.MAX_SAFE_INTEGER)})),
+    logs:arrayOfObjects(raw.logs).slice(0,200).map(l=>({at:cleanNumber(l.at,Date.now(),0,Number.MAX_SAFE_INTEGER),who:cleanText(l.who,120),act:cleanText(l.act,300)})),
+    emerg:cleanText(raw.emerg,2000)||base.emerg,
+    perms:{visitorCanPost:raw.perms?.visitorCanPost!==false,souqEnabled:raw.perms?.souqEnabled!==false,ratingsEnabled:raw.perms?.ratingsEnabled!==false},
+    admins,
+    // Local-only profile is stored separately; privileged sessions never survive reloads.
+    merchantProfile:(()=>{const m=raw.merchantProfile&&typeof raw.merchantProfile==="object"?raw.merchantProfile:merchantRaw||{};return {name:cleanText(m.name,80),phone:cleanText(m.phone,40),area:cleanText(m.area,100)};})(),
+    session:{role:"client",adminEmail:"",merchant:null},
+    tickets:arrayOfObjects(raw.tickets).slice(0,500).map((t,i)=>({id:cleanText(t.id,80)||"ticket_"+i,type:cleanText(t.type,60),name:cleanText(t.name,80),phone:cleanText(t.phone,40),text:cleanText(t.text,1200),at:cleanNumber(t.at,Date.now(),0,Number.MAX_SAFE_INTEGER),status:t.status==="closed"?"closed":"open"})),
+    blocks:arrayOfObjects(raw.blocks).slice(0,1000).map((b,i)=>({id:cleanText(b.id,80)||"block_"+i,phone:phoneKey(cleanText(b.phone,24)),reason:cleanText(b.reason,240)||"مخالفة شروط الدليل",at:cleanNumber(b.at,Date.now(),0,Number.MAX_SAFE_INTEGER),by:cleanText(b.by,160)||"المشرف",active:b.active!==false})).filter(b=>b.phone.length>=9),
+    installDate:cleanNumber(raw.installDate,base.installDate,1,Number.MAX_SAFE_INTEGER),
+    aiCloudConsent:raw.aiCloudConsent===true,
+    onboarded:raw.onboarded===true,
+    adminWhatsApp:digits(cleanText(raw.adminWhatsApp,24))||base.adminWhatsApp,
+    theme:raw.theme==="light"?"light":"dark",lang:raw.lang==="en"?"en":"ar"
+  };
+}
+let S=normalizeState(loadState());
+let storageWarned=false;
+function portableState(){
+  return {...S,session:{role:"client",adminEmail:"",merchant:null}};
+}
+function saveState(){
+  try{
+    const serialized=JSON.stringify(portableState());
+    localStorage.setItem(STORE_KEY,serialized);
+    if(serialized.length>3500000&&!storageWarned){storageWarned=true;toast("اقتربت مساحة التخزين من الحد. نزّل نسخة احتياطية واحذف الصور الكبيرة.");}
+    if(navigator.storage&&typeof navigator.storage.estimate==="function")navigator.storage.estimate().then(info=>{
+      if(info.quota&&info.usage/info.quota>.85&&!storageWarned){storageWarned=true;toast("مساحة التخزين المتاحة منخفضة. نزّل نسخة احتياطية.");}
+    }).catch(()=>{});
+  }catch(e){
+    toast("تعذّر حفظ البيانات. صدّر نسخة احتياطية واحذف بعض الصور.");
+  }
+}
+window.addEventListener("beforeunload",saveState);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)saveState();});
+
+function logAction(act){
+  const who=S.session.role==="admin"?(S.session.adminEmail||"مشرف"):(S.session.merchant?.name||"زائر");
+  S.logs.unshift({at:Date.now(),who,act});
+  S.logs=S.logs.slice(0,80);
+  saveState();
+}
+
+/* Theme */
+function applyTheme(){
+  document.body.classList.toggle("light",S.theme==="light");
+}
+applyTheme();
+function applyLang(){
+  curLang=S.lang||"ar";
+  $("#langLbl").textContent=curLang==="en"?"EN":"عربي";
+  document.documentElement.lang=curLang;
+  document.documentElement.dir=curLang==="en"?"ltr":"rtl";
+  document.title=curLang==="en"?"Dalilna | Services & Shops Directory in Yemen":"دليلنا | دليل الخدمات والمحلات في اليمن";
+  $(".brand-title h1").textContent=T("appName");
+  $(".brand-title small").textContent=T("appSub");
+  $("#themeBtn .lbl").textContent=T("theme");
+  $("#q").placeholder=T("searchPh");
+  $("#catHub h2").textContent=T("catHubTitle");
+  $("#catFilterQ").placeholder=T("catSearchPh");
+  const cgKeys={all:"cgAll",top:"cgTop",daily:"cgDaily",health:"cgHealth",tech:"cgTech",shop:"cgShop"};
+  $("#catTabs").querySelectorAll("[data-cg]").forEach(b=>b.textContent=T(cgKeys[b.dataset.cg]));
+  $("#recentBox h2 span").textContent=T("recentTitle");
+  $("#clrRecent").textContent=T("clear");
+  $("#more").textContent=T("moreBtn");
+  $("#fxBox h2 span:first-child").textContent=T("fxTitle");
+  $("#fxBadge").textContent=T("fxUpdated");
+  $(".fx-calc b").textContent=T("fxCalcTitle");
+  $("#calcAmt").placeholder=T("fxAmtPh");
+  $("#emBox h2").textContent=T("emTitle");
+  $("#vJobs h2").textContent=T("jobsTitle");
+  $("#addJob").textContent=T("addJob");
+  $("#vSouq h2").textContent=T("souqTitle");
+  $("#sqSell").textContent=T("sqSell");
+  $("#sqBuy").textContent=T("sqBuy");
+  $("#vFb h2").textContent=T("aiTitle");
+  $("#vFb .where").textContent=T("aiSub");
+  if($("#aiCloudConsent"))$("#aiCloudConsent").checked=S.aiCloudConsent===true;
+  $("#botq").placeholder=T("aiPh");
+  $("#botf button").textContent=T("send");
+  $("#aiFab span").textContent=T("aiFab");
+  const navMap={home:"navHome",souq:"navSouq",jobs:"navJobs",fb:"navAi"};
+  document.querySelectorAll(".bottom [data-go]").forEach(b=>{const span=b.querySelector("span");if(span)span.textContent=T(navMap[b.dataset.go]);});
+  $("#navAdd span").textContent=T("navAdd");
+  document.querySelectorAll("#back,[data-go='home']:not(.bottom button)").forEach(b=>{if(b.id!=="logoHome")b.textContent=T("back");});
+  if(typeof updateFormPickerLabels==="function")updateFormPickerLabels();
+  if($("#areaLbl"))$("#areaLbl").textContent=$("#area").value||(curLang==="en"?"All Areas":"كل المناطق");
+  syncRoleUI();
+  buildScopeSelector();
+  renderAds();
+  renderFx();
+  render();
+}
+$("#langBtn").addEventListener("click",()=>{
+  openCustomPicker({
+    title:curLang==="en"?"Select Language":"اختر لغة التطبيق",
+    searchable:false,
+    options:[
+      {val:"ar",label:"العربية (Arabic)",count:"AR"},
+      {val:"en",label:"English (الإنجليزية)",count:"EN"}
+    ],
+    selected:curLang,
+    onSelect:val=>{
+      S.lang=val;
+      saveState();
+      applyLang();
+      toast(S.lang==="en"?"Language switched to English":"تم التبديل إلى اللغة العربية");
+    }
+  });
+});
+$("#themeBtn").addEventListener("click",()=>{
+  S.theme=S.theme==="light"?"dark":"light";
+  applyTheme();saveState();
+  toast(S.theme==="light"?"تم تفعيل الوضع النهاري":"تم تفعيل الوضع الليلي");
+});
+
+/* Account & Role Switcher */
+function curAdmin(){return S.session.role==="admin"?S.admins.find(a=>a.email===S.session.adminEmail)||S.admins[0]:null;}
+function hasPerm(p){const a=curAdmin();return !!(a&&Array.isArray(a.perms)&&a.perms.includes(p));}
+
+function syncRoleUI(){
+  const btn=$("#accountBtn"),lbl=$("#accountLbl");
+  btn.classList.remove("active-role","admin-on");
+  if(S.session.role==="admin"){
+    lbl.textContent=T("admin");btn.classList.add("admin-on");
+    $("#adminPanel").hidden=false;
+    $("#admRoleInfo").textContent="مسجل كـ: "+(curAdmin()?.name||S.session.adminEmail);
+    renderAdminPanel();
+  }else if(S.session.role==="merchant"&&S.session.merchant){
+    lbl.textContent=T("merchant");btn.classList.add("active-role");
+    $("#adminPanel").hidden=true;
+  }else{
+    lbl.textContent=T("client");
+    $("#adminPanel").hidden=true;
+  }
+  renderMerchantTools();
+}
+
+$("#accountBtn").addEventListener("click",()=>{
+  $("#merchantBox").hidden=S.session.role!=="merchant";
+  $("#adminLoginForm").hidden=true;
+  const mp=S.session.merchant||S.merchantProfile||{};
+  $("#merchName").value=mp.name||"";
+  $("#merchPhone").value=mp.phone||"";
+  showDlg("#accountDlg");
+});
+$("#accClose").addEventListener("click",()=>{S.onboarded=true;saveState();closeDlg("#accountDlg");});
+$("#accountDlg").addEventListener("close",()=>{if(S.session.role!=="admin"){$("#roleAdminBtn").hidden=true;$("#adminAccessHint").hidden=true;$("#adminLoginForm").hidden=true;}});
+$("#roleClientBtn").addEventListener("click",()=>{
+  S.onboarded=true;
+  S.session={role:"client",adminEmail:"",merchant:null};
+  saveState();syncRoleUI();render();closeDlg("#accountDlg");
+  toast("تم التبديل إلى حساب مستفيد / عميل");
+});
+$("#roleMerchantBtn").addEventListener("click",()=>{
+  $("#merchantBox").hidden=false;$("#adminLoginForm").hidden=true;
+  $("#merchName").value=S.merchantProfile?.name||"";
+  $("#merchPhone").value=S.merchantProfile?.phone||"";
+});
+$("#merchSave").addEventListener("click",()=>{
+  const name=$("#merchName").value.trim(),phone=$("#merchPhone").value.trim();
+  if(!name||phoneKey(phone).length<9){toast("أدخل اسم المحل ورقم جوال صحيحاً");return;}
+  if(isPhoneBlocked(phone)){toast("هذا الرقم موقوف من الإدارة على هذا الجهاز. تواصل مع الإدارة للمراجعة.");return;}
+  S.onboarded=true;
+  S.merchantProfile={name,phone,area:S.merchantProfile?.area||""};
+  S.session={role:"merchant",adminEmail:"",merchant:{name,phone}};
+  saveState();syncRoleUI();render();closeDlg("#accountDlg");
+  toast("مرحباً "+name+"! تم تفعيل حساب التاجر");
+});
+$("#roleAdminBtn").addEventListener("click",()=>{
+  $("#adminLoginForm").hidden=false;$("#merchantBox").hidden=true;$("#admLoginErr").textContent="";
+});
+$("#adminLoginForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const email=$("#admEmail").value.trim().toLowerCase();
+  const pass=$("#admPass").value;
+  let h="";
+  try{h=await sha256(pass);}catch(err){$("#admLoginErr").textContent="تسجيل الدخول يحتاج إلى HTTPS أو localhost ومتصفح يدعم SHA-256.";return;}
+  const adm=S.admins.find(a=>a.email.toLowerCase()===email&&a.hash===h);
+  if(!adm){$("#admLoginErr").textContent="البريد الإلكتروني أو كلمة المرور غير صحيحة.";return;}
+  S.onboarded=true;
+  S.session={role:"admin",adminEmail:adm.email,merchant:S.session.merchant};
+  logAction("تسجيل دخول المشرف");
+  saveState();syncRoleUI();render();closeDlg("#accountDlg");
+  toast("أهلاً بك في لوحة تحكم المشرف");
+  $("#roleAdminBtn").hidden=true;
+  $("#adminAccessHint").hidden=true;
+});
+
+$("#toggleAdmPass").addEventListener("click",()=>{
+  const input=$("#admPass");
+  input.type=input.type==="password"?"text":"password";
+  $("#toggleAdmPass").textContent=input.type==="password"?"إظهار":"إخفاء";
+});
+
+let adminLongPressTimer=null,adminLongPressFired=false;
+const logoHomeEl=$("#logoHome");
+const startAdminLongPress=e=>{
+  if(e.pointerType==="mouse"&&e.button!==0)return;
+  clearTimeout(adminLongPressTimer);
+  adminLongPressTimer=setTimeout(()=>{
+    adminLongPressFired=true;
+    $("#roleAdminBtn").hidden=false;
+    $("#adminAccessHint").hidden=false;
+    $("#merchantBox").hidden=true;
+    $("#adminLoginForm").hidden=true;
+    showDlg("#accountDlg");
+    toast("تم إظهار بوابة الإدارة");
+  },1400);
+};
+const cancelAdminLongPress=()=>clearTimeout(adminLongPressTimer);
+logoHomeEl.addEventListener("pointerdown",startAdminLongPress);
+["pointerup","pointercancel","pointerleave"].forEach(ev=>logoHomeEl.addEventListener(ev,cancelAdminLongPress));
+logoHomeEl.addEventListener("contextmenu",e=>e.preventDefault());
+
+/* Navigation & Smart Shortcuts */
+let view="home",curCat="",scope="",catGroup="all",catExpanded=false,homeLim=24;
+let flt={open:false,ver:false,fav:false,near:false};
+let userPos=null;
+
+function go(v,c){
+  if(v==="souq"&&!S.perms.souqEnabled){toast("سوق البيع والشراء متوقف حالياً.");v="home";}
+  view=v;curCat=c||"";
+  $("#vHome").hidden=v!=="home";
+  $("#vCat").hidden=v!=="cat";
+  $("#vJobs").hidden=v!=="jobs";
+  $("#vSouq").hidden=v!=="souq";
+  $("#vFb").hidden=v!=="fb";
+  $("#aiFab").hidden=(v==="fb");
+  document.querySelectorAll(".bottom [data-go]").forEach(b=>{
+    b.toggleAttribute("aria-current",b.dataset.go===(v==="cat"?"home":v));
+  });
+  if(v==="cat"){$("#catT").textContent=catLabel(c);$("#area").value="";$("#areaLbl").textContent=curLang==="en"?"All Areas":"كل المناطق";}
+  window.scrollTo(0,0);
+  render();
+}
+$("#logoHome").addEventListener("click",e=>{
+  e.preventDefault();
+  if(adminLongPressFired){adminLongPressFired=false;return;}
+  $("#q").value="";flt={open:false,ver:false,fav:false,near:false};scope="";buildScopeSelector();go("home");
+});
+$("#aiFab").addEventListener("click",()=>go("fb"));
+document.querySelector(".bottom").addEventListener("click",e=>{
+  const b=e.target.closest("[data-go]");if(b)go(b.dataset.go);
+});
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-go]");if(g&&!g.closest(".bottom"))go(g.dataset.go);
+});
+$("#back").addEventListener("click",()=>go("home"));
+
+/* Yemen administrative hierarchy: 22 governorates, 335 districts, and Hubaish 22 local sub-districts. */
+function normalizePlace(s){
+  return String(s||"").normalize("NFKC").replace(/[\u064B-\u065F\u0670\u0640]/g,"")
+    .replace(/[أإآٱ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي")
+    .replace(/[ًٌٍَُِّْـ]/g,"").replace(/[^\u0600-\u06FF0-9a-z\s]/gi," ")
+    .replace(/\s+/g," ").trim().toLowerCase();
+}
+const HUBAISH_ALIASES={
+  "بني الضاحتين":"بني الضاحيتين","جبل عميقة":"جبل عنقه","وادي المعقاب":"وادي العقاب",
+  "الذارحي":"الزراحي","الوطئة":"الوطنة","قحزة":"جحزة","جحزه":"جحزة"
+};
+function canonicalHubaishArea(v){const n=normalizePlace(v);for(const [alias,canonical] of Object.entries(HUBAISH_ALIASES)){if(n===normalizePlace(alias))return canonical;}return HUBAISH_UZ.find(x=>normalizePlace(x)===n)||String(v||"").trim();}
+function phoneKey(v){let d=digits(v);if(d.startsWith("00"))d=d.slice(2);if(d.startsWith("967")&&d.length===12)d=d.slice(3);if(d.startsWith("0")&&d.length>=10)d=d.slice(1);return d;}
+function isPhoneBlocked(phone){const key=phoneKey(phone);return !!key&&S.blocks.some(b=>b.active&&phoneKey(b.phone)===key);}
+function isItemBlocked(item){return !!(item?.hidden||isPhoneBlocked(item?.ownerPhone)||isPhoneBlocked(item?.phone));}
+function publicItems(){return S.items.filter(i=>!isItemBlocked(i));}
+function itemMatchesDistrict(item,gov,dist){
+  const govOk=!gov||normalizePlace(item.gov)===normalizePlace(gov);
+  const distOk=!dist||normalizePlace(item.dist)===normalizePlace(dist);
+  return govOk&&distOk;
+}
+function getScopeOptions(){
+  const all=publicItems(),areaCnt={},govCnt={},distCnt={};
+  for(const i of all){
+    if(i.area){const k=normalizePlace(i.area);areaCnt[k]=(areaCnt[k]||0)+1;}
+    if(i.gov){const k=normalizePlace(i.gov);govCnt[k]=(govCnt[k]||0)+1;}
+    if(i.dist){const k=normalizePlace(i.gov)+"|"+normalizePlace(i.dist);distCnt[k]=(distCnt[k]||0)+1;}
+  }
+  const options=[{group:curLang==="en"?"General":"عام",val:"",label:T("allYemen"),count:all.length}];
+  for(const gov of GOVS){
+    options.push({group:curLang==="en"?"Governorates (22)":"المحافظات اليمنية (22)",val:"gov:"+gov,label:(curLang==="en"?"Governorate: ":"محافظة ")+gov,count:govCnt[normalizePlace(gov)]||0});
+  }
+  for(const gov of GOVS){
+    const rows=YEMEN_DISTRICTS[gov]||[];
+    for(const dist of rows){
+      const group=(curLang==="en"?"Districts — ":"مديريات ")+gov;
+      const label=(normalizePlace(dist)===normalizePlace("مدينة حجه")&&normalizePlace(gov)===normalizePlace("حجة"))?(curLang==="en"?"Hajjah City (District)":"مدينة حجة (مديرية)"):dist;
+      options.push({group,val:"district:"+gov+"|"+dist,label:curLang==="en"?`${dist} — ${gov}`:label+" — "+gov,count:distCnt[normalizePlace(gov)+"|"+normalizePlace(dist)]||0});
+    }
+  }
+  options.push({group:curLang==="en"?"Hubaish Sub-Districts (22)":"عزل مديرية حبيش (22 عزلة)",val:"district:إب|حبيش",label:curLang==="en"?"Hubaish District — All Sub-Districts":"مديرية حبيش بالكامل",count:distCnt[normalizePlace("إب")+"|"+normalizePlace("حبيش")]||0});
+  for(const area of HUBAISH_UZ){
+    options.push({group:curLang==="en"?"Hubaish Sub-Districts (22)":"عزل مديرية حبيش (22 عزلة)",val:"hubaish-area:"+area,label:area,count:areaCnt[normalizePlace(area)]||0});
+  }
+  const distinctAreas=[...new Map(all.filter(i=>i.area).map(i=>[normalizePlace(i.area),i.area])).values()];
+  if(distinctAreas.length) for(const area of distinctAreas.sort((a,b)=>a.localeCompare(b,"ar"))){
+    if(HUBAISH_UZ.some(h=>normalizePlace(h)===normalizePlace(area)))continue;
+    options.push({group:curLang==="en"?"Areas currently listed":"مناطق مسجلة حالياً في الدليل",val:"area:"+area,label:area,count:areaCnt[normalizePlace(area)]||0});
+  }
+  return options;
+}
+function buildScopeSelector(){
+  const opts=getScopeOptions();
+  const cur=opts.find(o=>o.val===scope)||opts[0];
+  const prefix=cur.count===0?"لا توجد إدراجات":"";
+  $("#scopeLbl").textContent=`${cur.label} (${cur.count})${prefix?" · "+prefix:""}`;
+}
+function scopeMatchesItem(item, selected=scope){
+  if(!selected)return true;
+  if(selected.startsWith("gov:"))return normalizePlace(item.gov)===normalizePlace(selected.slice(4));
+  if(selected.startsWith("district:")){
+    const [gov,dist]=selected.slice(9).split("|");
+    return itemMatchesDistrict(item,gov,dist);
+  }
+  if(selected==="dist:حبيش")return itemMatchesDistrict(item,"إب","حبيش");
+  if(selected.startsWith("hubaish-area:")){
+    const area=canonicalHubaishArea(selected.slice(13));
+    return canonicalHubaishArea(item.area)===area||canonicalHubaishArea(item.village)===area;
+  }
+  if(selected.startsWith("area:"))return normalizePlace(item.area)===normalizePlace(selected.slice(5));
+  return normalizePlace(item.area)===normalizePlace(selected)||normalizePlace(item.dist)===normalizePlace(selected)||normalizePlace(item.gov)===normalizePlace(selected);
+}
+function selectedRegionInfo(){
+  if(!scope)return {title:"اليمن",intro:"الدليل مفتوح لكل مناطق اليمن. اختر محافظة أو مديرية أو عزلة لعرض ما سُجل فيها.",meta:`يغطي المرجع الإداري ${YEMEN_GOV_TOTAL} محافظة و${YEMEN_DISTRICT_TOTAL} مديرية.`,items:publicItems()};
+  if(scope.startsWith("gov:")){
+    const gov=scope.slice(4),ds=YEMEN_DISTRICTS[gov]||[];
+    return {title:"محافظة "+gov,intro:"المستوى الإداري المحدد هو المحافظة.",meta:`تضم قائمة المرجع الإداري ${ds.length} مديرية مسجلة لهذه المحافظة.`,items:publicItems().filter(i=>scopeMatchesItem(i))};
+  }
+  if(scope.startsWith("district:")){
+    const [gov,dist]=scope.slice(9).split("|");
+    const hubaish=normalizePlace(gov)==normalizePlace("إب")&&normalizePlace(dist)==normalizePlace("حبيش");
+    const displayDist=normalizePlace(dist)===normalizePlace("مدينة حجه")&&normalizePlace(gov)===normalizePlace("حجة")?"مدينة حجة":dist;
+    const districtCount=(YEMEN_DISTRICTS[gov]||[]).length;
+    const intro=hubaish?"مديرية حبيش إحدى مديريات محافظة إب، والأرقام أدناه تخص إدراجات دليلنا فقط.":(displayDist+" مديرية ضمن محافظة "+gov+". تضم المحافظة "+districtCount+" مديرية في المرجع الإداري؛ الأرقام أدناه تخص إدراجات دليلنا فقط.");
+    return {title:displayDist+" — "+gov,intro,meta:hubaish?"مديرية حبيش في محافظة إب، وعدد عزلها 22 بحسب المرجع الإداري لمحافظة إب.":"تم اختيار المديرية من قائمة التقسيم الإداري اليمني.",items:publicItems().filter(i=>scopeMatchesItem(i))};
+  }
+  if(scope.startsWith("hubaish-area:")){
+    const area=canonicalHubaishArea(scope.slice(13));
+    return {title:"عزلة "+area+" — حبيش، إب",intro:"المستوى المحدد عزلة ضمن مديرية حبيش.",meta:"تظهر هنا الإدراجات المرتبطة باسم العزلة. قد تختلف كتابة الاسم محلياً، لذلك يدعم البحث الأسماء البديلة المعروفة.",items:publicItems().filter(i=>scopeMatchesItem(i))};
+  }
+  if(scope.startsWith("area:")){
+    const area=scope.slice(5);return {title:area,intro:"منطقة محلية مسجلة داخل دليلنا. لا تُعامل كمديرية أو محافظة إلا إذا كانت كذلك في بيانات التقسيم الإداري.",meta:"اسم المنطقة مصدره الإدراجات التي أضافها المستخدمون أو الإدارة.",items:publicItems().filter(i=>scopeMatchesItem(i))};
+  }
+  return {title:scope,intro:"منطقة محددة في الدليل.",meta:"الإحصاءات أدناه محصورة في الإدراجات المسجلة.",items:publicItems().filter(i=>scopeMatchesItem(i))};
+}
+function renderRegionInfo(){
+  const info=selectedRegionInfo();
+  const items=info.items;
+  const cats={};for(const i of items)cats[i.cat]=(cats[i.cat]||0)+1;
+  const verified=items.filter(i=>!!i.verifiedAt).length;
+  $("#regionInfoTitle").textContent="عن "+info.title+" في دليلنا";
+  $("#regionInfoIntro").textContent=info.intro;
+  $("#regionStatItems").textContent=items.length.toLocaleString("ar");
+  $("#regionStatCats").textContent=Object.keys(cats).length.toLocaleString("ar");
+  $("#regionStatVerified").textContent=verified.toLocaleString("ar");
+  let extra=info.meta;
+  if(!scope)extra+=` — قاعدة المديريات: ${YEMEN_DISTRICT_TOTAL} مديرية في ${YEMEN_GOV_TOTAL} محافظة.`;
+  if(scope==="dist:حبيش"||scope.startsWith("district:")&&normalizePlace(scope.slice(9).split("|")[1])===normalizePlace("حبيش")){
+    extra+=" وتذكر البيانات المحلية مساحة تقارب 330 كم² وموقعاً شمال غرب مدينة إب بنحو 42 كم؛ هذه معلومات مرجعية وليست إحداثيات دقيقة لكل قرية.";
+  }
+  $("#regionDistrictMeta").textContent=extra;
+  const labels=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k,n])=>`<span class="tag">${esc(catLabel(k))} (${n})</span>`).join("");
+  $("#regionCategoryBreakdown").innerHTML=labels||`<span class="where">لا توجد إدراجات مسجلة في هذه المنطقة بعد. يمكن للسكان وأصحاب المحلات إضافة المعلومات بعد التحقق منها.</span>`;
+}
+
+let pickerCb=null,pickerData=[];
+function openCustomPicker({title,searchable,options,selected,onSelect}){
+  $("#pickerTitle").textContent=title;
+  $("#pickerSearch").hidden=!searchable;
+  $("#pickerSearch").value="";
+  pickerData=options;pickerCb=onSelect;
+  renderPickerOptions(options,selected);
+  showDlg("#pickerDlg");
+}
+function renderPickerOptions(opts,selected){
+  let lastGrp="",html="";
+  for(const o of opts){
+    if(o.group&&o.group!==lastGrp){lastGrp=o.group;html+=`<div class="sheet-grp">${esc(o.group)}</div>`;}
+    html+=`<button type="button" class="sheet-opt" data-pval="${esc(o.val)}" aria-selected="${o.val===selected}">
+      <span>${esc(o.label)}</span>
+      ${o.count!==undefined?`<span class="cnt">${o.count}</span>`:""}
+    </button>`;
+  }
+  $("#pickerList").innerHTML=html||`<div class="empty">لا توجد نتائج مطابقة</div>`;
+}
+$("#pickerSearch").addEventListener("input",e=>{
+  const q=normalizePlace(e.target.value);
+  const filtered=pickerData.filter(o=>normalizePlace(o.label).includes(q)||normalizePlace(o.group||"").includes(q));
+  renderPickerOptions(filtered,"");
+});
+$("#pickerList").addEventListener("click",e=>{
+  const b=e.target.closest("[data-pval]");if(!b)return;
+  if(pickerCb)pickerCb(b.dataset.pval);
+  closeDlg("#pickerDlg");
+});
+$("#pickerClose").addEventListener("click",()=>closeDlg("#pickerDlg"));
+document.querySelectorAll("dialog").forEach(d=>d.addEventListener("close",()=>{d.classList.remove("dlg-fallback");if(!document.querySelector("dialog[open].dlg-fallback"))document.body.classList.remove("dialog-fallback-open");}));
+
+$("#scopeBtn").addEventListener("click",()=>{
+  openCustomPicker({
+    title:"اختر المنطقة أو المحافظة",
+    searchable:true,
+    options:getScopeOptions(),
+    selected:scope,
+    onSelect:val=>{scope=val;buildScopeSelector();render();}
+  });
+});
+
+/* Voice Search */
+let recog=null;
+$("#mic").addEventListener("click",()=>{
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){toast("المتصفح لا يدعم البحث الصوتي، استخدم مايك لوحة المفاتيح.");$("#q").focus();return;}
+  if(recog){try{recog.stop();}catch(e){}return;}
+  recog=new SR();recog.lang="ar-YE";recog.interimResults=true;
+  $("#mic").classList.add("on");$("#voiceBar").hidden=false;$("#voiceTxt").textContent="جارٍ الاستماع… تحدث الآن";
+  recog.onresult=e=>{
+    const txt=[...e.results].map(r=>r[0].transcript).join("");
+    $("#voiceTxt").textContent=txt||"جارٍ الاستماع…";
+    $("#q").value=txt;
+    if(view!=="home")go("home");else render();
+  };
+  recog.onerror=()=>{toast("تعذّر التقاط الصوت، تأكد من إذن المايك.");};
+  recog.onend=()=>{$("#mic").classList.remove("on");$("#voiceBar").hidden=true;recog=null;};
+  try{recog.start();}catch(e){recog=null;$("#mic").classList.remove("on");$("#voiceBar").hidden=true;toast("تعذّر تشغيل البحث الصوتي في هذا المتصفح.");}
+});
+$("#voiceStop").addEventListener("click",()=>{if(recog)try{recog.stop();}catch(e){}});
+
+/* GPS Proximity Radar */
+function calcKm(lat1,lon1,lat2,lon2){
+  if(![lat1,lon1,lat2,lon2].every(v=>v!==null&&v!==undefined&&v!==""&&Number.isFinite(Number(v))))return null;
+  const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function toggleNearRadar(){
+  if(flt.near){flt.near=false;render();return;}
+  if(!navigator.geolocation){toast("المتصفح لا يدعم تحديد الموقع.");return;}
+  toast("جارٍ تحديد موقعك لحساب الأقرب إليك…");
+  navigator.geolocation.getCurrentPosition(pos=>{
+    userPos={lat:pos.coords.latitude,lng:pos.coords.longitude};
+    flt.near=true;render();
+    toast("تم ترتيب المحلات من الأقرب لموقعك");
+  },err=>{
+    userPos=null;flt.near=false;render();
+    toast(err&&err.code===1?"لم تسمح بإذن الموقع. فعّل الإذن ثم أعد المحاولة.":"تعذّر تحديد موقعك. تحقق من GPS ثم أعد المحاولة.");
+  },{enableHighAccuracy:true,maximumAge:60000,timeout:12000});
+}
+
+/* Open Now Helper */
+function isOpenNow(h){
+  if(!h)return null;
+  const text=String(h).replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).toLowerCase();
+  if(/24\s*(ساعة|hour)?|على مدار الساعة/.test(text))return true;
+  if(/مغلق|closed/.test(text))return false;
+  const found=[...text.matchAll(/(\d{1,2})(?::(\d{2}))?\s*(ص|م|am|pm)?/gi)];
+  if(found.length<2)return null;
+  const toMinutes=m=>{
+    let hr=Number(m[1]),min=Number(m[2]||0),suffix=(m[3]||"").toLowerCase();
+    if(hr>23||min>59)return null;
+    if((suffix==="م"||suffix==="pm")&&hr<12)hr+=12;
+    if((suffix==="ص"||suffix==="am")&&hr===12)hr=0;
+    return hr*60+min;
+  };
+  let open=toMinutes(found[0]),close=toMinutes(found[1]);
+  if(open===null||close===null||open===close)return null;
+  const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Aden",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
+  const now=Number(parts.find(p=>p.type==="hour")?.value||0)*60+Number(parts.find(p=>p.type==="minute")?.value||0);
+  return close<open?(now>=open||now<close):(now>=open&&now<close);
+}
+
+/* Smart Categories Rendering */
+$("#catTabs").addEventListener("click",e=>{
+  const b=e.target.closest("[data-cg]");if(!b)return;
+  catGroup=b.dataset.cg;catExpanded=true;
+  $("#catTabs").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  renderCategories();
+});
+$("#catFilterQ").addEventListener("input",()=>{catExpanded=true;renderCategories();});
+$("#catMoreBtn").addEventListener("click",()=>{catExpanded=!catExpanded;renderCategories();});
+$("#tiles").addEventListener("click",e=>{
+  const t=e.target.closest(".tile");if(!t)return;
+  const c=t.dataset.c;
+  if(c==="jobs")go("jobs");else if(c==="souq")go("souq");else go("cat",c);
+});
+
+function renderCategories(){
+  const cnt={};for(const i of publicItems())cnt[i.cat]=(cnt[i.cat]||0)+1;
+  const q=$("#catFilterQ").value.trim().toLowerCase();
+  let list=CATS;
+  if(catGroup!=="all"&&CAT_GROUPS[catGroup])list=CATS.filter(([k])=>CAT_GROUPS[catGroup].includes(k));
+  if(q)list=CATS.filter(([k,v])=>v.includes(q)||(CAT_SYN[k]||"").includes(q));
+  const limit=(!catExpanded&&!q&&catGroup==="all")?12:list.length;
+  const shown=list.slice(0,limit);
+  $("#tiles").innerHTML=shown.map(([k])=>`
+    <button type="button" class="tile" data-c="${k}" style="--t:${TC[k]}">
+      <i><svg viewBox="0 0 24 24">${IC[k]}</svg></i>
+      <b>${catLabel(k)}</b>
+      <em>${cnt[k]||0}</em>
+    </button>`).join("");
+  $("#catMoreRow").hidden=(list.length<=12&&!catExpanded)||!!q||catGroup!=="all";
+  $("#catMoreBtn").textContent=catExpanded?T("collapseCats"):T("showAllCats")+" ("+list.length+")";
+}
+
+/* Filters & Cards */
+function renderFilterChips(){
+  const chips=[
+    ["near",T("fltNear")],
+    ["open",T("fltOpen")],
+    ["ver",T("fltVer")],
+    ["fav",T("fltFav")+" ("+S.favs.length+")"]
+  ];
+  const html=chips.map(([k,lbl])=>`<button type="button" data-flt="${k}" aria-pressed="${flt[k]}">${lbl}</button>`).join("");
+  $("#fltRow").innerHTML=html;$("#catFltRow").innerHTML=html;
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-flt]");
+  if(b){
+    const k=b.dataset.flt;
+    if(k==="near")toggleNearRadar();else{flt[k]=!flt[k];render();}
+    return;
+  }
+  const f=e.target.closest("[data-fav]");
+  if(f){
+    e.stopPropagation();
+    const id=f.dataset.fav;
+    const ix=S.favs.indexOf(id);
+    if(ix>=0)S.favs.splice(ix,1);else S.favs.push(id);
+    saveState();render();
+    toast(ix>=0?"أُزيل من المفضلة":"حُفظ في المفضلة");
+    return;
+  }
+  const sh=e.target.closest("[data-shr]");
+  if(sh){
+    e.stopPropagation();
+    const it=S.items.find(x=>x.id===sh.dataset.shr);if(!it)return;
+    const txt=`${it.name} (${CN[it.cat]||""})\nالموقع: ${it.area||""}${it.phone?"\nالهاتف: "+it.phone:""}\nعبر تطبيق دليلنا`;
+    if(navigator.share)navigator.share({title:it.name,text:txt}).catch(()=>{});
+    else window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank");
+    return;
+  }
+  const ed=e.target.closest("[data-edit]");
+  if(ed){e.stopPropagation();openEdit(ed.dataset.edit);return;}
+  const dl=e.target.closest("[data-del]");
+  if(dl){
+    e.stopPropagation();
+    const b=dl;
+    const target=S.items.find(x=>x.id===b.dataset.del);
+    if(!target||!canDelete(target)){toast("ليست لديك صلاحية حذف هذا الإدراج.");return;}
+    if(b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="تأكيد؟";setTimeout(()=>{b.dataset.sure="";b.textContent="حذف";},3500);return;}
+    const it=S.items.find(x=>x.id===b.dataset.del);
+    S.items=S.items.filter(x=>x.id!==b.dataset.del);
+    logAction("حذف: "+(it?.name||b.dataset.del));
+    saveState();buildScopeSelector();render();toast("تم الحذف");
+    return;
+  }
+  const cardEl=e.target.closest("[data-open]");
+  if(cardEl&&!e.target.closest("a,button")){
+    const it=S.items.find(x=>x.id===cardEl.dataset.open);
+    if(it)openDetail(it);
+  }
+});
+
+function isMerchantOwner(it){const owner=it.ownerPhone||it.phone;return S.session.role==="merchant"&&!!S.session.merchant&&!!owner&&phoneKey(owner)===phoneKey(S.session.merchant.phone);}
+function canManage(it){return (S.session.role==="admin"&&hasPerm("edit"))||isMerchantOwner(it);}
+function canDelete(it){return (S.session.role==="admin"&&hasPerm("delete"))||isMerchantOwner(it);}
+
+function renderMerchantTools(){
+  const box=$("#merchantToolsPanel");
+  if(!box)return;
+  const active=S.session.role==="merchant"&&S.session.merchant;
+  box.hidden=!active;
+  if(!active)return;
+  const owned=S.items.filter(isMerchantOwner);
+  $("#merchantToolsSummary").textContent=`${S.session.merchant.name} · ${owned.length} إدراج مرتبط برقم حسابك`;
+  $("#merchantOwnedItems").innerHTML=owned.length?owned.map(it=>`<div class="merchant-item"><div><b>${esc(it.name)}</b><div class="where">${esc(CN[it.cat]||it.cat)} · ${esc(it.area||"")}</div></div><div class="fbtn"><button type="button" class="ghost" data-edit="${esc(it.id)}" style="min-height:32px;font-size:12px">تعديل</button><button type="button" class="del" data-del="${esc(it.id)}" style="color:var(--danger)">حذف</button></div></div>`).join(""):`<div class="empty">لم تضف خدمات بعد. أضف أول محل أو خدمة من الزر أعلاه.</div>`;
+}
+$("#merchantAddBtn").addEventListener("click",()=>openAdd("grocery"));
+$("#merchantPromoBtn").addEventListener("click",()=>showDlg("#promoReleaseDlg"));
+
+function cardHTML(i){
+  const isFav=S.favs.includes(i.id);
+  const openSt=isOpenNow(i.hours);
+  const km=(flt.near&&userPos)?calcKm(userPos.lat,userPos.lng,i.lat,i.lng):null;
+  const imgSrc=safeImageData(i.img);
+  const rObj=S.rates[i.id];
+  const avg=rObj&&rObj.n?(rObj.sum/rObj.n).toFixed(1):null;
+  return `<article class="card" data-open="${esc(i.id)}">
+    ${imgSrc?`<img class="cover" src="${esc(imgSrc)}" alt="${esc(i.name)}" loading="lazy">`:""}
+    <div class="top">
+      <h3>${esc(i.name)}</h3>
+      <span class="tag">${esc(catLabel(i.cat))}</span>
+    </div>
+    <div class="where">
+      ${esc([i.village,i.area,i.gov].filter(Boolean).join(" · "))}
+      ${i.hours?" · "+esc(i.hours):""}
+      ${openSt===true?` · <span class="opn">${T("open")}</span>`:openSt===false?` · <span class="cls">${T("closed")}</span>`:""}
+      ${km!==null?` · <span class="dist-badge">${km<1?Math.round(km*1000)+" m":km.toFixed(1)+" km"}</span>`:""}
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      ${i.verifiedAt?`<span class="ok">${T("verified")}</span>`:`<span class="where">${T("community")}</span>`}
+      ${i.aiChecked?`<span class="tag">فحص آلي أولي</span>`:""}
+      ${avg?`<span class="dist-badge">★ ${avg} (${rObj.n})</span>`:""}
+      ${i.price?`<span class="price">${esc(i.price)}</span>`:""}
+    </div>
+    ${i.desc?`<p class="desc">${esc(i.desc)}</p>`:""}
+    <div class="acts">
+      ${i.phone?`<a class="wa" href="${waLink(i.phone)}" target="_blank" rel="noopener">${T("wa")}</a>
+      <a class="tel" href="tel:${digits(i.phone)}">${esc(i.phone)}</a>`:""}
+      <button type="button" class="ibtn ${isFav?"on":""}" data-fav="${esc(i.id)}" title="${T("fltFav")}">${isFav?"♥":"♡"}</button>
+      <button type="button" class="ibtn" data-shr="${esc(i.id)}" title="${T("share")}">${T("share")}</button>
+      ${canManage(i)?`<button type="button" class="del" data-edit="${esc(i.id)}">${T("edit")}</button>`:""}
+      ${canDelete(i)?`<button type="button" class="del" style="color:var(--danger)" data-del="${esc(i.id)}">${T("del")}</button>`:""}
+    </div>
+  </article>`;
+}
+
+function applyFilters(arr){
+  let r=arr.filter(i=>!isItemBlocked(i));
+  if(scope){
+    if(scope.startsWith("gov:"))r=r.filter(i=>i.gov===scope.slice(4));
+    else if(scope.startsWith("dist:"))r=r.filter(i=>i.dist===scope.slice(5));
+    else r=r.filter(i=>i.area===scope||i.gov===scope||i.dist===scope);
+  }
+  if(flt.open)r=r.filter(i=>isOpenNow(i.hours)===true);
+  if(flt.ver)r=r.filter(i=>i.verifiedAt);
+  if(flt.fav)r=r.filter(i=>S.favs.includes(i.id));
+  if(flt.near&&userPos){
+    r.sort((a,b)=>(calcKm(userPos.lat,userPos.lng,a.lat,a.lng)??999)-(calcKm(userPos.lat,userPos.lng,b.lat,b.lng)??999));
+  }else{
+    r.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  }
+  return r;
+}
+
+/* Recently Viewed */
+function pushRecent(id){
+  S.recent=[id,...S.recent.filter(x=>x!==id)].slice(0,8);
+  saveState();
+}
+$("#clrRecent").addEventListener("click",()=>{S.recent=[];saveState();renderRecent();});
+function renderRecent(){
+  const list=S.recent.map(id=>S.items.find(x=>x.id===id&&!isItemBlocked(x))).filter(Boolean);
+  $("#recentBox").hidden=!list.length;
+  $("#recentList").innerHTML=list.map(i=>`<button type="button" class="rec-chip" data-open="${esc(i.id)}"><b>${esc(i.name)}</b><span>${esc(CN[i.cat]||"")} · ${esc(i.area||"")}</span></button>`).join("");
+}
+
+/* Details & QR Business Card */
+function generateQRSVG(text){
+  try{
+    const qr=new DalilnaQRCode.QRCode(-1,DalilnaQRCode.ErrorLevel.M);
+    qr.addData(String(text));qr.make();
+    const matrix=qr.modules,n=matrix.length,pad=4,size=n+pad*2,cells=[];
+    for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(matrix[y][x])cells.push(`<rect x="${x+pad}" y="${y+pad}" width="1" height="1"/>`);
+    return `<svg viewBox="0 0 ${size} ${size}" width="144" height="144" role="img" aria-label="QR code" shape-rendering="crispEdges" style="background:#fff;border-radius:12px;padding:4px"><rect width="${size}" height="${size}" fill="#fff"/><g fill="#181411">${cells.join("")}</g></svg>`;
+  }catch(err){return `<div class="warn">تعذّر إنشاء رمز QR لهذه البيانات.</div>`;}
+}
+
+function openDetail(i){
+  pushRecent(i.id);renderRecent();
+  const rObj=S.rates[i.id]||{n:0,sum:0};
+  const avg=rObj.n?(rObj.sum/rObj.n).toFixed(1):"جديد";
+  $("#dbody").innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span class="tag">${esc(CN[i.cat]||"")}</span>
+      <button type="button" class="x" id="dclose">✕</button>
+    </div>
+    ${safeImageData(i.img)?`<img src="${esc(safeImageData(i.img))}" alt="" style="width:100%;max-height:220px;object-fit:cover;border-radius:14px">`:""}
+    <h2 style="font-size:21px">${esc(i.name)}</h2>
+    <div class="where">${esc([i.village,i.area,i.dist,i.gov].filter(Boolean).join(" · "))}${i.hours?" · "+esc(i.hours):""}</div>
+    ${i.price?`<div class="price">${esc(i.price)}</div>`:""}
+    ${i.desc?`<p class="desc">${esc(i.desc)}</p>`:""}
+    <div class="fbtn">
+      ${i.phone?`<a class="wa" href="${waLink(i.phone)}" target="_blank" rel="noopener noreferrer">تواصل واتساب</a>
+      <a class="lnk" href="tel:${digits(i.phone)}">اتصال: ${esc(i.phone)}</a>`:""}
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;background:var(--bg);padding:12px;border-radius:14px;border:1px solid var(--line)">
+      ${generateQRSVG((location.protocol==="http:"||location.protocol==="https:")?new URL("?item="+encodeURIComponent(i.id),location.href).href:"DALILNA:ITEM:"+i.id)}
+      <div style="display:grid;gap:4px">
+        <b style="font-size:14px">بطاقة QR للمحل</b>
+        <span class="where">امسح الرمز لمشاركة بيانات «${esc(i.name)}» بسرعة.</span>
+      </div>
+    </div>
+    <div style="background:var(--bg);padding:12px;border-radius:14px;border:1px solid var(--line);display:grid;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <b style="font-size:14px">تقييم الخدمة</b>
+        <span class="dist-badge">★ ${avg} (${rObj.n} تقييم)</span>
+      </div>
+      <div class="fbtn" id="starRow">
+        ${[1,2,3,4,5].map(n=>`<button type="button" class="ibtn" data-rate-id="${esc(i.id)}" data-stars="${n}">${n} ★</button>`).join("")}
+      </div>
+    </div>`;
+  showDlg("#ddlg");
+  $("#dclose").onclick=()=>closeDlg("#ddlg");
+}
+document.addEventListener("click",e=>{
+  const rb=e.target.closest("[data-rate-id]");if(!rb)return;
+  if(!S.perms.ratingsEnabled){toast("التقييمات متوقفة حالياً.");return;}
+  const id=rb.dataset.rateId,st=+rb.dataset.stars;
+  if(!Number.isInteger(st)||st<1||st>5)return;
+  const cur=S.rates[id]||{n:0,sum:0};
+  S.rates[id]={n:cur.n+1,sum:cur.sum+st};
+  saveState();render();
+  const it=S.items.find(x=>x.id===id);if(it)openDetail(it);
+  toast("شكراً! تم تسجيل تقييمك ("+st+" نجوم)");
+});
+
+/* Add / Edit Form & Image Compression */
+let editingId=null,pendingImgData="";
+$("#areas").innerHTML=AREAS.map(a=>`<option value="${a}">`).join("");
+function updateFormPickerLabels(){
+  const cat=CAT_KEYS.has($("#fcat").value)?$("#fcat").value:"grocery";
+  $("#fcatLbl").textContent=CN[cat]||cat;
+  const gov=GOVS.includes($("#fgov").value)?$("#fgov").value:"إب";
+  $("#fgovLbl").textContent=gov;
+}
+$("#fcatBtn").addEventListener("click",()=>openCustomPicker({
+  title:curLang==="en"?"Select Category":"اختر القسم",searchable:true,
+  options:CATS.map(([val,label])=>({val,label:curLang==="en"?(CN_EN[val]||label):label})),
+  selected:$("#fcat").value,onSelect:val=>{$("#fcat").value=val;updateFormPickerLabels();syncFormFields();}
+}));
+$("#fgovBtn").addEventListener("click",()=>openCustomPicker({
+  title:curLang==="en"?"Select Governorate":"اختر المحافظة",searchable:true,
+  options:GOVS.map(label=>({val:label,label})),selected:$("#fgov").value,
+  onSelect:val=>{$("#fgov").value=val;updateFormPickerLabels();}
+}));
+$("#areaBtn").addEventListener("click",()=>{
+  const current=S.items.filter(i=>i.cat===curCat),counts={};
+  for(const i of current)counts[i.area]=(counts[i.area]||0)+1;
+  const areas=[...new Set(current.map(i=>i.area).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ar"));
+  openCustomPicker({title:curLang==="en"?"Filter by Area":"تصفية حسب المنطقة",searchable:true,
+    options:[{val:"",label:curLang==="en"?"All Areas":"كل المناطق",count:current.length},...areas.map(label=>({val:label,label,count:counts[label]}))],
+    selected:$("#area").value,onSelect:val=>{$("#area").value=val;$("#areaLbl").textContent=val|| (curLang==="en"?"All Areas":"كل المناطق");render();}
+  });
+});
+updateFormPickerLabels();
+
+function syncFormFields(){
+  const c=$("#f").cat.value;
+  const showExtra=(c==="jobs"||c==="souq"||c==="land");
+  $("#extraFields").hidden=!showExtra;
+  $("#priceLbl").firstChild.textContent=c==="jobs"?"الراتب المتوقع":"السعر أو المساحة";
+}
+$("#f").cat.addEventListener("change",()=>{updateFormPickerLabels();syncFormFields();});
+
+async function compressImage(file){
+  if(!file||!/^image\/(jpeg|png|webp)$/.test(file.type)||file.size>8*1024*1024)throw new Error("invalid-image");
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        const max=640,scale=Math.min(1,max/Math.max(img.width,img.height));
+        const c=document.createElement("canvas");
+        c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);
+        const ctx=c.getContext&&c.getContext("2d");
+        if(!ctx){rej(new Error("canvas-not-supported"));return;}
+        ctx.drawImage(img,0,0,c.width,c.height);
+        try{res(c.toDataURL("image/jpeg",0.72));}catch(err){rej(err);}
+      };
+      img.onerror=rej;img.src=r.result;
+    };
+    r.onerror=rej;r.readAsDataURL(file);
+  });
+}
+$("#imgInput").addEventListener("change",async e=>{
+  const file=e.target.files[0];if(!file)return;
+  try{
+    pendingImgData=await compressImage(file);
+    $("#imgPreview").src=pendingImgData;$("#imgPreviewBox").hidden=false;
+  }catch(err){pendingImgData="";$("#imgInput").value="";toast("تعذّر معالجة الصورة. استخدم صورة JPG أو PNG أو WebP أقل من 8 ميجابايت.");}
+});
+$("#imgClearBtn").addEventListener("click",()=>{
+  pendingImgData="";$("#imgInput").value="";$("#imgPreviewBox").hidden=true;
+});
+
+function openAdd(defaultCat){
+  if(S.session.role==="merchant"&&isPhoneBlocked(S.session.merchant?.phone)){toast("حساب التاجر موقوف من الإدارة على هذا الجهاز.");return;}
+  if(S.session.role==="admin"&&!hasPerm("add")){toast("ليست لديك صلاحية الإضافة.");return;}
+  if(defaultCat==="souq"&&!S.perms.souqEnabled){toast("سوق البيع والشراء متوقف حالياً.");return;}
+  if(S.session.role==="client"&&!S.perms.visitorCanPost){
+    toast("النشر المباشر للزوار متوقف حالياً من قبل المشرف.");return;
+  }
+  editingId=null;pendingImgData="";
+  $("#f").reset();$("#imgPreviewBox").hidden=true;
+  if(defaultCat)$("#f").cat.value=defaultCat;
+  updateFormPickerLabels();
+  if(S.session.role==="merchant"&&S.session.merchant){
+    $("#f").phone.value=S.session.merchant.phone;
+  }
+  $("#dlgTitle").textContent="إضافة إلى الدليل";
+  syncFormFields();showDlg("#dlg");
+}
+function openEdit(id){
+  const it=S.items.find(x=>x.id===id);if(!it)return;
+  if(!canManage(it)){toast("ليست لديك صلاحية تعديل هذا الإدراج.");return;}
+  editingId=id;pendingImgData=it.img||"";
+  $("#f").reset();
+  for(const k of ["name","cat","gov","dist","area","village","phone","hours","price","country","desc"]){
+    if($("#f")[k])$("#f")[k].value=it[k]||"";
+  }
+  updateFormPickerLabels();
+  if(pendingImgData){$("#imgPreview").src=pendingImgData;$("#imgPreviewBox").hidden=false;}
+  else $("#imgPreviewBox").hidden=true;
+  $("#dlgTitle").textContent="تعديل البيانات";
+  syncFormFields();showDlg("#dlg");
+}
+$("#navAdd").addEventListener("click",()=>openAdd(view==="cat"?curCat:view==="jobs"?"jobs":view==="souq"?"souq":"grocery"));
+$("#addJob").addEventListener("click",()=>openAdd("jobs"));
+$("#sqSell").addEventListener("click",()=>openAdd("souq"));
+$("#sqBuy").addEventListener("click",()=>openAdd("souq"));
+$("#cancel").addEventListener("click",()=>closeDlg("#dlg"));
+
+$("#f").addEventListener("submit",e=>{
+  e.preventDefault();
+  const fd=Object.fromEntries(new FormData($("#f")));
+  const name=String(fd.name||"").trim();
+  const area=String(fd.area||"").trim();
+  if(!name||!area){$("#ferr").textContent="الاسم والمنطقة مطلوبان.";return;}
+  const isAdm=S.session.role==="admin";
+  if(!isAdm&&(isPhoneBlocked(fd.phone)||(S.session.merchant?.phone&&isPhoneBlocked(S.session.merchant.phone)))){toast("لا يمكن النشر من رقم موقوف. تواصل مع الإدارة إذا كان الإيقاف بالخطأ.");return;}
+  if(editingId){const current=S.items.find(x=>x.id===editingId);if(!current||!canManage(current)){toast("ليست لديك صلاحية تعديل هذا الإدراج.");return;}}
+  if(isAdm&&!hasPerm(editingId?"edit":"add")){toast("ليست لديك صلاحية تنفيذ العملية.");return;}
+  const obj={
+    id:editingId||(window.crypto&&crypto.randomUUID?"it_"+crypto.randomUUID():"it_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,8)),
+    name,cat:fd.cat||"other",gov:fd.gov||"إب",dist:String(fd.dist||"حبيش").trim(),
+    area,village:String(fd.village||"").trim(),phone:String(fd.phone||"").trim(),
+    hours:String(fd.hours||"").trim(),price:String(fd.price||"").trim(),
+    country:String(fd.country||"اليمن").trim(),desc:String(fd.desc||"").trim(),
+    img:pendingImgData||"",
+    ownerPhone:S.session.merchant?.phone||phoneKey(fd.phone)||"",
+    aiChecked:true,
+    verifiedAt:isAdm?Date.now():null,
+    createdAt:Date.now()
+  };
+  if(editingId){
+    const idx=S.items.findIndex(x=>x.id===editingId);
+    if(idx>=0){
+      const old=S.items[idx];
+      obj.createdAt=old.createdAt;
+      obj.ownerPhone=old.ownerPhone||obj.ownerPhone;
+      obj.verifiedAt=old.verifiedAt||(isAdm&&hasPerm("verify")?Date.now():null);
+      if(!isAdm&&old.verifiedAt)obj.verifiedAt=old.verifiedAt;
+      S.items[idx]=obj;
+    }
+    logAction("تعديل: "+name);
+    toast("تم حفظ التعديل في الذاكرة");
+  }else{
+    const reviewCats=["land","jobs","pharmacy","health","edu","gov","money"];
+    const validPhone=/^(?:967)?7[01378]\d{7}$/.test(digits(obj.phone));
+    const moderationWords=["احتيال","نصب","مخدرات","قمار","سلاح"];
+    const needsManualReview=reviewCats.includes(obj.cat)||!validPhone||moderationWords.some(w=>(obj.name+" "+obj.desc).includes(w));
+    if(!isAdm&&needsManualReview){
+      S.pending.unshift({...obj,verifiedAt:null,submittedAt:Date.now(),reason:!validPhone?"رقم التواصل يحتاج تحققاً":(reviewCats.includes(obj.cat)?"القسم يتطلب موافقة الإدارة":"النص يحتاج مراجعة بشرية"),requestType:"listing"});
+      logAction("إرسال طلب للمراجعة: "+name);
+      toast("تم إجراء فحص آلي أولي وتحويل الإدراج للمراجعة.");
+    }else{
+      S.items.unshift(obj);
+      logAction("إضافة بعد الفحص الآلي الأولي: "+name+" ("+(CN[obj.cat]||"")+")");
+      toast("اجتاز الإدراج الفحص الأولي ونُشر. يمكن الإبلاغ عنه للمراجعة لاحقاً.");
+    }
+  }
+  saveState();buildScopeSelector();render();renderMerchantTools();if(S.session.role==="admin")renderAdminPanel();closeDlg("#dlg");
+});
+
+/* Ads & Slider */
+function renderAds(){
+  const pinLogo=`<svg class="lpin" viewBox="0 0 120 150" aria-label="شعار دليلنا">
+    <path d="M10 62 A50 50 0 0 1 110 62 L110 140 L10 140 Z" fill="#1E1916" stroke="#F4EFE6" stroke-width="5"/>
+    <path d="M22 62 A38 38 0 0 1 98 62 Z" fill="none" stroke="#F4EFE6" stroke-width="4"/>
+    <path d="M24 62 L44 62 A16 16 0 0 1 48 51 L33 38 A36 36 0 0 0 24 62 Z" fill="#198A7E"/>
+    <path d="M33 38 L48 51 A16 16 0 0 1 56 47 L49 28 A36 36 0 0 0 33 38 Z" fill="#E8A025"/>
+    <path d="M49 28 L56 47 A16 16 0 0 1 64 47 L71 28 A36 36 0 0 0 49 28 Z" fill="#CC3652"/>
+    <path d="M71 28 L64 47 A16 16 0 0 1 72 51 L87 38 A36 36 0 0 0 71 28 Z" fill="#E8A025"/>
+    <path d="M87 38 L72 51 A16 16 0 0 1 76 62 L96 62 A36 36 0 0 0 87 38 Z" fill="#198A7E"/>
+    <circle cx="60" cy="62" r="13" fill="#F4EFE6"/>
+    <rect x="22" y="64" width="76" height="24" rx="4" fill="#1E1916" stroke="#F4EFE6" stroke-width="4"/>
+    <path d="M60 64 v24" stroke="#F4EFE6" stroke-width="4"/>
+    <rect x="24" y="96" width="72" height="32" rx="6" fill="#198A7E" stroke="#F4EFE6" stroke-width="4"/>
+    <path d="M60 96 v32" stroke="#F4EFE6" stroke-width="4"/>
+  </svg>`;
+  const sl=[
+    `<div class="slide lslide">${pinLogo}<div class="ltx"><b>${T("heroTitle")}</b><span>${T("heroSub")}</span><em>${T("heroTag")}</em></div></div>`,
+    ...S.ads.filter(a=>(!a.expiresAt||a.expiresAt>Date.now())&&!isPhoneBlocked(a.phone)).map(a=>`<a class="slide tslide" href="${waLink(a.phone)}" target="_blank" rel="noopener noreferrer"><h3>${esc(a.title)}</h3><p>${esc(a.text||"")}</p><span class="gold">${T("contactNow")}</span></a>`)
+  ];
+  $("#adsBox").innerHTML=sl.join("");
+  $("#dots").innerHTML=sl.map((_,i)=>`<i class="${i===0?"on":""}"></i>`).join("");
+}
+
+/* Exchange Rates & Calculator */
+function renderFx(){
+  const n=v=>Number(v||0).toLocaleString("en-US");
+  const isEn=curLang==="en";
+  const card=(t,o)=>`<div class="fxc"><h3><span>${t}</span><span style="font-size:11px;color:var(--mute)">${T("inYer")}</span></h3>
+    <table class="fx-tbl">
+      <tr><th>${T("currCol")}</th><th>${T("buyCol")}</th><th>${T("sellCol")}</th></tr>
+      <tr><td>${isEn?"US Dollar ($)":"دولار أمريكي ($)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.usdB)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.usdS)}</span></td></tr>
+      <tr><td>${isEn?"Saudi Riyal (SAR)":"ريال سعودي (SAR)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.sarB)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.sarS)}</span></td></tr>
+      <tr><td>${isEn?"UAE Dirham (AED)":"درهم إماراتي (AED)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.aedB||Math.round(o.usdB/3.67))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.aedS||Math.round(o.usdS/3.67))}</span></td></tr>
+      <tr><td>${isEn?"Omani Rial (OMR)":"ريال عماني (OMR)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.omrB||Math.round(o.usdB*2.58))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.omrS||Math.round(o.usdS*2.6))}</span></td></tr>
+      <tr><td>${isEn?"Gold 24K (g)":"ذهب عيار 24 (جرام)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g24B||Math.round(o.g21B*1.14))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g24S||Math.round(o.g21S*1.14))}</span></td></tr>
+      <tr><td>${isEn?"Gold 21K (g)":"ذهب عيار 21 (جرام)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g21B)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g21S)}</span></td></tr>
+      <tr><td>${isEn?"Gold 18K (g)":"ذهب عيار 18 (جرام)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g18B||Math.round(o.g21B*0.857))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g18S||Math.round(o.g21S*0.857))}</span></td></tr>
+    </table></div>`;
+  $("#fxGrid").innerHTML=card(T("sanaaRates"),S.fx.s)+card(T("adenRates"),S.fx.a);
+  $("#fxMeta").textContent=(isEn?"Last updated: ":"آخر تحديث: ")+(S.fx.date||(isEn?"Today":"اليوم"));
+  calcFx();
+}
+let calcFromVal="USD",calcToVal="YER_S";
+const CURR_OPTS=[
+  {val:"USD",label:"دولار أمريكي (USD)",toLabel:"إلى دولار أمريكي (USD)",badge:"$"},
+  {val:"SAR",label:"ريال سعودي (SAR)",toLabel:"إلى ريال سعودي (SAR)",badge:"SAR"},
+  {val:"AED",label:"درهم إماراتي (AED)",toLabel:"إلى درهم إماراتي (AED)",badge:"AED"},
+  {val:"OMR",label:"ريال عماني (OMR)",toLabel:"إلى ريال عماني (OMR)",badge:"OMR"},
+  {val:"YER_S",label:"ريال يمني (صنعاء)",toLabel:"إلى ريال يمني (صنعاء)",badge:"صنعاء"},
+  {val:"YER_A",label:"ريال يمني (عدن)",toLabel:"إلى ريال يمني (عدن)",badge:"عدن"}
+];
+$("#calcFromBtn").addEventListener("click",()=>{
+  openCustomPicker({
+    title:"اختر العملة المحوّل منها",
+    searchable:false,
+    options:CURR_OPTS.map(c=>({val:c.val,label:c.label,count:c.badge})),
+    selected:calcFromVal,
+    onSelect:val=>{
+      calcFromVal=val;
+      $("#calcFromLbl").textContent=CURR_OPTS.find(c=>c.val===val).label;
+      calcFx();
+    }
+  });
+});
+$("#calcToBtn").addEventListener("click",()=>{
+  openCustomPicker({
+    title:"اختر العملة المحوّل إليها",
+    searchable:false,
+    options:CURR_OPTS.map(c=>({val:c.val,label:c.toLabel,count:c.badge})),
+    selected:calcToVal,
+    onSelect:val=>{
+      calcToVal=val;
+      $("#calcToLbl").textContent=CURR_OPTS.find(c=>c.val===val).toLabel;
+      calcFx();
+    }
+  });
+});
+function calcFx(){
+  const amt=parseFloat($("#calcAmt").value)||0;
+  const from=calcFromVal,to=calcToVal;
+  const aedRate=S.fx.s.aedB||Math.round(S.fx.s.usdB/3.67);
+  const omrRate=S.fx.s.omrB||Math.round(S.fx.s.usdB*2.58);
+  const rates={USD:S.fx.s.usdB,SAR:S.fx.s.sarB,AED:aedRate,OMR:omrRate,YER_S:1,YER_A:S.fx.s.usdB/S.fx.a.usdB};
+  const inYerS=amt*(rates[from]||1);
+  const res=inYerS/(rates[to]||1);
+  const labels={USD:"دولار أمريكي",SAR:"ريال سعودي",AED:"درهم إماراتي",OMR:"ريال عماني",YER_S:"ريال يمني (صنعاء)",YER_A:"ريال يمني (عدن)"};
+  $("#calcRes").textContent=res.toLocaleString("en-US",{maximumFractionDigits:2})+" "+labels[to];
+}
+$("#calcAmt").addEventListener("input",calcFx);
+
+/* Emergency Numbers */
+function renderEmerg(){
+  const rows=S.emerg.split("\n").map(l=>l.split(/[:：]/)).filter(x=>x.length>1);
+  $("#emList").innerHTML=rows.map(([n,p])=>`<a class="lnk" href="tel:${digits(p)}">${esc(n.trim())}: <b dir="ltr">${esc(p.trim())}</b></a>`).join("");
+}
+
+/* Offline-first local assistant. A server-backed OpenAI assistant is optional; API keys never live in this file. */
+function normalizeQuery(v){return normalizePlace(v).replace(/\b(وين|اين|اريد|ابحث|عن|لي|من|في|قريب|اقرب|دلني|على|ممكن|لو|سمحت)\b/g," ").replace(/\s+/g," ").trim();}
+function localDirectorySearch(q,limit=6){
+  const query=normalizeQuery(q);if(!query)return [];
+  const tokens=query.split(/\s+/).filter(w=>w.length>1);
+  const requestedCat=CATS.map(([id,label])=>({id,label,terms:normalizeQuery(label+" "+(CAT_SYN[id]||""))})).find(c=>tokens.some(t=>c.terms.includes(t)));
+  const candidates=publicItems().map(item=>{
+    const fields=[item.name,item.desc,item.area,item.village,item.dist,item.gov,item.phone,CN[item.cat],CN_EN[item.cat],CAT_SYN[item.cat]||""].map(normalizeQuery);
+    const combined=fields.join(" ");
+    let score=0;
+    for(const token of tokens){
+      if(normalizeQuery(item.name).includes(token))score+=6;
+      if(normalizeQuery(item.area).includes(token)||normalizeQuery(item.village).includes(token))score+=4;
+      if(normalizeQuery(item.gov).includes(token)||normalizeQuery(item.dist).includes(token))score+=3;
+      if(normalizeQuery(CN[item.cat]||"").includes(token)||(CAT_SYN[item.cat]||"").split(/\s+/).some(w=>normalizeQuery(w)===token))score+=3;
+      if(normalizeQuery(item.desc).includes(token))score+=1;
+    }
+    if(requestedCat&&item.cat===requestedCat.id)score+=4;
+    if(scope&&!scopeMatchesItem(item))score-=2;
+    return {item,score};
+  }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||(b.item.createdAt||0)-(a.item.createdAt||0));
+  return candidates.slice(0,limit).map(x=>x.item);
+}
+function answerAI(q){
+  const raw=String(q||"").trim(),t=normalizeQuery(raw);
+  if(!raw)return "اكتب سؤالك وسأبحث في بيانات الدليل الموجودة على هذا الجهاز.";
+  if(/صرف|دولار|سعودي|عمله|ذهب|ريال/.test(t)){
+    return `أسعار الصرف المدخلة في هذا الجهاز (قد تحتاج إلى تحديث من الإدارة):\nصنعاء: الدولار شراء ${S.fx.s.usdB} / بيع ${S.fx.s.usdS}، السعودي شراء ${S.fx.s.sarB} / بيع ${S.fx.s.sarS}.\nعدن: الدولار شراء ${S.fx.a.usdB} / بيع ${S.fx.a.usdS}، السعودي شراء ${S.fx.a.sarB} / بيع ${S.fx.a.sarS}.\nلا أستطيع تأكيد أنها أسعار السوق اللحظية.`;
+  }
+  if(/طوارئ|اسعاف|شرطه|نجده|دفاع|اطفاء/.test(t))return "أرقام الطوارئ المسجلة في نسخة الدليل هذه:\n"+S.emerg+"\nتحقق من الرقم المحلي قبل الاعتماد عليه في الحالات الطارئة.";
+  if(/شكوى|بلاغ|اقتراح|تحسين|تحديث بيانات|تعديل بيانات/.test(t))return "يمكنك إرسال شكوى أو اقتراح من زر «إرسال رسالة إلى الإدارة» داخل قسم المساعد. ستُحفظ الرسالة في صندوق المشرف على هذا الجهاز فقط حتى ربط التطبيق بخادم مركزي.";
+  if(/حظر|احظر|ايقاف|ايقاف متجر|منع حساب/.test(t))return S.session.role==="admin"&&hasPerm("block")?"يمكنك فتح لوحة المشرف ثم تبويب «الحظر والإيقاف». تستطيع إيقاف إدراج منفرد أو حظر رقم صاحب محل أو وظيفة أو إعلان. الحظر في هذه النسخة محلي على هذا الجهاز فقط.":"إدارة الحظر متاحة للمشرف من لوحة التحكم.";
+  if(/وظيف|عمل|توظيف|راتب/.test(t)){
+    const jobs=publicItems().filter(i=>i.cat==="jobs");
+    return jobs.length?`وجدت ${jobs.length} وظيفة مسجلة في الدليل:\n`+jobs.slice(0,6).map((i,n)=>`${n+1}. ${i.name} — ${i.area||"الموقع غير محدد"}${i.price?" — "+i.price:""}${i.phone?" — "+i.phone:""}`).join("\n"):"لا توجد وظائف مسجلة حالياً في بيانات هذا الجهاز. لم أجد نتائج، ولا يعني ذلك عدم وجود وظائف في المنطقة.";
+  }
+  if(/سوق|حراج|للبيع|مطلوب|مقايض|مجانا/.test(t)){
+    const sq=publicItems().filter(i=>i.cat==="souq");
+    return sq.length?`توجد ${sq.length} إعلانات سوق مسجلة:\n`+sq.slice(0,6).map((i,n)=>`${n+1}. ${i.name} — ${i.area||"بدون منطقة"}${i.price?" — "+i.price:""}${i.status==="sold"?" — تم البيع":""}`).join("\n"):"لا توجد إعلانات سوق مسجلة حالياً في هذا الجهاز.";
+  }
+  if(/اقرب|قريب/.test(t)){
+    if(!userPos)return "لحساب أقرب محل فعلياً، اضغط فلتر «الأقرب لموقعي» واسمح بإذن GPS. لن أستخدم إحداثيات افتراضية إذا رفضت الإذن.";
+    const nearby=localDirectorySearch(raw,20).map(i=>({i,km:calcKm(userPos.lat,userPos.lng,i.lat,i.lng)})).filter(x=>x.km!==null).sort((a,b)=>a.km-b.km).slice(0,5);
+    if(nearby.length)return "أقرب النتائج التي لها إحداثيات محفوظة في الدليل:\n"+nearby.map((x,n)=>`${n+1}. ${x.i.name} — ${x.km<1?Math.round(x.km*1000)+" متر":x.km.toFixed(2)+" كم"} — ${x.i.area||"الموقع غير محدد"}`).join("\n")+"\nالمسافة بخط مستقيم وليست زمن طريق.";
+    return "تم تحديد موقعك، لكن لا توجد إحداثيات محفوظة للعناصر المطابقة. أضف إحداثيات المحل بعد التحقق منها.";
+  }
+  if(/الموقع|موقعي/.test(t))return userPos?"تم التقاط موقعك بعد موافقتك. المسافات لا تظهر إلا للإدراجات التي لديها إحداثيات محفوظة.":"لم يتم تحديد موقعك بعد. استخدم فلتر «الأقرب لموقعي» واسمح بإذن GPS.";
+  if(/مفتوح|فاتح|دوام/.test(t)){
+    const open=publicItems().filter(i=>isOpenNow(i.hours)===true);
+    return open.length?`هذه الإدراجات مسجلة على أنها مفتوحة الآن حسب ساعاتها وتوقيت اليمن:\n`+open.slice(0,6).map((i,n)=>`${n+1}. ${i.name} — ${i.area||""}`).join("\n"):"لا توجد إدراجات بساعات عمل واضحة تؤكد أنها مفتوحة الآن.";
+  }
+  if(/موثق|توثيق|معتمد/.test(t)){
+    const verified=publicItems().filter(i=>i.verifiedAt);
+    return verified.length?`وجدت ${verified.length} إدراجات موثقة داخل الدليل:\n`+verified.slice(0,6).map((i,n)=>`${n+1}. ${i.name} — ${i.area||""}`).join("\n"):"لا توجد إدراجات موثقة مسجلة حالياً في هذا الجهاز.";
+  }
+  const hits=localDirectorySearch(raw,6);
+  if(hits.length){
+    return `وجدت ${hits.length} نتيجة محتملة ضمن الإدراجات المسجلة في دليلنا:\n`+hits.map((i,n)=>`${n+1}. ${i.name} — ${CN[i.cat]||i.cat} — ${[i.village,i.area,i.dist,i.gov].filter(Boolean).join(" / ")}${i.phone?" — "+i.phone:""}${i.verifiedAt?" — موثّق":" — لم يوثّق بعد"}`).join("\n")+"\nهذه نتائج من قاعدة هذا الجهاز وليست تحققاً خارجياً من النشاط.";
+  }
+  if(/عزل حبيش|عزلات حبيش|عزله حبيش|كم عزله/.test(t))return `مديرية حبيش في محافظة إب تضم 22 عزلة بحسب مرجع التقسيم الإداري. الأسماء المرجعية في دليلنا: ${HUBAISH_UZ.join("، ")}. قد تختلف بعض الكتابات المحلية، لذلك يدعم التطبيق الأسماء البديلة المعروفة.`;
+  const askedGov=GOVS.find(g=>t.includes(normalizeQuery(g)));
+  if(askedGov&&/كم مديريه|عدد مديريات|مديريات|تقسيم|المحافظه/.test(t)){
+    const ds=YEMEN_DISTRICTS[askedGov]||[];
+    return `المحافظة: ${askedGov}. عدد المديريات في مرجع البيانات المضمن: ${ds.length}.\n${ds.join("، ")}\nهذه بيانات تقسيم إداري مرجعية وليست قائمة بجميع القرى أو المحلات.`;
+  }
+  if(/حجه|محافظه|مديريه|عزله|منطقه/.test(t)){
+    const info=selectedRegionInfo();
+    return `المنطقة المحددة حالياً: ${info.title}.\n${info.meta}\nالإدراجات المسجلة في هذا النطاق: ${info.items.length}. لا توجد لدي بيانات سكانية أو إحصاءات أعمال رسمية إضافية لهذه المنطقة.`;
+  }
+  return `أستطيع البحث في المحلات والخدمات والوظائف والسوق وأسعار الصرف وأرقام الطوارئ المسجلة.\nاكتب اسم الخدمة أو المنطقة.\nتنبيه: أجيب من البيانات المخزنة في هذا الجهاز؛ إذا لم توجد نتيجة فسأقول ذلك بدلاً من اختراع محل أو رقم.`;
+}
+function buildAssistantContext(){
+  const rows=publicItems().slice(0,80).map(i=>({name:i.name,category:CN[i.cat]||i.cat,governorate:i.gov,district:i.dist,area:i.area,phone:i.phone,description:i.desc,hours:i.hours,verified:!!i.verifiedAt,price:i.price}));
+  return {region:scope||"كل اليمن",listings:rows,rates:S.fx,emergencyNumbers:S.emerg,notice:"These are locally stored user-generated listings. Verification status is provided separately."};
+}
+$("#aiCloudConsent").addEventListener("change",e=>{
+  S.aiCloudConsent=e.target.checked===true;
+  saveState();
+  $("#aiModeHint").textContent=S.aiCloudConsent
+    ?"المساعد السحابي مفعّل بموافقتك. قد يُرسل سؤالك وبيانات الإدراجات العامة ذات الصلة، ومنها أرقام التواصل، إلى خادم التطبيق ومزود الذكاء الاصطناعي. يمكنك إيقافه في أي وقت."
+    :"المساعد المحلي يبحث في بيانات هذا الجهاز دون إنترنت. المساعد السحابي متوقف ولن تُرسل بيانات الدليل لخدمة خارجية.";
+  toast(S.aiCloudConsent?"تم تفعيل المساعد السحابي بموافقتك.":"تم إيقاف المساعد السحابي.");
+});
+async function askAssistant(q){
+  if(S.aiCloudConsent===true&&navigator.onLine&&location.protocol!=="file:"){
+    try{
+      const response=await fetch("/api/assistant",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:String(q).slice(0,1200),context:buildAssistantContext()})});
+      if(response.ok){const data=await response.json();if(data&&typeof data.answer==="string"&&data.answer.trim())return data.answer.trim();}
+    }catch(err){/* fall through to local assistant */}
+  }
+  return answerAI(q);
+}
+function appendChatMessage(type,text){
+  const el=document.createElement("div");el.className=type==="user"?"m u":"m a";el.textContent=String(text||"");$("#msgs").appendChild(el);$("#msgs").scrollTop=$("#msgs").scrollHeight;
+}
+
+$("#botf").addEventListener("submit",async e=>{
+  e.preventDefault();const q=$("#botq").value.trim();if(!q)return;$("#botq").value="";
+  appendChatMessage("user",q);
+  const pending=document.createElement("div");pending.className="m a";pending.textContent="أبحث في بيانات الدليل…";$("#msgs").appendChild(pending);
+  try{pending.textContent=await askAssistant(q);}catch(err){pending.textContent=answerAI(q);}
+  $("#msgs").scrollTop=$("#msgs").scrollHeight;
+});
+$("#sugg").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  $("#botq").value=b.textContent;$("#botf").dispatchEvent(new Event("submit"));
+});
+
+/* Admin Dashboard */
+let admTab="overview",selectedIds=new Set();
+$("#admTabs").addEventListener("click",e=>{
+  const b=e.target.closest("[data-atab]");if(!b)return;
+  const need={pending:"review",perms:"perms",ads:"ads",fx:"fx",logs:"logs",backup:"backup",listings:"edit",blocks:"block"}[b.dataset.atab];
+  if(need&&!hasPerm(need)){toast("ليست لديك صلاحية لهذا القسم.");return;}
+  admTab=b.dataset.atab;
+  $("#admTabs").querySelectorAll("button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  renderAdminPanel();
+});
+$("#admQuickAdd").addEventListener("click",()=>{if(!hasPerm("add")){toast("ليست لديك صلاحية الإضافة.");return;}openAdd("grocery");});
+$("#admLogout").addEventListener("click",()=>{
+  logAction("تسجيل خروج المشرف");
+  S.session={role:"client",adminEmail:"",merchant:null};
+  $("#roleAdminBtn").hidden=true;$("#adminAccessHint").hidden=true;
+  saveState();syncRoleUI();render();toast("تم تسجيل الخروج");
+});
+
+function blockPhoneLocal(phone,reason){
+  if(S.session.role!=="admin"||!hasPerm("block")){toast("ليست لديك صلاحية حظر الأرقام.");return false;}
+  const key=phoneKey(phone);
+  if(key.length<9||key.length>15){toast("أدخل رقماً صحيحاً مع مفتاح الدولة عند الحاجة.");return false;}
+  if(S.blocks.some(b=>b.active&&phoneKey(b.phone)===key)){toast("هذا الرقم محظور بالفعل.");return false;}
+  S.blocks.unshift({id:"bl_"+Date.now().toString(36),phone:key,reason:cleanText(reason,240)||"مخالفة شروط الدليل",at:Date.now(),by:S.session.adminEmail||"مشرف",active:true});
+  S.blocks=S.blocks.slice(0,1000);logAction("حظر رقم: "+key+" — "+reason);saveState();toast("تم حظر الرقم وإخفاء الإدراجات المرتبطة به على هذا الجهاز.");return true;
+}
+function unblockPhoneLocal(id){
+  if(S.session.role!=="admin"||!hasPerm("block")){toast("ليست لديك صلاحية رفع الحظر.");return;}
+  const b=S.blocks.find(x=>x.id===id);if(!b)return;b.active=false;logAction("رفع حظر رقم: "+b.phone);saveState();toast("تم رفع الحظر على هذا الجهاز.");
+}
+function renderAdminPanel(){
+  if(S.session.role!=="admin")return;
+  const tabPerm={overview:null,listings:"edit",pending:"review",perms:"perms",ads:"ads",fx:"fx",logs:"logs",blocks:"block",backup:"backup"};
+  let visibleTabs=[];
+  document.querySelectorAll("#admTabs [data-atab]").forEach(b=>{
+    const p=tabPerm[b.dataset.atab];
+    const show=!p||hasPerm(p)||((b.dataset.atab==="listings")&&["add","delete","verify"].some(hasPerm));
+    b.hidden=!show;if(show)visibleTabs.push(b.dataset.atab);
+  });
+  if(!visibleTabs.includes(admTab))admTab=visibleTabs[0]||"overview";
+  document.querySelectorAll("#admTabs [data-atab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.atab===admTab)));
+  const body=$("#admBody");
+  if(admTab==="overview"){
+    const ver=S.items.filter(i=>i.verifiedAt).length;
+    body.innerHTML=`<div class="adm-stats">
+      <div class="adm-stat"><b>${S.items.length}</b><span>إجمالي الخدمات</span></div>
+      <div class="adm-stat"><b>${ver}</b><span>موثّق</span></div>
+      <div class="adm-stat"><b>${S.pending.length}</b><span>طلبات معلّقة</span></div>
+      <div class="adm-stat"><b>${S.ads.length}</b><span>إعلانات نشطة</span></div>
+      <div class="adm-stat"><b>${S.reports.length}</b><span>بلاغات الإدراجات</span></div>
+      <div class="adm-stat"><b>${S.tickets.length}</b><span>رسائل الدعم</span></div>
+      <div class="adm-stat"><b>${S.admins.length}</b><span>المشرفون</span></div>
+    </div>
+    <p class="where" style="margin:0">جميع التغييرات تُحفظ تلقائياً في ذاكرة الجهاز، ويمكنك تصدير نسخة احتياطية في أي وقت.</p>`;
+  }else if(admTab==="listings"){
+    body.innerHTML=`
+      <div class="adm-bulk">
+        <input id="admListSearch" placeholder="بحث سريع في الإدراجات…" style="max-width:220px;min-height:36px">
+        <button type="button" class="danger-btn" id="admBulkDel" style="min-height:36px">حذف المحدد (${selectedIds.size})</button>
+      </div>
+      <div id="admListRows">${S.items.map(i=>`
+        <div class="adm-row">
+          <label style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer">
+            <input type="checkbox" class="adm-chk" value="${esc(i.id)}" ${selectedIds.has(i.id)?"checked":""} style="width:auto">
+            <span><b>${esc(i.name)}</b> <span class="tag">${esc(CN[i.cat]||"")}</span><br><span class="where">${esc(i.area||"")} · ${esc(i.phone||"بدون رقم")}</span></span>
+          </label>
+          <div class="fbtn">
+            ${hasPerm("verify")?`<button type="button" class="yes" data-aver="${esc(i.id)}" style="min-height:34px;font-size:12.5px">${i.verifiedAt?"موثّق ✓":"توثيق"}</button>`:""}
+            ${hasPerm("edit")?`<button type="button" class="ghost" data-edit="${esc(i.id)}" style="min-height:34px;font-size:12.5px">تعديل</button>`:""}
+            ${hasPerm("delete")?`<button type="button" class="del" style="color:var(--danger)" data-del="${esc(i.id)}">حذف</button>`:""}
+            ${hasPerm("block")?`<button type="button" class="ghost" data-hide-item="${esc(i.id)}">${i.hidden?"إعادة إظهار":"إيقاف الإدراج"}</button>${(i.ownerPhone||i.phone)?`<button type="button" class="danger-btn" data-block-owner="${esc(i.id)}">حظر الرقم</button>`:""}`:""}
+            ${i.hidden?`<span class="blocked-label">موقوف من الظهور</span>`:""}
+            ${isPhoneBlocked(i.ownerPhone||i.phone)?`<span class="blocked-label">رقم محظور</span>`:""}
+          </div>
+        </div>`).join("")}</div>`;
+    $("#admListSearch").oninput=e=>{
+      const q=e.target.value.trim().toLowerCase();
+      body.querySelectorAll(".adm-row").forEach(r=>{r.hidden=!r.textContent.toLowerCase().includes(q);});
+    };
+    body.querySelectorAll(".adm-chk").forEach(c=>c.onchange=()=>{
+      if(c.checked)selectedIds.add(c.value);else selectedIds.delete(c.value);
+      $("#admBulkDel").textContent=`حذف المحدد (${selectedIds.size})`;
+    });
+    $("#admBulkDel").onclick=()=>{
+      if(!hasPerm("delete")){toast("ليست لديك صلاحية الحذف.");return;}
+      if(!selectedIds.size){toast("حدد عنصراً واحداً على الأقل");return;}
+      const n=selectedIds.size;
+      S.items=S.items.filter(i=>!selectedIds.has(i.id));
+      selectedIds.clear();logAction("حذف جماعي لعدد "+n+" إدراج");
+      saveState();buildScopeSelector();render();renderAdminPanel();toast("تم حذف "+n+" إدراج");
+    };
+    body.querySelectorAll("[data-aver]").forEach(b=>b.onclick=()=>{
+      if(!hasPerm("verify")){toast("ليست لديك صلاحية التوثيق.");return;}
+      const it=S.items.find(x=>x.id===b.dataset.aver);if(!it)return;
+      it.verifiedAt=it.verifiedAt?null:Date.now();
+      logAction((it.verifiedAt?"توثيق: ":"إلغاء توثيق: ")+it.name);
+      saveState();render();renderAdminPanel();
+    });
+    body.querySelectorAll("[data-hide-item]").forEach(b=>b.onclick=()=>{
+      if(!hasPerm("block")){toast("ليست لديك صلاحية الإيقاف.");return;}
+      const it=S.items.find(x=>x.id===b.dataset.hideItem);if(!it)return;
+      it.hidden=!it.hidden;it.hiddenReason=it.hidden?"إيقاف إداري":"";
+      logAction((it.hidden?"إيقاف ظهور إدراج: ":"إعادة إظهار إدراج: ")+it.name);
+      saveState();render();renderAdminPanel();buildScopeSelector();
+    });
+    body.querySelectorAll("[data-block-owner]").forEach(b=>b.onclick=()=>{
+      const it=S.items.find(x=>x.id===b.dataset.blockOwner);if(!it)return;
+      const phone=it.ownerPhone||it.phone;
+      blockPhoneLocal(phone,"حظر رقم مرتبط بالإدراج: "+it.name);
+      renderAdminPanel();render();
+    });
+  }else if(admTab==="pending"){
+    body.innerHTML=S.pending.length?S.pending.map(i=>`<div class="adm-row">
+      <span><b>${esc(i.name)}</b> <span class="tag">${i.requestType==="ad"?"إعلان مجاني 60 يوماً":esc(CN[i.cat]||"")}</span><br><span class="where">${esc(i.area||"غير محدد")} · ${esc(i.phone||"بدون رقم")}</span><br><span class="where">${esc(i.reason||"بانتظار المراجعة")}</span>${i.adText?`<p class="desc">${esc(i.adText)}</p>`:""}</span>
+      <div class="fbtn"><button type="button" class="yes" data-papprove="${esc(i.id)}">موافقة ونشر</button><button type="button" class="danger-btn" data-preject="${esc(i.id)}">رفض</button></div>
+    </div>`).join(""):`<div class="empty">لا توجد طلبات معلّقة.</div>`;
+    body.querySelectorAll("[data-papprove]").forEach(b=>b.onclick=()=>{
+      if(!hasPerm("review"))return;
+      const i=S.pending.find(x=>x.id===b.dataset.papprove);if(!i)return;
+      if(isPhoneBlocked(i.ownerPhone||i.phone)){i.reason="لا يمكن الاعتماد: رقم التواصل محظور. ارفع الحظر أولاً أو ارفض الطلب.";renderAdminPanel();toast("هذا الرقم محظور. لن يُنشر الطلب حتى رفع الحظر.");return;}
+      S.pending=S.pending.filter(x=>x.id!==i.id);
+      if(i.requestType==="ad"){
+        S.ads.unshift({id:i.id,title:i.name,text:i.adText||i.desc||"",phone:i.phone,expiresAt:i.adExpiresAt||Date.now()+60*86400000});
+        logAction("اعتماد إعلان مجاني: "+i.name);
+        renderAds();
+      }else{
+        const published={...i,verifiedAt:Date.now(),aiChecked:true};
+        delete published.requestType;delete published.reason;delete published.adText;delete published.adExpiresAt;
+        S.items.unshift(published);
+        logAction("موافقة على طلب: "+i.name);
+      }
+      saveState();buildScopeSelector();render();renderAdminPanel();toast("تمت الموافقة والنشر");
+    });
+    body.querySelectorAll("[data-preject]").forEach(b=>b.onclick=()=>{
+      if(!hasPerm("review"))return;
+      const i=S.pending.find(x=>x.id===b.dataset.preject);if(!i)return;
+      S.pending=S.pending.filter(x=>x.id!==i.id);logAction("رفض طلب: "+i.name);saveState();renderAdminPanel();toast("تم رفض الطلب");
+    });
+  }else if(admTab==="perms"){
+    body.innerHTML=`
+      <div style="display:grid;gap:10px">
+        <label class="perm-item"><input type="checkbox" id="pVis" ${S.perms.visitorCanPost?"checked":""}> السماح للزوار والعملاء بإضافة محلات مباشرة</label>
+        <label class="perm-item"><input type="checkbox" id="pSouq" ${S.perms.souqEnabled?"checked":""}> تفعيل سوق البيع والشراء</label>
+        <label class="perm-item"><input type="checkbox" id="pRatings" ${S.perms.ratingsEnabled?"checked":""}> تفعيل التقييمات</label>
+        <h3 style="font-size:15px;margin-top:6px">إضافة مشرف مساعد</h3>
+        <div class="two">
+          <input id="newAdmName" placeholder="اسم المشرف">
+          <input id="newAdmEmail" type="email" dir="ltr" placeholder="البريد الإلكتروني">
+        </div>
+        <input id="newAdmPass" type="password" dir="ltr" minlength="8" placeholder="كلمة المرور (8 أحرف على الأقل)">
+        <div class="perm-grid">
+          ${[["add","إضافة"],["edit","تعديل"],["delete","حذف"],["verify","توثيق"],["review","مراجعة الطلبات"],["ads","الإعلانات"],["fx","الصرف والطوارئ"],["perms","إدارة الصلاحيات"],["logs","سجل النشاطات"],["backup","النسخ الاحتياطي"],["block","الحظر والإيقاف"]].map(([v,l])=>`<label class="perm-item"><input type="checkbox" name="admPerm" value="${v}"> ${l}</label>`).join("")}
+        </div>
+        <button type="button" class="add" id="addAdmBtn" style="justify-self:start">حفظ المشرف الجديد</button>
+        <div>${S.admins.map(a=>`<div class="adm-row"><span><b>${esc(a.name)}</b> (${esc(a.email)})</span>${a.email!=="admin@dalilna.ye"?`<button type="button" class="del" data-del-adm="${esc(a.email)}" style="color:var(--danger)">إزالة</button>`:`<span class="tag">أساسي</span>`}</div>`).join("")}</div>
+      </div>`;
+    const saveVisitorFlags=()=>{S.perms.visitorCanPost=$("#pVis").checked;S.perms.souqEnabled=$("#pSouq").checked;S.perms.ratingsEnabled=$("#pRatings").checked;saveState();toast("تم تحديث الصلاحيات");};
+    ["#pVis","#pSouq","#pRatings"].forEach(sel=>$(sel).onchange=saveVisitorFlags);
+    $("#addAdmBtn").onclick=async()=>{
+      const name=$("#newAdmName").value.trim(),email=$("#newAdmEmail").value.trim().toLowerCase(),pass=$("#newAdmPass").value;
+      const perms=[...body.querySelectorAll("input[name=admPerm]:checked")].map(x=>x.value);
+      if(!name||!email||pass.length<8||!perms.length){toast("أدخل الاسم والبريد وكلمة مرور من 8 أحرف واختر صلاحية واحدة على الأقل");return;}
+      if(S.admins.some(a=>a.email===email)){toast("هذا البريد مسجل مسبقاً");return;}
+      try{S.admins.push({email,name,hash:await sha256(pass),perms});}
+      catch(err){toast("تحتاج المصادقة إلى متصفح يدعم التشفير الآمن HTTPS أو localhost.");return;}
+      logAction("إضافة مشرف: "+email);saveState();renderAdminPanel();toast("تمت إضافة المشرف");
+    };
+    body.querySelectorAll("[data-del-adm]").forEach(b=>b.onclick=()=>{
+      S.admins=S.admins.filter(a=>a.email!==b.dataset.delAdm);
+      logAction("إزالة مشرف: "+b.dataset.delAdm);saveState();renderAdminPanel();toast("تمت إزالة المشرف");
+    });
+  }else if(admTab==="ads"){
+    body.innerHTML=`
+      <div style="display:grid;gap:8px;margin-bottom:10px">
+        <input id="adTitle" placeholder="عنوان الإعلان أو العرض">
+        <input id="adText" placeholder="تفاصيل العرض">
+        <input id="adTel" dir="ltr" placeholder="رقم التواصل (77xxxxxxx)">
+        <button type="button" class="add" id="adSaveBtn" style="justify-self:start">نشر الإعلان</button>
+      </div>
+      ${S.ads.map(a=>`<div class="adm-row"><span><b>${esc(a.title)}</b><br><span class="where">${esc(a.text)}</span></span><button type="button" class="del" data-del-ad="${esc(a.id)}" style="color:var(--danger)">حذف</button></div>`).join("")}`;
+    $("#adSaveBtn").onclick=()=>{
+      if(!hasPerm("ads")){toast("ليست لديك صلاحية إدارة الإعلانات.");return;}
+      const title=$("#adTitle").value.trim(),text=$("#adText").value.trim(),phone=$("#adTel").value.trim();
+      if(!title){toast("اكتب عنوان الإعلان");return;}
+      S.ads.unshift({id:"ad_"+Date.now(),title,text,phone});
+      logAction("نشر إعلان: "+title);saveState();renderAds();renderAdminPanel();toast("تم نشر الإعلان");
+    };
+    body.querySelectorAll("[data-del-ad]").forEach(b=>b.onclick=()=>{
+      if(!hasPerm("ads"))return;
+      S.ads=S.ads.filter(a=>a.id!==b.dataset.delAd);saveState();renderAds();renderAdminPanel();
+    });
+  }else if(admTab==="fx"){
+    body.innerHTML=`
+      <div class="two">
+        <label>دولار صنعاء (شراء)<input id="fx_su_b" type="number" value="${S.fx.s.usdB}"></label>
+        <label>دولار صنعاء (بيع)<input id="fx_su_s" type="number" value="${S.fx.s.usdS}"></label>
+        <label>سعودي صنعاء (شراء)<input id="fx_ss_b" type="number" value="${S.fx.s.sarB}"></label>
+        <label>سعودي صنعاء (بيع)<input id="fx_ss_s" type="number" value="${S.fx.s.sarS}"></label>
+        <label>دولار عدن (شراء)<input id="fx_au_b" type="number" value="${S.fx.a.usdB}"></label>
+        <label>دولار عدن (بيع)<input id="fx_au_s" type="number" value="${S.fx.a.usdS}"></label>
+        <label>سعودي عدن (شراء)<input id="fx_as_b" type="number" value="${S.fx.a.sarB}"></label>
+        <label>سعودي عدن (بيع)<input id="fx_as_s" type="number" value="${S.fx.a.sarS}"></label>
+      </div>
+      <label style="margin-top:8px">رقم واتساب الإدارة مع مفتاح الدولة<input id="admAdminWa" dir="ltr" inputmode="tel" value="${esc(S.adminWhatsApp)}"></label>
+      <label style="margin-top:8px">أرقام الطوارئ والخدمات<textarea id="admEm" rows="3">${esc(S.emerg)}</textarea></label>
+      <button type="button" class="add" id="fxSaveBtn" style="margin-top:8px">حفظ الأسعار والأرقام</button>`;
+    $("#fxSaveBtn").onclick=()=>{
+      if(!hasPerm("fx")){toast("ليست لديك صلاحية تعديل أسعار الصرف.");return;}
+      S.fx.s.usdB=+$("#fx_su_b").value;S.fx.s.usdS=+$("#fx_su_s").value;
+      S.fx.s.sarB=+$("#fx_ss_b").value;S.fx.s.sarS=+$("#fx_ss_s").value;
+      S.fx.a.usdB=+$("#fx_au_b").value;S.fx.a.usdS=+$("#fx_au_s").value;
+      S.fx.a.sarB=+$("#fx_as_b").value;S.fx.a.sarS=+$("#fx_as_s").value;
+      S.fx.date=new Date().toLocaleDateString("ar");
+      S.emerg=$("#admEm").value;
+      const adminWa=digits($("#admAdminWa").value);
+      if(adminWa.length<10||adminWa.length>15){toast("أدخل رقم واتساب الإدارة بمفتاح الدولة بشكل صحيح.");return;}
+      S.adminWhatsApp=adminWa;
+      logAction("تحديث أسعار الصرف وأرقام الطوارئ وواتساب الإدارة");
+      saveState();renderFx();renderEmerg();toast("تم حفظ الأسعار والأرقام");
+    };
+  }else if(admTab==="logs"){
+    const ticketHtml=S.tickets.filter(t=>t.status!=="closed").map(t=>`<div class="ticket-row"><div class="top"><b>${esc(t.type)} · ${esc(t.name||"زائر")}</b><span class="tag">${new Date(t.at).toLocaleDateString("ar")}</span></div><div class="where">${esc(t.phone||"بدون رقم")}</div><p>${esc(t.text)}</p><div class="fbtn">${t.phone?`<a class="wa" target="_blank" rel="noopener noreferrer" href="${waLink(t.phone)}">رد واتساب</a>`:""}<button type="button" class="ghost" data-ticket-close="${esc(t.id)}">إغلاق البلاغ</button></div></div>`).join("");
+    const logHtml=S.logs.slice(0,25).map(l=>`<div class="adm-row"><span><b>${esc(l.act)}</b><br><span class="where">بواسطة: ${esc(l.who)}</span></span><span class="where">${new Date(l.at).toLocaleTimeString("ar")}</span></div>`).join("");
+    body.innerHTML=`<h3 style="font-size:15px">صندوق الشكاوى والاقتراحات (${S.tickets.filter(t=>t.status!=="closed").length})</h3>${ticketHtml||`<div class="empty">لا توجد رسائل مفتوحة.</div>`}<h3 style="font-size:15px;margin-top:14px">سجل النشاطات</h3>${logHtml||`<div class="empty">لا يوجد نشاط مسجل.</div>`}`;
+    body.querySelectorAll("[data-ticket-close]").forEach(b=>b.onclick=()=>{const t=S.tickets.find(x=>x.id===b.dataset.ticketClose);if(!t)return;t.status="closed";logAction("إغلاق رسالة دعم: "+t.type);saveState();renderAdminPanel();});
+  }else if(admTab==="blocks"){
+    const activeBlocks=S.blocks.filter(b=>b.active);
+    body.innerHTML=`
+      <p class="warn">الحظر هنا محلي على هذا الجهاز فقط. لن يصل إلى أجهزة أخرى أو إلى نسخة صديقك إلا بعد ربط قاعدة بيانات وخادم مشترك.</p>
+      <div class="two">
+        <label>رقم الحساب أو صاحب المتجر أو الإعلان<input id="blockPhoneInput" dir="ltr" inputmode="tel" placeholder="9677xxxxxxx"></label>
+        <label>سبب الحظر<input id="blockReasonInput" maxlength="240" placeholder="مثلاً: احتيال أو انتحال أو مخالفة متكررة"></label>
+      </div>
+      <button type="button" class="danger-btn" id="blockPhoneSubmit">حظر الرقم وإخفاء إدراجاته</button>
+      <h3 style="font-size:15px;margin-top:10px">الأرقام المحظورة (${activeBlocks.length})</h3>
+      <div id="blockRows" style="display:grid;gap:8px">${activeBlocks.map(b=>`<div class="block-entry"><div><b>${esc(b.phone)}</b><span class="where">${esc(b.reason)} · ${new Date(b.at).toLocaleDateString("ar")}</span></div><button type="button" class="ghost" data-unblock="${esc(b.id)}">رفع الحظر</button></div>`).join("")||`<div class="empty">لا توجد أرقام محظورة على هذا الجهاز.</div>`}</div>
+      <h3 style="font-size:15px;margin-top:12px">إدراجات أوقفتها الإدارة (${S.items.filter(i=>i.hidden).length})</h3>
+      <div style="display:grid;gap:6px">${S.items.filter(i=>i.hidden).map(i=>`<div class="block-entry"><div><b>${esc(i.name)}</b><span class="where">${esc(i.cat)} · ${esc(i.area)}</span></div><button type="button" class="ghost" data-unhide="${esc(i.id)}">إعادة إظهار</button></div>`).join("")||`<div class="empty">لا توجد إدراجات موقوفة بشكل فردي.</div>`}</div>`;
+    $("#blockPhoneSubmit").onclick=()=>{
+      blockPhoneLocal($("#blockPhoneInput").value,$("#blockReasonInput").value.trim()||"مخالفة شروط الدليل");
+      renderAdminPanel();render();buildScopeSelector();
+    };
+    body.querySelectorAll("[data-unblock]").forEach(b=>b.onclick=()=>{unblockPhoneLocal(b.dataset.unblock);renderAdminPanel();render();buildScopeSelector();});
+    body.querySelectorAll("[data-unhide]").forEach(b=>b.onclick=()=>{const it=S.items.find(x=>x.id===b.dataset.unhide);if(it){it.hidden=false;it.hiddenReason="";logAction("إعادة إظهار إدراج: "+it.name);saveState();renderAdminPanel();render();buildScopeSelector();}});
+  }else if(admTab==="backup"){
+    body.innerHTML=`
+      <div class="fbtn">
+        <button type="button" class="add" id="expJson">تنزيل نسخة احتياطية (JSON)</button>
+        <label class="ghost" style="display:inline-flex;align-items:center;padding:0 14px;min-height:42px;border-radius:12px;cursor:pointer">
+          استيراد نسخة (JSON)<input type="file" id="impJson" accept=".json" hidden>
+        </label>
+      </div>`;
+    $("#expJson").onclick=()=>{
+      const blob=new Blob([JSON.stringify(portableState(),null,2)],{type:"application/json"});
+      const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="dalilna-backup.json";a.click();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+    };
+    $("#impJson").onchange=e=>{
+      const f=e.target.files[0];if(!f)return;
+      if(f.size>12*1024*1024){toast("حجم النسخة أكبر من 12 ميجابايت.");e.target.value="";return;}
+      const r=new FileReader();r.onload=()=>{
+        try{
+          const d=JSON.parse(r.result);
+          if(!d||typeof d!=="object"||!Array.isArray(d.items))throw new Error("invalid-backup");
+          if(!confirm("سيتم استبدال بيانات هذا الجهاز بالنسخة المحددة. هل تريد المتابعة؟"))return;
+          S=normalizeState(d);saveState();buildScopeSelector();applyTheme();applyLang();renderEmerg();render();toast("تمت استعادة النسخة بعد فحص محتوياتها");
+        }catch(err){toast("ملف النسخة غير صالح أو تالف.");}
+        finally{e.target.value="";}
+      };r.onerror=()=>toast("تعذّرت قراءة ملف النسخة.");r.readAsText(f);
+    };
+  }
+}
+
+/* Main Render Loop */
+function render(){
+  renderRegionInfo();
+  renderCategories();
+  renderFilterChips();
+  renderRecent();
+  const q=$("#q").value.trim().toLowerCase();
+  const match=i=>{
+    if(!q)return true;
+    const hay=[i.name,i.desc,i.area,i.village,i.dist,i.gov,i.phone,i.country,CN[i.cat],CN_EN[i.cat],CAT_SYN[i.cat]||""].join(" ").toLowerCase();
+    return q.split(/\s+/).every(w=>hay.includes(w));
+  };
+
+  if(view==="home"){
+    const base=S.items.filter(i=>i.cat!=="souq"&&i.cat!=="jobs");
+    const res=applyFilters(base.filter(match));
+    $("#latestT").innerHTML=`${q?T("searchRes"):T("latestTitle")} <span>${res.length}</span>`;
+    $("#list").innerHTML=res.slice(0,homeLim).map(cardHTML).join("")||`<div class="empty">${T("emptyList")}</div>`;
+    $("#more").hidden=res.length<=homeLim;
+  }else if(view==="cat"){
+    const inCat=S.items.filter(i=>i.cat===curCat);
+    const areas=[...new Set(inCat.map(i=>i.area).filter(Boolean))];
+    const curA=$("#area").value;
+    if(curA&&!areas.includes(curA))$("#area").value="";
+    const ar=$("#area").value;
+    $("#areaLbl").textContent=ar||(curLang==="en"?`All Areas (${areas.length})`:`كل المناطق (${areas.length})`);
+    const shown=applyFilters(inCat.filter(i=>(!ar||i.area===ar)&&match(i)));
+    $("#count").textContent=`${shown.length} نتيجة`;
+    $("#clist").innerHTML=shown.map(cardHTML).join("")||`<div class="empty">لا توجد إدراجات في هذا القسم بعد.</div>`;
+  }else if(view==="jobs"){
+    const jobs=applyFilters(S.items.filter(i=>i.cat==="jobs"&&match(i)));
+    $("#jobs").innerHTML=jobs.map(cardHTML).join("")||`<div class="empty">لا توجد وظائف متاحة حالياً.</div>`;
+  }else if(view==="souq"){
+    const sq=applyFilters(S.items.filter(i=>i.cat==="souq"&&match(i)));
+    $("#sqList").innerHTML=sq.map(cardHTML).join("")||`<div class="empty">لا توجد عروض في السوق حالياً.</div>`;
+  }
+}
+
+$("#q").addEventListener("input",()=>{if(view==="fb")go("home");else render();});
+
+$("#more").addEventListener("click",()=>{homeLim+=24;render();});
+
+/* PWA / offline shell registration. Service workers require HTTPS or localhost. */
+if("serviceWorker" in navigator&&location.protocol!=="file:"){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(()=>{}));
+}
+
+// Handle PWA shortcut deep links without changing the single-page navigation model.
+if(location.hash==="#souq")window.setTimeout(()=>go("souq"),0);
+else if(location.hash==="#jobs")window.setTimeout(()=>go("jobs"),0);
+
+/* Initial Boot */
+applyLang();
+if($("#aiCloudConsent")){
+  $("#aiCloudConsent").checked=S.aiCloudConsent===true;
+  $("#aiModeHint").textContent=S.aiCloudConsent?"المساعد السحابي مفعّل بموافقتك. قد يُرسل سؤالك وبيانات الإدراجات العامة ذات الصلة، ومنها أرقام التواصل، إلى خادم التطبيق ومزود الذكاء الاصطناعي. يمكنك إيقافه في أي وقت.":"المساعد المحلي يبحث في بيانات هذا الجهاز دون إنترنت. المساعد السحابي متوقف ولن تُرسل بيانات الدليل لخدمة خارجية.";
+}
+renderEmerg();
+const sharedItemId=new URLSearchParams(location.search).get("item");
+if(sharedItemId){const sharedItem=S.items.find(item=>item.id===sharedItemId);if(sharedItem)openDetail(sharedItem);}
+
+
+/* First-run onboarding, 60-day offer and support inbox */
+function refreshPromoCountdown(){
+  const previousAdCount=S.ads.length;
+  S.ads=S.ads.filter(a=>!a.expiresAt||a.expiresAt>Date.now());
+  if(S.ads.length!==previousAdCount){saveState();renderAds();}
+  const duration=60*86400000;
+  const remain=Math.max(0,duration-(Date.now()-S.installDate));
+  const days=Math.ceil(remain/86400000);
+  const label=curLang==="en"?`${days} free days left`:`متبقي ${days} يوماً`;
+  $("#promoDaysLeft").textContent=label;
+  $("#promoReleaseTitle").textContent=curLang==="en"?"Welcome offer: 60 days of free advertising":"عرض البداية: 60 يوماً للإعلان المجاني";
+  $("#promoReleaseText").textContent=curLang==="en"?"The period starts on this device's first app launch. Ads require admin approval before publication.":"تبدأ المدة من أول تشغيل للتطبيق على هذا الجهاز. الإعلان يحتاج موافقة الإدارة قبل ظهوره.";
+  $("#openPromoRelease").disabled=days===0;
+  $("#openPromoRelease").textContent=days===0?(curLang==="en"?"Offer ended":"انتهى العرض"):(curLang==="en"?"Submit free ad":"اطلب إعلانك المجاني");
+}
+$("#openPromoRelease").addEventListener("click",()=>{
+  if(Date.now()-S.installDate>=60*86400000){toast("انتهت مدة العرض المجاني على هذا الجهاز.");return;}
+  if(S.session.merchant?.phone)$("#promoReleasePhone").value=S.session.merchant.phone;
+  else if(S.merchantProfile?.phone)$("#promoReleasePhone").value=S.merchantProfile.phone;
+  showDlg("#promoReleaseDlg");
+});
+$("#promoReleaseClose").addEventListener("click",()=>closeDlg("#promoReleaseDlg"));
+$("#promoReleaseForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const title=$("#promoReleaseName").value.trim(),desc=$("#promoReleaseDesc").value.trim(),phone=$("#promoReleasePhone").value.trim(),kind=$("#promoReleaseKind").value;
+  if(!title||!desc||digits(phone).length<9){$("#promoReleaseErr").textContent="أكمل العنوان والتفاصيل وأدخل رقم تواصل صحيحاً.";return;}
+  if(Date.now()-S.installDate>=60*86400000){$("#promoReleaseErr").textContent="انتهت مدة العرض على هذا الجهاز.";return;}
+  const id="adreq_"+Date.now().toString(36);
+  const daysLeft=Math.max(0,Math.ceil((60*86400000-(Date.now()-S.installDate))/86400000));
+  S.pending.unshift({id,name:title,cat:"other",area:"",phone,desc,adText:`${kind}: ${desc}`,requestType:"ad",reason:`طلب إعلان مجاني · ${daysLeft} يوم متبقٍ`,adExpiresAt:Math.min(Date.now()+daysLeft*86400000,S.installDate+60*86400000),submittedAt:Date.now(),aiChecked:true});
+  logAction("استلام طلب إعلان مجاني: "+title);saveState();renderAdminPanel();closeDlg("#promoReleaseDlg");$("#promoReleaseForm").reset();$("#promoReleaseErr").textContent="";toast("تم إرسال الإعلان إلى صندوق مراجعة المشرف.");
+});
+$("#promoReleaseWa").addEventListener("click",()=>{
+  const title=$("#promoReleaseName").value.trim(),desc=$("#promoReleaseDesc").value.trim(),phone=$("#promoReleasePhone").value.trim(),kind=$("#promoReleaseKind").value;
+  if(!title||!desc||digits(phone).length<9){$("#promoReleaseErr").textContent="أكمل البيانات أولاً قبل فتح واتساب.";return;}
+  const msg=`طلب إعلان مجاني لمدة 60 يوماً في دليلنا\nالنوع: ${kind}\nالعنوان: ${title}\nالتفاصيل: ${desc}\nالتواصل: ${phone}`;
+  window.open(`${waLink(S.adminWhatsApp)}?text=${encodeURIComponent(msg)}`,"_blank","noopener");
+});
+$("#supportClose").addEventListener("click",()=>closeDlg("#supportDlg"));
+$("#openSupportTicket").addEventListener("click",()=>{
+  const p=S.session.merchant||S.merchantProfile||{};
+  $("#ticketName").value=p.name||"";$("#ticketPhone").value=p.phone||"";
+  showDlg("#supportDlg");
+});
+$("#ticketForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const type=$("#ticketType").value,name=$("#ticketName").value.trim()||"زائر",phone=$("#ticketPhone").value.trim(),textValue=$("#ticketText").value.trim();
+  if(textValue.length<8){$("#ticketErr").textContent="اكتب تفاصيل أكثر حتى تتمكن الإدارة من فهم طلبك.";return;}
+  S.tickets.unshift({id:"ticket_"+Date.now().toString(36),type,name,phone,text:textValue,at:Date.now(),status:"open"});
+  S.tickets=S.tickets.slice(0,500);logAction("رسالة دعم جديدة: "+type);saveState();
+  $("#ticketForm").reset();$("#ticketErr").textContent="";closeDlg("#supportDlg");toast("تم إرسال الرسالة إلى صندوق المشرف.");
+});
+
+// The first-run screen is a role chooser, not a login wall.
+if(!S.onboarded){
+  window.setTimeout(()=>showDlg("#accountDlg"),350);
+}
+refreshPromoCountdown();
+window.setInterval(refreshPromoCountdown,60000);
+renderMerchantTools();
+
+})();
+</script>
+</body>
+</html>

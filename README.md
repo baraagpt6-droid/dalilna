@@ -1,1 +1,32 @@
-# dalilna
+# دليلنا | Dalilna
+
+دليل محلي للخدمات والمحلات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها، وبيانات المديريات والمحافظات المرجعية.
+
+## الإصدار
+
+- Version: 1.2.0
+- Web app: PWA (installable from supported browsers)
+- Android: WebView application source included in `android/`
+- Offline: cached application shell and local device storage
+
+## تجربة التطبيق
+
+افتح `index.html` عبر HTTPS أو عبر خادم محلي. تثبيت PWA يتطلب HTTPS (أو localhost للتطوير). GitHub Pages workflow publishes only the site files.
+
+## بناء Android APK
+
+يعمل workflow `Build Dalilna Android APK` عند push أو يدوياً من Actions. ينشئ Debug-signed APK، ويحفظه كـ Artifact وينشره كـ GitHub pre-release. هذا APK للاختبار وليس إصدار متجر Google Play.
+
+## النشر
+
+فعّل GitHub Pages من Settings → Pages → Build and deployment → Source: GitHub Actions، ثم شغّل `Deploy Dalilna PWA` من Actions.
+
+## مساعد الذكاء الاصطناعي السحابي
+
+المساعد المحلي يعمل دون مفتاح. لتشغيل النموذج السحابي، انشر `api/assistant.js` على Vercel وأضف `OPENAI_API_KEY` كمتغير بيئة سري، مع عدم وضع المفتاح داخل ملفات الواجهة أو GitHub.
+
+## الأمان وحدود النسخة
+
+الحسابات والأدوار والتخزين المحلي في هذه النسخة تجريبية ومحلية. لا تستخدم بوابة المشرف أو الحظر المحلي كحماية إنتاجية. النشر التجاري متعدد المستخدمين يحتاج خادماً مركزياً ومصادقة وصلاحيات وقاعدة بيانات ومراجعة خادمية.
+
+راجع `SECURITY_LIMITATIONS.txt` و`AI_SETUP.txt` قبل النشر العام.
