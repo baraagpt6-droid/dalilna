@@ -4,7 +4,7 @@
 
 ## الإصدار
 
-- Version: 1.2.0
+- Version: 1.2.1
 - Web app: PWA (installable from supported browsers)
 - Android: WebView application source included in `android/`
 - Offline: cached application shell and local device storage
@@ -23,7 +23,7 @@
 
 ## مساعد الذكاء الاصطناعي السحابي
 
-المساعد المحلي يعمل دون مفتاح. لتشغيل النموذج السحابي، انشر `api/assistant.js` على Vercel وأضف `OPENAI_API_KEY` كمتغير بيئة سري، مع عدم وضع المفتاح داخل ملفات الواجهة أو GitHub.
+المساعد المحلي يعمل دون مفتاح. لتشغيل المساعد السحابي، أضف `GEMINI_API_KEY` كمتغير بيئة من نوع Sensitive في Vercel (Production). النموذج الافتراضي `gemini-3.8-flash` عبر Gemini Interactions API. لا تضع المفتاح داخل ملفات الواجهة أو GitHub. الخطة المجانية لها حصص استخدام محددة وقد تستخدم Google المحتوى لتحسين منتجاتها؛ لا ترسل بيانات شخصية أو سرية. الخادم يرسل `store:false` لتجنب تخزين سجل Interactions. راجع `AI_SETUP.txt`.
 
 ## الأمان وحدود النسخة
 
