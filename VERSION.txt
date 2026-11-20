@@ -1,4 +1,4 @@
-Dalilna 1.2.8
+Dalilna 1.2.9
 PWA + Android WebView
 Gemini cloud assistant (optional, server-side)
 Assistant replies disclose source: Gemini, fixed administrative reference, local, or cloud fallback

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.2.8">
+<meta name="app-version" content="1.2.9">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2659,7 +2659,6 @@ $("#adminLoginForm").addEventListener("submit",async e=>{
   logAction("تسجيل دخول المشرف");
   saveState();syncRoleUI();render();closeDlg("#accountDlg");
   toast("أهلاً بك في لوحة تحكم المشرف");
-  $("#roleAdminBtn").hidden=true;
   $("#adminAccessHint").hidden=true;
 });
 
@@ -3614,7 +3613,7 @@ $("#admQuickAdd").addEventListener("click",()=>{if(!hasPerm("add")){toast("لي�
 $("#admLogout").addEventListener("click",()=>{
   logAction("تسجيل خروج المشرف");
   S.session={role:"client",adminEmail:"",merchant:null};
-  $("#roleAdminBtn").hidden=true;$("#adminAccessHint").hidden=true;
+  $("#adminAccessHint").hidden=true;
   saveState();syncRoleUI();render();toast("تم تسجيل الخروج");
 });
 

@@ -3,10 +3,28 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { createHash } = require('node:crypto');
+const vm = require('node:vm');
 const fs = require('node:fs');
 
 const html = fs.readFileSync('index.html', 'utf8');
 const accountDialog = html.match(/<dialog id="accountDlg">([\s\S]*?)<\/dialog>/)?.[1];
+
+function captureHandler(selector, eventName) {
+  const escaped = selector.replace(/[.#]/g, '\\$&');
+  const pattern = new RegExp('\\$\\("' + escaped + '"\\)\\.addEventListener\\("' + eventName + '",(?:async )?[\\w]*=>\\{([\\s\\S]*?)\\n\\}\\);');
+  return html.match(pattern)?.[1];
+}
+
+function makeElements() {
+  const elements = new Map();
+  const $ = selector => {
+    if (!elements.has(selector)) {
+      elements.set(selector, { value: '', textContent: '', hidden: false, type: 'password' });
+    }
+    return elements.get(selector);
+  };
+  return { $, elements };
+}
 
 test('admin login option is visible in the account menu', () => {
   assert.ok(accountDialog, 'account dialog exists');
@@ -16,33 +34,74 @@ test('admin login option is visible in the account menu', () => {
   assert.match(accountDialog, /دخول المشرف/);
 });
 
-test('logo long-press admin shortcut has been removed', () => {
+test('logo long-press login mechanism and stale click state are removed', () => {
   assert.doesNotMatch(html, /adminLongPressTimer|adminLongPressFired|startAdminLongPress|cancelAdminLongPress/);
+  assert.doesNotMatch(html, /#roleAdminBtn"\)\.hidden=true/);
+  const logoClick = html.match(/\$\("#logoHome"\)\.addEventListener\("click",e=>\{([\s\S]*?)\n\}\);/)?.[1] || '';
+  assert.doesNotMatch(logoClick, /adminLongPress/);
 });
 
-test('account menu opens and admin option reveals the login form', () => {
-  assert.match(html, /#accountBtn"\)\.addEventListener\("click",[\s\S]*?showDlg\("#accountDlg"\)/);
-  assert.match(html, /#roleAdminBtn"\)\.addEventListener\("click",\(\)=>\{[\s\S]*?#adminLoginForm"\)\.hidden=false/);
-  assert.match(html, /#adminLoginForm"\)\.addEventListener\("submit",async e=>\{/);
+test('account icon opens the dialog and admin option reveals the login form', () => {
+  const { $, elements } = makeElements();
+  const shown = [];
+  const accountBody = captureHandler('#accountBtn', 'click');
+  assert.ok(accountBody, 'account button click handler exists');
+  const openAccount = vm.runInNewContext('(()=>{' + accountBody + '})', {
+    $, S: { session: { role: 'client', merchant: null }, merchantProfile: {} },
+    showDlg: selector => shown.push(selector),
+  });
+  openAccount();
+  assert.deepEqual(shown, ['#accountDlg']);
+
+  const adminBody = captureHandler('#roleAdminBtn', 'click');
+  assert.ok(adminBody, 'admin button click handler exists');
+  const revealAdmin = vm.runInNewContext('(()=>{' + adminBody + '})', { $ });
+  revealAdmin();
+  assert.equal($('#adminLoginForm').hidden, false);
+  assert.equal($('#adminAccessHint').hidden, false);
+  assert.equal($('#merchantBox').hidden, true);
 });
 
-test('admin login handler checks email and SHA-256 password hash', () => {
-  assert.match(html, /const adm=S\.admins\.find\(a=>a\.email\.toLowerCase\(\)===email&&a\.hash===h\)/);
-  assert.match(html, /h=await sha256\(pass\)/);
-});
-
-test('SHA-256 admin credential verifier accepts valid test credentials and rejects invalid ones', async () => {
+test('actual admin login handler accepts valid test credentials and rejects an invalid password', async () => {
+  const loginBody = captureHandler('#adminLoginForm', 'submit');
+  assert.ok(loginBody, 'admin login submit handler exists');
   const digest = value => createHash('sha256').update(value, 'utf8').digest('hex');
-  const testAdmin = {
-    email: 'admin-test@dalilna.invalid',
-    hash: digest('Dalilna-Test-Only-Password!'),
-  };
-  const findAdmin = (email, password) => [testAdmin].find(
-    account => account.email.toLowerCase() === email.trim().toLowerCase()
-      && account.hash === digest(password),
-  );
+  const email = 'admin-test@dalilna.invalid';
+  const password = 'Dalilna-Test-Only-Password!';
+  const testAdmin = { email, name: 'Test Admin', hash: digest(password), perms: [] };
 
-  assert.equal(findAdmin('ADMIN-TEST@DALILNA.INVALID', 'Dalilna-Test-Only-Password!'), testAdmin);
-  assert.equal(findAdmin('admin-test@dalilna.invalid', 'wrong-password'), undefined);
-  assert.equal(findAdmin('another@dalilna.invalid', 'Dalilna-Test-Only-Password!'), undefined);
+  const runLogin = async suppliedPassword => {
+    const { $, elements } = makeElements();
+    $('#admEmail').value = email;
+    $('#admPass').value = suppliedPassword;
+    const state = {
+      admins: [testAdmin],
+      session: { role: 'client', adminEmail: '', merchant: null },
+      onboarded: false,
+    };
+    const notices = [];
+    const handler = vm.runInNewContext('(async e=>{' + loginBody + '})', {
+      $, S: state,
+      sha256: async value => digest(value),
+      logAction: () => {},
+      saveState: () => {},
+      syncRoleUI: () => {},
+      render: () => {},
+      closeDlg: () => {},
+      toast: message => notices.push(message),
+    });
+    await handler({ preventDefault() {} });
+    return { state, elements, notices };
+  };
+
+  const success = await runLogin(password);
+  assert.equal(success.state.session.role, 'admin');
+  assert.equal(success.state.session.adminEmail, email);
+  assert.equal(success.state.onboarded, true);
+  assert.equal(success.elements.get('#roleAdminBtn').hidden, false, 'admin option remains available after login');
+  assert.equal(success.notices.at(-1), 'أهلاً بك في لوحة تحكم المشرف');
+
+  const failure = await runLogin('wrong-password');
+  assert.equal(failure.state.session.role, 'client');
+  assert.match(failure.elements.get('#admLoginErr').textContent, /غير صحيحة/);
 });
