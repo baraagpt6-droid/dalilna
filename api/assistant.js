@@ -97,7 +97,7 @@ async function handler(req, res) {
 
   // Administrative facts with a fixed local reference must not be guessed by the model.
   if (/حبيش/.test(question) && /(عزل|عزلات|عزلة|عزله)/.test(question)) {
-    const names = HUBAISH_SUBDISTRICTS.map((name, index) => (index + 1) + ". " + name).join("\\n");
+    const names = HUBAISH_SUBDISTRICTS.map((name, index) => (index + 1) + ". " + name).join("\n");
     const answer = [
       "مديرية حبيش تتبع محافظة إب، وتضم 22 عزلة في المرجع الإداري.",
       "الأسماء المرجعية في دليلنا:",
@@ -105,7 +105,7 @@ async function handler(req, res) {
       "",
       "للتفريق الإداري: محافظة إب تضم 20 مديرية إجمالاً، وحبيش واحدة منها؛ أما 22 فهي عدد عزل مديرية حبيش وليست عدد مديريات المحافظة.",
       "مرجع عدد المديريات والعزل: المركز الوطني للمعلومات اليمني. وترد أسماء العزل في المراجع المحلية المنشورة، وقد تختلف كتابة بعض الأسماء محلياً."
-    ].join("\\n");
+    ].join("\n");
     return send(res, 200, { answer, mode: "reference", source: "Dalilna Yemen administrative reference" });
   }
 
