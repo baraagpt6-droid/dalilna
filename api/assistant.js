@@ -5,6 +5,12 @@ const RATE_LIMIT = 12;
 const MAX_QUESTION = 1200;
 const MAX_CONTEXT = 9000;
 const buckets = new Map();
+const HUBAISH_SUBDISTRICTS = [
+  "بني معين", "السلق", "بني شبيب", "بني الضاحيتين", "التفادي",
+  "جبل خضراء", "جبل عنقه", "الجعافرة", "ربع ظلمة", "الزراحي",
+  "شباع", "صائر", "الصدر", "العارضة", "الفراعي", "جحزة",
+  "كومان", "المشيرق", "الناحية", "نقيل العقاب", "وادي العقاب", "الوطنة"
+];
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-oavk.vercel.app",
   "https://baraagpt6-droid.github.io",
@@ -88,6 +94,21 @@ async function handler(req, res) {
 
   const question = String(body.question || "").trim().slice(0, MAX_QUESTION);
   if (!question) return send(res, 400, { error: "question_required" });
+
+  // Administrative facts with a fixed local reference must not be guessed by the model.
+  if (/حبيش/.test(question) && /(عزل|عزلات|عزلة|عزله)/.test(question)) {
+    const names = HUBAISH_SUBDISTRICTS.map((name, index) => (index + 1) + ". " + name).join("\\n");
+    const answer = [
+      "مديرية حبيش تتبع محافظة إب، وتضم 22 عزلة في المرجع الإداري.",
+      "الأسماء المرجعية في دليلنا:",
+      names,
+      "",
+      "للتفريق الإداري: محافظة إب تضم 20 مديرية إجمالاً، وحبيش واحدة منها؛ أما 22 فهي عدد عزل مديرية حبيش وليست عدد مديريات المحافظة.",
+      "مرجع عدد المديريات والعزل: المركز الوطني للمعلومات اليمني. وترد أسماء العزل في المراجع المحلية المنشورة، وقد تختلف كتابة بعض الأسماء محلياً."
+    ].join("\\n");
+    return send(res, 200, { answer, mode: "reference", source: "Dalilna Yemen administrative reference" });
+  }
+
   const context = safeJson(body.context, MAX_CONTEXT);
 
   const systemInstruction = [
