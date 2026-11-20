@@ -1,4 +1,4 @@
-تفعيل المساعد الذكي في دليلنا — الإصدار 1.2.1
+تفعيل المساعد الذكي في دليلنا — الإصدار 1.2.2
 ==============================================
 
 المساعد المحلي
@@ -20,6 +20,7 @@
 إعداد النموذج
 - النموذج الافتراضي: gemini-3.8-flash
 - الواجهة: Gemini Interactions API عبر https://generativelanguage.googleapis.com/v1beta/interactions
+- نقطة Vercel تقبل CORS من نطاق Vercel الحالي وGitHub Pages وAndroid WebView فقط.
 - يمكن ضبط GEMINI_MODEL كمتغير بيئة لتغيير النموذج لاحقاً.
 - لا يحتاج التطبيق إلى OPENAI_API_KEY؛ الخادم الحالي يستخدم GEMINI_API_KEY.
 - مفتاح Gemini يبقى في Vercel فقط، ولا يوضع في index.html أو GitHub.
