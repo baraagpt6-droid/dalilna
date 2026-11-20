@@ -1,6 +1,6 @@
 const CACHE_PREFIX = "dalilna-pwa-";
 const CACHE_NAME = CACHE_PREFIX + "v1.2.0";
-const APP_SHELL = ["./", "./index.html", "./manifest.json", "./regions-yemen.js", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-512.png"];
+const APP_SHELL = ["./", "./index.html", "./manifest.json", "./regions-yemen.js", "./icons/icon.svg"];
 
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
