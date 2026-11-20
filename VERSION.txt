@@ -1,6 +1,6 @@
-Dalilna 1.2.5
+Dalilna 1.2.6
 PWA + Android WebView
 Gemini cloud assistant (optional, server-side)
-Administrative assistant distinguishes Ibb's 20 districts from Hubaish's 22 sub-districts.
-Hubaish reference answers are deterministic and include all names.
+Assistant replies disclose source: Gemini, fixed administrative reference, local, or cloud fallback
+Ibb has 20 districts; Hubaish has 22 sub-districts
 Offline local assistant remains available.
