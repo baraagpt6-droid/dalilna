@@ -3571,16 +3571,21 @@ function assistantApiUrl(){
   return "/api/assistant";
 }
 async function askAssistant(q){
-  // Administrative reference facts with fixed local data are returned deterministically,
-  // so a generative model cannot substitute governorates/districts for Hubaish sub-districts.
-  if(asksHubaishSubdistricts(q))return hubaishSubdistrictAnswer();
+  // Administrative reference facts with fixed local data are returned deterministically.
+  if(asksHubaishSubdistricts(q))return {answer:hubaishSubdistrictAnswer(),mode:"reference"};
   if(S.aiCloudConsent===true&&navigator.onLine){
     try{
       const response=await fetch(assistantApiUrl(),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:String(q).slice(0,1200),context:buildAssistantContext(q)})});
-      if(response.ok){const data=await response.json();if(data&&typeof data.answer==="string"&&data.answer.trim())return data.answer.trim();}
-    }catch(err){/* fall through to local assistant */}
+      if(response.ok){
+        const data=await response.json();
+        if(data&&typeof data.answer==="string"&&data.answer.trim()){
+          return {answer:data.answer.trim(),mode:data.mode==="gemini"?"gemini":"reference"};
+        }
+      }
+    }catch(err){/* show local fallback status below */}
+    return {answer:answerAI(q),mode:"local-fallback"};
   }
-  return answerAI(q);
+  return {answer:answerAI(q),mode:navigator.onLine?"local":"offline"};
 }
 function appendChatMessage(type,text){
   const el=document.createElement("div");el.className=type==="user"?"m u":"m a";el.textContent=String(text||"");$("#msgs").appendChild(el);$("#msgs").scrollTop=$("#msgs").scrollHeight;
@@ -3590,7 +3595,19 @@ $("#botf").addEventListener("submit",async e=>{
   e.preventDefault();const q=$("#botq").value.trim();if(!q)return;$("#botq").value="";
   appendChatMessage("user",q);
   const pending=document.createElement("div");pending.className="m a";pending.textContent="أبحث في بيانات الدليل…";$("#msgs").appendChild(pending);
-  try{pending.textContent=await askAssistant(q);}catch(err){pending.textContent=answerAI(q);}
+  try{
+    const result=await askAssistant(q);
+    pending.textContent=result.answer;
+    const source=document.createElement("small");
+    source.className="where";
+    source.style.display="block";
+    source.style.marginTop="7px";
+    source.textContent=result.mode==="gemini"?"المصدر: Gemini":result.mode==="reference"?"المصدر: مرجع دليلنا الإداري":result.mode==="local-fallback"?"المصدر: المساعد المحلي — تعذر اتصال Gemini":result.mode==="offline"?"المصدر: المساعد المحلي دون إنترنت":"المصدر: المساعد المحلي";
+    pending.appendChild(source);
+  }catch(err){
+    pending.textContent=answerAI(q);
+    const source=document.createElement("small");source.className="where";source.textContent="المصدر: المساعد المحلي";pending.appendChild(source);
+  }
   $("#msgs").scrollTop=$("#msgs").scrollHeight;
 });
 $("#sugg").addEventListener("click",e=>{
