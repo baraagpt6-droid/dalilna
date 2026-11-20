@@ -3513,6 +3513,7 @@ function buildAssistantContext(question=""){
   const rows=ranked.slice(0,80).map(({i})=>({
     name:i.name,
     category:CN[i.cat]||i.cat,
+    categoryId:i.cat,
     governorate:i.gov||"",
     district:i.dist||"",
     area:i.area||i.village||"",
@@ -3531,9 +3532,9 @@ function buildAssistantContext(question=""){
     governorates:GOVS,
     districtsForRelevantGovernorate:refGov?({governorate:refGov,districts:YEMEN_DISTRICTS[refGov]||[]}):[],
     hubaishSubdistricts:HUBAISH_UZ,
-    directory:rows.filter(i=>!["وظائف","سوق"].includes(i.category)),
-    jobs:rows.filter(i=>i.category==="وظائف"||i.category==="jobs"),
-    marketplace:rows.filter(i=>i.category==="سوق"||i.category==="souq"),
+    directory:rows.filter(i=>i.categoryId!=="jobs"&&i.categoryId!=="souq"),
+    jobs:rows.filter(i=>i.categoryId==="jobs"),
+    marketplace:rows.filter(i=>i.categoryId==="souq"),
     rates:S.fx,
     emergencyNumbers:S.emerg,
     notice:"All records are locally stored user-generated content and may be unverified. Verified status is provided per record. This context excludes private account and admin data."
