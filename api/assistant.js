@@ -5,20 +5,36 @@ const RATE_LIMIT = 12;
 const MAX_QUESTION = 1200;
 const MAX_CONTEXT = 9000;
 const buckets = new Map();
+const ALLOWED_ORIGINS = new Set([
+  "https://dalilna-oavk.vercel.app",
+  "https://baraagpt6-droid.github.io",
+  "https://appassets.androidplatform.net"
+]);
 
 function send(res, status, body) {
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("X-Content-Type-Options", "nosniff");
-  res.end(JSON.stringify(body));
+  res.end(body === null ? "" : JSON.stringify(body));
+}
+
+function applyCors(req, res) {
+  const origin = req.headers.origin;
+  if (!origin) return true; // server-to-server clients do not need CORS
+  if (!ALLOWED_ORIGINS.has(origin)) return false;
+  res.setHeader("Access-Control-Allow-Origin", origin);
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Max-Age", "600");
+  return true;
 }
 
 function extractText(data) {
   if (typeof data?.output_text === "string" && data.output_text.trim()) {
     return data.output_text.trim();
   }
-
   const parts = [];
   for (const step of Array.isArray(data?.steps) ? data.steps : []) {
     if (step?.type !== "model_output" || !Array.isArray(step.content)) continue;
@@ -38,23 +54,15 @@ function safeJson(value, maxLength) {
 }
 
 async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
-    return send(res, 405, { error: "method_not_allowed" });
+  if (!applyCors(req, res)) return send(res, 403, { error: "origin_not_allowed" });
+  if (req.method === "OPTIONS") {
+    res.statusCode = 204;
+    res.setHeader("Cache-Control", "no-store");
+    return res.end("");
   }
-
-  // Same-origin browser calls only. Requests without an Origin header remain
-  // possible for server-to-server health checks, but are still rate-limited.
-  const origin = req.headers.origin;
-  const host = req.headers["x-forwarded-host"] || req.headers.host;
-  if (origin && host) {
-    try {
-      if (new URL(origin).host !== String(host).split(",")[0].trim()) {
-        return send(res, 403, { error: "origin_not_allowed" });
-      }
-    } catch {
-      return send(res, 403, { error: "origin_not_allowed" });
-    }
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST, OPTIONS");
+    return send(res, 405, { error: "method_not_allowed" });
   }
 
   const key = process.env.GEMINI_API_KEY;
@@ -70,9 +78,7 @@ async function handler(req, res) {
   }
   bucket.count += 1;
   buckets.set(ip, bucket);
-  if (bucket.count > RATE_LIMIT) {
-    return send(res, 429, { error: "rate_limited" });
-  }
+  if (bucket.count > RATE_LIMIT) return send(res, 429, { error: "rate_limited" });
 
   let body = req.body;
   if (typeof body === "string") {
@@ -82,8 +88,6 @@ async function handler(req, res) {
 
   const question = String(body.question || "").trim().slice(0, MAX_QUESTION);
   if (!question) return send(res, 400, { error: "question_required" });
-
-  // Only public directory context is accepted. It is user-generated and may be unverified.
   const context = safeJson(body.context, MAX_CONTEXT);
 
   const systemInstruction = [
@@ -134,7 +138,11 @@ async function handler(req, res) {
 
     const answer = extractText(data);
     if (!answer) return send(res, 502, { error: "empty_ai_response" });
-    return send(res, 200, { answer, mode: "gemini", model: data.model || process.env.GEMINI_MODEL || "gemini-3.8-flash" });
+    return send(res, 200, {
+      answer,
+      mode: "gemini",
+      model: data.model || process.env.GEMINI_MODEL || "gemini-3.8-flash"
+    });
   } catch (error) {
     const isTimeout = error?.name === "TimeoutError" || error?.name === "AbortError";
     return send(res, 502, { error: isTimeout ? "provider_timeout" : "assistant_unavailable" });
