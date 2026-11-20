@@ -3501,22 +3501,56 @@ function answerAI(q){
   }
   return `أستطيع البحث في المحلات والخدمات والوظائف والسوق وأسعار الصرف وأرقام الطوارئ المسجلة.\nاكتب اسم الخدمة أو المنطقة.\nتنبيه: أجيب من البيانات المخزنة في هذا الجهاز؛ إذا لم توجد نتيجة فسأقول ذلك بدلاً من اختراع محل أو رقم.`;
 }
-function buildAssistantContext(){
-  const rows=publicItems().slice(0,80).map(i=>({name:i.name,category:CN[i.cat]||i.cat,governorate:i.gov,district:i.dist,area:i.area,phone:i.phone,description:i.desc,hours:i.hours,verified:!!i.verifiedAt,price:i.price}));
-  return {region:scope||"كل اليمن",listings:rows,rates:S.fx,emergencyNumbers:S.emerg,notice:"These are locally stored user-generated listings. Verification status is provided separately."};
+function buildAssistantContext(question=""){
+  const query=normalizeQuery(question);
+  const tokens=query.split(/\\s+/).filter(w=>w.length>1);
+  const all=publicItems();
+  const ranked=all.map(i=>{
+    const hay=normalizeQuery([i.name,i.desc,i.area,i.village,i.dist,i.gov,CN[i.cat]||i.cat,i.price].filter(Boolean).join(" "));
+    const score=tokens.reduce((sum,t)=>sum+(hay.includes(t)?2:0),0)+(scopeMatchesItem(i)?1:0);
+    return {i,score};
+  }).sort((a,b)=>b.score-a.score||(b.i.createdAt||0)-(a.i.createdAt||0));
+  const rows=ranked.slice(0,80).map(({i})=>({
+    name:i.name,
+    category:CN[i.cat]||i.cat,
+    governorate:i.gov||"",
+    district:i.dist||"",
+    area:i.area||i.village||"",
+    contact:i.phone||"",
+    description:i.desc||"",
+    hours:i.hours||"",
+    verified:!!i.verifiedAt,
+    price:i.price||"",
+    status:i.status||""
+  }));
+  const namedGov=GOVS.find(g=>query.includes(normalizeQuery(g)));
+  const scopedGov=scope.startsWith("gov:")?scope.slice(4):scope.startsWith("district:")?scope.slice(9).split("|")[0]:"";
+  const refGov=namedGov||scopedGov;
+  return {
+    selectedRegion:scope||"كل اليمن",
+    governorates:GOVS,
+    districtsForRelevantGovernorate:refGov?({governorate:refGov,districts:YEMEN_DISTRICTS[refGov]||[]}):[],
+    hubaishSubdistricts:HUBAISH_UZ,
+    directory:rows.filter(i=>!["وظائف","سوق"].includes(i.category)),
+    jobs:rows.filter(i=>i.category==="وظائف"||i.category==="jobs"),
+    marketplace:rows.filter(i=>i.category==="سوق"||i.category==="souq"),
+    rates:S.fx,
+    emergencyNumbers:S.emerg,
+    notice:"All records are locally stored user-generated content and may be unverified. Verified status is provided per record. This context excludes private account and admin data."
+  };
 }
 $("#aiCloudConsent").addEventListener("change",e=>{
   S.aiCloudConsent=e.target.checked===true;
   saveState();
   $("#aiModeHint").textContent=S.aiCloudConsent
-    ?"المساعد السحابي مفعّل بموافقتك. قد يُرسل سؤالك وبيانات الإدراجات العامة ذات الصلة، ومنها أرقام التواصل، إلى خادم التطبيق ومزود الذكاء الاصطناعي. يمكنك إيقافه في أي وقت."
+    ?"المساعد السحابي مفعّل بموافقتك. يُرسل سؤالك وبيانات الإدراجات العامة ذات الصلة، ومنها أرقام التواصل، إلى Google عبر خادم دليلنا. في الخطة المجانية قد تستخدم Google المحتوى لتحسين منتجاتها؛ لا ترسل بيانات خاصة أو حساسة. يمكنك إيقافه في أي وقت."
     :"المساعد المحلي يبحث في بيانات هذا الجهاز دون إنترنت. المساعد السحابي متوقف ولن تُرسل بيانات الدليل لخدمة خارجية.";
   toast(S.aiCloudConsent?"تم تفعيل المساعد السحابي بموافقتك.":"تم إيقاف المساعد السحابي.");
 });
 async function askAssistant(q){
   if(S.aiCloudConsent===true&&navigator.onLine&&location.protocol!=="file:"){
     try{
-      const response=await fetch("/api/assistant",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:String(q).slice(0,1200),context:buildAssistantContext()})});
+      const response=await fetch("/api/assistant",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:String(q).slice(0,1200),context:buildAssistantContext(q)})});
       if(response.ok){const data=await response.json();if(data&&typeof data.answer==="string"&&data.answer.trim())return data.answer.trim();}
     }catch(err){/* fall through to local assistant */}
   }
