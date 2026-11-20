@@ -11,7 +11,7 @@ const accountDialog = html.match(/<dialog id="accountDlg">([\s\S]*?)<\/dialog>/)
 
 function captureHandler(selector, eventName) {
   const escaped = selector.replace(/[.#]/g, '\\$&');
-  const pattern = new RegExp('\\$\\("' + escaped + '"\\)\\.addEventListener\\("' + eventName + '",(?:async )?[\\w]*=>\\{([\\s\\S]*?)\\n\\}\\);');
+  const pattern = new RegExp('\\$\\("' + escaped + '"\\)\\.addEventListener\\("' + eventName + '",(?:async )?(?:\\([^)]*\\)|[\\w]*)=>\\{([\\s\\S]*?)\\n\\}\\);');
   return html.match(pattern)?.[1];
 }
 
