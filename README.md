@@ -4,7 +4,7 @@
 
 ## الإصدار
 
-- Version: 1.2.6
+- Version: 1.2.7
 - Web app: PWA (installable from supported browsers)
 - Android: WebView application source included in `android/`
 - Offline: cached application shell and local device storage
@@ -12,6 +12,10 @@
 ## تجربة التطبيق
 
 افتح `index.html` عبر HTTPS أو عبر خادم محلي. تثبيت PWA يتطلب HTTPS (أو localhost للتطوير). GitHub Pages workflow publishes only the site files.
+
+## دخول المشرف
+
+افتح قائمة الحساب من أيقونة الشخص، ثم اختر «دخول المشرف». لم يعد الدخول يعتمد على الضغط المطوّل على الشعار.
 
 ## بناء Android APK
 
