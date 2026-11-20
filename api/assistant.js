@@ -56,7 +56,7 @@ async function handler(req, res) {
       method: 'POST',
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || 'gpt-5.5',
+        model: process.env.OPENAI_MODEL || 'gpt-6.2-astra',
         instructions,
         input: `بيانات الدليل المحلية (قد تكون من إدخالات المستخدمين وغير موثقة):\n${context}\n\nسؤال المستخدم:\n${question}`,
         max_output_tokens: 650,
