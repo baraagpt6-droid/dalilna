@@ -207,7 +207,9 @@ const GEOAPIFY_CATEGORY_MAP = {
   grocery: ["commercial.supermarket", "commercial.convenience", "commercial.marketplace"],
   food: ["catering.restaurant", "catering.fast_food", "catering.food_court"],
   cafe: ["catering.cafe"],
-  pharmacy: ["healthcare.pharmacy"],
+  telecom: ["commercial.elektronics"],
+  elec: ["commercial.elektronics"],
+  pharmacy: ["healthcare.pharmacy", "commercial.health_and_beauty.pharmacy"],
   health: ["healthcare.hospital", "healthcare.clinic_or_praxis", "healthcare.dentist", "healthcare.pharmacy", "commercial.health_and_beauty.pharmacy"],
   edu: ["education.school", "education.college", "education.university", "childcare.kindergarten"],
   gov: ["office.government"],
@@ -260,7 +262,7 @@ function geoapifyRectFilter(bbox) {
 function geoapifyCategoryLabel(category, properties = {}) {
   const labels = {
     grocery:"بقالات وتموينات",food:"مطاعم ومخابز",cafe:"كافيهات وبوفيهات",
-    pharmacy:"صيدليات",health:"مراكز صحية",edu:"تعليم ومدارس",
+    pharmacy:"صيدليات",health:"مراكز صحية",edu:"تعليم ومدارس",telecom:"جوالات واتصالات",elec:"إلكترونيات وكمبيوتر",
     gov:"جهات حكومية",money:"بنوك وصرافة",craft:"حرف وخدمات",
     transport:"مواصلات",mosque:"مساجد",hotel:"فنادق وسكن",
     market:"أسواق",solar:"طاقة شمسية وكهربائيات",parts:"قطع غيار",
