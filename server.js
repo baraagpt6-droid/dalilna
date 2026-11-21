@@ -151,6 +151,7 @@ function createIntervalGate(intervalMs) {
 }
 const waitForNominatimSlot = createIntervalGate(1100);
 const waitForOverpassSlot = createIntervalGate(1100);
+const waitForCommonsSlot = createIntervalGate(1100);
 
 function buildOverpassQuery(bbox, category) {
   const filters = FILTERS[category] || FILTERS.all;
@@ -342,6 +343,7 @@ async function searchCommonsPhotos(query, place) {
     gsrnamespace:"6",gsrlimit:"8",prop:"imageinfo",
     iiprop:"url|extmetadata",iiurlwidth:"640"
   }).toString();
+  await waitForCommonsSlot();
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
   try{
     const response=await fetch(url,{signal:controller.signal,headers:{
