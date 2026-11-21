@@ -185,6 +185,7 @@
   const filterActive=!!document.querySelector('#fltRow [data-flt][aria-pressed="true"]');
   const active=!!(input&&input.value.trim())||filterActive;
   document.body.classList.toggle("search-active",active);
+  if(!active)document.body.classList.remove("quick-jump-reveal-emergency");
   const clear=$("clearSearch");if(clear)clear.hidden=!(input&&input.value);
  }
  function scrollToQuickTarget(id){
@@ -196,9 +197,9 @@
   target.classList.add("quick-jump-highlight");
   target.scrollIntoView({behavior:"smooth",block:"center"});
   window.setTimeout(()=>target.classList.remove("quick-jump-highlight"),1100);
-  if(id==="emBox")window.setTimeout(()=>document.body.classList.remove("quick-jump-reveal-emergency"),1600);
  }
  function scrollBackToSearch(){
+  document.body.classList.remove("quick-jump-reveal-emergency");
   const target=document.querySelector(".search-bar")||document.getElementById("q");
   if(!target)return;
   target.classList.remove("quick-jump-highlight");
