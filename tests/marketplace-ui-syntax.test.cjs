@@ -28,15 +28,15 @@ test("marketplace client displays rental labels",()=>{
  assert.ok(client.includes('item.listingType === "rent") labels.push("للإيجار")'));
 });
 
-test("PWA version metadata is 2.1.3",()=>{
- assert.ok(html.includes('content="2.1.3"'));
+test("PWA version metadata is 2.1.4",()=>{
+ assert.ok(html.includes('content="2.1.4"'));
 });
 
 test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});
 
 test("home quick jump bar points to existing exchange, calculator and emergency cards",()=>{
  for(const token of ['id="quickJumpBar"','data-quick-jump="fxBox"','data-quick-jump="fxCalcBox"','data-quick-jump="emBox"','id="fxCalcBox"'])assert.ok(html.includes(token),token);
- assert.ok(features.includes('scrollIntoView({behavior:"smooth",block:"center"})'));
+ assert.ok(features.includes('scrollIntoView({behavior:"smooth",block:"start"})'));
  assert.ok(features.includes('quick-jump-highlight'));
 });
 test("emergency contacts remain direct tel links and include a return-to-search control",()=>{
@@ -55,7 +55,7 @@ test("emergency card stays visible until search is cleared or back-to-search is 
  assert.ok(features.includes('if(id==="emBox")document.body.classList.add("quick-jump-reveal-emergency")'));
  assert.ok(!features.includes('classList.remove("quick-jump-reveal-emergency"),1600'));
  assert.ok(features.includes('if(!active)document.body.classList.remove("quick-jump-reveal-emergency")'));
- assert.ok(features.includes('scrollIntoView({behavior:"smooth",block:"center"})'));
+ assert.ok(features.includes('scrollIntoView({behavior:"smooth",block:"start"})'));
 });
 
 test("search state observer cannot recursively observe its own hidden updates",()=>{

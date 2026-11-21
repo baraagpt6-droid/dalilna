@@ -3909,7 +3909,7 @@ $("#calcAmt").addEventListener("input",calcFx);
 function renderEmerg(){
   const rows=S.emerg.split("\n").map(l=>l.split(/[:：]/)).filter(x=>x.length>1);
   const phoneIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 3.8 4.8 5.1c-.8.5-.9 1.4-.6 2.4 1.9 6.2 6 10.3 12.2 12.2 1 .3 1.9.2 2.4-.6l1.3-2.4-4.2-2.8-1.8 2.1c-2.5-1.2-4.4-3.1-5.6-5.6l2.1-1.8-2.8-4.2Z"/></svg>';
-  $("#emList").innerHTML=rows.map(([n,p])=>`<a class="lnk" href="tel:${digits(p)}" aria-label="اتصال ${esc(n.trim())} على ${digits(p)}" title="اتصال ${esc(n.trim())}">${phoneIcon}<span>${esc(n.trim())}: <b dir="ltr">${esc(p.trim())}</b></span></a>`).join("")+`<button type="button" class="lnk quick-back-top" id="emBackToTop">↑ العودة للأعلى</button>`;
+  $("#emList").innerHTML=rows.map(([n,p])=>`<a class="lnk emergency-number-link" href="tel:${digits(p)}" aria-label="اتصال ${esc(n.trim())} على ${digits(p)}" title="اتصال ${esc(n.trim())}">${phoneIcon}<span>${esc(n.trim())}: <b dir="ltr">${esc(p.trim())}</b></span></a>`).join("")+`<button type="button" class="lnk quick-back-top" id="emBackToTop">↑ العودة للأعلى</button>`;
 }
 
 /* Offline-first local assistant. A server-backed OpenAI assistant is optional; API keys never live in this file. */
