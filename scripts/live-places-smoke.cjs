@@ -8,11 +8,11 @@ async function get(path,extraHeaders={}){
 async function main(){
  const deadline=Date.now()+180000;let health=null,last="no response";
  while(Date.now()<deadline){
-  try{const r=await get("/health");if(r.response.ok&&r.payload.ok&&r.payload.version==="1.6.2"){health=r.payload;break;}last="unexpected health: "+JSON.stringify(r.payload);}
+  try{const r=await get("/health");if(r.response.ok&&r.payload.ok&&r.payload.version==="1.7.0"){health=r.payload;break;}last="unexpected health: "+JSON.stringify(r.payload);}
   catch(e){last=e.message;}
   await new Promise(resolve=>setTimeout(resolve,5000));
  }
- assert.ok(health,"Render service did not become healthy on v1.6.2: "+last);
+ assert.ok(health,"Render service did not become healthy on v1.7.0: "+last);
  process.stdout.write("PASS live Render health: "+health.version+"\n");
  let r=await get("/api/places/status",{Origin:"https://dalilna-yemen.onrender.com"});assert.equal(r.response.status,200);
  assert.equal(r.response.headers.get("access-control-allow-origin"),"*");
