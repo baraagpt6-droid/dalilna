@@ -2,7 +2,7 @@
 const test=require("node:test");
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {buildOverpassQuery,inferCategoryFromQuery,classifyCategory,normalizeElement,normalizeText,createIntervalGate,searchCommonsPhotos,searchGooglePlaces,googlePlacesEnabled,server}=require("../server");
+const {buildOverpassQuery,inferCategoryFromQuery,classifyCategory,normalizeElement,normalizeText,createIntervalGate,searchCommonsPhotos,searchGooglePlaces,googlePlacesEnabled,searchGeoapifyPlaces,geoapifyEnabled,server}=require("../server");
 
 test("builds a narrow grocery query for a supplied bounding box",()=>{
  const query=buildOverpassQuery({south:13.1,west:43.2,north:13.4,east:43.5},"grocery");
@@ -95,6 +95,57 @@ test("Google Places search requests phone, category and Maps link fields and map
  }
 });
 
+test("Geoapify free integration stays disabled without a server-side key",async()=>{
+ const originalKey=process.env.GEOAPIFY_API_KEY;
+ delete process.env.GEOAPIFY_API_KEY;
+ try{
+  assert.equal(geoapifyEnabled(),false);
+  await assert.rejects(searchGeoapifyPlaces({q:"بقال",category:"grocery",lat:"15.36",lon:"44.19"}),error=>error.code==="GEOAPIFY_NOT_CONFIGURED"&&error.statusCode===503);
+ }finally{
+  if(originalKey===undefined)delete process.env.GEOAPIFY_API_KEY;else process.env.GEOAPIFY_API_KEY=originalKey;
+ }
+});
+test("Geoapify returns in-app place cards and obtains phone from Place Details",async()=>{
+ const originalKey=process.env.GEOAPIFY_API_KEY,originalFetch=global.fetch;
+ process.env.GEOAPIFY_API_KEY="server-only-geoapify-test-key";
+ global.fetch=async(input,options={})=>{
+  const url=new URL(String(input));
+  assert.equal(url.hostname,"api.geoapify.com");
+  assert.equal(url.searchParams.get("apiKey"),"server-only-geoapify-test-key");
+  if(url.pathname==="/v2/places"){
+   assert.equal(url.searchParams.get("categories"),"commercial.supermarket,commercial.convenience,commercial.marketplace");
+   assert.match(url.searchParams.get("filter"),/^rect:/);
+   assert.equal(url.searchParams.get("lang"),"ar");
+   return new Response(JSON.stringify({type:"FeatureCollection",features:[{
+    type:"Feature",geometry:{type:"Point",coordinates:[44.19,15.36]},
+    properties:{name:"بقالة الاختبار",place_id:"geoapify-test-place-161",formatted:"شارع الاختبار، صنعاء، اليمن",categories:["commercial.convenience"],lat:15.36,lon:44.19}
+   }]}),{status:200,headers:{"content-type":"application/json"}});
+  }
+  if(url.pathname==="/v2/place-details"){
+   assert.equal(url.searchParams.get("id"),"geoapify-test-place-161");
+   return new Response(JSON.stringify({type:"FeatureCollection",features:[{
+    type:"Feature",geometry:{type:"Point",coordinates:[44.19,15.36]},
+    properties:{feature_type:"details",name:"بقالة الاختبار",contact:{phone:"+967 777 111 222"},website:"https://example.test",opening_hours:"08:00-22:00"}
+   }]}),{status:200,headers:{"content-type":"application/json"}});
+  }
+  throw new Error("Unexpected Geoapify endpoint "+url.pathname);
+ };
+ try{
+  assert.equal(geoapifyEnabled(),true);
+  const result=await searchGeoapifyPlaces({q:"بقال",category:"grocery",lat:"15.36",lon:"44.19",radius:"5000"});
+  assert.equal(result.source,"Geoapify");
+  assert.equal(result.count,1);
+  assert.equal(result.items[0].name,"بقالة الاختبار");
+  assert.equal(result.items[0].phone,"+967 777 111 222");
+  assert.equal(result.items[0].website,"https://example.test");
+  assert.equal(result.items[0].category,"بقالات وتموينات");
+  assert.match(result.items[0].mapsUrl,/google\.com\/maps\/search/);
+  assert.match(result.attribution,/OpenStreetMap/);
+ }finally{
+  global.fetch=originalFetch;
+  if(originalKey===undefined)delete process.env.GEOAPIFY_API_KEY;else process.env.GEOAPIFY_API_KEY=originalKey;
+ }
+});
 test("Wikimedia Commons search returns author and license metadata",async()=>{
  const original=global.fetch;
  global.fetch=async(input,options={})=>{
@@ -113,12 +164,13 @@ test("Google details endpoint is unavailable and status confirms free providers"
   assert.equal(statusResponse.headers.get("access-control-allow-origin"),"*");
   const status=await statusResponse.json();
   assert.equal(status.activeProvider,"OpenStreetMap");assert.equal(status.paidProvidersDisabled,true);assert.equal(status.photoProvider,"Wikimedia Commons");
-  const googleStatusResponse=await fetch(base+"/api/google/places/status",{headers:{Origin:"https://preview.example"}});
-  assert.equal(googleStatusResponse.headers.get("access-control-allow-origin"),"*");
-  const googleStatus=await googleStatusResponse.json();
-  assert.equal(googleStatus.provider,"Google Maps");
-  assert.equal(googleStatus.googlePlacesEnabled,false);
-  assert.equal(JSON.stringify(googleStatus).includes("GOOGLE_MAPS_API_KEY"),false);
+  const geoStatusResponse=await fetch(base+"/api/geoapify/status",{headers:{Origin:"https://preview.example"}});
+  assert.equal(geoStatusResponse.headers.get("access-control-allow-origin"),"*");
+  const geoStatus=await geoStatusResponse.json();
+  assert.equal(geoStatus.provider,"Geoapify");
+  assert.equal(geoStatus.geoapifyEnabled,false);
+  assert.equal(geoStatus.creditCardRequired,false);
+  assert.equal(JSON.stringify(geoStatus).includes("GEOAPIFY_API_KEY"),false);
   const preflight=await fetch(base+"/api/places/search",{method:"OPTIONS",headers:{Origin:"https://preview.example","Access-Control-Request-Method":"GET"}});
   assert.equal(preflight.status,204);assert.equal(preflight.headers.get("access-control-allow-origin"),"*");
   const details=await fetch(base+"/api/places/details?placeId=ChIJOldGooglePlaceId123");
