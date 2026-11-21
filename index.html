@@ -3760,6 +3760,8 @@ function cardHTML(i){
   const imgSrc=safeImageData(i.img);
   const rObj=S.rates[i.id];
   const avg=rObj&&rObj.n?(rObj.sum/rObj.n).toFixed(1):null;
+  const sourceBadge=i.sourceName?`<span class="tag">المصدر: ${esc(i.sourceName)}</span>`:i.verifiedAt?`<span class="ok">${T("verified")}</span>`:`<span class="where">${T("community")}</span>`;
+  const sourceLink=i.sourceUrl?`<a class="lnk" href="${esc(i.sourceUrl)}" target="_blank" rel="noopener noreferrer">${i.sourceType==="official_product"?"شاهد المنتج لدى المتجر":i.sourceType==="public_job_portal"?"تفاصيل الوظيفة والتقديم":"صفحة المصدر والتواصل"}</a>`:"";
   return `<article class="card" data-open="${esc(i.id)}">
     ${imgSrc?`<img class="cover" src="${esc(imgSrc)}" alt="${esc(i.name)}" loading="lazy">`:""}
     <div class="top">
@@ -3773,15 +3775,19 @@ function cardHTML(i){
       ${km!==null?` · <span class="dist-badge">${km<1?Math.round(km*1000)+" m":km.toFixed(1)+" km"}</span>`:""}
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      ${i.verifiedAt?`<span class="ok">${T("verified")}</span>`:`<span class="where">${T("community")}</span>`}
+      ${sourceBadge}
+      ${i.sourceCheckedAt?`<span class="where">مراجعة المصدر: ${esc(formatListingDate(i.sourceCheckedAt))}</span>`:""}
+      ${i.expiresAt?`<span class="dist-badge">آخر موعد: ${esc(formatListingDate(i.expiresAt))}</span>`:""}
       ${i.aiChecked?`<span class="tag">فحص آلي أولي</span>`:""}
       ${avg?`<span class="dist-badge">★ ${avg} (${rObj.n})</span>`:""}
       ${i.price?`<span class="price">${esc(i.price)}</span>`:""}
     </div>
     ${i.desc?`<p class="desc">${esc(i.desc)}</p>`:""}
+    ${i.sourceNote?`<p class="where" style="line-height:1.6">${esc(i.sourceNote)}</p>`:""}
     <div class="acts">
-      ${i.phone?`<a class="wa" href="${waLink(i.phone)}" target="_blank" rel="noopener">${T("wa")}</a>
-      <a class="tel" href="tel:${digits(i.phone)}">${esc(i.phone)}</a>`:""}
+      ${i.phone?`<a class="wa" href="${waLink(i.phone)}" target="_blank" rel="noopener noreferrer">${T("wa")}</a><a class="tel" href="tel:${digits(i.phone)}">${esc(i.phone)}</a>`:""}
+      ${i.phone2?`<a class="tel" href="tel:${digits(i.phone2)}">${esc(i.phone2)}</a>`:""}
+      ${sourceLink}
       <button type="button" class="ibtn ${isFav?"on":""}" data-fav="${esc(i.id)}" title="${T("fltFav")}">${isFav?"♥":"♡"}</button>
       <button type="button" class="ibtn" data-shr="${esc(i.id)}" title="${T("share")}">${T("share")}</button>
       ${canManage(i)?`<button type="button" class="del" data-edit="${esc(i.id)}">${T("edit")}</button>`:""}
@@ -3845,9 +3851,13 @@ function openDetail(i){
     <div class="where">${esc([i.village,i.area,i.dist,i.gov].filter(Boolean).join(" · "))}${i.hours?" · "+esc(i.hours):""}</div>
     ${i.price?`<div class="price">${esc(i.price)}</div>`:""}
     ${i.desc?`<p class="desc">${esc(i.desc)}</p>`:""}
+    ${i.sourceName?`<p class="where">المصدر: ${esc(i.sourceName)} · مراجعة ${esc(formatListingDate(i.sourceCheckedAt))}</p>`:""}
+    ${i.sourceNote?`<p class="where">${esc(i.sourceNote)}</p>`:""}
+    ${i.expiresAt?`<p class="where">آخر موعد: ${esc(formatListingDate(i.expiresAt))}</p>`:""}
     <div class="fbtn">
-      ${i.phone?`<a class="wa" href="${waLink(i.phone)}" target="_blank" rel="noopener noreferrer">تواصل واتساب</a>
-      <a class="lnk" href="tel:${digits(i.phone)}">اتصال: ${esc(i.phone)}</a>`:""}
+      ${i.phone?`<a class="wa" href="${waLink(i.phone)}" target="_blank" rel="noopener noreferrer">تواصل واتساب</a><a class="lnk" href="tel:${digits(i.phone)}">اتصال: ${esc(i.phone)}</a>`:""}
+      ${i.phone2?`<a class="lnk" href="tel:${digits(i.phone2)}">اتصال إضافي: ${esc(i.phone2)}</a>`:""}
+      ${i.sourceUrl?`<a class="lnk" href="${esc(i.sourceUrl)}" target="_blank" rel="noopener noreferrer">${i.sourceType==="official_product"?"صفحة المنتج لدى المتجر":i.sourceType==="public_job_portal"?"التقديم في صفحة الإعلان":"موقع المصدر والتفاصيل"}</a>`:""}
     </div>
     <div style="display:flex;align-items:center;gap:12px;background:var(--bg);padding:12px;border-radius:14px;border:1px solid var(--line)">
       ${generateQRSVG((location.protocol==="http:"||location.protocol==="https:")?new URL("?item="+encodeURIComponent(i.id),location.href).href:"DALILNA:ITEM:"+i.id)}
