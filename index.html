@@ -4106,29 +4106,35 @@ function renderLiveDirectoryResponse(data){
  const status=$("#liveDirectoryStatus"),box=$("#liveDirectoryItems"),attribution=$("#liveDirectoryAttribution");if(!status||!box)return;
  const items=Array.isArray(data.items)?data.items:[];
  liveDirectoryLastData=data;
- if(data.source==="Geoapify"){ 
-  status.textContent="المصدر: Geoapify وOpenStreetMap · عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة";
+ const shared=liveDirectorySharedMatchesHTML();
+ if(data.source==="Geoapify"){
+  status.textContent=(data.fallbackFromGeoapify?"لم يعط Geoapify نتائج؛ عثر OpenStreetMap على ":"المصدر: Geoapify وOpenStreetMap · عُثر على ")+Number(items.length||0).toLocaleString("ar")+" نتيجة للمحلات"+(liveSharedMatches.length?" · وإعلانات معتمدة: "+liveSharedMatches.length:"");
   box.classList.add("live-google-results");
   if(attribution)attribution.innerHTML='<a href="https://www.geoapify.com/" target="_blank" rel="noopener noreferrer">Powered by Geoapify</a> · © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>';
-  if(!items.length){box.innerHTML='<div class="live-directory-empty">لم يعثر مصدر البيانات على أماكن مسجلة لهذه الفئة في المنطقة المحددة.</div>';return;}
+  if(!items.length){
+   const ctx=liveDirectoryContext(),term=liveDirectoryLast.query||(CN[liveDirectoryLast.category]||"محلات وخدمات"),place=ctx?ctx.place:"اليمن";
+   box.innerHTML=shared+'<div class="live-directory-empty">لم تسجل مصادر الخرائط محلات تطابق هذه الفئة في النطاق. هذا لا يعني عدم وجودها في الواقع. جرّب توسيع النطاق أو افتح البحث الخارجي.</div><div class="live-directory-actions"><a href="https://www.openstreetmap.org/search?query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في OpenStreetMap</a><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في خرائط Google</a></div>';
+   return;
+  }
   const visible=items.slice(0,liveDirectoryVisibleCount);
   let cards=visible.map(geoapifyDirectoryCardHTML).join("");
   if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">عرض المزيد ('+(items.length-visible.length)+')</button>';
-  box.innerHTML=cards;
+  box.innerHTML=shared+cards;
   return;
  }
- liveDirectoryLastData=data;
-
- status.textContent=(data.scopeFallback?"لم نجد حدود المديرية؛ هذه نتائج على مستوى المحافظة. ":"")+"المصدر: OpenStreetMap · عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة"+(data.cached?" · من التخزين المؤقت":"");
+ status.textContent=(data.scopeFallback?"لم نجد حدود المديرية؛ هذه نتائج على مستوى المحافظة. ":"")+
+  (data.fallbackFromGeoapify?"المصدر البديل: OpenStreetMap بعد عدم وجود نتائج في Geoapify. ":"المصدر: OpenStreetMap · ")+
+  "عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة للمحلات"+(liveSharedMatches.length?" · وإعلانات معتمدة: "+liveSharedMatches.length:"")+(data.cached?" · من التخزين المؤقت":"");
  box.classList.remove("live-google-results");
  if(attribution)attribution.innerHTML='المصدر: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · الصور من Wikimedia Commons.';
  if(!items.length){
   const ctx=liveDirectoryContext(),term=liveDirectoryLast.query||(CN[liveDirectoryLast.category]||"محلات وخدمات"),place=ctx?ctx.place:"اليمن";
-  box.innerHTML='<div class="live-directory-empty">لم يعثر مصدر البيانات على أماكن مسجلة لهذه الفئة في النطاق المحدد. هذا لا يؤكد عدم وجودها على أرض الواقع.</div><a class="ai-map-search-link" href="https://www.openstreetmap.org/search?query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في OpenStreetMap</a>';return;
+  box.innerHTML=shared+'<div class="live-directory-empty">لم يعثر مصدر البيانات على أماكن مسجلة في النطاق المحدد. هذا لا يؤكد عدم وجود محلات أو خدمات على أرض الواقع.</div><div class="live-directory-actions"><a href="https://www.openstreetmap.org/search?query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في OpenStreetMap</a><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في خرائط Google</a></div>';
+  return;
  }
  const visible=items.slice(0,liveDirectoryVisibleCount);let cards=visible.map(liveDirectoryCardHTML).join("");
  if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">عرض المزيد ('+(items.length-visible.length)+')</button>';
- box.innerHTML=cards;if(data.note)status.textContent+=" · "+data.note;
+ box.innerHTML=shared+cards;if(data.note)status.textContent+=" · "+data.note;
 }
 async function loadLiveCommonsPhotos(button){
  const panel=button.parentElement.querySelector(".live-directory-commons-panel");if(!panel)return;
@@ -4682,19 +4688,12 @@ function render(){
   renderFilterChips();
   renderRecent();
   const q=$("#q").value.trim().toLowerCase();
-  const liveWanted=(view==="home"&&(q.length>=2||!!scope))||view==="cat";
+  const liveWanted=view==="home"||view==="cat";
   const liveInfo=directoryMapSearchInfo(q);
-  liveDirectoryLast={query:q||(view==="cat"?(CN[curCat]||curCat):""),category:liveInfo?liveInfo.category:(view==="cat"?curCat:"all")};
+  liveDirectoryLast={query:q||(view==="cat"?(CN[curCat]||curCat):""),category:liveInfo?liveInfo.category:(view==="cat"?curCat:"all"),productType:liveInfo?liveInfo.productType:""};
   const liveTop=$("#liveDirectoryTop");
   if(liveTop)liveTop.innerHTML=liveWanted?liveDirectoryPanelHTML():"";
-  if(liveWanted){
-    if(view==="cat"||q.length>=2)runLiveDirectorySearch(false);
-    else {
-      const status=$("#liveDirectoryStatus"),items=$("#liveDirectoryItems");
-      if(status)status.textContent="اكتب اسم الخدمة مثل بقالة أو صيدلية لبدء البحث في المنطقة المحددة.";
-      if(items)items.innerHTML='<div class="live-directory-empty">اختر نوع الخدمة أو اكتب اسم المكان حتى لا نرسل بحثاً واسعاً عن كل الفئات دفعة واحدة.</div>';
-    }
-  }
+  if(liveWanted)runLiveDirectorySearch(false);
   const match=i=>{
     if(!q)return true;
     const hay=[i.name,i.desc,i.area,i.village,i.dist,i.gov,i.phone,i.country,CN[i.cat],CN_EN[i.cat],CAT_SYN[i.cat]||""].join(" ").toLowerCase();
