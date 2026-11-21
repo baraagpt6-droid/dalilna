@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.1.0">
+<meta name="app-version" content="2.1.1">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -643,6 +643,12 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     </button>
   </div>
 
+  <nav class="quick-jump-bar" id="quickJumpBar" aria-label="وصول سريع إلى الخدمات">
+    <button type="button" class="quick-jump-btn" data-quick-jump="fxBox">💱 الصرف والذهب</button>
+    <button type="button" class="quick-jump-btn" data-quick-jump="fxCalcBox">🧮 حاسبة التحويل</button>
+    <button type="button" class="quick-jump-btn" data-quick-jump="emBox">🚨 أرقام الطوارئ</button>
+  </nav>
+
   <div class="voice-bar" id="voiceBar" hidden>
     <span id="voiceTxt">جارٍ الاستماع… تحدث الآن</span>
     <button type="button" class="tbtn" id="voiceStop" style="min-height:30px">إيقاف</button>
@@ -819,7 +825,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
         <span class="tag" id="fxBadge">محدّث</span>
       </h2>
       <div class="fxg" id="fxGrid"></div>
-      <div class="fx-calc">
+      <div class="fx-calc" id="fxCalcBox">
         <b style="font-size:14px">حاسبة تحويل العملات الفورية</b>
         <div class="fx-calc-grid">
           <input id="calcAmt" type="number" value="100" min="0" step="any" placeholder="المبلغ">
@@ -3888,7 +3894,7 @@ $("#calcAmt").addEventListener("input",calcFx);
 /* Emergency Numbers */
 function renderEmerg(){
   const rows=S.emerg.split("\n").map(l=>l.split(/[:：]/)).filter(x=>x.length>1);
-  $("#emList").innerHTML=rows.map(([n,p])=>`<a class="lnk" href="tel:${digits(p)}">${esc(n.trim())}: <b dir="ltr">${esc(p.trim())}</b></a>`).join("");
+  $("#emList").innerHTML=rows.map(([n,p])=>`<a class="lnk" href="tel:${digits(p)}" aria-label="اتصال ${esc(n.trim())} على ${digits(p)}" title="اتصال ${esc(n.trim())}">${esc(n.trim())}: <b dir="ltr">${esc(p.trim())}</b></a>`).join("")+`<button type="button" class="lnk quick-back-top" id="emBackToTop">↑ العودة للأعلى</button>`;
 }
 
 /* Offline-first local assistant. A server-backed OpenAI assistant is optional; API keys never live in this file. */

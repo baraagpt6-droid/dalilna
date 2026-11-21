@@ -39,3 +39,15 @@ body.search-active #fltRow{margin-top:8px}
 .shared-listing-actions button.is-favorite{color:var(--gold);border-color:var(--gold)}
 #souqCurrencyWrap[hidden]{display:none}
 @media(max-width:560px){.jobs-feature-panel,.job-seekers-panel{padding:11px}.job-feed-card,.job-seeker-card{padding:10px}}
+
+/* Quick access to the existing home-page service cards. */
+.quick-jump-bar{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:9px 14px 5px;max-width:1160px;margin:0 auto}
+.quick-jump-bar::-webkit-scrollbar{display:none}
+.quick-jump-btn{flex:0 0 auto;min-height:36px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--chip);color:var(--ink);font:600 11.5px 'Readex Pro',Tahoma,sans-serif;white-space:nowrap;cursor:pointer;transition:background .18s,border-color .18s}
+.quick-jump-btn:active{background:rgba(56,182,166,.16);border-color:var(--acc)}
+.quick-jump-highlight{outline:2px solid var(--acc)!important;outline-offset:3px;animation:quick-jump-glow 1s ease-out both}
+@keyframes quick-jump-glow{0%{box-shadow:0 0 0 0 rgba(56,182,166,.42)}45%{box-shadow:0 0 0 7px rgba(56,182,166,.16)}100%{box-shadow:0 0 0 0 rgba(56,182,166,0)}}
+#fxBox,#fxCalcBox,#emBox,.search-bar{scroll-margin-top:18px}
+body.search-active.quick-jump-reveal-emergency #emBox{display:block!important}
+.quick-back-top{font:600 12px 'Readex Pro',Tahoma,sans-serif;cursor:pointer}
+@media(max-width:420px){.quick-jump-bar{gap:6px;padding-inline:10px}.quick-jump-btn{padding-inline:10px;font-size:11px}}
