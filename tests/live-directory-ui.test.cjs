@@ -34,7 +34,7 @@ test("curated Yemen seed data has sources, review timestamps and useful starter 
  const start=html.indexOf("const SEED_ITEMS=")+ "const SEED_ITEMS=".length;
  const end=html.indexOf("const LEGACY_DEMO_IDS",start);
  assert.ok(start>0&&end>start,"SEED_ITEMS must remain a JSON-readable starter directory");
- const seeds=JSON.parse(html.slice(start,end));
+ const seeds=JSON.parse(html.slice(start,end).trim().replace(/;$/,""));
  assert.ok(seeds.length>=24);
  assert.ok(seeds.some(x=>x.name==="المتجر العالمي Global Store"));
  assert.ok(seeds.some(x=>x.name==="مطاعم الشيباني جولدن"));
