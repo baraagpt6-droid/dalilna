@@ -16,6 +16,15 @@ test("public YemenHR HTML parser extracts job metadata and original detail URLs"
  assert.equal(items[0].country,"Yemen");
  assert.equal(items[0].url,"https://telegra.ph/Project-Officer-11-18");
 });
+
+test("Careers.sa parser ignores employer-directory pages and keeps only job details",()=>{
+ const {parseCareersSaIndex}=require("../scripts/refresh-jobs.cjs");
+ const html='<a href="/en/jobs/company/parsons">Parsons Corporation careers</a><a href="/en/jobs/its-engineer-544679bc">ITS Engineer</a>';
+ const links=parseCareersSaIndex(html);
+ assert.equal(links.length,1);
+ assert.ok(links[0].url.endsWith("/en/jobs/its-engineer-544679bc"));
+});
+
 test("Careers.sa parser retains exact job links, location, organization and freshness date",()=>{
  const {parseCareersSaIndex,parseCareersSaJob}=require("../scripts/refresh-jobs.cjs");
  const index='<a href="/en/jobs/example-position">Example Position</a>';
