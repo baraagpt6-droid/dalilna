@@ -1,7 +1,7 @@
 "use strict";
 const test=require("node:test"),assert=require("node:assert/strict"),fs=require("node:fs");
 const html=fs.readFileSync("index.html","utf8");
-test("live place discovery supports Google Maps and OpenStreetMap fallback",()=>{
+test("live place discovery prefers Geoapify free data and falls back to OpenStreetMap",()=>{
  assert.match(html,/function liveDirectoryPanelHTML\(\)/);assert.match(html,/dalilna-live\.onrender\.com/);
  assert.match(html,/\/api\/places\/search/);assert.match(html,/runLiveDirectorySearch\(false\)/);
  assert.match(html,/OpenStreetMap contributors/);
@@ -34,14 +34,14 @@ test("optional Wikimedia photo search shows author and license",()=>{
  assert.match(html,/api\/places\/photos/);assert.match(html,/data-commons-photos/);
  assert.match(html,/p\.author/);assert.match(html,/p\.license/);assert.match(html,/p\.sourceUrl/);
 });
-test("Google Maps places are shown as in-app cards with optional map links",()=>{
- assert.match(html,/\/api\/google\/places\/status/);
- assert.match(html,/\/api\/google\/places\/search/);
- assert.match(html,/function googleMapsDirectoryCardHTML\(item\)/);
- assert.match(html,/فتح الموقع في Google Maps/);
+test("Geoapify results render in-app business cards with phone and optional map links",()=>{
+ assert.match(html,/\/api\/geoapify\/status/);
+ assert.match(html,/\/api\/geoapify\/search/);
+ assert.match(html,/function geoapifyDirectoryCardHTML\(item\)/);
+ assert.match(html,/Powered by Geoapify/);
+ assert.match(html,/فتح الموقع على الخريطة/);
  assert.ok(html.includes("item.mapsUrl"));
  assert.match(html,/tel:/);
- assert.match(html,/Google Maps · تُعرض بيانات المحلات هنا داخل دليلنا/);
- assert.doesNotMatch(html,/places\.googleapis\.com|GOOGLE_MAPS_API_KEY/);
+ assert.doesNotMatch(html,/GEOAPIFY_API_KEY|GOOGLE_MAPS_API_KEY|places\.googleapis\.com/);
 });
 test("live directory links to privacy and terms pages",()=>{assert.match(html,/\.\/privacy\.html/);assert.match(html,/\.\/terms\.html/);});
