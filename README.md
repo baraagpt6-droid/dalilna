@@ -46,7 +46,7 @@ Pending shop submissions are shown in a prominent dashboard shortcut. Open it to
 
 ## البحث المباشر عن الأماكن — الإصدار 1.6.0
 
-يستخدم دليلنا مصادر مفتوحة ولا يحتاج مفتاح Google Places أو بطاقة بنكية أو حساب فوترة.
+يعمل البحث عبر OpenStreetMap دون مفتاح Google أو فوترة. ويمكن تفعيل Google Places اختيارياً لعرض بيانات Google داخل قائمة التطبيق، ويتطلب ذلك مفتاح Places API وتفعيل الفوترة في Google Cloud.
 
 - تحديد حدود المحافظة أو المديرية عبر OpenStreetMap Nominatim.
 - البحث عن الأماكن عبر OpenStreetMap Overpass مع التبديل بين FOSSGIS وPrivate.coffee وVK Maps عند التعطل أو الاستجابة غير المكتملة.
