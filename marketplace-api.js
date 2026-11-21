@@ -1,7 +1,7 @@
 "use strict";
 const crypto=require("node:crypto");
 const {URL}=require("node:url");
-const CATEGORIES=new Set(["grocery","food","cafe","edu","health","pharmacy","gov","money","jobs","land","build","parts","craft","transport","telecom","utility","farm","mosque","gold","wedding","hotel","market","solar","elec","clothes","home","books","beauty","delivery","salon","laundry","souq","other"]);
+const CATEGORIES=new Set(["grocery","food","cafe","edu","health","pharmacy","gov","money","jobs","land","build","parts","craft","transport","telecom","utility","farm","mosque","gold","wedding","hotel","market","solar","elec","clothes","home","books","beauty","delivery","salon","laundry","souq","other","marketplace"]);
 const PRODUCT_TYPES=new Set(["phone","watch","computer","tablet","camera","car","motorcycle","vehicle_parts","land","property","electronics","appliance","furniture","clothing","shoes","jewelry","honey","coffee","spices","food","livestock","agriculture","building_materials","books","other"]);
 const LISTING_TYPES=new Set(["sale","wanted","barter","free"]);
 const CONDITIONS=new Set(["new","used","unknown"]);
@@ -22,7 +22,7 @@ function validate(body){
  if(!LISTING_TYPES.has(listingType))throw error("INVALID_LISTING_TYPE","نوع الإعلان غير معروف.");
  if(!CONDITIONS.has(condition))throw error("INVALID_CONDITION","حالة المعروض غير معروفة.");
  if(!CURRENCIES.has(currency))throw error("INVALID_CURRENCY","العملة غير معروفة.");
- if(category!=="souq"&&productType!=="other")throw error("INVALID_PRODUCT_TYPE","نوع المنتج مخصص لإعلانات السوق.");
+ if(category!=="souq"&&category!=="land"&&productType!=="other")throw error("INVALID_PRODUCT_TYPE","نوع المنتج مخصص لإعلانات السوق.");
  if(deadline&&category!=="jobs")throw error("INVALID_DEADLINE","تاريخ الانتهاء مخصص للوظائف.");
  if(deadline&&(!/^\d{4}-\d{2}-\d{2}$/.test(deadline)||Number.isNaN(Date.parse(deadline+"T00:00:00Z"))))throw error("INVALID_DEADLINE","تاريخ الانتهاء غير صالح.");
  if((latitude===null)!==(longitude===null))throw error("INVALID_COORDINATES","أرسل خط العرض وخط الطول معاً.");
@@ -31,7 +31,7 @@ function validate(body){
  let image=String(body.imageData||body.img||"");
  if(image.length>400000)throw error("IMAGE_TOO_LARGE","حجم الصورة أكبر من الحد المسموح.",413);
  if(image&&!/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(image))throw error("INVALID_IMAGE","صيغة الصورة غير مدعومة.");
- return {id:crypto.randomUUID(),clientRef:clean(body.clientRef||body.client_ref,100)||null,title,category,productType:category==="souq"?productType:"other",listingType,condition,governorate,district:clean(body.district||body.dist,100),area:clean(body.area,120),village:clean(body.village,120),country:clean(body.country||"اليمن",80),description:clean(body.description||body.desc,1800),phone:clean(body.phone,50),sellerName:clean(body.sellerName,100),price:clean(body.price,80),currency,image,latitude,longitude,deadline:deadline||null};
+ return {id:crypto.randomUUID(),clientRef:clean(body.clientRef||body.client_ref,100)||null,title,category,productType:(category==="souq"||category==="land")?productType:"other",listingType,condition,governorate,district:clean(body.district||body.dist,100),area:clean(body.area,120),village:clean(body.village,120),country:clean(body.country||"اليمن",80),description:clean(body.description||body.desc,1800),phone:clean(body.phone,50),sellerName:clean(body.sellerName,100),price:clean(body.price,80),currency,image,latitude,longitude,deadline:deadline||null};
 }
 function send(res,status,payload){res.writeHead(status,{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"});res.end(JSON.stringify(payload));}
 function limit(req,key,max,windowMs){const ip=String(req.headers["x-forwarded-for"]||req.socket&&req.socket.remoteAddress||"unknown").split(",")[0].trim(),k=key+":"+ip,now=Date.now(),times=(buckets.get(k)||[]).filter(t=>now-t<windowMs);if(times.length>=max){buckets.set(k,times);return false;}times.push(now);buckets.set(k,times);if(buckets.size>4000)for(const [id,arr] of buckets)if(!arr.length||now-arr[arr.length-1]>3600000)buckets.delete(id);return true;}
@@ -43,7 +43,7 @@ function map(row,withImage){const o={id:row.id,clientRef:row.client_ref,title:ro
 async function status(res){if(!process.env.DATABASE_URL)return send(res,200,{ok:true,ready:false,databaseConfigured:false});try{const db=getPool();await schema(db);return send(res,200,{ok:true,ready:true,databaseConfigured:true});}catch(e){return send(res,e.statusCode||503,{ok:false,ready:false,databaseConfigured:true,code:e.code||"DATABASE_UNAVAILABLE",error:e.message});}}
 async function list(req,res,url){if(!limit(req,"list",45,60000))return send(res,429,{ok:false,error:"طلبات كثيرة. انتظر قليلاً."});const db=getPool();await schema(db);const where=["status='approved'","(expires_at IS NULL OR expires_at>NOW())","(category<>'jobs' OR deadline IS NULL OR deadline>=CURRENT_DATE)"],params=[];function add(sql,val){params.push(val);where.push(sql.replace("?", "$"+params.length));}
  const cat=clean(url.searchParams.get("category"),32),type=clean(url.searchParams.get("productType"),32),gov=clean(url.searchParams.get("governorate"),80),dist=clean(url.searchParams.get("district"),100),q=clean(url.searchParams.get("q"),100).replace(/[%_]/g,"");
- if(cat&&cat!=="all"&&CATEGORIES.has(cat))add("category = ?",cat);
+ if(cat==="marketplace")where.push("category IN ('souq','land')");else if(cat&&cat!=="all"&&CATEGORIES.has(cat))add("category = ?",cat);
  if(type&&type!=="all"&&PRODUCT_TYPES.has(type))add("product_type = ?",type);
  if(gov&&GOVERNORATES.has(gov))add("governorate = ?",gov);
  if(dist)add("district ILIKE ?","%"+dist+"%");
