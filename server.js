@@ -842,7 +842,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
   if (url.pathname === "/api/places/status") {
-    json(res,200,{activeProvider:"OpenStreetMap",paidProvidersDisabled:true,photoProvider:"Wikimedia Commons",ratingsStorage:"local-device"});
+    json(res,200,{activeProvider:geoapifyEnabled()?"Geoapify":"OpenStreetMap",paidProvidersDisabled:true,photoProvider:"Wikimedia Commons",ratingsStorage:"local-device"});
     return;
   }
   if(url.pathname==="/api/places/photos"){
