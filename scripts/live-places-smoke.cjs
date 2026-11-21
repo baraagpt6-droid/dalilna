@@ -21,14 +21,14 @@ async function waitForService() {
   while (Date.now() < deadline) {
     try {
       const { response, payload } = await getJson("/health");
-      if (response.ok && payload.ok && payload.version === "1.5.7") return payload;
+      if (response.ok && payload.ok && payload.version === "1.5.8") return payload;
       lastError = "unexpected health response: HTTP " + response.status + " version=" + String(payload.version || "missing");
     } catch (error) {
       lastError = error.message || String(error);
     }
     await new Promise(resolve => setTimeout(resolve, 5000));
   }
-  throw new Error("Render service did not become healthy on v1.5.7 within 180 seconds: " + lastError);
+  throw new Error("Render service did not become healthy on v1.5.8 within 180 seconds: " + lastError);
 }
 
 async function main() {

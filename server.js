@@ -4,7 +4,7 @@ const http = require("node:http");
 const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.5.7";
+const VERSION = "1.5.8";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -290,7 +290,7 @@ async function geocodePlace(place) {
     url.search=new URLSearchParams({q:candidate,format:"jsonv2",addressdetails:"1",limit:"5",countrycodes:"ye","accept-language":"ar,en"}).toString();
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
     try{
-      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaYemenDirectory/1.5.7 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
+      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaYemenDirectory/1.5.8 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
       if(response.status===429){lastError=new Error("مصدر تحديد المنطقة مزدحم. حاول مرة أخرى بعد قليل.");continue;}
       if(!response.ok){lastError=new Error("تعذّر تحديد حدود المنطقة من مصدر الخريطة.");continue;}
       const rows=await response.json();
@@ -332,7 +332,7 @@ async function fetchOverpass(bbox,category,label){
         headers:{
           "Content-Type":"application/x-www-form-urlencoded; charset=UTF-8",
           "Accept":"application/json",
-          "User-Agent":"DalilnaYemenDirectory/1.5.7 (+https://dalilna-live.onrender.com)"
+          "User-Agent":"DalilnaYemenDirectory/1.5.8 (+https://dalilna-live.onrender.com)"
         },
         body:new URLSearchParams({data:query})
       });
@@ -346,7 +346,18 @@ async function fetchOverpass(bbox,category,label){
         console.warn(JSON.stringify({event:"places.overpass.retry",provider:provider.name,status:response.status,durationMs:Date.now()-startedAt}));
         continue;
       }
-      const body=await response.json(),elements=Array.isArray(body.elements)?body.elements:[],items=elements.map(item=>normalizeElement(item,label)).filter(Boolean),seen=new Set();
+      const body=await response.json();
+      if(body && body.remark){
+        lastError=new Error("أعاد مصدر الخريطة نتيجة غير مكتملة: "+cleanText(body.remark,140));
+        console.warn(JSON.stringify({event:"places.overpass.retry",provider:provider.name,status:200,remark:cleanText(body.remark,140),durationMs:Date.now()-startedAt}));
+        continue;
+      }
+      if(!body || !Array.isArray(body.elements)){
+        lastError=new Error("استجابة مصدر الخريطة غير صالحة.");
+        console.warn(JSON.stringify({event:"places.overpass.retry",provider:provider.name,status:200,message:lastError.message,durationMs:Date.now()-startedAt}));
+        continue;
+      }
+      const elements=body.elements,items=elements.map(item=>normalizeElement(item,label)).filter(Boolean),seen=new Set();
       const unique=items.filter(item=>{const key=normalizeText(item.name)+"|"+item.lat.toFixed(4)+"|"+item.lon.toFixed(4);if(seen.has(key))return false;seen.add(key);return true;});
       console.info(JSON.stringify({event:"places.overpass.success",provider:provider.name,category,count:unique.length,durationMs:Date.now()-startedAt}));
       return unique.slice(0,80);

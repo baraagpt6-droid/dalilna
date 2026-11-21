@@ -4,7 +4,7 @@
 
 ## الإصدار
 
-- Version: 1.5.7
+- Version: 1.5.8
 - Web app: PWA (installable from supported browsers)
 - Android: WebView application source included in `android/`
 - Offline: cached application shell and local device storage
@@ -44,7 +44,7 @@
 
 Pending shop submissions are shown in a prominent dashboard shortcut. Open it to inspect the request details and choose approve/publish or reject. In this offline-first release, pending requests remain local to the device until a shared backend is connected.
 
-## البحث المباشر عن الأماكن — الإصدار 1.5.7
+## البحث المباشر عن الأماكن — الإصدار 1.5.8
 
 يستخدم دليلنا خادم البحث على Render: `https://dalilna-live.onrender.com`.
 
@@ -62,3 +62,6 @@ Pending shop submissions are shown in a prominent dashboard shortcut. Open it to
 - https://developers.google.com/maps/billing-and-pricing/pricing
 
 راجع `SECURITY_LIMITATIONS.txt` قبل الإطلاق العام.
+
+
+تحديث 1.5.8: يتحقق الخادم من حقل `remark` في رد Overpass. إذا أعاد المصدر HTTP 200 مع استعلام غير مكتمل، ينتقل إلى المرآة التالية بدلاً من عرض صفر نتائج.

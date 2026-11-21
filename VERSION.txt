@@ -1,4 +1,4 @@
-Dalilna 1.5.7
+Dalilna 1.5.8
 Application release: PWA + Android WebView
 Backend directory API service version: 1.5.0 (separate service package version)
 Gemini cloud assistant (optional, server-side)
@@ -21,7 +21,7 @@ Live place discovery now queries Nominatim and Overpass directly from the browse
 
 Live search uses the shared Render API proxy. Nominatim and Overpass requests are globally serialized per API process at 1.1-second intervals, with caching. The browser checks /health before searching and allows up to 100 seconds for free-service wake-up, then offers retry and Google Maps fallback.
 
-Live directory search v1.5.7
+Live directory search v1.5.8
 - Google Places search returns rating, rating count, phone, website, opening hours, price level and business status when present in Google's data.
 - Place details load on demand and include photos and visitor reviews with author attribution.
 - Google Places content is not persisted or cached by Dalilna.
@@ -32,3 +32,8 @@ OpenStreetMap fallback reliability:
 - Overpass endpoints: FOSSGIS, Private.coffee (current replacement for the old Kumi address), and VK Maps.
 - Each provider has its own timeout and retry diagnostics.
 - A failed provider does not stop attempts against the remaining providers.
+
+
+Overpass empty-response fix in 1.5.8:
+- HTTP 200 responses with an Overpass `remark` (for example query timeout or memory error) are treated as incomplete and trigger the next mirror.
+- Malformed successful responses also trigger failover rather than being shown as a legitimate zero-result search.

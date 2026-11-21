@@ -1,6 +1,6 @@
 {
   "name": "dalilna-yemen",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "private": true,
   "description": "Dalilna directory and open-map discovery API",
   "engines": {

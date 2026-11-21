@@ -268,7 +268,45 @@ async function run() {
       process.stdout.write("PASS Overpass retry switches from a busy primary to the current Private.coffee mirror\\n");
     }
 
-    // 7. The feature gate must prevent details access when Google is disabled.
+    // 7. HTTP 200 with an Overpass remark is incomplete, not an empty success.
+    {
+      const providers = [];
+      global.fetch = async input => {
+        const url = new URL(String(input));
+        if (url.hostname === "places.googleapis.com") return jsonResponse({ places: [] });
+        providers.push(url.hostname);
+        if (url.hostname === "overpass-api.de") {
+          return jsonResponse({ elements: [], remark: "runtime error: Query timed out in query" });
+        }
+        if (url.hostname === "overpass.private.coffee") {
+          return jsonResponse({ elements: [{
+            type: "node",
+            id: 8899,
+            lat: 15.3722,
+            lon: 44.1932,
+            tags: { name: "مطعم بعد إعادة محاولة المصدر", amenity: "restaurant" }
+          }] });
+        }
+        throw new Error("Unexpected Overpass provider: " + url.hostname);
+      };
+
+      const query = new URLSearchParams({
+        q: "مطعم",
+        category: "food",
+        lat: "15.3720",
+        lon: "44.1930",
+        radius: "5000"
+      });
+      const response = await httpRequest("/api/places/search?" + query, "198.51.100.18");
+      assert.equal(response.status, 200);
+      const result = JSON.parse(response.body.toString("utf8"));
+      assert.equal(result.count, 1);
+      assert.equal(result.items[0].name, "مطعم بعد إعادة محاولة المصدر");
+      assert.deepEqual(providers, ["overpass-api.de", "overpass.private.coffee"]);
+      process.stdout.write("PASS Overpass HTTP 200 remark is treated as incomplete and retried\\n");
+    }
+
+    // 8. The feature gate must prevent details access when Google is disabled.
     {
       process.env.GOOGLE_PLACES_ENABLED = "false";
       const response = await httpRequest("/api/places/details?placeId=" + PLACE_ID, "198.51.100.16");
@@ -278,7 +316,7 @@ async function run() {
       process.stdout.write("PASS disabled Google feature gate returns a clear HTTP 503\n");
     }
 
-    process.stdout.write("RESULT: 7 HTTP integration checks passed; no mock upstream call failed.\n");
+    process.stdout.write("RESULT: 8 HTTP integration checks passed; no mock upstream call failed.\n");
   } finally {
     global.fetch = originalFetch;
     restoreEnv();
