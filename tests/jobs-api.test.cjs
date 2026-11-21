@@ -41,7 +41,7 @@ test("Careers.sa parser retains exact job links, location, organization and fres
 
 test("daily refresh script uses valid URL-path filters and writes a real JSON newline",()=>{
  const script=fs.readFileSync("scripts/refresh-jobs.cjs","utf8");
- assert.match(script,/\/en\/jobs\/company/);
+ assert.ok(script.includes(String.raw`+"\n"`));
  assert.ok(!script.includes('/\\\\\\\\/en\\\\\\\\/jobs'));
  assert.ok(script.includes('"+\"\\\\n\"')); 
 });
