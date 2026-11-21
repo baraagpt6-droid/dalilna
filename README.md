@@ -4,7 +4,7 @@
 
 ## الإصدار
 
-- Version: 1.5.8
+- Version: 1.5.9
 - Web app: PWA (installable from supported browsers)
 - Android: WebView application source included in `android/`
 - Offline: cached application shell and local device storage
@@ -44,24 +44,21 @@
 
 Pending shop submissions are shown in a prominent dashboard shortcut. Open it to inspect the request details and choose approve/publish or reject. In this offline-first release, pending requests remain local to the device until a shared backend is connected.
 
-## البحث المباشر عن الأماكن — الإصدار 1.5.8
+## البحث المباشر عن الأماكن — الإصدار 1.5.9
 
-يستخدم دليلنا خادم البحث على Render: `https://dalilna-live.onrender.com`.
+يستخدم دليلنا مصادر مفتوحة ولا يحتاج مفتاح Google Places أو بطاقة بنكية أو حساب فوترة.
 
-- عند تفعيل Google Places في الخادم، يعرض البحث الاسم والعنوان والتقييم وعدد التقييمات ورقم الهاتف والموقع الإلكتروني وساعات العمل ومستوى السعر وحالة النشاط، إذا كانت Google توفر هذه البيانات للمكان.
-- زر «التفاصيل والصور وآراء الزوار» يجلب الصور ومراجعات العملاء عند طلب المستخدم، ويعرض إسناد أصحاب الصور والمراجعات. لا تُحفظ هذه البيانات في قوائم دليلنا أو في التخزين المؤقت.
-- OpenStreetMap وOverpass يبقيان مصدراً بديلاً عندما لا يكون Google مفعّلاً أو لا يعيد نتائج.
-- Google Places معطّل افتراضياً. يتطلب `GOOGLE_PLACES_API_KEY` كمتغير Sensitive و`GOOGLE_PLACES_ENABLED=true` على خدمة Render. لا تضع المفتاح في HTML أو Android أو GitHub.
-- قبل التفعيل، فعّل Places API (New) في Google Cloud، وقيّد المفتاح إلى Places API، واضبط الحصص والتنبيهات والميزانية. حقول التقييم والهاتف والموقع وساعات العمل من فئة Text Search Enterprise؛ نصوص المراجعات والصور الإضافية قد ترفع تكلفة طلب التفاصيل.
-- تتوفر صفحتا `privacy.html` و`terms.html` داخل الموقع والتطبيق.
+- تحديد حدود المحافظة أو المديرية عبر OpenStreetMap Nominatim.
+- البحث عن الأماكن عبر OpenStreetMap Overpass مع التبديل بين FOSSGIS وPrivate.coffee وVK Maps عند التعطل أو الاستجابة غير المكتملة.
+- عرض الاسم والعنوان والهاتف والموقع الإلكتروني وساعات العمل والوصف ونوع النشاط عندما تكون هذه البيانات مسجلة في الخريطة.
+- البحث الاختياري عن صور مرتبطة باسم المكان والمنطقة عبر Wikimedia Commons. يعرض التطبيق صفحة الملف واسم صاحب الصورة والترخيص عند توفر البيانات.
+- التقييمات والصور التي يضيفها المستخدم محفوظة على جهازه فقط ولا تتم مشاركتها أو مزامنتها في هذا الإصدار.
+- أزيلت طلبات Google Places المدفوعة من الخادم والواجهة.
+- مصادر الخرائط العامة تخضع لسياسات استخدام وحدود طلبات وقد تتوقف مؤقتاً. لا يوجد ضمان لاستخدام غير محدود أو توفر دائم.
+- صفر نتائج يعني عدم وجود عناصر مطابقة في بيانات الخريطة الحالية، ولا يثبت عدم وجود المكان على أرض الواقع.
 
-مصادر Google الرسمية:
-- https://developers.google.com/maps/documentation/places/web-service/text-search
-- https://developers.google.com/maps/documentation/places/web-service/place-details
-- https://developers.google.com/maps/documentation/places/web-service/policies
-- https://developers.google.com/maps/billing-and-pricing/pricing
+المصادر:
+- OpenStreetMap: https://www.openstreetmap.org/copyright
+- Wikimedia Commons: https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia
 
 راجع `SECURITY_LIMITATIONS.txt` قبل الإطلاق العام.
-
-
-تحديث 1.5.8: يتحقق الخادم من حقل `remark` في رد Overpass. إذا أعاد المصدر HTTP 200 مع استعلام غير مكتمل، ينتقل إلى المرآة التالية بدلاً من عرض صفر نتائج.
