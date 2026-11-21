@@ -22,8 +22,8 @@ test("preserves opening hours, safe website links and optional map coordinates",
  assert.equal(x.website,"https://example.org/");
  assert.equal(x.latitude,15.3694);
  assert.equal(x.longitude,44.191);
- assert.throws(()=>validate({title:"مكتبة",category:"books",website:"javascript:alert(1)"}),/رابط الموقع الإلكتروني/);
- assert.throws(()=>validate({title:"مكتبة",category:"books",website:"https://user:pass@example.org"}),/رابط الموقع الإلكتروني/);
+ assert.throws(()=>validate({title:"مكتبة",category:"books",website:"javascript:alert(1)"}),/يجب أن يبدأ رابط الموقع/);
+ assert.throws(()=>validate({title:"مكتبة",category:"books",website:"https://user:pass@example.org"}),/يجب أن يبدأ رابط الموقع/);
 });
 test("shared listings SQL migration adds backward-compatible shop detail columns",()=>{
  const sql=fs.readFileSync("db/schema.sql","utf8");
