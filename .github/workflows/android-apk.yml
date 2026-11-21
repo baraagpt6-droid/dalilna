@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'marketplace-client.js'
       - 'privacy.html'
       - 'terms.html'
       - 'manifest.json'
@@ -16,9 +17,10 @@ on:
       - 'android/**'
       - 'tests/**'
       - 'api/**'
+      - 'db/**'
+      - 'scripts/**'
       - 'server.js'
-      - 'vercel.json'
-      - 'server.js'
+      - 'marketplace-api.js'
       - 'package.json'
       - '.github/workflows/android-apk.yml'
 
@@ -31,40 +33,35 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
-
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-
-      - name: Test admin account entry and login verifier
-        run: node --test tests/*.test.cjs
-
+      - name: Test application and shared marketplace validation
+        run: npm test
       - name: Build signed debug APK
         run: gradle --no-daemon :android:app:assembleDebug
-
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dalilna-1.6.2-android-debug
+          name: dalilna-1.7.0-android-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
-
       - name: Publish APK as a GitHub pre-release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.6.2
-          name: Dalilna 1.6.2 Android APK (Testing)
+          tag_name: v1.7.0
+          name: Dalilna 1.7.0 Android APK (Testing)
           prerelease: true
           make_latest: false
           files: android/app/build/outputs/apk/debug/app-debug.apk
           body: |
-            Dalilna 1.6.2 testing APK.
+            Dalilna 1.7.0 testing APK.
+            Shared marketplace requires PostgreSQL setup on Render.
             This is a debug-signed test build, not a Play Store production release.

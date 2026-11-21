@@ -2,13 +2,15 @@
 
 const http = require("node:http");
 const { URL } = require("node:url");
+const { handleMarketplaceRequest } = require("./marketplace-api");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.6.2";
+const VERSION = "1.7.0";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
   "https://dalilna-yemen.vercel.app",
+  "https://dalilna-oavk.vercel.app",
   "https://baraagpt6-droid.github.io",
   "https://appassets.androidplatform.net",
   "http://localhost:3000",
@@ -75,10 +77,10 @@ function setCors(req, res) {
   const pathname = String(req.url || "").split("?")[0];
   // These endpoints return public map data only. Wildcard CORS avoids brittle
   // hostname allowlists for Render previews, PWA hosts and Android WebView.
-  if (pathname === "/health" || pathname.startsWith("/api/places/") || pathname.startsWith("/api/geoapify/")) {
+  if (pathname === "/health" || pathname.startsWith("/api/places/") || pathname.startsWith("/api/geoapify/") || pathname.startsWith("/api/marketplace/")) {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Accept, Content-Type");
+    res.setHeader("Access-Control-Allow-Methods", pathname.startsWith("/api/marketplace/") ? "GET, POST, OPTIONS" : "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Accept, Content-Type, Authorization");
     res.setHeader("Access-Control-Max-Age", "600");
     return;
   }
@@ -301,7 +303,7 @@ async function geoapifyRequest(url, timeoutMs = 10000) {
   try {
     const response = await fetch(url, {
       signal: controller.signal,
-      headers: { "Accept": "application/json", "User-Agent": "DalilnaDirectory/1.6.2 (+https://dalilna-yemen.onrender.com)" }
+      headers: { "Accept": "application/json", "User-Agent": "DalilnaDirectory/1.7.0 (+https://dalilna-yemen.onrender.com)" }
     });
     if (!response.ok) {
       const error = new Error(response.status === 429
@@ -399,18 +401,48 @@ async function searchGeoapifyPlaces(params) {
   }
 
   const categories = GEOAPIFY_CATEGORY_MAP[category] || GEOAPIFY_ALL_CATEGORIES;
-  const searchUrl = new URL("https://api.geoapify.com/v2/places");
-  const searchParams = {
-    categories: categories.join(","),
-    filter: geoapifyRectFilter(area.bbox),
-    limit: "8",
-    lang: "ar",
-    apiKey
-  };
-  if (query && category === "all") searchParams.name = query;
-  searchUrl.search = new URLSearchParams(searchParams).toString();
-  const payload = await geoapifyRequest(searchUrl, 12000);
-  const features = Array.isArray(payload.features) ? payload.features : [];
+  const south = area.bbox.south, north = area.bbox.north;
+  const west = area.bbox.west, east = area.bbox.east;
+  const latSteps = Math.max(1, Math.ceil((north - south) / 2.6));
+  const lonSteps = Math.max(1, Math.ceil((east - west) / 2.6));
+  const totalTiles = latSteps * lonSteps;
+  if (totalTiles > 12) {
+    const error = new Error("المنطقة واسعة جداً للبحث الكامل. اختر مديرية أو استخدم البحث حول موقعك.");
+    error.statusCode = 400;
+    error.code = "SEARCH_AREA_TOO_LARGE";
+    throw error;
+  }
+  const uniqueFeatures = new Map();
+  for (let row = 0; row < latSteps; row++) {
+    for (let col = 0; col < lonSteps; col++) {
+      const tile = {
+        south: south + (north - south) * row / latSteps,
+        north: south + (north - south) * (row + 1) / latSteps,
+        west: west + (east - west) * col / lonSteps,
+        east: west + (east - west) * (col + 1) / lonSteps
+      };
+      const searchUrl = new URL("https://api.geoapify.com/v2/places");
+      const searchParams = {
+        categories: categories.join(","),
+        filter: geoapifyRectFilter(tile),
+        limit: "20",
+        lang: "ar",
+        apiKey
+      };
+      if (query && category === "all") searchParams.name = query;
+      searchUrl.search = new URLSearchParams(searchParams).toString();
+      const payload = await geoapifyRequest(searchUrl, 12000);
+      const rows = Array.isArray(payload.features) ? payload.features : [];
+      for (const feature of rows) {
+        const props = feature && feature.properties ? feature.properties : {};
+        const placeId = cleanText(props.place_id || props.datasource && props.datasource.raw && props.datasource.raw.osm_id || "", 200);
+        const latValue = Number(props.lat), lonValue = Number(props.lon);
+        const key = placeId || (Number.isFinite(latValue) && Number.isFinite(lonValue) ? latValue.toFixed(5) + ":" + lonValue.toFixed(5) : "");
+        if (key && !uniqueFeatures.has(key)) uniqueFeatures.set(key, feature);
+      }
+    }
+  }
+  const features = [...uniqueFeatures.values()];
   const baseItems = features.map(feature => {
     const props = feature && feature.properties ? feature.properties : {};
     const name = cleanText(props.name, 180);
@@ -419,7 +451,6 @@ async function searchGeoapifyPlaces(params) {
     if (!Number.isFinite(pLat) || !Number.isFinite(pLon)) return null;
     const address = cleanText(props.formatted || [props.address_line1, props.address_line2].filter(Boolean).join("، "), 240);
     const itemId = cleanText(props.place_id || props.datasource && props.datasource.raw && props.datasource.raw.osm_id || "", 200);
-    const mapsUrl = geoapifyMapsUrl(name, address, pLat, pLon);
     return {
       id: itemId || "geoapify-" + pLat.toFixed(5) + "-" + pLon.toFixed(5),
       placeId: itemId,
@@ -432,25 +463,27 @@ async function searchGeoapifyPlaces(params) {
       description: "",
       lat: pLat,
       lon: pLon,
-      mapsUrl,
+      mapsUrl: geoapifyMapsUrl(name, address, pLat, pLon),
       sourceUrl: "https://www.openstreetmap.org/?mlat=" + pLat + "&mlon=" + pLon + "#map=18/" + pLat + "/" + pLon,
       source: "Geoapify"
     };
   }).filter(Boolean);
-
-  // Contact details are fetched only for the eight visible cards. Place Details
-  // costs one credit per request, so the page never requests details for hidden
-  // or unused results. Geoapify's free quota is shared by Places and Details.
   const items = [];
-  for (const item of baseItems.slice(0, 8)) {
-    const details = item.placeId ? await geoapifyPlaceDetails(item.placeId, apiKey) : {};
-    items.push({ ...item, ...details });
+  for (const item of baseItems) {
+    if (items.length < 8) {
+      const details = item.placeId ? await geoapifyPlaceDetails(item.placeId, apiKey) : {};
+      items.push({ ...item, ...details });
+    } else {
+      items.push(item);
+    }
   }
 
   const result = {
     source: "Geoapify",
     items,
     count: items.length,
+    tilesQueried: totalTiles,
+    truncated: features.length >= totalTiles * 20,
     place: usedPlace,
     scopeFallback,
     attribution: "Powered by Geoapify · © OpenStreetMap contributors",
@@ -556,7 +589,7 @@ async function geocodePlace(place) {
     url.search=new URLSearchParams({q:candidate,format:"jsonv2",addressdetails:"1",limit:"5",countrycodes:"ye","accept-language":"ar,en"}).toString();
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
     try{
-      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaDirectory/1.6.2 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
+      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaDirectory/1.7.0 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
       if(response.status===429){lastError=new Error("مصدر تحديد المنطقة مزدحم. حاول مرة أخرى بعد قليل.");continue;}
       if(!response.ok){lastError=new Error("تعذّر تحديد حدود المنطقة من مصدر الخريطة.");continue;}
       const rows=await response.json();
@@ -568,7 +601,7 @@ async function geocodePlace(place) {
         const bbox={south:bounds[0],north:bounds[1],west:bounds[2],east:bounds[3]};
         if(bbox.north<=bbox.south||bbox.east<=bbox.west)continue;
         const spanLat=bbox.north-bbox.south,spanLon=bbox.east-bbox.west;
-        if(spanLat>2.8||spanLon>2.8||spanLat*spanLon>5.5){const error=new Error("المنطقة واسعة جداً للبحث المباشر. اختر مديرية أو منطقة أصغر.");error.statusCode=400;throw error;}
+        if(spanLat>9||spanLon>9||spanLat*spanLon>42){const error=new Error("النطاق واسع جداً. اختر مديرية أو استخدم البحث حول موقعك.");error.statusCode=400;throw error;}
         return touchCache(geocodeCache,key,{bbox,label:cleanText(row.display_name||candidate,220),osmType:row.osm_type||"",osmId:row.osm_id||null},12*60*60*1000);
       }
     }catch(error){
@@ -599,7 +632,7 @@ async function fetchOverpass(bbox,category,label){
         headers:{
           "Content-Type":"application/x-www-form-urlencoded; charset=UTF-8",
           "Accept":"application/json",
-          "User-Agent":"DalilnaDirectory/1.6.2 (+https://dalilna-live.onrender.com)"
+          "User-Agent":"DalilnaDirectory/1.7.0 (+https://dalilna-live.onrender.com)"
         },
         body:new URLSearchParams({data:query})
       });
@@ -659,7 +692,7 @@ async function searchCommonsPhotos(query, place) {
   try{
     const response=await fetch(url,{signal:controller.signal,headers:{
       "Accept":"application/json",
-      "User-Agent":"DalilnaDirectory/1.6.2 (https://dalilna-live.onrender.com; contact: dalilna project)"
+      "User-Agent":"DalilnaDirectory/1.7.0 (https://dalilna-live.onrender.com; contact: dalilna project)"
     }});
     if(response.status===429){const error=new Error("مكتبة الصور مزدحمة. حاول لاحقاً.");error.statusCode=429;throw error;}
     if(!response.ok)throw new Error("تعذر الاتصال بمكتبة Wikimedia Commons.");
@@ -823,6 +856,7 @@ const server = http.createServer(async (req, res) => {
     json(res, 400, { error: "Invalid URL" });
     return;
   }
+  if (await handleMarketplaceRequest(req, res, url)) return;
   if (url.pathname === "/api/geoapify/status") {
     json(res, 200, {
       provider: "Geoapify",
