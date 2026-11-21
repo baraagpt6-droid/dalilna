@@ -65,7 +65,15 @@ test("Geoapify returns in-app place cards and obtains phone from Place Details",
   assert.equal(url.searchParams.get("apiKey"),"server-only-geoapify-test-key");
   if(url.pathname==="/v2/places"){
    assert.equal(url.searchParams.get("categories"),"commercial.supermarket,commercial.convenience,commercial.marketplace");
-   assert.match(url.searchParams.get("filter"),/^rect:/);
+   const expectedLatDelta=5000/111000;
+   const expectedLonDelta=5000/(111000*Math.max(0.2,Math.cos(15.36*Math.PI/180)));
+   const expectedRect=[
+    44.19-expectedLonDelta,
+    15.36-expectedLatDelta,
+    44.19+expectedLonDelta,
+    15.36+expectedLatDelta
+   ].join(",");
+   assert.equal(url.searchParams.get("filter"),"rect:"+expectedRect);
    assert.equal(url.searchParams.get("lang"),"ar");
    return new Response(JSON.stringify({type:"FeatureCollection",features:[{
     type:"Feature",geometry:{type:"Point",coordinates:[44.19,15.36]},
