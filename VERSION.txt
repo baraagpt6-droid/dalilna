@@ -1,11 +1,8 @@
-Dalilna 1.6.2
+Dalilna 1.7.0
 Application release: PWA + Android WebView
-Backend directory service release: 1.6.2
-Geoapify Places is the primary free live directory provider, using a server-side key; OpenStreetMap Overpass is the automatic fallback.
-Geoapify searches selected Yemen regions with corrected west,south,east,north rectangle ordering. Arabic search terms are routed to the intended category, including schools, health services, pharmacies, groceries, restaurants, electronics, and mobile shops.
-Public starter content includes 40 business records across Ibb, Taiz, Sana'a and Aden, plus six external product listings. Every public record is labelled as unverified and links to its public source. Product prices and stock may change.
-The starter catalogue is merged once per device. User submissions, ratings, photos and merchant changes remain device-local and are not synchronized between users because this release has no shared database.
-Wikimedia Commons photos remain on-demand and show file page, author, and license metadata when provided.
-No Google Places runtime, Google Cloud billing account, or bank card is required.
-Public data providers have coverage gaps and fair-use limits; they may be temporarily unavailable. Search responses and details are cached server-side within provider terms.
-PWA and Android WebView HTML, policies and service-worker cache versions are kept in sync.
+Android versionCode: 164
+Live place discovery: Geoapify Places and OpenStreetMap with provider attribution.
+Shared marketplace: PostgreSQL API; every community submission remains pending until server-side review.
+Product types include phones, watches, computers, cars, motorcycles, land, property, electronics, appliances, furniture, clothing, jewelry, honey, coffee, spices, livestock and other goods.
+Approved listings are shared across devices and refreshed while the app is visible.
+DATABASE_URL and DALILNA_ADMIN_TOKEN must be configured as server environment secrets and the database schema must be applied.
