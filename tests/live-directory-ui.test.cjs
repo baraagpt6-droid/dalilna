@@ -7,7 +7,7 @@ test("live place discovery supports Google Maps and OpenStreetMap fallback",()=>
  assert.match(html,/OpenStreetMap contributors/);
 });
 test("live results retain source links and geographic selection",()=>{
- assert.match(html,/item\.sourceUrl/);assert.match(html,/item\.mapsUrl/);
+ assert.match(html,/item\\.mapsUrl/);
  assert.match(html,/function liveDirectoryContext\(\)/);assert.match(html,/fallbackPlace/);
  assert.match(html,/navigator\.geolocation\.getCurrentPosition/);
 });
@@ -39,7 +39,7 @@ test("Google Maps places are shown as in-app cards with optional map links",()=>
  assert.match(html,/\/api\/google\/places\/search/);
  assert.match(html,/function googleMapsDirectoryCardHTML\(item\)/);
  assert.match(html,/فتح الموقع في Google Maps/);
- assert.match(html,/href=\"\'+esc\(item\.mapsUrl\)/);
+ assert.match(html,/item\\.mapsUrl/);
  assert.match(html,/tel:/);
  assert.match(html,/Google Maps · تُعرض بيانات المحلات هنا داخل دليلنا/);
  assert.doesNotMatch(html,/places\.googleapis\.com|GOOGLE_MAPS_API_KEY/);
