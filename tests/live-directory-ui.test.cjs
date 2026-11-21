@@ -49,17 +49,17 @@ test("Geoapify results render in-app business cards with phone and optional map 
 });
 test("live directory links to privacy and terms pages",()=>{assert.match(html,/\.\/privacy\.html/);assert.match(html,/\.\/terms\.html/);});
 
-test("first-run public starter catalog includes real sourced businesses and products",()=>{
- assert.match(html,/const PUBLIC_BUSINESSES=\[/);
- assert.match(html,/const PUBLIC_PRODUCTS=\[/);
- assert.match(html,/seedCatalogVersion/);
- assert.match(html,/بيانات عامة · غير موثّقة/);
- assert.match(html,/عرض من متجر خارجي/);
- assert.match(html,/function safeExternalUrl\\(value\\)/);\n assert.match(html,/sourceUrl:safeExternalUrl/);
- assert.match(html,/https:\/\/hubloh\.com\/en\/cell-phones/);
- assert.match(html,/https:\/\/www\.google\.com\/maps\/search/);
+test("first-run public starter catalog includes sourced businesses and products",()=>{
+ assert.ok(html.includes("const PUBLIC_BUSINESSES=["));
+ assert.ok(html.includes("const PUBLIC_PRODUCTS=["));
+ assert.ok(html.includes("seedCatalogVersion"));
+ assert.ok(html.includes("بيانات عامة · غير موثّقة"));
+ assert.ok(html.includes("عرض من متجر خارجي"));
+ assert.ok(html.includes("function safeExternalUrl(value)"));
+ assert.ok(html.includes("sourceUrl:safeExternalUrl"));
+ assert.ok(html.includes("https://hubloh.com/en/cell-phones"));
+ assert.ok(html.includes("https://www.google.com/maps/search/"));
 });
-
 test("Arabic search routes pharmacies, hospitals, schools and mobile shops to separate categories",()=>{
  assert.match(html,/category:"health".*مستشف.*عياده/);
  assert.match(html,/category:"pharmacy".*صيدل.*دواء/);
