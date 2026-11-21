@@ -4,7 +4,7 @@ const http = require("node:http");
 const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.6.0";
+const VERSION = "1.6.1";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -75,7 +75,7 @@ function setCors(req, res) {
   const pathname = String(req.url || "").split("?")[0];
   // These endpoints return public map data only. Wildcard CORS avoids brittle
   // hostname allowlists for Render previews, PWA hosts and Android WebView.
-  if (pathname === "/health" || pathname.startsWith("/api/places/") || pathname.startsWith("/api/google/places/")) {
+  if (pathname === "/health" || pathname.startsWith("/api/places/") || pathname.startsWith("/api/google/places/") || pathname.startsWith("/api/geoapify/")) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Accept, Content-Type");
@@ -304,6 +304,256 @@ async function searchGooglePlaces(params) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+const GEOAPIFY_CATEGORY_MAP = {
+  grocery: ["commercial.supermarket", "commercial.convenience", "commercial.marketplace"],
+  food: ["catering.restaurant", "catering.fast_food", "catering.food_court"],
+  cafe: ["catering.cafe"],
+  pharmacy: ["healthcare.pharmacy"],
+  health: ["healthcare.hospital", "healthcare.clinic_or_praxis", "healthcare.dentist", "healthcare.pharmacy"],
+  edu: ["education.school", "education.college", "education.university", "education.kindergarten"],
+  gov: ["office.government"],
+  money: ["service.financial.bank", "service.financial.atm", "service.financial.bureau_de_change", "service.financial.money_transfer"],
+  craft: ["commercial", "service"],
+  transport: ["service.taxi", "public_transport"],
+  mosque: ["religion.place_of_worship.islam"],
+  hotel: ["accommodation.hotel", "accommodation.guest_house", "accommodation.hostel"],
+  market: ["commercial.marketplace"],
+  solar: ["commercial.electronics", "commercial.hardware"],
+  parts: ["commercial.vehicle"],
+  build: ["commercial.hardware", "commercial.building_materials"],
+  clothes: ["commercial.clothing", "commercial.shoes"],
+  home: ["commercial.furniture", "commercial.houseware", "commercial.appliance"],
+  books: ["commercial.books", "commercial.stationery"],
+  beauty: ["commercial.health_and_beauty", "service.beauty"],
+  salon: ["service.beauty.hairdresser"],
+  laundry: ["service.cleaning.laundry"],
+  delivery: ["service.post", "service.post.office", "service.post.parcel_locker"],
+  utility: ["service.vehicle.fuel", "commercial.energy"],
+  gold: ["commercial.jewelry"],
+  wedding: ["catering", "commercial.wedding"],
+  farm: ["commercial.agrarian", "commercial.garden_centre"]
+};
+const GEOAPIFY_ALL_CATEGORIES = [
+  "commercial", "catering", "healthcare", "education", "accommodation",
+  "service", "office.government", "religion.place_of_worship"
+];
+const geoapifyCache = new Map();
+const geoapifyDetailsCache = new Map();
+const waitForGeoapifySlot = createIntervalGate(220);
+
+function geoapifyEnabled() {
+  return Boolean(String(process.env.GEOAPIFY_API_KEY || "").trim());
+}
+
+function geoapifyCategoryLabel(category, properties = {}) {
+  const labels = {
+    grocery:"بقالات وتموينات",food:"مطاعم ومخابز",cafe:"كافيهات وبوفيهات",
+    pharmacy:"صيدليات",health:"مراكز صحية",edu:"تعليم ومدارس",
+    gov:"جهات حكومية",money:"بنوك وصرافة",craft:"حرف وخدمات",
+    transport:"مواصلات",mosque:"مساجد",hotel:"فنادق وسكن",
+    market:"أسواق",solar:"طاقة شمسية وكهربائيات",parts:"قطع غيار",
+    build:"مواد بناء",clothes:"ملابس",home:"أثاث ومستلزمات منزلية",
+    books:"مكتبات وقرطاسية",beauty:"تجميل وعناية",salon:"صالونات",
+    laundry:"مغاسل",delivery:"بريد وتوصيل",utility:"وقود وخدمات",
+    gold:"ذهب ومجوهرات",wedding:"قاعات مناسبات",farm:"زراعة وحدائق"
+  };
+  if (FILTERS[category] && category !== "all") return labels[category] || "خدمة";
+  const cats = Array.isArray(properties.categories) ? properties.categories : [];
+  const first = cats.find(value => typeof value === "string") || "";
+  if (/supermarket|convenience|marketplace/.test(first)) return "بقالات وأسواق";
+  if (/catering\.restaurant|fast_food/.test(first)) return "مطاعم";
+  if (/catering\.cafe/.test(first)) return "كافيهات";
+  if (/healthcare\.pharmacy/.test(first)) return "صيدليات";
+  if (/healthcare/.test(first)) return "خدمات صحية";
+  if (/education/.test(first)) return "تعليم";
+  if (/office\.government/.test(first)) return "جهة حكومية";
+  if (/financial/.test(first)) return "بنوك وصرافة";
+  if (/religion/.test(first)) return "مسجد أو مكان عبادة";
+  if (/accommodation/.test(first)) return "فنادق وسكن";
+  return "خدمة";
+}
+
+function geoapifyMapsUrl(name, address, lat, lon) {
+  const query = cleanText([name, address].filter(Boolean).join(" "), 260);
+  if (query) return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
+  if (Number.isFinite(lat) && Number.isFinite(lon)) return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(lat + "," + lon);
+  return "";
+}
+
+async function geoapifyRequest(url, timeoutMs = 10000) {
+  await waitForGeoapifySlot();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: { "Accept": "application/json", "User-Agent": "DalilnaDirectory/1.6.1 (+https://dalilna-yemen.onrender.com)" }
+    });
+    if (!response.ok) {
+      const error = new Error(response.status === 429
+        ? "وصل البحث المجاني إلى حد الطلبات اليومي في Geoapify. جرّب غداً."
+        : "تعذر جلب بيانات الأماكن من Geoapify.");
+      error.statusCode = response.status === 429 ? 429 : 502;
+      error.code = response.status === 429 ? "GEOAPIFY_QUOTA_REACHED" : "GEOAPIFY_UPSTREAM_ERROR";
+      throw error;
+    }
+    return await response.json();
+  } catch (error) {
+    if (error.name === "AbortError") {
+      const timeout = new Error("تأخر مصدر البحث المجاني. أعد المحاولة بعد قليل.");
+      timeout.statusCode = 504;
+      timeout.code = "GEOAPIFY_TIMEOUT";
+      throw timeout;
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function geoapifyPlaceDetails(placeId, apiKey) {
+  const id = cleanText(placeId, 180);
+  if (!id) return {};
+  const cached = readCache(geoapifyDetailsCache, id);
+  if (cached) return cached;
+  const url = new URL("https://api.geoapify.com/v2/place-details");
+  url.search = new URLSearchParams({ id, lang: "ar", apiKey }).toString();
+  try {
+    const payload = await geoapifyRequest(url, 8000);
+    const features = Array.isArray(payload.features) ? payload.features : [];
+    const detail = features.find(feature => feature && feature.properties && feature.properties.feature_type === "details");
+    const props = detail && detail.properties ? detail.properties : {};
+    const contact = props.contact || {};
+    const phone = cleanText(contact.phone || contact.phone_other && contact.phone_other[0] || "", 60);
+    const result = {
+      phone,
+      website: cleanText(props.website || "", 240),
+      openingHours: cleanText(props.opening_hours || "", 120),
+      description: cleanText(props.description || "", 300)
+    };
+    touchCache(geoapifyDetailsCache, id, result, 24 * 60 * 60 * 1000);
+    return result;
+  } catch (error) {
+    console.warn(JSON.stringify({ event: "geoapify.details.error", code: cleanText(error.code, 80) }));
+    return {};
+  }
+}
+
+async function searchGeoapifyPlaces(params) {
+  const apiKey = String(process.env.GEOAPIFY_API_KEY || "").trim();
+  if (!apiKey) {
+    const error = new Error("مصدر Geoapify المجاني غير مفعّل بعد. أضف مفتاحه المجاني إلى خادم دليلنا.");
+    error.statusCode = 503;
+    error.code = "GEOAPIFY_NOT_CONFIGURED";
+    throw error;
+  }
+  const place = cleanText(params.place, 180);
+  const fallbackPlace = cleanText(params.fallbackPlace, 180);
+  const query = cleanText(params.q, 100);
+  const requestedCategory = FILTERS[params.category] ? params.category : "all";
+  const category = requestedCategory === "all" ? (inferCategoryFromQuery(query) || "all") : requestedCategory;
+  const lat = Number(params.lat), lon = Number(params.lon);
+  const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
+  const radius = Math.min(15000, Math.max(1000, Number(params.radius) || 7000));
+  if ((!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen") && !hasCoordinates) {
+    const error = new Error("اختر محافظة أو مديرية أولاً، أو فعّل البحث حول موقعك.");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const cacheKey = (hasCoordinates ? "near:" + lat.toFixed(3) + ":" + lon.toFixed(3) : normalizeText(place)) + "|" + category + "|" + normalizeText(query);
+  const cached = readCache(geoapifyCache, cacheKey);
+  if (cached) return { ...cached, cached: true, fetchedAt: new Date().toISOString() };
+
+  let area = null, scopeFallback = false, usedPlace = place || "بالقرب من موقعك";
+  if (hasCoordinates) {
+    const latDelta = radius / 111000;
+    const lonDelta = radius / (111000 * Math.max(0.2, Math.cos(lat * Math.PI / 180)));
+    area = { bbox: { south: lat - latDelta, north: lat + latDelta, west: lon - lonDelta, east: lon + lonDelta }, label: "بالقرب من موقعك" };
+  } else {
+    area = await geocodePlace(place);
+  }
+  if (!area && fallbackPlace && normalizeText(fallbackPlace) !== normalizeText(place)) {
+    area = await geocodePlace(fallbackPlace);
+    scopeFallback = true;
+    usedPlace = fallbackPlace;
+  }
+  if (!area || !area.bbox) {
+    const error = new Error("تعذر تحديد نطاق المنطقة. اختر محافظة أو مديرية أخرى.");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const categories = GEOAPIFY_CATEGORY_MAP[category] || GEOAPIFY_ALL_CATEGORIES;
+  const searchUrl = new URL("https://api.geoapify.com/v2/places");
+  const west = Math.min(area.bbox.west, area.bbox.east);
+  const east = Math.max(area.bbox.west, area.bbox.east);
+  const south = Math.min(area.bbox.south, area.bbox.north);
+  const north = Math.max(area.bbox.south, area.bbox.north);
+  const searchParams = {
+    categories: categories.join(","),
+    filter: "rect:" + [west, north, east, south].join(","),
+    limit: "8",
+    lang: "ar",
+    apiKey
+  };
+  if (query && category === "all") searchParams.name = query;
+  searchUrl.search = new URLSearchParams(searchParams).toString();
+  const payload = await geoapifyRequest(searchUrl, 12000);
+  const features = Array.isArray(payload.features) ? payload.features : [];
+  const baseItems = features.map(feature => {
+    const props = feature && feature.properties ? feature.properties : {};
+    const name = cleanText(props.name, 180);
+    if (!name) return null;
+    const pLat = Number(props.lat), pLon = Number(props.lon);
+    if (!Number.isFinite(pLat) || !Number.isFinite(pLon)) return null;
+    const address = cleanText(props.formatted || [props.address_line1, props.address_line2].filter(Boolean).join("، "), 240);
+    const itemId = cleanText(props.place_id || props.datasource && props.datasource.raw && props.datasource.raw.osm_id || "", 200);
+    const mapsUrl = geoapifyMapsUrl(name, address, pLat, pLon);
+    return {
+      id: itemId || "geoapify-" + pLat.toFixed(5) + "-" + pLon.toFixed(5),
+      placeId: itemId,
+      name,
+      category: geoapifyCategoryLabel(category, props),
+      address,
+      phone: "",
+      website: "",
+      openingHours: "",
+      description: "",
+      lat: pLat,
+      lon: pLon,
+      mapsUrl,
+      sourceUrl: "https://www.openstreetmap.org/?mlat=" + pLat + "&mlon=" + pLon + "#map=18/" + pLat + "/" + pLon,
+      source: "Geoapify"
+    };
+  }).filter(Boolean);
+
+  // Contact details are fetched only for the eight visible cards. Place Details
+  // costs one credit per request, so the page never requests details for hidden
+  // or unused results. Geoapify's free quota is shared by Places and Details.
+  const items = [];
+  for (const item of baseItems.slice(0, 8)) {
+    const details = item.placeId ? await geoapifyPlaceDetails(item.placeId, apiKey) : {};
+    items.push({ ...item, ...details });
+  }
+
+  const result = {
+    source: "Geoapify",
+    items,
+    count: items.length,
+    place: usedPlace,
+    scopeFallback,
+    attribution: "Powered by Geoapify · © OpenStreetMap contributors",
+    attributionUrl: "https://www.geoapify.com/",
+    sourceUrl: "https://www.openstreetmap.org/copyright",
+    cached: false,
+    fetchedAt: new Date().toISOString(),
+    note: "الأرقام والمواقع تظهر عند توفرها في بيانات OpenStreetMap. قد لا يكون لكل محل رقم هاتف مسجل."
+  };
+  touchCache(geoapifyCache, cacheKey, result, 10 * 60 * 1000);
+  return result;
 }
 
 function classifyCategory(tags) {
@@ -665,6 +915,46 @@ const server = http.createServer(async (req, res) => {
     json(res, 400, { error: "Invalid URL" });
     return;
   }
+  if (url.pathname === "/api/geoapify/status") {
+    json(res, 200, {
+      provider: "Geoapify",
+      dataSource: "OpenStreetMap",
+      geoapifyEnabled: geoapifyEnabled(),
+      freePlanDailyCredits: 3000,
+      creditCardRequired: false,
+      phoneNumbers: "available-when-listed-in-source"
+    });
+    return;
+  }
+  if (url.pathname === "/api/geoapify/search") {
+    const searchStartedAt = Date.now();
+    if (req.method !== "GET") {
+      json(res, 405, { error: "Method not allowed" }, { "Allow": "GET, OPTIONS" });
+      return;
+    }
+    if (!rateLimit(req)) {
+      json(res, 429, { code: "RATE_LIMITED", error: "عدد عمليات البحث كبير. انتظر قليلاً ثم حاول مجدداً." });
+      return;
+    }
+    try {
+      const result = await searchGeoapifyPlaces({
+        q: url.searchParams.get("q"),
+        place: url.searchParams.get("place"),
+        fallbackPlace: url.searchParams.get("fallbackPlace"),
+        category: url.searchParams.get("category"),
+        lat: url.searchParams.get("lat"),
+        lon: url.searchParams.get("lon"),
+        radius: url.searchParams.get("radius")
+      });
+      console.info(JSON.stringify({ event: "geoapify.search.complete", count: result.count, cached: result.cached, durationMs: Date.now() - searchStartedAt }));
+      json(res, 200, result);
+    } catch (error) {
+      const status = Number(error.statusCode) || 502;
+      console.warn(JSON.stringify({ event: "geoapify.search.error", status, code: cleanText(error.code, 80), durationMs: Date.now() - searchStartedAt }));
+      json(res, status, { code: cleanText(error.code, 80) || "GEOAPIFY_ERROR", error: cleanText(error.message, 240) || "تعذر البحث في Geoapify." });
+    }
+    return;
+  }
   if (url.pathname === "/api/google/places/status") {
     json(res, 200, {
       provider: "Google Maps",
@@ -770,4 +1060,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, inferCategoryFromQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGooglePlaces, googlePlacesEnabled, createIntervalGate, searchCommonsPhotos, server };
+module.exports = { buildOverpassQuery, inferCategoryFromQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGooglePlaces, googlePlacesEnabled, searchGeoapifyPlaces, geoapifyEnabled, geoapifyCategoryLabel, createIntervalGate, searchCommonsPhotos, server };
