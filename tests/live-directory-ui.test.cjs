@@ -8,7 +8,7 @@ const html = fs.readFileSync("index.html", "utf8");
 
 test("live map discovery panel appears for scoped home and category searches", () => {
   assert.match(html, /function liveDirectoryPanelHTML\(\)/);
-  assert.match(html, /dalilna-directory-api\.onrender\.com/);
+  assert.match(html, /dalilna-live\.onrender\.com/);
   assert.match(html, /runLiveDirectorySearch\(false\)/);
 });
 
