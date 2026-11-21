@@ -3,7 +3,7 @@
 const assert = require("node:assert/strict");
 
 const baseUrl = String(process.env.LIVE_API_BASE_URL || "https://dalilna-live.onrender.com").replace(/\/+$/, "");
-const timeoutMs = 20000;
+const timeoutMs = 90000;
 
 async function getJson(path) {
   const response = await fetch(baseUrl + path, {
