@@ -221,8 +221,9 @@ const GEOAPIFY_CATEGORY_MAP = {
   farm: ["commercial.agrarian", "commercial.garden"]
 };
 const GEOAPIFY_ALL_CATEGORIES = [
-  "commercial", "catering", "healthcare", "education", "accommodation",
-  "service", "office.government", "religion.place_of_worship"
+  "commercial", "catering", "healthcare", "education", "childcare",
+  "accommodation", "service", "office.government", "religion.place_of_worship",
+  "public_transport", "activity.events_venue"
 ];
 const geoapifyCache = new Map();
 const geoapifyDetailsCache = new Map();
@@ -533,7 +534,7 @@ async function geocodePlace(place) {
     url.search=new URLSearchParams({q:candidate,format:"jsonv2",addressdetails:"1",limit:"5",countrycodes:"ye","accept-language":"ar,en"}).toString();
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
     try{
-      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaDirectory/1.5.10 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
+      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaDirectory/1.6.1 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
       if(response.status===429){lastError=new Error("مصدر تحديد المنطقة مزدحم. حاول مرة أخرى بعد قليل.");continue;}
       if(!response.ok){lastError=new Error("تعذّر تحديد حدود المنطقة من مصدر الخريطة.");continue;}
       const rows=await response.json();
@@ -576,7 +577,7 @@ async function fetchOverpass(bbox,category,label){
         headers:{
           "Content-Type":"application/x-www-form-urlencoded; charset=UTF-8",
           "Accept":"application/json",
-          "User-Agent":"DalilnaDirectory/1.5.10 (+https://dalilna-live.onrender.com)"
+          "User-Agent":"DalilnaDirectory/1.6.1 (+https://dalilna-live.onrender.com)"
         },
         body:new URLSearchParams({data:query})
       });
@@ -636,7 +637,7 @@ async function searchCommonsPhotos(query, place) {
   try{
     const response=await fetch(url,{signal:controller.signal,headers:{
       "Accept":"application/json",
-      "User-Agent":"DalilnaDirectory/1.5.10 (https://dalilna-live.onrender.com; contact: dalilna project)"
+      "User-Agent":"DalilnaDirectory/1.6.1 (https://dalilna-live.onrender.com; contact: dalilna project)"
     }});
     if(response.status===429){const error=new Error("مكتبة الصور مزدحمة. حاول لاحقاً.");error.statusCode=429;throw error;}
     if(!response.ok)throw new Error("تعذر الاتصال بمكتبة Wikimedia Commons.");
