@@ -31,8 +31,10 @@ function validate(body){
   let openingHours=clean(body.openingHours||body.hours,120),website=clean(body.website,320);
   if(website){
    let parsed;
-    if(/^[a-z][a-z0-9+.-]*:/i.test(website)&&!/^https?:\\/\\//i.test(website))throw error("INVALID_WEBSITE","يجب أن يبدأ رابط الموقع بـ http أو https.");
-    try{parsed=new URL(/^https?:\\/\\//i.test(website)?website:"https://"+website);}
+    const hasHttpPrefix=website.toLowerCase().startsWith("http://")||website.toLowerCase().startsWith("https://");
+    const hasExplicitScheme=/^[a-z][a-z0-9+.-]*:/i.test(website);
+    if(hasExplicitScheme&&!hasHttpPrefix)throw error("INVALID_WEBSITE","يجب أن يبدأ رابط الموقع بـ http أو https.");
+    try{parsed=new URL(hasHttpPrefix?website:"https://"+website);}
    catch(_){throw error("INVALID_WEBSITE","رابط الموقع الإلكتروني غير صالح.");}
    if(!["http:","https:"].includes(parsed.protocol)||!parsed.hostname||parsed.username||parsed.password)throw error("INVALID_WEBSITE","يجب أن يبدأ رابط الموقع بـ http أو https.");
    website=parsed.href;
