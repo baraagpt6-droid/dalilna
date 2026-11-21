@@ -80,6 +80,11 @@
       img.alt = item.title || "صورة الإعلان";
       img.loading = "lazy";
       card.appendChild(img);
+    } else {
+      const placeholder = document.createElement("div");
+      placeholder.className = "shared-listing-image-fallback no-image";
+      placeholder.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3 3 3-4 5 6"/></svg><span>لا توجد صورة مرفقة</span>';
+      card.appendChild(placeholder);
     }
     const title = document.createElement("h3");
     title.textContent = item.title || "إعلان";

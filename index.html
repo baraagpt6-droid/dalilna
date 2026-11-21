@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.1.3">
+<meta name="app-version" content="2.1.4">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -646,9 +646,18 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
   </div>
 
   <nav class="quick-jump-bar" id="quickJumpBar" aria-label="وصول سريع إلى الخدمات">
-    <button type="button" class="quick-jump-btn" data-quick-jump="fxBox">💱 الصرف والذهب</button>
-    <button type="button" class="quick-jump-btn" data-quick-jump="fxCalcBox">🧮 حاسبة التحويل</button>
-    <button type="button" class="quick-jump-btn" data-quick-jump="emBox">🚨 أرقام الطوارئ</button>
+    <a class="quick-jump-btn" href="#fxBox" data-quick-jump="fxBox" aria-label="الانتقال إلى أسعار الصرف والذهب">
+      <span class="quick-jump-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M15.2 8.3c-.7-.8-1.7-1.2-3.1-1.2-1.5 0-2.5.8-2.5 1.9 0 3.1 5.1 1.1 5.1 4.2 0 1.1-1 2-2.8 2-1.2 0-2.3-.4-3-1.2M12 5.5v13"/></svg></span>
+      <span>الصرف والذهب</span>
+    </a>
+    <a class="quick-jump-btn" href="#fxCalcBox" data-quick-jump="fxCalcBox" aria-label="الانتقال إلى حاسبة تحويل العملات">
+      <span class="quick-jump-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4.5" y="2.8" width="15" height="18.4" rx="2.2"/><path d="M8 6.4h8M8 10.5h.01M12 10.5h.01M16 10.5h.01M8 14.5h.01M12 14.5h.01M16 14.5h.01M8 18h.01M12 18h4"/></svg></span>
+      <span>حاسبة التحويل</span>
+    </a>
+    <a class="quick-jump-btn" href="#emBox" data-quick-jump="emBox" aria-label="الانتقال إلى أرقام الطوارئ">
+      <span class="quick-jump-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.8 19 6v5c0 4.7-2.7 7.9-7 10.2C7.7 18.9 5 15.7 5 11V6l7-3.2Z"/><path d="M12 7.3v5.2M12 16.1h.01"/></svg></span>
+      <span>أرقام الطوارئ</span>
+    </a>
   </nav>
 
   <div class="voice-bar" id="voiceBar" hidden>
@@ -823,12 +832,12 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <!-- Exchange Rates & Gold -->
     <section class="panel" id="fxBox">
       <h2>
-        <span>أسعار الصرف والذهب اليوم</span>
+        <span class="fx-title-group"><svg class="fx-heading-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M15.2 8.3c-.7-.8-1.7-1.2-3.1-1.2-1.5 0-2.5.8-2.5 1.9 0 3.1 5.1 1.1 5.1 4.2 0 1.1-1 2-2.8 2-1.2 0-2.3-.4-3-1.2M12 5.5v13"/></svg><span>أسعار الصرف والذهب اليوم</span></span>
         <span class="tag" id="fxBadge">محدّث</span>
       </h2>
       <div class="fxg" id="fxGrid"></div>
       <div class="fx-calc" id="fxCalcBox">
-        <b style="font-size:14px">حاسبة تحويل العملات الفورية</b>
+        <div class="fx-calc-heading"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="2.8" width="15" height="18.4" rx="2.2"/><path d="M8 6.4h8M8 10.5h.01M12 10.5h.01M16 10.5h.01M8 14.5h.01M12 14.5h.01M16 14.5h.01M8 18h.01M12 18h4"/></svg><b>حاسبة تحويل العملات الفورية</b></div>
         <div class="fx-calc-grid">
           <input id="calcAmt" type="number" value="100" min="0" step="any" placeholder="المبلغ">
           <button type="button" class="picker-btn" id="calcFromBtn">
@@ -847,7 +856,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 
     <!-- Important Numbers -->
     <section class="panel" id="emBox">
-      <h2>أرقام الطوارئ والخدمات</h2>
+      <h2 class="emergency-heading"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 19 6v5c0 4.7-2.7 7.9-7 10.2C7.7 18.9 5 15.7 5 11V6l7-3.2Z"/><path d="M12 7.3v5.2M12 16.1h.01"/></svg><span>أرقام الطوارئ والخدمات</span></h2>
       <div class="links" id="emList"></div>
     </section>
   </section>
@@ -3830,16 +3839,19 @@ function renderAds(){
 function renderFx(){
   const n=v=>Number(v||0).toLocaleString("en-US");
   const isEn=curLang==="en";
+  const currencyIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M15.1 8.2c-.7-.7-1.7-1.1-3-1.1-1.5 0-2.4.7-2.4 1.8 0 3 5 1.1 5 4 0 1.1-1 2-2.8 2-1.2 0-2.2-.4-2.9-1.1M12 5.5v13"/></svg>';
+  const goldIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-2.1 10H6.1L4 9Z"/><path d="m7 9 2-4h6l2 4M8 13h8"/></svg>';
+  const asset=(kind,label)=>'<span class="fx-asset"><span class="fx-asset-icon '+kind+'">'+(kind==="gold"?goldIcon:currencyIcon)+'</span><span>'+label+'</span></span>';
   const card=(t,o)=>`<div class="fxc"><h3><span>${t}</span><span style="font-size:11px;color:var(--mute)">${T("inYer")}</span></h3>
     <table class="fx-tbl">
       <tr><th>${T("currCol")}</th><th>${T("buyCol")}</th><th>${T("sellCol")}</th></tr>
-      <tr><td>${isEn?"US Dollar ($)":"دولار أمريكي ($)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.usdB)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.usdS)}</span></td></tr>
-      <tr><td>${isEn?"Saudi Riyal (SAR)":"ريال سعودي (SAR)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.sarB)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.sarS)}</span></td></tr>
-      <tr><td>${isEn?"UAE Dirham (AED)":"درهم إماراتي (AED)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.aedB||Math.round(o.usdB/3.67))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.aedS||Math.round(o.usdS/3.67))}</span></td></tr>
-      <tr><td>${isEn?"Omani Rial (OMR)":"ريال عماني (OMR)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.omrB||Math.round(o.usdB*2.58))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.omrS||Math.round(o.usdS*2.6))}</span></td></tr>
-      <tr><td>${isEn?"Gold 24K (g)":"ذهب عيار 24 (جرام)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g24B||Math.round(o.g21B*1.14))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g24S||Math.round(o.g21S*1.14))}</span></td></tr>
-      <tr><td>${isEn?"Gold 21K (g)":"ذهب عيار 21 (جرام)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g21B)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g21S)}</span></td></tr>
-      <tr><td>${isEn?"Gold 18K (g)":"ذهب عيار 18 (جرام)"}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g18B||Math.round(o.g21B*0.857))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g18S||Math.round(o.g21S*0.857))}</span></td></tr>
+      <tr><td>${asset("currency",isEn?"US Dollar ($)":"دولار أمريكي ($)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.usdB)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.usdS)}</span></td></tr>
+      <tr><td>${asset("currency",isEn?"Saudi Riyal (SAR)":"ريال سعودي (SAR)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.sarB)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.sarS)}</span></td></tr>
+      <tr><td>${asset("currency",isEn?"UAE Dirham (AED)":"درهم إماراتي (AED)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.aedB||Math.round(o.usdB/3.67))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.aedS||Math.round(o.usdS/3.67))}</span></td></tr>
+      <tr><td>${asset("currency",isEn?"Omani Rial (OMR)":"ريال عماني (OMR)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.omrB||Math.round(o.usdB*2.58))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.omrS||Math.round(o.usdS*2.6))}</span></td></tr>
+      <tr><td>${asset("gold",isEn?"Gold 24K (g)":"ذهب عيار 24 (جرام)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g24B||Math.round(o.g21B*1.14))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g24S||Math.round(o.g21S*1.14))}</span></td></tr>
+      <tr><td>${asset("gold",isEn?"Gold 21K (g)":"ذهب عيار 21 (جرام)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g21B)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g21S)}</span></td></tr>
+      <tr><td>${asset("gold",isEn?"Gold 18K (g)":"ذهب عيار 18 (جرام)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g18B||Math.round(o.g21B*0.857))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g18S||Math.round(o.g21S*0.857))}</span></td></tr>
     </table></div>`;
   $("#fxGrid").innerHTML=card(T("sanaaRates"),S.fx.s)+card(T("adenRates"),S.fx.a);
   $("#fxMeta").textContent=(isEn?"Last updated: ":"آخر تحديث: ")+(S.fx.date||(isEn?"Today":"اليوم"));
@@ -3896,7 +3908,8 @@ $("#calcAmt").addEventListener("input",calcFx);
 /* Emergency Numbers */
 function renderEmerg(){
   const rows=S.emerg.split("\n").map(l=>l.split(/[:：]/)).filter(x=>x.length>1);
-  $("#emList").innerHTML=rows.map(([n,p])=>`<a class="lnk" href="tel:${digits(p)}" aria-label="اتصال ${esc(n.trim())} على ${digits(p)}" title="اتصال ${esc(n.trim())}">${esc(n.trim())}: <b dir="ltr">${esc(p.trim())}</b></a>`).join("")+`<button type="button" class="lnk quick-back-top" id="emBackToTop">↑ العودة للأعلى</button>`;
+  const phoneIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 3.8 4.8 5.1c-.8.5-.9 1.4-.6 2.4 1.9 6.2 6 10.3 12.2 12.2 1 .3 1.9.2 2.4-.6l1.3-2.4-4.2-2.8-1.8 2.1c-2.5-1.2-4.4-3.1-5.6-5.6l2.1-1.8-2.8-4.2Z"/></svg>';
+  $("#emList").innerHTML=rows.map(([n,p])=>`<a class="lnk" href="tel:${digits(p)}" aria-label="اتصال ${esc(n.trim())} على ${digits(p)}" title="اتصال ${esc(n.trim())}">${phoneIcon}<span>${esc(n.trim())}: <b dir="ltr">${esc(p.trim())}</b></span></a>`).join("")+`<button type="button" class="lnk quick-back-top" id="emBackToTop">↑ العودة للأعلى</button>`;
 }
 
 /* Offline-first local assistant. A server-backed OpenAI assistant is optional; API keys never live in this file. */
@@ -4051,7 +4064,7 @@ function geoapifyDirectoryCardHTML(item){
 }
 function liveApprovedListingCardHTML(item){
  const row=item&&typeof item==="object"?item:{},place=[row.area,row.district,row.governorate].filter(Boolean).join(" · ");
- const image=/^data:image\/(?:jpeg|png|webp);base64,/.test(String(row.imageData||""))&&row.imageData.length<=400000?'<img class="shared-listing-image" src="'+esc(row.imageData)+'" alt="'+esc(row.title||"صورة الإعلان")+'" loading="lazy">':"";
+  const image=/^data:image\/(?:jpeg|png|webp);base64,/.test(String(row.imageData||""))&&row.imageData.length<=400000?'<img class="shared-listing-image" src="'+esc(row.imageData)+'" alt="'+esc(row.title||"صورة الإعلان")+'" loading="lazy">':'<div class="shared-listing-image-fallback no-image"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3 3 3-4 5 6"/></svg><span>لا توجد صورة مرفقة</span></div>';
  const phone=String(row.phone||"").trim(),phoneInfo=yemenPhoneDetails(phone),tel=phone.replace(/[^+\d]/g,"");
  const contact=phone?'<div class="shared-listing-actions">'+(phoneInfo.isMobile?'<a href="'+esc(yemenWhatsAppUrl(phone,"مرحباً، وجدت محلكم في تطبيق دليلنا وأريد الاستفسار عن الإعلان."))+'" target="_blank" rel="noopener noreferrer">واتساب</a>':"")+'<a href="tel:'+esc(tel)+'">اتصال</a></div>':"";
  const lat=Number(row.latitude??row.lat),lon=Number(row.longitude??row.lon??row.lng);

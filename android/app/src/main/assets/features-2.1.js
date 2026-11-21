@@ -193,10 +193,17 @@
   const target=document.getElementById(id);
   if(!target)return;
   if(id==="emBox")document.body.classList.add("quick-jump-reveal-emergency");
+  target.hidden=false;
   target.classList.remove("quick-jump-highlight");
   void target.offsetWidth;
   target.classList.add("quick-jump-highlight");
-  target.scrollIntoView({behavior:"smooth",block:"center"});
+  target.scrollIntoView({behavior:"smooth",block:"start"});
+  const header=document.querySelector("header");
+  const headerOffset=header?Math.min(header.getBoundingClientRect().height,150):0;
+  const targetTop=window.scrollY+target.getBoundingClientRect().top-headerOffset-10;
+  if(Number.isFinite(targetTop)&&Math.abs(target.getBoundingClientRect().top-headerOffset)>24){
+   window.setTimeout(()=>window.scrollTo({top:Math.max(0,targetTop),behavior:"smooth"}),80);
+  }
   window.setTimeout(()=>target.classList.remove("quick-jump-highlight"),1100);
  }
  function scrollBackToSearch(){
@@ -229,11 +236,19 @@
   $("closeJobSeeker")?.addEventListener("click",()=>closeDialog($("jobSeekerDlg")));
   $("jobSeekerForm")?.addEventListener("submit",submitCandidate);
   $("refreshJobSeekers")?.addEventListener("click",loadCandidates);
+  document.addEventListener("error",event=>{
+   const image=event.target;
+   if(!(image instanceof HTMLImageElement)||!image.classList.contains("shared-listing-image"))return;
+   const fallback=document.createElement("div");fallback.className="shared-listing-image-fallback";
+   fallback.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3 3 3-4 5 6"/></svg><span>تعذر تحميل الصورة</span>';
+   image.replaceWith(fallback);
+  },true);
+  document.querySelectorAll("[data-quick-jump]").forEach(jump=>{
+   jump.addEventListener("click",event=>{event.preventDefault();scrollToQuickTarget(jump.dataset.quickJump);});
+  });
   $("q")?.addEventListener("input",syncSearch);
   $("clearSearch")?.addEventListener("click",()=>setTimeout(syncSearch,0));
   document.addEventListener("click",event=>{
-   const jump=event.target.closest("[data-quick-jump]");
-   if(jump){event.preventDefault();scrollToQuickTarget(jump.dataset.quickJump);}
    if(event.target.closest("#emBackToTop")){event.preventDefault();scrollBackToSearch();}
    if(event.target.closest("#tiles .tile,[data-flt]")){
     setTimeout(()=>{

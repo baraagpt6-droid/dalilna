@@ -69,3 +69,24 @@ test("regional catalogue requests are cancelled before a newer search starts",()
  assert.ok(html.includes("controller.signal.aborted"));
  assert.ok(html.includes("},260);"));
 });
+
+test("Dalilna quick jump buttons use SVG icons and native anchor targets",()=>{
+ assert.ok(html.includes('href="#fxBox"'));
+ assert.ok(html.includes('href="#fxCalcBox"'));
+ assert.ok(html.includes('href="#emBox"'));
+ assert.ok(html.includes('class="quick-jump-icon"'));
+ assert.ok(!html.includes('>💱 الصرف والذهب'));
+ assert.ok(!html.includes('>🧮 حاسبة التحويل'));
+ assert.ok(!html.includes('>🚨 أرقام الطوارئ'));
+ assert.ok(features.includes('scrollIntoView({behavior:"smooth",block:"start"})'));
+});
+test("approved listing cards use compact empty-image fallbacks",()=>{
+ assert.ok(html.includes('shared-listing-image-fallback no-image'));
+ assert.ok(client.includes('shared-listing-image-fallback no-image'));
+ assert.ok(features.includes('image.replaceWith(fallback)'));
+});
+test("currency, gold and emergency areas use matching vector icons",()=>{
+ assert.ok(html.includes('class="fx-asset-icon '));
+ assert.ok(html.includes('class="emergency-heading"'));
+ assert.ok(html.includes('emergency-number-link'));
+});
