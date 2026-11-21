@@ -8,6 +8,7 @@ const VERSION = "1.5.0";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
+  "https://dalilna-yemen.vercel.app",
   "https://baraagpt6-droid.github.io",
   "https://appassets.androidplatform.net",
   "http://localhost:3000",
@@ -135,7 +136,7 @@ function buildOverpassQuery(bbox, category) {
   const filters = FILTERS[category] || FILTERS.all;
   const box = [bbox.south, bbox.west, bbox.north, bbox.east].map(n => Number(n).toFixed(6)).join(",");
   const union = filters.map(filter => "nwr" + filter + "(" + box + ");").join("\n");
-  return "[out:json][timeout:25];\n(\n" + union + "\n);\nout center tags 80;";
+  return "[out:json][timeout:12][maxsize:134217728];\n(\n" + union + "\n);\nout center tags 80;
 }
 
 function classifyCategory(tags) {
@@ -213,103 +214,62 @@ function normalizeElement(element, placeLabel) {
 }
 
 async function geocodePlace(place) {
-  const key = normalizeText(place);
-  const cached = readCache(geocodeCache, key);
-  if (cached) return cached;
-  const wait = Math.max(0, 1100 - (Date.now() - lastGeocodeAt));
-  if (wait) await sleep(wait);
-  lastGeocodeAt = Date.now();
-  const url = new URL("https://nominatim.openstreetmap.org/search");
-  url.search = new URLSearchParams({
-    q: place,
-    format: "jsonv2",
-    addressdetails: "1",
-    limit: "1",
-    countrycodes: "ye",
-    "accept-language": "ar,en"
-  }).toString();
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 12_000);
-  try {
-    const response = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        "Accept": "application/json",
-        "User-Agent": "DalilnaYemenDirectory/1.5.0 (+https://dalilna-yemen.onrender.com)"
+  const key=normalizeText(place);
+  const cached=readCache(geocodeCache,key);
+  if(cached)return cached;
+  const cleanedPlace=cleanText(place.replace(/\b(?:محافظة|مديرية|عزلة)\s*/g," ").replace(/،\s*اليمن$/g,"").replace(/\s+/g," "),180);
+  const candidates=[...new Set([place,cleanedPlace+"، اليمن"].filter(Boolean))];
+  let lastError=null;
+  for(const candidate of candidates){
+    const wait=Math.max(0,1100-(Date.now()-lastGeocodeAt));
+    if(wait)await sleep(wait);
+    lastGeocodeAt=Date.now();
+    const url=new URL("https://nominatim.openstreetmap.org/search");
+    url.search=new URLSearchParams({q:candidate,format:"jsonv2",addressdetails:"1",limit:"5",countrycodes:"ye","accept-language":"ar,en"}).toString();
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
+    try{
+      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaYemenDirectory/1.5.2 (+https://dalilna-yemen.vercel.app)","Referer":"https://dalilna-yemen.vercel.app/"}});
+      if(response.status===429){lastError=new Error("مصدر تحديد المنطقة مزدحم. حاول مرة أخرى بعد قليل.");continue;}
+      if(!response.ok){lastError=new Error("تعذّر تحديد حدود المنطقة من مصدر الخريطة.");continue;}
+      const rows=await response.json();
+      if(!Array.isArray(rows)||!rows.length)continue;
+      for(const row of rows){
+        if(row.address?.country_code&&row.address.country_code!=="ye")continue;
+        const bounds=Array.isArray(row.boundingbox)?row.boundingbox.map(Number):[];
+        if(bounds.length!==4||!bounds.every(Number.isFinite))continue;
+        const bbox={south:bounds[0],north:bounds[1],west:bounds[2],east:bounds[3]};
+        if(bbox.north<=bbox.south||bbox.east<=bbox.west)continue;
+        const spanLat=bbox.north-bbox.south,spanLon=bbox.east-bbox.west;
+        if(spanLat>2.8||spanLon>2.8||spanLat*spanLon>5.5){const error=new Error("المنطقة واسعة جداً للبحث المباشر. اختر مديرية أو منطقة أصغر.");error.statusCode=400;throw error;}
+        return touchCache(geocodeCache,key,{bbox,label:cleanText(row.display_name||candidate,220),osmType:row.osm_type||"",osmId:row.osm_id||null},12*60*60*1000);
       }
-    });
-    if (!response.ok) throw new Error("خدمة تحديد المنطقة غير متاحة حالياً.");
-    const rows = await response.json();
-    if (!Array.isArray(rows) || !rows.length) return null;
-    const row = rows[0];
-    if (row.address && row.address.country_code && row.address.country_code !== "ye") return null;
-    const bounds = Array.isArray(row.boundingbox) ? row.boundingbox.map(Number) : [];
-    if (bounds.length !== 4 || !bounds.every(Number.isFinite)) return null;
-    const bbox = { south: bounds[0], north: bounds[1], west: bounds[2], east: bounds[3] };
-    if (bbox.north <= bbox.south || bbox.east <= bbox.west) return null;
-    const spanLat = bbox.north - bbox.south;
-    const spanLon = bbox.east - bbox.west;
-    if (spanLat > 2.8 || spanLon > 2.8 || spanLat * spanLon > 5.5) {
-      throw new Error("المنطقة واسعة جداً للبحث المباشر. اختر مديرية أو منطقة أصغر.");
-    }
-    const value = {
-      bbox,
-      label: cleanText(row.display_name || place, 220),
-      osmType: row.osm_type || "",
-      osmId: row.osm_id || null
-    };
-    return touchCache(geocodeCache, key, value, 12 * 60 * 60 * 1000);
-  } finally {
-    clearTimeout(timer);
+    }catch(error){
+      if(error.statusCode)throw error;
+      lastError=error.name==="AbortError"?new Error("تأخر مصدر تحديد المنطقة في الرد."):error;
+    }finally{clearTimeout(timer);}
   }
+  if(lastError)throw lastError;
+  return null;
 }
-
-async function fetchOverpass(bbox, category, label) {
-  const query = buildOverpassQuery(bbox, category);
-  const endpoints = [
-    "https://overpass-api.de/api/interpreter",
-    "https://overpass.kumi.systems/api/interpreter"
-  ];
-  let lastError = null;
-  for (const endpoint of endpoints) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 30_000);
-    try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        signal: controller.signal,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-          "Accept": "application/json",
-          "User-Agent": "DalilnaYemenDirectory/1.5.0 (+https://dalilna-yemen.onrender.com)"
-        },
-        body: new URLSearchParams({ data: query })
-      });
-      if (response.status === 429 || response.status === 504 || response.status === 503) {
-        lastError = new Error("مصدر الخرائط مشغول حالياً. حاول مرة أخرى بعد قليل.");
-        continue;
-      }
-      if (!response.ok) throw new Error("تعذّر جلب بيانات الأماكن من المصدر المفتوح.");
-      const body = await response.json();
-      const elements = Array.isArray(body.elements) ? body.elements : [];
-      const items = elements.map(item => normalizeElement(item, label)).filter(Boolean);
-      const seen = new Set();
-      const unique = items.filter(item => {
-        const key = normalizeText(item.name) + "|" + item.lat.toFixed(4) + "|" + item.lon.toFixed(4);
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
-      return unique.slice(0, 80);
-    } catch (error) {
-      lastError = error;
-    } finally {
-      clearTimeout(timer);
-    }
+async function fetchOverpass(bbox,category,label){
+  const query=buildOverpassQuery(bbox,category);
+  const endpoints=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
+  let lastError=null;
+  for(const [index,endpoint] of endpoints.entries()){
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),index===0?12000:10000),startedAt=Date.now();
+    try{
+      const response=await fetch(endpoint,{method:"POST",signal:controller.signal,headers:{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8","Accept":"application/json","User-Agent":"DalilnaYemenDirectory/1.5.2 (+https://dalilna-yemen.vercel.app)"},body:new URLSearchParams({data:query})});
+      if([429,503,504].includes(response.status)){lastError=new Error("مصدر بيانات الأماكن مشغول حالياً.");continue;}
+      if(!response.ok){lastError=new Error("تعذّر جلب بيانات الأماكن من المصدر المفتوح.");continue;}
+      const body=await response.json(),elements=Array.isArray(body.elements)?body.elements:[],items=elements.map(item=>normalizeElement(item,label)).filter(Boolean),seen=new Set();
+      const unique=items.filter(item=>{const key=normalizeText(item.name)+"|"+item.lat.toFixed(4)+"|"+item.lon.toFixed(4);if(seen.has(key))return false;seen.add(key);return true;});
+      console.info(JSON.stringify({event:"places.overpass.success",endpoint:index+1,category,count:unique.length,durationMs:Date.now()-startedAt}));
+      return unique.slice(0,80);
+    }catch(error){lastError=error.name==="AbortError"?new Error("انتهت مهلة مصدر الخريطة."):error;}
+    finally{clearTimeout(timer);}
   }
-  throw lastError || new Error("مصدر الخرائط غير متاح حالياً.");
+  throw lastError||new Error("مصدر بيانات الأماكن غير متاح حالياً.");
 }
-
 async function searchPlaces(params) {
   const place = cleanText(params.place, 180);
   const fallbackPlace = cleanText(params.fallbackPlace, 180);
@@ -440,6 +400,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
   if (url.pathname === "/api/places/search") {
+    const searchStartedAt = Date.now();
     if (req.method !== "GET") {
       json(res, 405, { error: "Method not allowed" }, { "Allow": "GET, OPTIONS" });
       return;
@@ -449,6 +410,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     try {
+      console.info(JSON.stringify({event:"places.search.start",place:cleanText(url.searchParams.get("place"),100),category:cleanText(url.searchParams.get("category"),30)}));
       const result = await searchPlaces({
         q: url.searchParams.get("q"),
         place: url.searchParams.get("place"),
@@ -458,9 +420,11 @@ const server = http.createServer(async (req, res) => {
         lon: url.searchParams.get("lon"),
         radius: url.searchParams.get("radius")
       });
+      console.info(JSON.stringify({event:"places.search.complete",count:result.count,durationMs:Date.now()-searchStartedAt}));
       json(res, 200, result);
     } catch (error) {
       const status = Number(error.statusCode) || 503;
+      console.warn(JSON.stringify({event:"places.search.error",status,durationMs:Date.now()-searchStartedAt,message:cleanText(error.message,160)}));
       json(res, status, { error: cleanText(error.message, 240) || "تعذّر البحث حالياً." });
     }
     return;

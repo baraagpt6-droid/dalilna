@@ -4,7 +4,7 @@
 
 ## الإصدار
 
-- Version: 1.5.1
+- Version: 1.5.2
 - Web app: PWA (installable from supported browsers)
 - Android: WebView application source included in `android/`
 - Offline: cached application shell and local device storage
@@ -56,3 +56,8 @@ Pending shop submissions are shown in a prominent dashboard shortcut. Open it to
 
 
 ملاحظة الإصدارات: نسخة التطبيق والواجهة هي 1.5.1. رقم `package.json` و`server.js` يخص خدمة API الخلفية المستقلة، ولا يمثل إصدار تطبيق Android أو PWA.
+
+
+## Faster live directory search
+
+The primary OpenStreetMap endpoint is a Vercel Node Function at `/api/places/search`, avoiding Render free-service idle spin-down. Browser requests abort after 35 seconds and show retry and Google Maps fallback actions. OpenStreetMap/Nominatim can still be rate-limited and coverage in Yemen may be incomplete.

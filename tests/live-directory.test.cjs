@@ -10,6 +10,8 @@ test("builds a narrow grocery query for a supplied bounding box", () => {
   assert.match(query, /convenience/);
   assert.match(query, /supermarket/);
   assert.match(query, /13\.100000,43\.200000,13\.400000,43\.500000/);
+  assert.match(query, /\[timeout:12\]/);
+  assert.match(query, /maxsize:134217728/);
   assert.match(query, /out center tags 80/);
 });
 
@@ -45,4 +47,11 @@ test("ignores unnamed or unlocated map objects", () => {
 
 test("normalizes Arabic spelling for live filtering", () => {
   assert.equal(normalizeText("أَبْرَاء"), "ابراء");
+});
+
+
+test("Vercel Places route exports a Node handler and a bounded duration", () => {
+  const handler = require("../api/places/search");
+  assert.equal(typeof handler, "function");
+  assert.equal(handler.config.maxDuration, 60);
 });

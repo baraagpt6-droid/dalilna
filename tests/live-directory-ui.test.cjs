@@ -8,7 +8,7 @@ const html = fs.readFileSync("index.html", "utf8");
 
 test("live map discovery panel appears for scoped home and category searches", () => {
   assert.match(html, /function liveDirectoryPanelHTML\(\)/);
-  assert.match(html, /dalilna-live\.onrender\.com/);
+  assert.match(html, /dalilna-yemen\.vercel\.app/);
   assert.match(html, /runLiveDirectorySearch\(false\)/);
 });
 
@@ -43,4 +43,12 @@ test("live discovery prompt is shown directly below the search bar", () => {
 test("scope count is described as local entries", () => {
   assert.match(html, /إدراج محلي/);
   assert.doesNotMatch(html, /const prefix=cur\.count===0\?"لا توجد إدراجات"/);
+});
+
+
+test("live search is bounded and offers retry after a timeout", () => {
+  assert.match(html, /controller\.abort\(\),35000/);
+  assert.match(html, /id="liveDirectoryRetry"/);
+  assert.match(html, /liveDirectoryRetry/);
+  assert.match(html, /انتهت مهلة الاتصال/);
 });
