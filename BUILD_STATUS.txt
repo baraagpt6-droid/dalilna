@@ -1,26 +1,28 @@
-Dalilna 1.2.0 — Repository build plan
-====================================
+Dalilna 1.5.5 — Build and deployment status
+===========================================
 
-The Android WebView source and PWA files are included.
+Application
+- Progressive Web App and Android WebView.
+- Android workflow builds a debug-signed testing APK, not a Play Store production package.
+- Root and Android WebView assets must stay synchronized.
 
-GitHub Actions:
-- deploy-pages.yml publishes only PWA web assets to GitHub Pages.
-- android-apk.yml builds a debug-signed APK, stores it as an Actions artifact, and publishes it as a GitHub pre-release asset.
+Live directory
+- Primary provider: Google Places API (New), only when GOOGLE_PLACES_API_KEY exists on Render service dalilna-live.
+- Fallback provider: OpenStreetMap Nominatim and Overpass when Google is not configured, returns no results, or fails.
+- Google content is live-only and is not stored in local merchant listings or cached.
+- Empty searches provide a direct Google Maps search link.
+- Selected area changes clear a previously selected GPS coordinate.
 
-To enable public PWA hosting:
-1. Open repository Settings > Pages.
-2. Select GitHub Actions as the build/deployment source.
-3. Run the Deploy Dalilna PWA workflow from Actions.
+Google setup required before live Google results work
+1. Create or select a Google Cloud project.
+2. Enable Places API (New) and attach billing.
+3. Create a server-side API key restricted to Places API (New).
+4. Configure daily quotas and billing alerts.
+5. Add GOOGLE_PLACES_API_KEY as a Sensitive environment variable to Render service dalilna-live.
+6. Publish a Privacy Policy and Terms of Use covering Google Maps Platform usage.
+7. Test category and district searches in several Yemen governorates.
 
-To obtain the Android installer:
-1. Open Actions > Build Dalilna Android APK.
-2. Run workflow_dispatch or push a relevant source change.
-3. Download the APK from the workflow artifact or Releases > v1.2.0.
-
-Important:
-- The APK is debug-signed for testing, not a Play Store production release.
-- No production signing keystore is committed.
-- The cloud AI endpoint requires OPENAI_API_KEY in Vercel Environment Variables.
-- GitHub Pages is static hosting and cannot execute api/assistant.js.
-- Account roles, moderation and bans stored in local browser storage are not secure server-side authorization. Production multi-user use requires a backend and database.
-- PWA offline mode caches the app shell and local device data; cloud AI requires internet.
+Security and operations
+- Do not put API secrets in the web app, Android assets, or GitHub.
+- User accounts, admin roles, moderation, reviews, contributions, and local listings are still device-local. This is not yet a central multi-user production system.
+- A stable Android release keystore and field testing are still required for a public Android production release.

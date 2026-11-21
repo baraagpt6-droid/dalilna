@@ -1,4 +1,4 @@
-Dalilna 1.5.4
+Dalilna 1.5.5
 Application release: PWA + Android WebView
 Backend directory API service version: 1.5.0 (separate service package version)
 Gemini cloud assistant (optional, server-side)
@@ -20,3 +20,10 @@ Live place search uses the Vercel Node Function as primary, with a 35-second cli
 Live place discovery now queries Nominatim and Overpass directly from the browser. Geocoding is throttled to one request per 1.1 seconds and cached. Overpass has two public endpoints. The interface has a 30-second timeout and retry plus Google Maps fallback.
 
 Live search uses the shared Render API proxy. Nominatim and Overpass requests are globally serialized per API process at 1.1-second intervals, with caching. The browser checks /health before searching and allows up to 100 seconds for free-service wake-up, then offers retry and Google Maps fallback.
+
+Live directory search v1.5.5
+- Google Places API (New) is the preferred live source when GOOGLE_PLACES_API_KEY is configured on Render.
+- OpenStreetMap remains the fallback.
+- Google Places results are live-only and are not saved in local listings or cached.
+- Empty live searches offer a direct Google Maps search action.
+- Changing a selected region clears old GPS coordinates.

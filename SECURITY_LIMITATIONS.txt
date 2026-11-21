@@ -5,15 +5,20 @@
 2. جلسة المشرف لا تُحفظ بعد إعادة تحميل الصفحة؛ يجب تسجيل الدخول مرة أخرى. هذا يقلل بقاء الجلسة لكنه لا يحوّل التطبيق إلى نظام آمن.
 3. الحظر والإيقاف يعملان على بيانات هذا الجهاز فقط. لن يؤثرا على نسخة صديقك أو الأجهزة الأخرى قبل ربط API وقاعدة بيانات مشتركة، وتطبيق الحظر والتحقق على الخادم لكل عملية.
 4. حساب التاجر محلي ولا يستخدم OTP أو إثبات ملكية رقم الهاتف. مطابقة رقم الهاتف ليست تحققاً من الهوية.
-5. المساعد المحلي ليس نموذجاً توليدياً؛ هو بحث ومرادفات وقواعد محلية. المساعد السحابي اختياري ويتطلب نشر api/assistant.js وإضافة OPENAI_API_KEY على الخادم.
-6. المساعد السحابي معطّل افتراضياً. عند موافقة المستخدم يرسل سؤال المستخدم وسياق الإدراجات العامة ذات الصلة، بما فيها أرقام التواصل، إلى الخادم ومزود الذكاء الاصطناعي. يمكن إلغاء الموافقة. لا ترسل كلمات مرور أو بيانات خاصة.
+5. المساعد المحلي ليس نموذجاً توليدياً؛ هو بحث ومرادفات وقواعد محلية. المساعد السحابي اختياري ويتطلب نشر api/assistant.js وإضافة GEMINI_API_KEY على الخادم.
+6. المساعد السحابي معطّل افتراضياً. عند موافقة المستخدم يرسل السؤال وسياق الإدراجات العامة ذات الصلة إلى الخادم ومزود Gemini. يمكن إلغاء الموافقة. لا ترسل كلمات مرور أو بيانات خاصة.
 7. الفحص الآلي الأولي لا يثبت صحة النشاط ولا يمنع كل الاحتيال. الإدراجات الحساسة تُحوّل للمراجعة، لكن القرار النهائي يجب أن يكون بشرياً.
 8. أسعار الصرف وأرقام الطوارئ يحدّثها المشرف يدوياً. ليست أسعاراً لحظية ولا تحققاً رسمياً من أرقام الطوارئ.
 9. GPS يعمل فقط بعد موافقة المستخدم وعلى سياق آمن. عند رفض الإذن لا تُعرض مسافة وهمية. المسافة المحسوبة خط مستقيم وليست وقت قيادة أو طريقاً.
 10. ساعات العمل تُحتسب على أساس Asia/Aden عندما تكون صيغة ساعات العمل قابلة للقراءة. الإدراجات التي لا تحتوي على وقت واضح لا تُصنف مفتوحة أو مغلقة.
 11. البيانات المحلية والتقييمات والتعليقات محفوظة في localStorage. حذف بيانات المتصفح أو إزالة التطبيق قد يؤدي إلى فقدها. نزّل نسخة احتياطية دورياً.
 12. Service Worker وPWA يحتاجان HTTPS أو localhost. فتح index.html عبر file:// لا يفعّل التثبيت أو Service Worker.
-13. لم يُبنَ APK موقّع ولم يحدث اختبار ميداني على Android/Huawei. لم يُنشر التطبيق على رابط HTTPS خلال هذه الجلسة.
+13. تتوفر نسخة Android تجريبية Debug-signed، لكنها ليست نسخة Release موقعة بمفتاح متجر. ما زال الاختبار الميداني على أجهزة Android مطلوباً.
 14. لا توجد حماية مطلقة أو اختبار أمني خارجي/اختبار اختراق. تم إجراء مراجعة ثابتة واختبارات متصفح آلية، وليس اعتماداً أمنياً.
 
 قبل الإطلاق العام، انقل المستخدمين والمشرفين والتجار والقوائم والحظر والتقييمات والإعلانات إلى خادم وقاعدة بيانات مركزية، وطبّق RBAC والتحقق من الصلاحيات ومحدد المعدل وسجل التدقيق على الخادم.
+
+15. Google Places API (New) is optional. It requires GOOGLE_PLACES_API_KEY on the Render service dalilna-live, a billing-enabled Google Cloud project, and Places API (New). Do not place the key in HTML, Android assets, or GitHub.
+16. Google Places names and addresses are displayed live and must not be copied to local merchant listings or cached. Show Google Maps attribution and follow Google Maps Platform storage, display, terms, and privacy requirements.
+17. The current IP rate limit and provider request gates are process-local. They are not shared across multiple service instances. Configure Google Cloud daily quotas, budget alerts, and API restrictions before enabling the key.
+18. Google results cannot be enabled for public use until the app publishes a Privacy Policy and Terms of Use covering Google Maps Platform requirements.
