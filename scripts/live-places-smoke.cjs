@@ -8,11 +8,11 @@ async function get(path,extraHeaders={}){
 async function main(){
  const deadline=Date.now()+180000;let health=null,last="no response";
  while(Date.now()<deadline){
-  try{const r=await get("/health");if(r.response.ok&&r.payload.ok&&r.payload.version==="1.9.1"){health=r.payload;break;}last="unexpected health: "+JSON.stringify(r.payload);}
+  try{const r=await get("/health");if(r.response.ok&&r.payload.ok&&r.payload.version==="2.1.0"){health=r.payload;break;}last="unexpected health: "+JSON.stringify(r.payload);}
   catch(e){last=e.message;}
   await new Promise(resolve=>setTimeout(resolve,5000));
  }
- assert.ok(health,"Render service did not become healthy on v1.9.1: "+last);
+ assert.ok(health,"Render service did not become healthy on v2.1.0: "+last);
  process.stdout.write("PASS live Render health: "+health.version+"\n");
  let r=await get("/api/places/status",{Origin:"https://dalilna-yemen.onrender.com"});assert.equal(r.response.status,200);
  assert.equal(r.response.headers.get("access-control-allow-origin"),"*");
@@ -33,7 +33,7 @@ async function main(){
  assert.ok(Array.isArray(r.payload.items));
  assert.ok(Number.isFinite(r.payload.count));
  process.stdout.write("PASS live Geoapify grocery search returned "+r.payload.count+" results\n");
- r=await get("/api/places/photos?q=Sanaa%20mosque&place=Sanaa%20Yemen");assert.equal(r.response.status,200);assert.equal(r.payload.source,"Wikimedia Commons");assert.ok(Array.isArray(r.payload.items));
+ const commons=await get("/api/places/photos?q=Sanaa%20mosque&place=Sanaa%20Yemen");assert.equal(commons.response.status,200);assert.equal(commons.payload.source,"Wikimedia Commons");assert.ok(Array.isArray(commons.payload.items));
  const marketplace=await get("/api/marketplace/status");
  assert.equal(marketplace.response.status,200);
  assert.equal(marketplace.payload.ready,true,"shared PostgreSQL must be reachable and migrated");
