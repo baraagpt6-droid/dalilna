@@ -2304,7 +2304,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="1.6.1";
+const APP_VERSION="1.6.2";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -2994,15 +2994,35 @@ function cleanNumber(v,fallback=0,min=-1e9,max=1e9){
   const n=Number(v);
   return Number.isFinite(n)&&n>=min&&n<=max?n:fallback;
 }
+function safeExternalUrl(v){
+  try{const u=new URL(String(v||""));if(u.protocol==="https:"&&!u.username&&!u.password)return u.href;}catch(e){}
+  return "";
+}
+function formatListingDate(v){
+  const n=Number(v),d=new Date(n);if(!Number.isFinite(n)||!Number.isFinite(d.getTime()))return "";
+  return new Intl.DateTimeFormat("ar-YE",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Aden"}).format(d);
+}
 function safeImageData(v){
   return typeof v==="string"&&v.length<=850000&&/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(v)?v:"";
 }
 function normalizeState(raw){
   const base=JSON.parse(JSON.stringify(DEFAULT_STATE));
   raw=raw&&typeof raw==="object"&&!Array.isArray(raw)?raw:{};
-  const items=Array.isArray(raw.items)?raw.items.filter(x=>!LEGACY_DEMO_IDS.has(String(x?.id||""))):base.items;
+  const seedIds=new Set(SEED_ITEMS.map(x=>String(x.id)));
+  const removedSeedIds=new Set(Array.isArray(raw.removedSeedIds)?raw.removedSeedIds.filter(x=>typeof x==="string"):[]);
+  const activeSeeds=SEED_ITEMS.filter(x=>!removedSeedIds.has(String(x.id)));
+  const storedItems=Array.isArray(raw.items)?raw.items.filter(x=>!LEGACY_DEMO_IDS.has(String(x?.id||""))):base.items;
+  const items=[...activeSeeds,...storedItems.filter(x=>!seedIds.has(String(x?.id||"")))];
   const safeItems=items.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)).map((x,idx)=>({
     id:cleanText(x.id,80)||("imp_"+idx+"_"+Date.now().toString(36)),
+    phone2:cleanText(x.phone2,40),
+    sourceUrl:safeExternalUrl(x.sourceUrl),
+    sourceName:cleanText(x.sourceName,120),
+    sourceType:["official_merchant","brand_dealer","official_product","public_job_portal","public_directory"].includes(x.sourceType)?x.sourceType:"",
+    sourceCheckedAt:cleanNumber(x.sourceCheckedAt,0,0,Number.MAX_SAFE_INTEGER),
+    sourceNote:cleanText(x.sourceNote,360),
+    expiresAt:cleanNumber(x.expiresAt,0,0,Number.MAX_SAFE_INTEGER),
+    nationwide:x.nationwide===true,
     name:cleanText(x.name,80),cat:CAT_KEYS.has(x.cat)?x.cat:"other",
     gov:cleanText(x.gov,80),dist:cleanText(x.dist,80),area:cleanText(x.area,100),village:cleanText(x.village,120),
     phone:cleanText(x.phone,40),hours:cleanText(x.hours,80),price:cleanText(x.price,80),country:cleanText(x.country,80),
@@ -3045,7 +3065,7 @@ function normalizeState(raw){
   const arrayOfObjects=(v)=>Array.isArray(v)?v.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)):[];
   return {
     ...base,...raw,
-    items:safeItems,
+    items:safeItems,\n    removedSeedIds:[...removedSeedIds].slice(0,500),
     pending:arrayOfObjects(raw.pending).map((x,i)=>({
       id:cleanText(x.id,80)||"pending_"+i,name:cleanText(x.name,80),cat:CAT_KEYS.has(x.cat)?x.cat:"other",
       gov:cleanText(x.gov,80),dist:cleanText(x.dist,80),area:cleanText(x.area,100),village:cleanText(x.village,120),
@@ -3370,12 +3390,12 @@ function getScopeOptions(){
 function buildScopeSelector(){
   const opts=getScopeOptions();
   const cur=opts.find(o=>o.val===scope)||opts[0];
-  const localCount=cur.count===0?"0 إدراج محلي على هذا الجهاز":cur.count+" إدراج محلي على هذا الجهاز";
+  const localCount=cur.count===0?"لا توجد إدراجات مسجلة بعد":cur.count+" إدراجات مسجلة";
   $("#scopeLbl").textContent=cur.label+" · "+localCount;
 }
 function scopeMatchesItem(item, selected=scope){
   if(!selected)return true;
-  if(selected.startsWith("gov:"))return normalizePlace(item.gov)===normalizePlace(selected.slice(4));
+  if(item.nationwide===true)return true;\n   if(selected.startsWith("gov:"))return normalizePlace(item.gov)===normalizePlace(selected.slice(4));
   if(selected.startsWith("district:")){
     const [gov,dist]=selected.slice(9).split("|");
     return itemMatchesDistrict(item,gov,dist);
@@ -3773,9 +3793,9 @@ function cardHTML(i){
 function applyFilters(arr){
   let r=arr.filter(i=>!isItemBlocked(i));
   if(scope){
-    if(scope.startsWith("gov:"))r=r.filter(i=>i.gov===scope.slice(4));
-    else if(scope.startsWith("dist:"))r=r.filter(i=>i.dist===scope.slice(5));
-    else r=r.filter(i=>i.area===scope||i.gov===scope||i.dist===scope);
+    if(scope.startsWith("gov:"))r=r.filter(i=>i.nationwide===true||i.gov===scope.slice(4));
+    else if(scope.startsWith("dist:"))r=r.filter(i=>i.nationwide===true||i.dist===scope.slice(5));
+    else r=r.filter(i=>i.nationwide===true||i.area===scope||i.gov===scope||i.dist===scope);
   }
   if(flt.open)r=r.filter(i=>isOpenNow(i.hours)===true);
   if(flt.ver)r=r.filter(i=>i.verifiedAt);
