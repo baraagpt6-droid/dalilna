@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.4.1">
+<meta name="app-version" content="1.4.2">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -266,6 +266,14 @@ button:active{transform:scale(.98)}
 .admin-panel{background:var(--card);border:2px solid var(--gold);border-radius:18px;padding:14px;margin-top:14px;box-shadow:var(--shadow)}
 .adm-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px}
 .adm-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:6px;margin-bottom:12px}
+.adm-pending-shortcut{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px;padding:12px 14px;border:1px solid var(--gold);border-radius:13px;background:rgba(232,160,37,.12);color:var(--text);text-align:right;font-weight:700;line-height:1.6}
+.adm-pending-shortcut[hidden]{display:none}
+.adm-pending-shortcut small{display:block;color:var(--mute);font-size:11px;font-weight:500}
+.adm-pending-count{display:inline-flex;align-items:center;justify-content:center;flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:var(--gold);color:#181411;font-weight:800}
+.adm-pending-card{display:grid;gap:7px;min-width:0;flex:1}
+.adm-pending-card .where{line-height:1.7}
+.adm-pending-photo{width:88px;height:88px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+
 .adm-tabs button{flex:0 0 auto;min-height:36px;padding:0 12px;border-radius:10px;background:var(--chip);font-size:13px;font-weight:600}
 .adm-tabs button[aria-selected=true]{background:var(--gold);color:#181411}
 .adm-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px;margin-bottom:12px}
@@ -606,6 +614,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
         <button type="button" class="ghost" id="admLogout" style="min-height:36px">خروج</button>
       </div>
     </div>
+    <button type="button" class="adm-pending-shortcut" id="admPendingShortcut" hidden><span>طلبات بانتظار المراجعة<small>افتح لمراجعة الطلبات وقبولها أو رفضها</small></span><span class="adm-pending-count">0</span></button>
     <div class="adm-tabs" id="admTabs">
       <button type="button" data-atab="overview" aria-selected="true">نظرة عامة</button>
       <button type="button" data-atab="listings">الإدراجات والحذف</button>
@@ -2264,7 +2273,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="1.4.1";
+const APP_VERSION="1.4.2";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -3878,18 +3887,29 @@ $("#sugg").addEventListener("click",e=>{
 });
 
 /* Admin Dashboard */
-let admTab="overview",selectedIds=new Set();
+let admTab="overview",adminTabManuallySelected=false,selectedIds=new Set();
 $("#admTabs").addEventListener("click",e=>{
   const b=e.target.closest("[data-atab]");if(!b)return;
   const need={pending:"review",perms:"perms",ads:"ads",fx:"fx",logs:"logs",backup:"backup",listings:"edit",blocks:"block"}[b.dataset.atab];
   if(need&&!hasPerm(need)){toast("ليست لديك صلاحية لهذا القسم.");return;}
   admTab=b.dataset.atab;
+  adminTabManuallySelected=true;
   $("#admTabs").querySelectorAll("button").forEach(x=>x.setAttribute("aria-selected",x===b));
   renderAdminPanel();
+});
+$("#admPendingShortcut").addEventListener("click",()=>{
+  if(!hasPerm("review")){toast("ليست لديك صلاحية مراجعة الطلبات.");return;}
+  adminTabManuallySelected=true;
+  admTab="pending";
+  const tab=$("#admTabs").querySelector('[data-atab="pending"]');
+  if(tab){tab.setAttribute("aria-selected","true");tab.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});}
+  renderAdminPanel();
+  $("#admBody").scrollIntoView({behavior:"smooth",block:"start"});
 });
 $("#admQuickAdd").addEventListener("click",()=>{if(!hasPerm("add")){toast("ليست لديك صلاحية الإضافة.");return;}openAdd("grocery");});
 $("#admLogout").addEventListener("click",()=>{
   logAction("تسجيل خروج المشرف");
+  admTab="overview";adminTabManuallySelected=false;
   S.session={role:"client",adminEmail:"",merchant:null};
   $("#adminAccessHint").hidden=true;
   saveState();syncRoleUI();render();toast("تم تسجيل الخروج");
@@ -3909,6 +3929,13 @@ function unblockPhoneLocal(id){
 }
 function renderAdminPanel(){
   if(S.session.role!=="admin")return;
+  const pendingShortcut=$("#admPendingShortcut");
+  if(pendingShortcut){
+    const count=S.pending.length;
+    pendingShortcut.hidden=count===0||!hasPerm("review");
+    pendingShortcut.innerHTML='<span>يوجد '+count+' طلب بانتظار مراجعتك<small>افتح الطلبات لمعاينة بيانات المحل ثم الموافقة والنشر أو الرفض</small></span><span class="adm-pending-count">'+count+'</span>';
+  }
+  if(!adminTabManuallySelected&&S.pending.length&&hasPerm("review"))admTab="pending";
   const tabPerm={overview:null,listings:"edit",pending:"review",perms:"perms",ads:"ads",fx:"fx",logs:"logs",blocks:"block",backup:"backup"};
   let visibleTabs=[];
   document.querySelectorAll("#admTabs [data-atab]").forEach(b=>{
@@ -3989,9 +4016,22 @@ function renderAdminPanel(){
       renderAdminPanel();render();
     });
   }else if(admTab==="pending"){
-    body.innerHTML=S.pending.length?S.pending.map(i=>`<div class="adm-row">
-      <span><b>${esc(i.name)}</b> <span class="tag">${i.requestType==="ad"?"إعلان مجاني 60 يوماً":esc(CN[i.cat]||"")}</span><br><span class="where">${esc(i.area||"غير محدد")} · ${esc(i.phone||"بدون رقم")}</span><br><span class="where">${esc(i.reason||"بانتظار المراجعة")}</span>${i.adText?`<p class="desc">${esc(i.adText)}</p>`:""}</span>
-      <div class="fbtn"><button type="button" class="yes" data-papprove="${esc(i.id)}">موافقة ونشر</button><button type="button" class="danger-btn" data-preject="${esc(i.id)}">رفض</button></div>
+    body.innerHTML=S.pending.length?'<p class="where">هذه الطلبات تنتظر قرار المشرف. الموافقة تنشر المحل في دليلنا، والرفض يحذفه من قائمة الانتظار.</p>'+S.pending.map(i=>`<div class="adm-row">
+      ${safeImageData(i.img)?`<img class="adm-pending-photo" src="${esc(safeImageData(i.img))}" alt="صورة ${esc(i.name)}">`:""}
+      <div class="adm-pending-card">
+        <b>${esc(i.name)}</b>
+        <span class="tag">${i.requestType==="ad"?"إعلان مجاني 60 يوماً":esc(CN[i.cat]||"")}</span>
+        <span class="where">الموقع: ${esc([i.village,i.area,i.dist,i.gov].filter(Boolean).join(" · ")||"غير محدد")}</span>
+        <span class="where">رقم التواصل: ${esc(i.phone||"غير مسجل")} · صاحب الطلب: ${esc(i.ownerPhone||"غير محدد")}</span>
+        ${i.desc?`<span class="where">التفاصيل: ${esc(i.desc)}</span>`:""}
+        ${i.adText?`<p class="desc">${esc(i.adText)}</p>`:""}
+        <span class="where">تاريخ الطلب: ${new Date(i.submittedAt||i.createdAt||Date.now()).toLocaleString("ar")}</span>
+        <span class="where">سبب الإحالة: ${esc(i.reason||"بانتظار المراجعة")}</span>
+        <div class="fbtn">
+          <button type="button" class="yes" data-papprove="${esc(i.id)}">موافقة ونشر</button>
+          <button type="button" class="danger-btn" data-preject="${esc(i.id)}">رفض</button>
+        </div>
+      </div>
     </div>`).join(""):`<div class="empty">لا توجد طلبات معلّقة.</div>`;
     body.querySelectorAll("[data-papprove]").forEach(b=>b.onclick=()=>{
       if(!hasPerm("review"))return;
