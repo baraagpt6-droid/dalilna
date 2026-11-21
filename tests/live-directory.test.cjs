@@ -152,3 +152,13 @@ test("normalizes Google photos and visitor reviews with author attribution", () 
   assert.equal(item.reviews[0].author.displayName,"زائر");
   assert.equal(item.reviews[0].rating,5);
 });
+
+test("Google photo proxy requests a short-lived URI without forwarding the API key to the photo host", () => {
+  const source=require("node:fs").readFileSync(require.resolve("../server"),"utf8");
+  const photoFn=source.slice(source.indexOf("async function fetchGooglePlacePhoto"),source.indexOf("async function searchPlaces"));
+  assert.match(photoFn,/skipHttpRedirect/);
+  assert.match(photoFn,/photoUri/);
+  assert.match(photoFn,/googleusercontent\.com/);
+  assert.match(photoFn,/headers:\s*\{\s*"Accept": "image\/\*"\s*\}/);
+  assert.doesNotMatch(photoFn,/headers:\s*\{[^}]*X-Goog-Api-Key[^}]*\}\s*,\s*redirect:\s*"follow"/s);
+});

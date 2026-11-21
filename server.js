@@ -523,28 +523,57 @@ async function fetchGooglePlacePhoto(placeId, photoName) {
     error.statusCode = 400;
     throw error;
   }
-  const url = new URL("https://places.googleapis.com/v1/" + photoName + "/media");
-  url.searchParams.set("maxWidthPx", "900");
+  const mediaUrl = new URL("https://places.googleapis.com/v1/" + photoName + "/media");
+  mediaUrl.searchParams.set("maxWidthPx", "900");
+  mediaUrl.searchParams.set("skipHttpRedirect", "true");
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 15000);
   try {
-    const response = await fetch(url, {
+    // Ask Google for a short-lived photo URI without following a redirect carrying the API key.
+    const mediaResponse = await fetch(mediaUrl, {
       signal: controller.signal,
-      headers: { "X-Goog-Api-Key": apiKey, "Accept": "image/*" },
-      redirect: "follow"
+      headers: {
+        "X-Goog-Api-Key": apiKey,
+        "Accept": "application/json"
+      },
+      redirect: "manual"
     });
-    if (!response.ok) {
-      const error = new Error("تعذر تحميل صورة المكان من Google.");
-      error.statusCode = response.status === 429 ? 429 : 502;
+    if (!mediaResponse.ok) {
+      const error = new Error("تعذر الحصول على رابط صورة المكان من Google.");
+      error.statusCode = mediaResponse.status === 429 ? 429 : 502;
       throw error;
     }
-    const contentType = response.headers.get("content-type") || "image/jpeg";
+    const mediaPayload = await mediaResponse.json().catch(() => ({}));
+    const photoUri = String(mediaPayload.photoUri || "");
+    let photoUrl;
+    try { photoUrl = new URL(photoUri); } catch (_) {
+      const error = new Error("رابط صورة Google غير صالح.");
+      error.statusCode = 502;
+      throw error;
+    }
+    if (photoUrl.protocol !== "https:" || !photoUrl.hostname.endsWith(".googleusercontent.com")) {
+      const error = new Error("مصدر صورة Google غير موثوق.");
+      error.statusCode = 502;
+      throw error;
+    }
+    // The short-lived photo URI is independently authorized; never forward the API key to it.
+    const imageResponse = await fetch(photoUrl, {
+      signal: controller.signal,
+      headers: { "Accept": "image/*" },
+      redirect: "follow"
+    });
+    if (!imageResponse.ok) {
+      const error = new Error("تعذر تحميل صورة المكان من Google.");
+      error.statusCode = imageResponse.status === 429 ? 429 : 502;
+      throw error;
+    }
+    const contentType = imageResponse.headers.get("content-type") || "image/jpeg";
     if (!contentType.startsWith("image/")) {
       const error = new Error("مصدر الصورة لم يُرجع ملف صورة.");
       error.statusCode = 502;
       throw error;
     }
-    const bytes = Buffer.from(await response.arrayBuffer());
+    const bytes = Buffer.from(await imageResponse.arrayBuffer());
     if (!bytes.length || bytes.length > 5 * 1024 * 1024) {
       const error = new Error("حجم صورة المكان غير صالح.");
       error.statusCode = 502;
