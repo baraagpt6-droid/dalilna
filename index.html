@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.4.0">
+<meta name="app-version" content="1.4.1">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -511,6 +511,10 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 .region-community-card small{font-size:9px;color:var(--mute)}
 @media(max-width:390px){.region-profile-metric b{font-size:15px}}
 
+.ai-map-search-link{display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin-top:9px;padding:9px 13px;border:1px solid var(--acc);border-radius:11px;background:rgba(56,182,166,.12);color:var(--acc);font-size:12px;font-weight:700;text-decoration:none}
+.empty-search-help{display:grid;gap:8px;text-align:center;padding:14px}
+.empty-search-help p{margin:0;color:var(--mute);font-size:12px;line-height:1.8}
+.empty-search-help .ai-map-search-link{justify-self:center}
 </style>
 </head>
 <body>
@@ -2260,7 +2264,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="1.3.0";
+const APP_VERSION="1.4.1";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -3646,6 +3650,45 @@ function localDirectorySearch(q,limit=6){
   }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||(b.item.createdAt||0)-(a.item.createdAt||0));
   return candidates.slice(0,limit).map(x=>x.item);
 }
+function directoryMapSearchInfo(q){
+  const text=normalizeQuery(q);
+  const services=[
+    {category:"grocery",label:"بقالات ومحلات تموين",test:/بقال|تموين|سوبر\\s?ماركت|مواد غذائيه/},
+    {category:"pharmacy",label:"صيدليات وعيادات",test:/صيدل|دواء|ادويه|علاج|عياده/},
+    {category:"food",label:"مطاعم ومخابز",test:/مطعم|مطاعم|مخبز|مخابز|وجبات/},
+    {category:"cafe",label:"بوفيات وكافيهات",test:/بوفيه|كافيه|كوفي|قهوه|كافتيريا/},
+    {category:"health",label:"مستشفيات ومراكز صحية",test:/مستشف|مركز صحي|مختبر|طبيب|دكتور/},
+    {category:"edu",label:"مدارس ومعاهد",test:/مدرس|مدارس|معهد|جامعه/},
+    {category:"mosque",label:"مساجد وجوامع",test:/مسجد|مساجد|جامع|جوامع/},
+    {category:"craft",label:"فنيون وورش صيانة",test:/سباك|كهربائي|نجار|حداد|ورشه|صيانه|تصليح|فني/},
+    {category:"transport",label:"نقل ومواصلات",test:/مواصلات|تاكسي|باص|نقل/},
+    {category:"hotel",label:"فنادق وشقق",test:/فندق|فنادق|شقق مفروشه|سكن/},
+    {category:"salon",label:"حلاقون وصالونات",test:/حلاق|حلاقه|صالون/},
+    {category:"laundry",label:"مغاسل ملابس",test:/مغسله|مغاسل|غسيل ملابس|كوي/},
+    {category:"market",label:"أسواق ومحلات",test:/سوق|اسواق|محل|محلات|متجر/}
+  ];
+  const service=services.find(item=>item.test.test(text));
+  if(!service)return null;
+  const gov=GOVS.find(name=>text.includes(normalizePlace(name)));
+  const districtEntry=Object.entries(YEMEN_DISTRICTS).find(([parent,districts])=>
+    districts.some(name=>text.includes(normalizePlace(name)))
+  );
+  const district=districtEntry&&districtEntry[1].find(name=>text.includes(normalizePlace(name)));
+  const place=gov?("محافظة "+gov+"، اليمن")
+    :districtEntry?("مديرية "+district+"، محافظة "+districtEntry[0]+"، اليمن")
+    :scope?regionScopeLabel(regionCurrentContext()):"اليمن";
+  const mapQuery=service.label+" "+String(q||"").trim()+" "+place;
+  return {category:service.category,label:service.label,place,mapQuery,url:regionMapSearch(mapQuery)};
+}
+function emptySearchFallbackHTML(term){
+  const raw=String(term||"").trim()||"محلات وخدمات";
+  const info=directoryMapSearchInfo(raw);
+  const place=info?info.place:(scope?regionScopeLabel(regionCurrentContext()):"اليمن");
+  const mapQuery=info?info.mapQuery:(raw+" في "+place);
+  const url=regionMapSearch(mapQuery);
+  const label=info?info.label:raw;
+  return '<div class="empty empty-search-help"><b>لا توجد إدراجات مطابقة داخل دليلنا حالياً.</b><p>الدليل يعرض المحلات والخدمات التي أضافها المستخدمون. عدم ظهور نتيجة يعني أن المكان غير مسجل في بيانات هذا الجهاز، وليس بالضرورة أنه غير موجود. يمكنك البحث خارج الدليل أو إضافة المكان.</p><a class="ai-map-search-link" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">ابحث عن '+esc(label)+' في خرائط Google</a></div>';
+}
 function hubaishSubdistrictAnswer(){
   const ibbDistricts=YEMEN_DISTRICTS["إب"]||[];
   return "التقسيم الإداري لمحافظة إب: تضم المحافظة 20 مديرية وفق مرجع المركز الوطني للمعلومات:\n"
@@ -3662,6 +3705,15 @@ function answerAI(q){
   const raw=String(q||"").trim(),t=normalizeQuery(raw);
   if(!raw)return "اكتب سؤالك وسأبحث في بيانات الدليل الموجودة على هذا الجهاز.";
   if(asksHubaishSubdistricts(raw))return hubaishSubdistrictAnswer();
+  const serviceIntent=directoryMapSearchInfo(raw);
+  if(serviceIntent){
+    const hits=localDirectorySearch(raw,12).filter(item=>item.cat===serviceIntent.category&&(!scope||scopeMatchesItem(item)));
+    if(hits.length){
+      return `وجدت ${hits.length} إدراجات من فئة ${serviceIntent.label} في بيانات هذا الجهاز:\\n`+
+        hits.slice(0,8).map((item,n)=>`${n+1}. ${item.name} — ${[item.area,item.dist,item.gov].filter(Boolean).join(" / ")}${item.phone?" — "+item.phone:""}${item.verifiedAt?" — موثّق":" — غير موثّق"}`).join("\\n");
+    }
+    return `لا توجد ${serviceIntent.label} مسجلة في دليلنا حالياً ضمن البيانات المتاحة على هذا الجهاز. هذا لا يعني عدم وجودها في المنطقة. استخدم زر خرائط Google أسفل الإجابة للبحث خارج الدليل.`;
+  }
   if(/صرف|دولار|سعودي|عمله|ذهب|ريال/.test(t)){
     return `أسعار الصرف المدخلة في هذا الجهاز (قد تحتاج إلى تحديث من الإدارة):\nصنعاء: الدولار شراء ${S.fx.s.usdB} / بيع ${S.fx.s.usdS}، السعودي شراء ${S.fx.s.sarB} / بيع ${S.fx.s.sarS}.\nعدن: الدولار شراء ${S.fx.a.usdB} / بيع ${S.fx.a.usdS}، السعودي شراء ${S.fx.a.sarB} / بيع ${S.fx.a.sarS}.\nلا أستطيع تأكيد أنها أسعار السوق اللحظية.`;
   }
@@ -3758,12 +3810,20 @@ $("#aiCloudConsent").addEventListener("change",e=>{
 });
 function assistantApiUrl(){
   const host=location.hostname;
-  if(host==="appassets.androidplatform.net"||host.endsWith(".github.io")){
+  if(host==="appassets.androidplatform.net"||host.endsWith(".github.io")||host==="dalilna-yemen.onrender.com"){
     return "https://dalilna-oavk.vercel.app/api/assistant";
   }
   return "/api/assistant";
 }
 async function askAssistant(q){
+  const serviceIntent=directoryMapSearchInfo(q);
+  if(serviceIntent){
+    const hits=localDirectorySearch(q,12).filter(item=>item.cat===serviceIntent.category&&(!scope||scopeMatchesItem(item)));
+    const answer=hits.length
+      ? `وجدت ${hits.length} إدراجات من فئة ${serviceIntent.label} في بيانات هذا الجهاز:\\n`+hits.slice(0,8).map((item,n)=>`${n+1}. ${item.name} — ${[item.area,item.dist,item.gov].filter(Boolean).join(" / ")}${item.phone?" — "+item.phone:""}${item.verifiedAt?" — موثّق":" — غير موثّق"}`).join("\\n")
+      : `لا توجد ${serviceIntent.label} مسجلة في دليلنا حالياً ضمن البيانات المتاحة على هذا الجهاز. هذا لا يعني عدم وجودها في المنطقة. يمكنك البحث خارج الدليل في خرائط Google.`;
+    return {answer,mode:hits.length?"directory":"maps",mapUrl:serviceIntent.url,mapLabel:serviceIntent.label};
+  }
   // Administrative reference facts with fixed local data are returned deterministically.
   if(asksHubaishSubdistricts(q))return {answer:hubaishSubdistrictAnswer(),mode:"reference"};
   if(S.aiCloudConsent===true&&navigator.onLine){
@@ -3795,8 +3855,17 @@ $("#botf").addEventListener("submit",async e=>{
     source.className="where";
     source.style.display="block";
     source.style.marginTop="7px";
-    source.textContent=result.mode==="gemini"?"المصدر: Gemini":result.mode==="reference"?"المصدر: مرجع دليلنا الإداري":result.mode==="local-fallback"?"المصدر: المساعد المحلي — تعذر اتصال Gemini":result.mode==="offline"?"المصدر: المساعد المحلي دون إنترنت":"المصدر: المساعد المحلي";
+    source.textContent=result.mode==="gemini"?"المصدر: Gemini":result.mode==="reference"?"المصدر: مرجع دليلنا الإداري":result.mode==="local-fallback"?"المصدر: المساعد المحلي — تعذر اتصال Gemini":result.mode==="offline"?"المصدر: المساعد المحلي دون إنترنت":result.mode==="directory"?"المصدر: إدراجات دليلنا على هذا الجهاز":result.mode==="maps"?"المصدر: بحث خارجي عبر خرائط Google":"المصدر: المساعد المحلي";
     pending.appendChild(source);
+    if(result.mapUrl){
+      const mapLink=document.createElement("a");
+      mapLink.className="ai-map-search-link";
+      mapLink.href=result.mapUrl;
+      mapLink.target="_blank";
+      mapLink.rel="noopener noreferrer";
+      mapLink.textContent="ابحث عن "+String(result.mapLabel||"الخدمة")+" في خرائط Google";
+      pending.appendChild(mapLink);
+    }
   }catch(err){
     pending.textContent=answerAI(q);
     const source=document.createElement("small");source.className="where";source.textContent="المصدر: المساعد المحلي";pending.appendChild(source);
@@ -4099,7 +4168,7 @@ function render(){
     const base=S.items.filter(i=>i.cat!=="souq"&&i.cat!=="jobs");
     const res=applyFilters(base.filter(match));
     $("#latestT").innerHTML=`${q?T("searchRes"):T("latestTitle")} <span>${res.length}</span>`;
-    $("#list").innerHTML=res.slice(0,homeLim).map(cardHTML).join("")||`<div class="empty">${T("emptyList")}</div>`;
+    $("#list").innerHTML=res.slice(0,homeLim).map(cardHTML).join("")||emptySearchFallbackHTML(q||"محلات وخدمات");
     $("#more").hidden=res.length<=homeLim;
   }else if(view==="cat"){
     const inCat=S.items.filter(i=>i.cat===curCat);
@@ -4110,7 +4179,7 @@ function render(){
     $("#areaLbl").textContent=ar||(curLang==="en"?`All Areas (${areas.length})`:`كل المناطق (${areas.length})`);
     const shown=applyFilters(inCat.filter(i=>(!ar||i.area===ar)&&match(i)));
     $("#count").textContent=`${shown.length} نتيجة`;
-    $("#clist").innerHTML=shown.map(cardHTML).join("")||`<div class="empty">لا توجد إدراجات في هذا القسم بعد.</div>`;
+    $("#clist").innerHTML=shown.map(cardHTML).join("")||emptySearchFallbackHTML($("#q").value.trim()||CN[curCat]||curCat);
   }else if(view==="jobs"){
     const jobs=applyFilters(S.items.filter(i=>i.cat==="jobs"&&match(i)));
     $("#jobs").innerHTML=jobs.map(cardHTML).join("")||`<div class="empty">لا توجد وظائف متاحة حالياً.</div>`;
