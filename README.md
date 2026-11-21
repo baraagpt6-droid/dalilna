@@ -4,7 +4,7 @@
 
 ## الإصدار
 
-- Version: 1.6.1
+- Version: 1.6.2
 - Web app: PWA (installable from supported browsers)
 - Android: WebView application source included in `android/`
 - Offline: cached application shell and local device storage
@@ -44,7 +44,7 @@
 
 Pending shop submissions are shown in a prominent dashboard shortcut. Open it to inspect the request details and choose approve/publish or reject. In this offline-first release, pending requests remain local to the device until a shared backend is connected.
 
-## البحث المباشر عن الأماكن — الإصدار 1.6.1
+## البحث المباشر عن الأماكن — الإصدار 1.6.2
 
 يعتمد دليلنا على Geoapify Places كواجهة مجانية منظمة لبيانات الأماكن المبنية على OpenStreetMap، مع الرجوع إلى OpenStreetMap مباشرة إذا لم يتم إعداد المفتاح أو توقف الخدمة.
 
@@ -65,3 +65,15 @@ Pending shop submissions are shown in a prominent dashboard shortcut. Open it to
 - Wikimedia Commons: https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia
 
 راجع `SECURITY_LIMITATIONS.txt` قبل الإطلاق العام.
+
+## دليل البداية والبيانات العامة — 1.6.2
+
+- يتضمن الإصدار إدراجات بداية مستندة إلى صفحات متاجر ووكلاء يمنيين رسمية، وصفحات منتجات بأسعارها المنشورة، وإعلانات وظائف عامة مع مواعيد إغلاقها.
+- تظهر لكل إدراج صفحة المصدر وتاريخ مراجعة المصدر وملاحظة بأن دليلنا لم يتحقق ميدانياً من حالة الفرع أو توفر المخزون.
+- تُخفى الوظائف والعروض بعد تاريخ انتهاء الإعلان.
+- تبقى نتائج البحث الجغرافي من Geoapify وOpenStreetMap منفصلة عن قاعدة الإضافات المحلية. لا ندمج نتيجة خريطة آلياً بوصفها إدراجاً موثقاً.
+- يُحفظ حذف إدراج البداية الذي يجريه المشرف حتى لا يعود بعد إعادة فتح التطبيق، مع الإبقاء على إدراجات المستخدم السابقة.
+- لا يزال نموذج الإضافة الحالي محلياً على الجهاز فقط؛ لا تظهر إدراجات المستخدم للعامة حتى يكتمل خادم قاعدة البيانات المشتركة ومراجعة الطلبات. لا تَعِد المستخدم بأن نشره عام قبل تفعيل هذه الخدمة.
+- لا ننسخ إعلانات السوق أو أرقام البائعين من المواقع الخارجية؛ نوفر روابط للمصدر حتى يتواصل العميل مع المعلن مباشرة.
+
+مصادر الدليل المبدئي: مواقع المتاجر والوكلاء الرسميين، Yemen HR، السجل الصحي لوزارة الصحة العامة والسكان، وGeoapify Places المبني على OpenStreetMap. بيانات الأماكن المفتوحة قد تكون ناقصة في بعض المحافظات والمديريات.
