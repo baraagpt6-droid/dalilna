@@ -30,3 +30,12 @@ test("individual place cards use optional map and source links from catalogue da
 test("photos and ratings remain device-local",()=>{
  for(const token of ["data-live-rate-id","data-live-photo-input","محفوظة على هذا الجهاز فقط"])assert.ok(html.includes(token),token);
 });
+
+
+test("region category shortcuts use the actual category filter",()=>{
+ assert.ok(html.includes('const key=category.dataset.regionCategory||"all"'));
+ assert.ok(html.includes('go("cat",key)'));
+});
+test("approved market ads map directory sections to their product types",()=>{
+ for(const token of ['vehicles:["car","motorcycle","vehicle_parts","construction_equipment"]','real_estate:["land","property","apartment","house"]','categoryProductTypes.includes(item.productType)',"للإيجار"])assert.ok(html.includes(token),token);
+});

@@ -23,6 +23,7 @@ function validate(body){
  if(!CONDITIONS.has(condition))throw error("INVALID_CONDITION","حالة المعروض غير معروفة.");
  if(!CURRENCIES.has(currency))throw error("INVALID_CURRENCY","العملة غير معروفة.");
  if(category!=="souq"&&category!=="land"&&productType!=="other")throw error("INVALID_PRODUCT_TYPE","نوع المنتج مخصص لإعلانات السوق.");
+ if(listingType==="rent"&&!["land","property","apartment","house","car","motorcycle"].includes(productType))throw error("INVALID_LISTING_TYPE","خيار الإيجار مخصص للعقارات والشقق والمنازل والسيارات والدراجات.");
  if(deadline&&category!=="jobs")throw error("INVALID_DEADLINE","تاريخ الانتهاء مخصص للوظائف.");
  if(deadline&&(!/^\d{4}-\d{2}-\d{2}$/.test(deadline)||Number.isNaN(Date.parse(deadline+"T00:00:00Z"))))throw error("INVALID_DEADLINE","تاريخ الانتهاء غير صالح.");
  if((latitude===null)!==(longitude===null))throw error("INVALID_COORDINATES","أرسل خط العرض وخط الطول معاً.");

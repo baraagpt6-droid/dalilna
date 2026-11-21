@@ -20,3 +20,8 @@ test("legacy migration keeps opening hours, websites and coordinates",()=>{
  assert.ok(client.includes("openingHours: item.hours || item.openingHours"));
  assert.ok(client.includes("website: item.website"));
 });
+
+
+test("marketplace client displays rental labels",()=>{
+ assert.ok(client.includes('item.listingType === "rent") labels.push("للإيجار")'));
+});

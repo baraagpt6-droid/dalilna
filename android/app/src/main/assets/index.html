@@ -3223,7 +3223,7 @@ $("#regionProfileDetails").addEventListener("click",function(e){
  const gov=e.target.closest("[data-region-gov]");
  if(gov){scope="gov:"+gov.dataset.regionGov;liveDirectoryCoords=null;liveDirectoryVisibleCount=8;buildScopeSelector();render();$("#regionInfoCard").scrollIntoView({behavior:"smooth",block:"start"});return;}
  const category=e.target.closest("[data-region-category]");
- if(category){$("#q").value=category.dataset.regionQuery||"";if(view!=="home")go("home");else render();const panel=$("#liveDirectoryPanel");if(panel)panel.scrollIntoView({behavior:"smooth",block:"start"});}
+ if(category){const key=category.dataset.regionCategory||"all";$("#q").value="";if(key==="all")go("home");else go("cat",key);const panel=$("#liveDirectoryPanel");if(panel)panel.scrollIntoView({behavior:"smooth",block:"start"});}
 });
 $("#regionLikeButton").addEventListener("click",function(){
  const ctx=regionCurrentContext();S.regionLikes=S.regionLikes||{};
@@ -4024,7 +4024,7 @@ function geoapifyDirectoryCardHTML(item){
 }
 function liveApprovedListingCardHTML(item){
  const place=[item.area,item.district,item.governorate].filter(Boolean).join(" · ");
- const typeNames={phone:"جوال",phone_accessories:"إكسسوارات جوال",watch:"ساعة",computer:"كمبيوتر",computer_accessories:"ملحقات كمبيوتر",tablet:"جهاز لوحي",camera:"كاميرا",car:"سيارة",motorcycle:"دراجة نارية",vehicle_parts:"قطع غيار",land:"أرض",property:"عقار",electronics:"إلكترونيات",appliance:"أجهزة منزلية",furniture:"أثاث",clothing:"ملابس",shoes:"أحذية",jewelry:"مجوهرات",honey:"عسل",coffee:"بن وقهوة",spices:"بهارات",food:"مواد غذائية",livestock:"مواشٍ",agriculture:"منتجات زراعية",building_materials:"مواد بناء",books:"كتب",stationery:"قرطاسية",perfume:"عطور",cosmetics:"تجميل",solar_equipment:"طاقة شمسية",tools:"أدوات",household_items:"مستلزمات منزلية",kitchenware:"أدوات مطبخ",baby_products:"منتجات أطفال",games:"ألعاب",sports_equipment:"معدات رياضية",animal_feed:"أعلاف",seeds:"بذور",construction_equipment:"معدات إنشاءات"};
+ const typeNames={phone:"جوال",phone_accessories:"إكسسوارات جوال",watch:"ساعة",computer:"كمبيوتر",computer_accessories:"ملحقات كمبيوتر",tablet:"جهاز لوحي",camera:"كاميرا",car:"سيارة",motorcycle:"دراجة نارية",vehicle_parts:"قطع غيار",land:"أرض",property:"عقار",apartment:"شقة",house:"منزل",electronics:"إلكترونيات",appliance:"أجهزة منزلية",furniture:"أثاث",clothing:"ملابس",shoes:"أحذية",jewelry:"مجوهرات",honey:"عسل",coffee:"بن وقهوة",spices:"بهارات",food:"مواد غذائية",livestock:"مواشٍ",agriculture:"منتجات زراعية",building_materials:"مواد بناء",books:"كتب",stationery:"قرطاسية",perfume:"عطور",cosmetics:"تجميل",solar_equipment:"طاقة شمسية",tools:"أدوات",household_items:"مستلزمات منزلية",kitchenware:"أدوات مطبخ",baby_products:"منتجات أطفال",games:"ألعاب",sports_equipment:"معدات رياضية",animal_feed:"أعلاف",seeds:"بذور",construction_equipment:"معدات إنشاءات"};
  const image=/^data:image\/(?:jpeg|png|webp);base64,/.test(String(item.imageData||""))&&item.imageData.length<=400000
   ?'<img class="shared-listing-image" src="'+esc(item.imageData)+'" alt="'+esc(item.title||"صورة الإعلان")+'" loading="lazy">':"";
  const categoryLabels={souq:"السوق",land:"أراضٍ وعقارات",food:"مطاعم ومخابز",grocery:"بقالات",books:"مكتبات وقرطاسية",telecom:"جوالات واتصالات",jobs:"وظائف"};
@@ -4042,7 +4042,7 @@ function liveApprovedListingCardHTML(item){
   :(place?'https://www.openstreetmap.org/search?query='+encodeURIComponent([item.title,place,"اليمن"].join(" ")):"");
  const mapLink=map?'<div class="shared-listing-actions"><a href="'+esc(map)+'" target="_blank" rel="noopener noreferrer">الموقع على الخريطة</a></div>':"";
  return '<article class="shared-listing-card">'+image+'<div class="shared-listing-card-head"><h3>'+esc(item.title||"إعلان معتمد")+'</h3><span class="tag">اعتمدته الإدارة</span></div>'+
-  '<div class="shared-listing-tags"><span>'+esc(category)+'</span>'+(type?'<span>'+esc(type)+'</span>':"")+(item.condition==="new"?'<span>جديد</span>':item.condition==="used"?'<span>مستعمل</span>':"")+'</div>'+
+  '<div class="shared-listing-tags"><span>'+esc(category)+'</span>'+(type?'<span>'+esc(type)+'</span>':"")+(item.listingType==="rent"?'<span>للإيجار</span>':item.listingType==="sale"?'<span>للبيع</span>':item.listingType==="wanted"?'<span>مطلوب</span>':item.listingType==="barter"?'<span>مقايضة</span>':item.listingType==="free"?'<span>مجاني</span>':"")+(item.condition==="new"?'<span>جديد</span>':item.condition==="used"?'<span>مستعمل</span>':"")+'</div>'+
   (place?'<p class="shared-listing-place">'+esc(place)+'</p>':"")+price+description+hours+website+contact+mapLink+
   '<small class="live-directory-local-note">إعلان نشره مستخدم ووافقت عليه إدارة دليلنا.</small></article>';
 }
@@ -4187,15 +4187,18 @@ async function loadLiveMarketplaceMatches(query,category,productType,signal,forc
  const cached=liveSharedCache.get(key);
  if(!force&&cached&&Date.now()-cached.at<120000){liveSharedMatches=cached.items;liveSharedLoadError="";return liveSharedMatches;}
  liveSharedMatches=[];liveSharedLoadError="";
- const params=new URLSearchParams({limit:"12",includeImages:"1"});
+ const productTypesByCategory={grocery:["food","honey","coffee","spices"],food:["food","honey","coffee","spices"],cafe:["coffee"],books:["books","stationery"],vehicles:["car","motorcycle","vehicle_parts","construction_equipment"],real_estate:["land","property","apartment","house"],watches:["watch"],telecom:["phone","phone_accessories"],elec:["electronics","computer","computer_accessories","tablet","camera","appliance"],build:["building_materials","tools","construction_equipment"],gold:["jewelry"],clothes:["clothing","shoes"],home:["appliance","furniture","household_items","kitchenware"],beauty:["perfume","cosmetics"],solar:["solar_equipment"],farm:["livestock","agriculture","animal_feed","seeds"]};
+ const categoryProductTypes=productTypesByCategory[category]||null;
+ const params=new URLSearchParams({limit:"24",includeImages:"1"});
  if(productType){params.set("category","marketplace");params.set("productType",productType);}
+ else if(categoryProductTypes)params.set("category","marketplace");
  else if(category&&category!=="all")params.set("category",category);
  if(query)params.set("q",query);
  if(gov)params.set("governorate",gov);
  if(district)params.set("district",district);
  try{
   const result=await liveFetchJson("/api/marketplace/listings",params,signal,1);
-  if(Array.isArray(result.items))liveSharedMatches=result.items;
+  if(Array.isArray(result.items))liveSharedMatches=categoryProductTypes?result.items.filter(item=>categoryProductTypes.includes(item.productType)):result.items;
   liveSharedCache.set(key,{items:liveSharedMatches,at:Date.now()});
  }catch(error){liveSharedLoadError=String(error&&error.message||"تعذر الاتصال بخدمة الإعلانات.");liveSharedMatches=[];}
  return liveSharedMatches;

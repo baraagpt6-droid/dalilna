@@ -5,7 +5,7 @@ const { URL } = require("node:url");
 const { handleMarketplaceRequest } = require("./marketplace-api");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.8.2";
+const VERSION = "1.9.0";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",

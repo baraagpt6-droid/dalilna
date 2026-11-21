@@ -44,3 +44,10 @@ test("supports apartment and house rentals in the land and property category",()
  assert.equal(apartment.productType,"apartment");assert.equal(apartment.listingType,"rent");
  assert.equal(house.productType,"house");assert.equal(house.listingType,"sale");
 });
+
+
+test("rent is restricted to homes, land and vehicles",()=>{
+ const valid=validate({title:"سيارة للإيجار",category:"souq",productType:"car",listingType:"rent"});
+ assert.equal(valid.listingType,"rent");
+ assert.throws(()=>validate({title:"جوال للإيجار",category:"souq",productType:"phone",listingType:"rent"}),/خيار الإيجار مخصص/);
+});

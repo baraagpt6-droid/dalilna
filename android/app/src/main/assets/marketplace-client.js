@@ -92,6 +92,8 @@
     if (item.category === "souq" || item.category === "land") labels.push(product ? product[1] : "منتج آخر");
     if (item.condition === "new") labels.push("جديد");
     if (item.condition === "used") labels.push("مستعمل");
+    if (item.listingType === "sale") labels.push("للبيع");
+    if (item.listingType === "rent") labels.push("للإيجار");
     if (item.listingType === "wanted") labels.push("مطلوب");
     if (item.listingType === "barter") labels.push("مقايضة");
     if (item.listingType === "free") labels.push("مجاني");
