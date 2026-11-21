@@ -24,3 +24,5 @@
 18. Keep GOOGLE_PLACES_ENABLED unset or false until the app publishes a Privacy Policy and Terms of Use covering Google Maps Platform requirements.
 
 19. Google Place Details and Photos are requested only after the user opens place details. Reviews and photos are shown with the author attributions supplied by Google. The responses are not stored or cached.
+
+19. OpenStreetMap Overpass is a best-effort public fallback. The service retries FOSSGIS, Private.coffee and VK Maps, but public mirrors can be overloaded and Yemen data may be incomplete. A zero result does not prove the business does not exist.

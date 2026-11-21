@@ -4,7 +4,7 @@ const http = require("node:http");
 const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.5.6";
+const VERSION = "1.5.7";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -290,7 +290,7 @@ async function geocodePlace(place) {
     url.search=new URLSearchParams({q:candidate,format:"jsonv2",addressdetails:"1",limit:"5",countrycodes:"ye","accept-language":"ar,en"}).toString();
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
     try{
-      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaYemenDirectory/1.5.5 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
+      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaYemenDirectory/1.5.7 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
       if(response.status===429){lastError=new Error("مصدر تحديد المنطقة مزدحم. حاول مرة أخرى بعد قليل.");continue;}
       if(!response.ok){lastError=new Error("تعذّر تحديد حدود المنطقة من مصدر الخريطة.");continue;}
       const rows=await response.json();
@@ -315,24 +315,47 @@ async function geocodePlace(place) {
 }
 async function fetchOverpass(bbox,category,label){
   const query=buildOverpassQuery(bbox,category);
-  const endpoints=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
+  const endpoints=[
+    {name:"FOSSGIS",url:"https://overpass-api.de/api/interpreter",timeoutMs:12000},
+    {name:"Private.coffee",url:"https://overpass.private.coffee/api/interpreter",timeoutMs:15000},
+    {name:"VK Maps",url:"https://maps.mail.ru/osm/tools/overpass/api/interpreter",timeoutMs:18000}
+  ];
   let lastError=null;
-  for(const [index,endpoint] of endpoints.entries()){
+  for(const provider of endpoints){
     await waitForOverpassSlot();
     lastOverpassAt=Date.now();
-    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),index===0?12000:10000),startedAt=Date.now();
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),provider.timeoutMs),startedAt=Date.now();
     try{
-      const response=await fetch(endpoint,{method:"POST",signal:controller.signal,headers:{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8","Accept":"application/json","User-Agent":"DalilnaYemenDirectory/1.5.5 (+https://dalilna-live.onrender.com)"},body:new URLSearchParams({data:query})});
-      if([429,503,504].includes(response.status)){lastError=new Error("مصدر بيانات الأماكن مشغول حالياً.");continue;}
-      if(!response.ok){lastError=new Error("تعذّر جلب بيانات الأماكن من المصدر المفتوح.");continue;}
+      const response=await fetch(provider.url,{
+        method:"POST",
+        signal:controller.signal,
+        headers:{
+          "Content-Type":"application/x-www-form-urlencoded; charset=UTF-8",
+          "Accept":"application/json",
+          "User-Agent":"DalilnaYemenDirectory/1.5.7 (+https://dalilna-live.onrender.com)"
+        },
+        body:new URLSearchParams({data:query})
+      });
+      if([429,503,504].includes(response.status)){
+        lastError=new Error("مصدر بيانات الأماكن مشغول حالياً.");
+        console.warn(JSON.stringify({event:"places.overpass.retry",provider:provider.name,status:response.status,durationMs:Date.now()-startedAt}));
+        continue;
+      }
+      if(!response.ok){
+        lastError=new Error("تعذّر جلب بيانات الأماكن من المصدر المفتوح.");
+        console.warn(JSON.stringify({event:"places.overpass.retry",provider:provider.name,status:response.status,durationMs:Date.now()-startedAt}));
+        continue;
+      }
       const body=await response.json(),elements=Array.isArray(body.elements)?body.elements:[],items=elements.map(item=>normalizeElement(item,label)).filter(Boolean),seen=new Set();
       const unique=items.filter(item=>{const key=normalizeText(item.name)+"|"+item.lat.toFixed(4)+"|"+item.lon.toFixed(4);if(seen.has(key))return false;seen.add(key);return true;});
-      console.info(JSON.stringify({event:"places.overpass.success",endpoint:index+1,category,count:unique.length,durationMs:Date.now()-startedAt}));
+      console.info(JSON.stringify({event:"places.overpass.success",provider:provider.name,category,count:unique.length,durationMs:Date.now()-startedAt}));
       return unique.slice(0,80);
-    }catch(error){lastError=error.name==="AbortError"?new Error("انتهت مهلة مصدر الخريطة."):error;}
-    finally{clearTimeout(timer);}
+    }catch(error){
+      lastError=error.name==="AbortError"?new Error("انتهت مهلة مصدر الخريطة."):error;
+      console.warn(JSON.stringify({event:"places.overpass.retry",provider:provider.name,message:cleanText(lastError.message,140),durationMs:Date.now()-startedAt}));
+    }finally{clearTimeout(timer);}
   }
-  throw lastError||new Error("مصدر بيانات الأماكن غير متاح حالياً.");
+  throw lastError||new Error("مصادر بيانات الأماكن غير متاحة حالياً.");
 }
 
 function buildGoogleTextSearchBody(area, category, query, placeLabel) {

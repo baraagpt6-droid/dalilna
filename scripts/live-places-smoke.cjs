@@ -21,14 +21,14 @@ async function waitForService() {
   while (Date.now() < deadline) {
     try {
       const { response, payload } = await getJson("/health");
-      if (response.ok && payload.ok && payload.version === "1.5.6") return payload;
+      if (response.ok && payload.ok && payload.version === "1.5.7") return payload;
       lastError = "unexpected health response: HTTP " + response.status + " version=" + String(payload.version || "missing");
     } catch (error) {
       lastError = error.message || String(error);
     }
     await new Promise(resolve => setTimeout(resolve, 5000));
   }
-  throw new Error("Render service did not become healthy on v1.5.6 within 180 seconds: " + lastError);
+  throw new Error("Render service did not become healthy on v1.5.7 within 180 seconds: " + lastError);
 }
 
 async function main() {
@@ -56,7 +56,9 @@ async function main() {
     radius: "7000"
   });
   const { response: searchResponse, payload: result } = await getJson("/api/places/search?" + query.toString());
-  assert.equal(searchResponse.status, 200, "live place search must return HTTP 200");
+  if (searchResponse.status !== 200) {
+    throw new Error("Live place search failed: HTTP " + searchResponse.status + " — " + String(result.error || JSON.stringify(result)));
+  }
   assert.ok(Array.isArray(result.items), "live search must return an items array");
   assert.equal(result.count, result.items.length);
   assert.ok(["Google Maps", "OpenStreetMap"].includes(result.source));

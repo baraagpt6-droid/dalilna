@@ -1,4 +1,4 @@
-Dalilna 1.5.6 — Build and deployment status
+Dalilna 1.5.7 — Build and deployment status
 ===========================================
 
 Application
@@ -28,3 +28,9 @@ Security and operations
 - Do not put API secrets in the web app, Android assets or GitHub.
 - User accounts, admin roles, moderation, reviews, contributions and local listings are still device-local. This is not yet a central multi-user production system.
 - A stable Android release keystore and field testing are still required for a public Android production release.
+
+Reliability improvement in 1.5.7:
+- The obsolete overpass.kumi.systems endpoint was replaced with overpass.private.coffee.
+- Search now retries FOSSGIS, Private.coffee and VK Maps in sequence, with a provider-specific timeout.
+- Each failed provider is logged before the next fallback is attempted.
+- Automated HTTP integration verifies that a busy primary endpoint falls back to Private.coffee.
