@@ -3,11 +3,25 @@ const test=require("node:test"),assert=require("node:assert/strict"),fs=require(
 const html=fs.readFileSync("index.html","utf8");
 test("live place discovery prefers Geoapify free data and falls back to OpenStreetMap",()=>{
  assert.ok(html.includes("function liveDirectoryPanelHTML()"));
- assert.ok(html.includes("/api/geoapify/status"));
  assert.ok(html.includes("/api/geoapify/search"));
  assert.ok(html.includes("/api/places/search"));
  assert.match(html,/runLiveDirectorySearch/);
  assert.match(html,/OpenStreetMap contributors/);
+});
+test("map search retries and falls back when a provider is unavailable",()=>{
+ assert.match(html,/async function liveFetchJson\(/);
+ assert.match(html,/async function searchLivePlaces\(/);
+ assert.match(html,/liveFetchJson\("\/api\/geoapify\/search"/);
+ assert.match(html,/liveFetchJson\("\/api\/places\/search"/);
+ assert.match(html,/تعذر مصدر Geoapify/);
+ assert.doesNotMatch(html,/const health=await fetch\(LIVE_DIRECTORY_API/);
+});
+test("AI assistant searches live maps and approved shared listings for shop intents",()=>{
+ assert.match(html,/searchLivePlaces\(q,serviceIntent,controller\.signal\)/);
+ assert.match(html,/loadLiveMarketplaceMatches\(q,serviceIntent\.category,serviceIntent\.productType/);
+ assert.match(html,/محلات ظهرت في مصدر الخرائط/);
+ assert.match(html,/إعلانات أضافها المستخدمون واعتمدتها إدارة دليلنا/);
+ assert.match(html,/mode:places\.length\|\|approved\.length\?"live-directory"/);
 });
 test("live results retain source links and geographic selection",()=>{
  assert.ok(html.includes("item.mapsUrl"));
@@ -20,7 +34,7 @@ test("external place data is not inserted into local merchant listings",()=>{
 });
 test("live search offers retry and explains network failures in Arabic",()=>{
  assert.match(html,/id="liveDirectoryRetry"/);assert.match(html,/هذا لا يؤكد عدم وجود محلات أو خدمات على أرض الواقع/);
- assert.match(html,/تعذر الوصول إلى خادم البحث/);assert.doesNotMatch(html,/Failed to fetch/);
+ assert.match(html,/تعذر الوصول إلى خدمة البحث بعد محاولات الاتصال/);assert.doesNotMatch(html,/Failed to fetch/);
 });
 test("home opens in browse mode and shows shared approved listings without a search term",()=>{
  assert.match(html,/const liveWanted=view==="home"\|\|view==="cat"/);
@@ -41,7 +55,6 @@ test("optional Wikimedia photo search shows author and license",()=>{
  assert.match(html,/p\.author/);assert.match(html,/p\.license/);assert.match(html,/p\.sourceUrl/);
 });
 test("Geoapify results render in-app business cards with phone and optional map links",()=>{
- assert.match(html,/\/api\/geoapify\/status/);
  assert.match(html,/\/api\/geoapify\/search/);
  assert.match(html,/function geoapifyDirectoryCardHTML\(item\)/);
  assert.match(html,/Powered by Geoapify/);
