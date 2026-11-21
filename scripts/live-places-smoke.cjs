@@ -24,7 +24,8 @@ async function main(){
  assert.equal(typeof geo.payload.geoapifyEnabled,"boolean");
  assert.equal(geo.payload.creditCardRequired,false);
  assert.equal(JSON.stringify(geo.payload).includes("GEOAPIFY_API_KEY"),false);
- assert.equal(r.payload.activeProvider,geo.payload.geoapifyEnabled?"Geoapify":"OpenStreetMap");\n process.stdout.write("PASS free Geoapify status endpoint does not expose the server key\\n");
+ assert.equal(r.payload.activeProvider,geo.payload.geoapifyEnabled?"Geoapify":"OpenStreetMap");
+ process.stdout.write("PASS free Geoapify status endpoint does not expose the server key\\n");
  const query=new URLSearchParams({q:"مطعم",category:"food",lat:"15.3694",lon:"44.1910",radius:"7000"});
  r=await get("/api/places/search?"+query);assert.equal(r.response.status,200);assert.equal(r.payload.source,"OpenStreetMap");assert.ok(Array.isArray(r.payload.items));
  process.stdout.write("PASS live OSM search returned "+r.payload.count+" results\n");
