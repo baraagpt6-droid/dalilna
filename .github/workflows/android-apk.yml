@@ -8,6 +8,9 @@ on:
       - 'index.html'
       - 'regional-catalog-runtime.js'
       - 'marketplace-client.js'
+      - 'features-2.1.js'
+      - 'features-2.1.css'
+      - 'jobs-feed.json'
       - 'privacy.html'
       - 'terms.html'
       - 'manifest.json'
@@ -49,13 +52,16 @@ jobs:
         shell: bash
         run: |
           mkdir -p android/app/src/main/assets/icons android/app/src/main/assets/regional-catalog
-          cp index.html regional-catalog-runtime.js marketplace-client.js manifest.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html android/app/src/main/assets/
+          cp index.html regional-catalog-runtime.js marketplace-client.js features-2.1.js features-2.1.css jobs-feed.json manifest.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html android/app/src/main/assets/
           cp icons/* android/app/src/main/assets/icons/
           cp regional-catalog/*.json android/app/src/main/assets/regional-catalog/
           cmp -s index.html android/app/src/main/assets/index.html
           cmp -s regional-catalog-runtime.js android/app/src/main/assets/regional-catalog-runtime.js
           cmp -s sw.js android/app/src/main/assets/sw.js
           cmp -s marketplace-client.js android/app/src/main/assets/marketplace-client.js
+          cmp -s features-2.1.js android/app/src/main/assets/features-2.1.js
+          cmp -s features-2.1.css android/app/src/main/assets/features-2.1.css
+          cmp -s jobs-feed.json android/app/src/main/assets/jobs-feed.json
       - name: Test application and shared marketplace validation
         run: npm test
       - name: Build signed debug APK

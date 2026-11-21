@@ -8,6 +8,9 @@ on:
       - 'index.html'
       - 'regional-catalog-runtime.js'
       - 'marketplace-client.js'
+      - 'features-2.1.js'
+      - 'features-2.1.css'
+      - 'jobs-feed.json'
       - 'privacy.html'
       - 'terms.html'
       - 'manifest.json'
@@ -43,12 +46,14 @@ jobs:
       - name: Prepare website files
         run: |
           mkdir -p _site/icons _site/regional-catalog
-          cp index.html regional-catalog-runtime.js marketplace-client.js manifest.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html _site/
+          cp index.html regional-catalog-runtime.js marketplace-client.js features-2.1.js features-2.1.css jobs-feed.json manifest.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html _site/
           cp icons/* _site/icons/
           cp regional-catalog/*.json _site/regional-catalog/
           touch _site/.nojekyll
           test -s _site/index.html
           test -s _site/marketplace-client.js
+          test -s _site/features-2.1.js
+          test -s _site/jobs-feed.json
       - name: Upload PWA files
         uses: actions/upload-pages-artifact@v3
         with:
