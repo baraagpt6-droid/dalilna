@@ -107,7 +107,7 @@ test("Wikimedia Commons search returns author and license metadata",async()=>{
  try{const result=await searchCommonsPhotos("Dalilna Commons unique test","Yemen");assert.equal(result.source,"Wikimedia Commons");assert.equal(result.count,1);assert.equal(result.items[0].license,"CC BY-SA 4.0");assert.equal(result.items[0].author,"Photographer One");assert.match(result.items[0].sourceUrl,/commons\.wikimedia\.org/);}
  finally{global.fetch=original;}
 });
-test("Google details endpoint is unavailable and status confirms free providers",async()=>{
+test("Geoapify status endpoint is public and confirms free provider setup",async()=>{
  await new Promise((resolve,reject)=>{server.once("error",reject);server.listen(0,"127.0.0.1",resolve);});
  try{
   const base="http://127.0.0.1:"+server.address().port;
