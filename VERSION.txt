@@ -1,5 +1,6 @@
-Dalilna 1.5.0
-PWA + Android WebView
+Dalilna 1.5.1
+Application release: PWA + Android WebView
+Backend directory API service version: 1.5.0 (separate service package version)
 Gemini cloud assistant (optional, server-side)
 Assistant replies disclose source: Gemini, fixed administrative reference, local, or cloud fallback
 Ibb has 20 districts; Hubaish has 22 sub-districts
