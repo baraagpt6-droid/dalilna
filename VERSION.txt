@@ -3,7 +3,7 @@ Application release: PWA + Android WebView
 Backend directory service release: 1.6.2
 Geoapify Places is the primary free live directory provider, using a server-side key; OpenStreetMap Overpass is the automatic fallback.
 Geoapify searches selected Yemen regions with corrected west,south,east,north rectangle ordering. Arabic search terms are routed to the intended category, including schools, health services, pharmacies, groceries, restaurants, electronics, and mobile shops.
-Public starter content includes 41 business records across Ibb, Taiz, Sana'a and Aden, plus six external product listings. Every public record is labelled as unverified and links to its public source. Product prices and stock may change.
+Public starter content includes 40 business records across Ibb, Taiz, Sana'a and Aden, plus six external product listings. Every public record is labelled as unverified and links to its public source. Product prices and stock may change.
 The starter catalogue is merged once per device. User submissions, ratings, photos and merchant changes remain device-local and are not synchronized between users because this release has no shared database.
 Wikimedia Commons photos remain on-demand and show file page, author, and license metadata when provided.
 No Google Places runtime, Google Cloud billing account, or bank card is required.
