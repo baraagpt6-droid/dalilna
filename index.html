@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.1.1">
+<meta name="app-version" content="2.1.2">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -96,7 +96,9 @@ body.light .app{background:rgba(255,255,255,.94);box-shadow:0 6px 20px -10px rgb
   background:var(--card);color:var(--ink);border:1px solid var(--line);
   padding-inline-start:38px;padding-inline-end:44px;min-height:42px;border-radius:12px;
 }
-.search .s-ic{position:absolute;inset-inline-start:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--mute);fill:none;stroke-width:2}
+.search .search-submit{position:absolute;inset-inline-start:5px;top:50%;transform:translateY(-50%);width:30px;min-height:30px;padding:0;border:0;border-radius:8px;background:transparent;color:var(--mute);display:grid;place-items:center;z-index:3}
+.search .search-submit:active{background:var(--chip)}
+.search .search-submit .s-ic{position:static;transform:none;width:18px;height:18px;stroke:var(--mute);fill:none;stroke-width:2}
 #mic{
   position:absolute;inset-inline-end:4px;top:50%;transform:translateY(-50%);
   width:36px;min-height:34px;padding:0;border-radius:9px;
@@ -630,7 +632,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 
   <div class="search-bar">
     <div class="search">
-      <svg class="s-ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <button type="button" class="search-submit" id="searchSubmit" aria-label="تنفيذ البحث" title="بحث"><svg class="s-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
       <input id="q" type="search" autocomplete="off" placeholder="ابحث عن محل، صيدلية، سباك، وظيفة…">
       <button type="button" id="clearSearch" class="search-clear" aria-label="مسح البحث" title="مسح البحث" hidden>×</button>
       <button id="mic" type="button" aria-label="البحث بالصوت" title="تحدث للبحث بالصوت">
@@ -4871,7 +4873,27 @@ function render(){
   else if(homeSlot)nodes.forEach(node=>homeSlot.appendChild(node));
 }
 
-$("#q").addEventListener("input",()=>{liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";if(view==="fb")go("home");else render();});
+let searchRenderTimer=0;
+function renderSearchAndRevealResults(){
+ clearTimeout(searchRenderTimer);searchRenderTimer=0;
+ liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";
+ if(view==="fb")go("home");else render();
+ const top=$("#searchResultsTop");
+ if(top&&!top.hidden)window.requestAnimationFrame(()=>top.scrollIntoView({behavior:"smooth",block:"start"}));
+ else if(view==="cat")window.requestAnimationFrame(()=>$("#clist")?.scrollIntoView({behavior:"smooth",block:"start"}));
+}
+$("#q").addEventListener("input",()=>{
+ liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";
+ clearTimeout(searchRenderTimer);
+ searchRenderTimer=window.setTimeout(()=>{
+  searchRenderTimer=0;
+  if(view==="fb")go("home");else render();
+ },140);
+});
+$("#searchSubmit").addEventListener("click",renderSearchAndRevealResults);
+$("#q").addEventListener("keydown",event=>{
+ if(event.key==="Enter"){event.preventDefault();renderSearchAndRevealResults();}
+});
 $("#clearSearch").addEventListener("click",()=>{$("#q").value="";liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";$("#q").dispatchEvent(new Event("input",{bubbles:true}));$("#q").focus();});
 
 $("#more").addEventListener("click",()=>{homeLim+=24;render();});

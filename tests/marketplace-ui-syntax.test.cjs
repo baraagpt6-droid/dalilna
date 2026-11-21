@@ -28,8 +28,8 @@ test("marketplace client displays rental labels",()=>{
  assert.ok(client.includes('item.listingType === "rent") labels.push("للإيجار")'));
 });
 
-test("PWA version metadata is 2.1.1",()=>{
- assert.ok(html.includes('content="2.1.1"'));
+test("PWA version metadata is 2.1.2",()=>{
+ assert.ok(html.includes('content="2.1.2"'));
 });
 
 test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});
@@ -43,4 +43,17 @@ test("emergency contacts remain direct tel links and include a return-to-search 
  assert.ok(html.includes('href="tel:'));
  assert.ok(html.includes('id="emBackToTop"'));
  assert.ok(features.includes('event.target.closest("#emBackToTop")'));
+});
+
+test("search icon is a working submit button and Enter reveals results",()=>{
+ assert.ok(html.includes('id="searchSubmit"'));
+ assert.ok(html.includes('id="searchSubmit").addEventListener("click",renderSearchAndRevealResults)'));
+ assert.ok(html.includes('event.key==="Enter"'));
+ assert.ok(html.includes('searchRenderTimer=window.setTimeout'));
+});
+test("emergency card stays visible until search is cleared or back-to-search is pressed",()=>{
+ assert.ok(features.includes('if(id==="emBox")document.body.classList.add("quick-jump-reveal-emergency")'));
+ assert.ok(!features.includes('classList.remove("quick-jump-reveal-emergency"),1600'));
+ assert.ok(features.includes('if(!active)document.body.classList.remove("quick-jump-reveal-emergency")'));
+ assert.ok(features.includes('scrollIntoView({behavior:"smooth",block:"center"})'));
 });

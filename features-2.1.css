@@ -51,3 +51,8 @@ body.search-active #fltRow{margin-top:8px}
 body.search-active.quick-jump-reveal-emergency #emBox{display:block!important}
 .quick-back-top{font:600 12px 'Readex Pro',Tahoma,sans-serif;cursor:pointer}
 @media(max-width:420px){.quick-jump-bar{gap:6px;padding-inline:10px}.quick-jump-btn{padding-inline:10px;font-size:11px}}
+
+
+/* Search submit and long-distance jump stability. */
+.search .search-submit{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body.quick-jump-reveal-emergency #emBox{display:block!important}
