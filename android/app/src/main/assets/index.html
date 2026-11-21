@@ -3709,8 +3709,8 @@ function answerAI(q){
   if(serviceIntent){
     const hits=localDirectorySearch(raw,12).filter(item=>item.cat===serviceIntent.category&&(!scope||scopeMatchesItem(item)));
     if(hits.length){
-      return `وجدت ${hits.length} إدراجات من فئة ${serviceIntent.label} في بيانات هذا الجهاز:\\n`+
-        hits.slice(0,8).map((item,n)=>`${n+1}. ${item.name} — ${[item.area,item.dist,item.gov].filter(Boolean).join(" / ")}${item.phone?" — "+item.phone:""}${item.verifiedAt?" — موثّق":" — غير موثّق"}`).join("\\n");
+      return `وجدت ${hits.length} إدراجات من فئة ${serviceIntent.label} في بيانات هذا الجهاز:\n`+
+        hits.slice(0,8).map((item,n)=>`${n+1}. ${item.name} — ${[item.area,item.dist,item.gov].filter(Boolean).join(" / ")}${item.phone?" — "+item.phone:""}${item.verifiedAt?" — موثّق":" — غير موثّق"}`).join("\n");
     }
     return `لا توجد ${serviceIntent.label} مسجلة في دليلنا حالياً ضمن البيانات المتاحة على هذا الجهاز. هذا لا يعني عدم وجودها في المنطقة. استخدم زر خرائط Google أسفل الإجابة للبحث خارج الدليل.`;
   }
@@ -3820,7 +3820,7 @@ async function askAssistant(q){
   if(serviceIntent){
     const hits=localDirectorySearch(q,12).filter(item=>item.cat===serviceIntent.category&&(!scope||scopeMatchesItem(item)));
     const answer=hits.length
-      ? `وجدت ${hits.length} إدراجات من فئة ${serviceIntent.label} في بيانات هذا الجهاز:\\n`+hits.slice(0,8).map((item,n)=>`${n+1}. ${item.name} — ${[item.area,item.dist,item.gov].filter(Boolean).join(" / ")}${item.phone?" — "+item.phone:""}${item.verifiedAt?" — موثّق":" — غير موثّق"}`).join("\\n")
+      ? `وجدت ${hits.length} إدراجات من فئة ${serviceIntent.label} في بيانات هذا الجهاز:\n`+hits.slice(0,8).map((item,n)=>`${n+1}. ${item.name} — ${[item.area,item.dist,item.gov].filter(Boolean).join(" / ")}${item.phone?" — "+item.phone:""}${item.verifiedAt?" — موثّق":" — غير موثّق"}`).join("\n")
       : `لا توجد ${serviceIntent.label} مسجلة في دليلنا حالياً ضمن البيانات المتاحة على هذا الجهاز. هذا لا يعني عدم وجودها في المنطقة. يمكنك البحث خارج الدليل في خرائط Google.`;
     return {answer,mode:hits.length?"directory":"maps",mapUrl:serviceIntent.url,mapLabel:serviceIntent.label};
   }
