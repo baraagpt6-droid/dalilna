@@ -1,42 +1,30 @@
-Dalilna 1.5.8 — Build and deployment status
+Dalilna 1.5.9 — Build and deployment status
 ===========================================
 
 Application
 - Progressive Web App and Android WebView.
 - Android workflow builds a debug-signed testing APK, not a Play Store production package.
 - Root and Android WebView assets must stay synchronized.
-- Public Privacy Policy and Terms pages are included in PWA and Android assets.
+- Privacy Policy and Terms pages are included in PWA and Android assets.
 
-Live directory
-- Google Places API (New), when explicitly activated, returns name, address, rating, rating count, phone, website, business status, opening hours and price level when Google has the data.
-- Place details (photos and reviews) are fetched only after the user taps the details button. Author attributions are displayed.
-- Google Places content is not written to local merchant listings or caches.
-- OpenStreetMap Nominatim and Overpass remain the fallback provider.
-- Google Places remains disabled until GOOGLE_PLACES_API_KEY and GOOGLE_PLACES_ENABLED=true are configured on Render.
+Free live directory
+- OpenStreetMap Nominatim resolves selected Yemen regions.
+- OpenStreetMap Overpass searches FOSSGIS, Private.coffee and VK Maps in sequence.
+- The server retries when a provider is busy, times out, returns an Overpass remark, or returns malformed content.
+- Results show only fields recorded in OSM. Missing details are not inferred.
+- Wikimedia Commons is queried only when the user requests photos. The card shows source page, author and license metadata when provided.
+- Place ratings and user-added photos are saved locally on the current device. They are not synchronized or shared in this release.
+- Google Places search, details and photo API routes have been removed.
+- No paid Google API key, card, or billing account is needed.
 
-Google setup required before live Google results work
-1. Create or select a Google Cloud project.
-2. Enable Places API (New) and attach billing.
-3. Create a server-side API key restricted to Places API (New).
-4. Set API quotas and budget alerts in Google Cloud.
-5. Add GOOGLE_PLACES_API_KEY as a Sensitive environment variable to Render service dalilna-live.
-6. Review and publish privacy.html and terms.html.
-7. Set GOOGLE_PLACES_ENABLED=true only after the API restrictions, quotas, billing alerts and legal pages are ready.
-8. Test category and district searches in several Yemen governorates.
+Usage and verification
+- Public Nominatim, Overpass and Wikimedia Commons endpoints apply fair-use rules and request limits. Availability is not guaranteed.
+- The service caches results, throttles requests and retries multiple Overpass mirrors.
+- Zero results mean no matching mapped features were returned for that query. It does not prove a business does not exist.
+- Check each Wikimedia Commons file page and license before reuse.
+- OpenStreetMap attribution is displayed in the search UI and documented in the app.
 
 Security and operations
-- Do not put API secrets in the web app, Android assets or GitHub.
-- User accounts, admin roles, moderation, reviews, contributions and local listings are still device-local. This is not yet a central multi-user production system.
-- A stable Android release keystore and field testing are still required for a public Android production release.
-
-Reliability improvement in 1.5.8:
-- The obsolete overpass.kumi.systems endpoint was replaced with overpass.private.coffee.
-- Search now retries FOSSGIS, Private.coffee and VK Maps in sequence, with a provider-specific timeout.
-- Each failed provider is logged before the next fallback is attempted.
-- Automated HTTP integration verifies that a busy primary endpoint falls back to Private.coffee.
-
-
-Overpass 1.5.8 response validation:
-- HTTP 200 responses with an Overpass `remark` are not treated as successful empty results.
-- Incomplete or malformed results trigger retry against the remaining mirrors.
-- The HTTP integration test simulates a timeout `remark` and verifies a later mirror returns a place.
+- User accounts, admin roles, moderation, ratings and contributions remain device-local. This release does not provide a shared multi-user database.
+- Do not store secrets in client files or public GitHub content.
+- A private Android release keystore and field testing are still required for a Play Store production release.
