@@ -39,6 +39,13 @@ test("Careers.sa parser retains exact job links, location, organization and fres
  assert.equal(job.publishedAt,"2026-11-21T00:00:00.000Z");
 });
 
+test("daily refresh script uses valid URL-path filters and writes a real JSON newline",()=>{
+ const script=fs.readFileSync("scripts/refresh-jobs.cjs","utf8");
+ assert.match(script,/\/en\/jobs\/company/);
+ assert.ok(!script.includes('/\\\\\\\\/en\\\\\\\\/jobs'));
+ assert.ok(script.includes('"+\"\\\\n\"')); 
+});
+
 test("daily refresh script includes UN RSS and optional ReliefWeb configuration",()=>{const script=fs.readFileSync("scripts/refresh-jobs.cjs","utf8");assert.match(script,/careers\.un\.org/);assert.match(script,/RELIEFWEB_APPNAME/);assert.match(script,/DALILNA_JOB_RSS_FEEDS/);assert.match(script,/expiresAt/);});
 test("job seeker records require public consent and expire after 60 days",()=>{const api=fs.readFileSync("jobs-api.js","utf8");assert.match(api,/body\.consentPublic===true/);assert.match(api,/consent_public=TRUE/);assert.match(api,/INTERVAL '60 days'/);});
 test("marketplace exposes category groups and 60-day market expiry",()=>{const api=fs.readFileSync("marketplace-api.js","utf8");assert.match(api,/PRODUCT_GROUPS/);assert.match(api,/productGroup/);assert.match(api,/NOW\(\)\+INTERVAL '60 days'/);});
