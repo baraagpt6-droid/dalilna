@@ -115,6 +115,7 @@
     const meta=el("div",{class:"job-feed-meta"});
     [job.organization,job.city||job.location,job.country,formatDate(job.publishedAt),job.source].filter(Boolean).forEach(value=>meta.appendChild(el("span",{},String(value))));
     card.appendChild(meta);
+    if(job.eligibility)card.appendChild(el("p",{},"شرط التقديم: "+job.eligibility));
     if(job.deadline)card.appendChild(el("p",{},"آخر موعد للتقديم: "+job.deadline));
     const actions=el("div",{class:"job-feed-actions"});
     if(job.url&&/^https?:\/\//i.test(job.url))actions.appendChild(el("a",{href:job.url,target:"_blank",rel:"noopener noreferrer"},"التقديم من المصدر"));
