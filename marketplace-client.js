@@ -168,10 +168,10 @@
       map.href = "https://www.openstreetmap.org/search?query=" + encodeURIComponent([item.title,place,"اليمن"].join(" "));
       map.target = "_blank"; map.rel = "noopener noreferrer"; map.textContent = "فتح الموقع في OpenStreetMap"; actions.appendChild(map);
     }
-    if (item.expiresAt) {
+    if (item.category === "souq" || item.category === "land") {
       const expiry = document.createElement("p"); expiry.className = "shared-listing-expiry";
-      const expiryDate = new Date(item.expiresAt);
-      expiry.textContent = Number.isNaN(expiryDate.getTime()) ? "إعلان مجاني لمدة 60 يوماً" : "إعلان مجاني · ينتهي " + expiryDate.toLocaleDateString("ar");
+      const expiryDate = item.expiresAt ? new Date(item.expiresAt) : null;
+      expiry.textContent = !expiryDate || Number.isNaN(expiryDate.getTime()) ? "إعلان مجاني · مدة الصلاحية 60 يوماً" : "إعلان مجاني · ينتهي " + expiryDate.toLocaleDateString("ar");
       card.appendChild(expiry);
     }
     if (item.category === "souq" || item.category === "land") {
