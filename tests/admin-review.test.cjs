@@ -19,7 +19,8 @@ test('admin always has a visible shortcut when review requests are pending', () 
 test('review shortcut opens the pending tab and scrolls the requests into view', () => {
   const start = html.indexOf('$("#admPendingShortcut").addEventListener("click"');
   assert.ok(start >= 0, 'pending shortcut click handler exists');
-  const handler = html.slice(start, html.indexOf('});', start) + 3);
+  const end = html.indexOf('\n$("#admQuickAdd").addEventListener', start);
+  const handler = html.slice(start, end > start ? end : start + 1400);
   assert.match(handler, /hasPerm\("review"\)/);
   assert.match(handler, /admTab="pending"/);
   assert.match(handler, /renderAdminPanel\(\)/);
