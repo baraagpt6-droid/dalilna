@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.9.1">
+<meta name="app-version" content="2.0.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2396,7 +2396,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="1.8.2";
+const APP_VERSION="2.0.0";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -2578,7 +2578,9 @@ function closeDlg(selector){
 
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const digits=p=>String(p||"").replace(/\D/g,"");
-const waLink=p=>{let d=digits(p);if(d.startsWith("00"))d=d.slice(2);if(d.startsWith("0"))d=d.slice(1);if(d.length===9&&d.startsWith("7"))d="967"+d;return "https://wa.me/"+d;};
+function yemenPhoneDetails(phone){return window.DalilnaRegionalCatalog?.yemenPhone(phone)||{local:digits(phone),isMobile:false,whatsapp:""};}
+function yemenWhatsAppUrl(phone,message){const data=yemenPhoneDetails(phone);return data.isMobile?"https://wa.me/"+data.whatsapp+(message?"?text="+encodeURIComponent(message):""):"";}
+const waLink=p=>yemenWhatsAppUrl(p,"مرحباً، وجدت محلكم في تطبيق دليلنا وأريد الاستفسار عن الخدمة.");
 const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove("on"),3200);};
 async function sha256(str){if(!window.crypto||!window.crypto.subtle)throw new Error("secure-context-required");const buf=await window.crypto.subtle.digest("SHA-256",new TextEncoder().encode(str));return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");}
 
@@ -3084,9 +3086,10 @@ function getScopeOptions(){
     if(i.gov){const k=normalizePlace(i.gov);govCnt[k]=(govCnt[k]||0)+1;}
     if(i.dist){const k=normalizePlace(i.gov)+"|"+normalizePlace(i.dist);distCnt[k]=(distCnt[k]||0)+1;}
   }
-  const options=[{group:curLang==="en"?"General":"عام",val:"",label:T("allYemen"),count:all.length}];
+  const options=[{group:curLang==="en"?"General":"عام",val:"",label:T("allYemen"),count:Number(liveCatalogManifest?.totalCount||all.length)}];
   for(const gov of GOVS){
-    options.push({group:curLang==="en"?"Governorates (22)":"المحافظات اليمنية (22)",val:"gov:"+gov,label:(curLang==="en"?"Governorate: ":"محافظة ")+gov,count:govCnt[normalizePlace(gov)]||0});
+    const catalogRegion=catalogManifestRecord(gov);
+    options.push({group:curLang==="en"?"Governorates (22)":"المحافظات اليمنية (22)",val:"gov:"+gov,label:(curLang==="en"?"Governorate: ":"محافظة ")+gov,count:Number(catalogRegion?.count||govCnt[normalizePlace(gov)]||0)});
   }
   for(const gov of GOVS){
     const rows=YEMEN_DISTRICTS[gov]||[];
@@ -3108,10 +3111,7 @@ function getScopeOptions(){
   return options;
 }
 function buildScopeSelector(){
-  const opts=getScopeOptions();
-  const cur=opts.find(o=>o.val===scope)||opts[0];
-  const localCount=cur.count===0?"0 إدراج محلي على هذا الجهاز":cur.count+" إدراج محلي على هذا الجهاز";
-  $("#scopeLbl").textContent=cur.label+" · "+localCount;
+  const opts=getScopeOptions();const cur=opts.find(o=>o.val===scope)||opts[0];const stats=catalogStatsForScope(),place=scope&&scope.startsWith("gov:")?"محافظة "+scope.slice(4):"اليمن";const countLabel=stats?place+" • "+regionNumber(stats.count)+" محل وخدمة":(cur.count?Number(cur.count).toLocaleString("ar")+" إدراج":"");$("#scopeLbl").textContent=cur.label+(countLabel?" · "+countLabel:"");
 }
 function scopeMatchesItem(item, selected=scope){
   if(!selected)return true;
@@ -3152,26 +3152,19 @@ function selectedRegionInfo(){
   return {title:scope,intro:"منطقة محددة في الدليل.",meta:"الإحصاءات أدناه محصورة في الإدراجات المسجلة.",items:publicItems().filter(i=>scopeMatchesItem(i))};
 }
 function renderRegionInfo(){
-  const info=selectedRegionInfo();
-  const items=info.items;
-  const cats={};for(const i of items)cats[i.cat]=(cats[i.cat]||0)+1;
-  const verified=items.filter(i=>!!i.verifiedAt).length;
-  $("#regionInfoTitle").textContent="عن "+info.title+" في دليلنا";
-  $("#regionInfoIntro").textContent=info.intro;
-  $("#regionStatItems").textContent=items.length.toLocaleString("ar");
-  $("#regionStatCats").textContent=Object.keys(cats).length.toLocaleString("ar");
-  $("#regionStatVerified").textContent=verified.toLocaleString("ar");
-  let extra=info.meta;
-  if(!scope)extra+=` — قاعدة المديريات: ${YEMEN_DISTRICT_TOTAL} مديرية في ${YEMEN_GOV_TOTAL} محافظة.`;
-  if(scope==="dist:حبيش"||scope.startsWith("district:")&&normalizePlace(scope.slice(9).split("|")[1])===normalizePlace("حبيش")){
-    extra+=" وتذكر البيانات المحلية مساحة تقارب 330 كم² وموقعاً شمال غرب مدينة إب بنحو 42 كم؛ هذه معلومات مرجعية وليست إحداثيات دقيقة لكل قرية.";
-  }
-  $("#regionDistrictMeta").textContent=extra;
-  const labels=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k,n])=>`<span class="tag">${esc(catLabel(k))} (${n})</span>`).join("");
-  $("#regionCategoryBreakdown").innerHTML=labels||`<span class="where">لا توجد إدراجات مسجلة في هذه المنطقة بعد. يمكن للسكان وأصحاب المحلات إضافة المعلومات بعد التحقق منها.</span>`;
+ const info=selectedRegionInfo(),items=info.items,catalogStats=catalogStatsForScope(),cats={};for(const item of items)if(item?.cat)cats[item.cat]=(cats[item.cat]||0)+1;
+ const verified=items.filter(item=>!!item?.verifiedAt).length;
+ $("#regionInfoTitle").textContent="عن "+info.title+" في دليلنا";
+ $("#regionInfoIntro").textContent=info.intro+(catalogStats?" · "+regionNumber(catalogStats.count)+" محل وخدمة في الفهرس":"");
+ $("#regionStatItems").textContent=regionNumber(catalogStats?.count??items.length);
+ $("#regionStatCats").textContent=regionNumber(Object.keys(catalogStats?.categories||cats).length);
+ $("#regionStatVerified").textContent=regionNumber(verified);
+ let extra=info.meta;if(!scope)extra+=" — قاعدة المديريات: "+YEMEN_DISTRICT_TOTAL+" مديرية في "+YEMEN_GOV_TOTAL+" محافظة.";
+ if(catalogStats?.snapshotDate)extra+=" · تاريخ تحديث فهرس الأماكن: "+catalogStats.snapshotDate;
+ $("#regionDistrictMeta").textContent=extra;
+ const categoryCounts=catalogStats?.categories||cats,labels=Object.entries(categoryCounts).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([key,count])=>'<span class="tag">'+esc(catLabel(key))+' ('+regionNumber(count)+')</span>').join("");
+ $("#regionCategoryBreakdown").innerHTML=labels||'<span class="where">لا توجد سجلات مطابقة في الفهرس لهذه المنطقة.</span>';
 }
-
-
 function regionCurrentContext(){
  const selected=scope||"";
  if(!selected)return {key:"country:Yemen",type:"country",gov:"",district:"",place:"اليمن"};
@@ -3380,7 +3373,7 @@ $("#tiles").addEventListener("click",e=>{
 });
 
 function renderCategories(){
-  const cnt={};for(const i of publicItems())cnt[i.cat]=(cnt[i.cat]||0)+1;
+  const cnt={};for(const [key] of CATS)cnt[key]=getDirectoryCategoryCount(key);
   const q=$("#catFilterQ").value.trim().toLowerCase();
   let list=CATS;
   if(catGroup!=="all"&&CAT_GROUPS[catGroup])list=CATS.filter(([k])=>CAT_GROUPS[catGroup].includes(k));
@@ -3391,7 +3384,7 @@ function renderCategories(){
     <button type="button" class="tile" data-c="${k}" style="--t:${TC[k]}">
       <i><svg viewBox="0 0 24 24">${IC[k]}</svg></i>
       <b>${catLabel(k)}</b>
-      <em>${cnt[k]||0}</em>
+      <em>${Number(cnt[k]||0).toLocaleString("ar")}</em>
     </button>`).join("");
   $("#catMoreRow").hidden=(list.length<=12&&!catExpanded)||!!q||catGroup!=="all";
   $("#catMoreBtn").textContent=catExpanded?T("collapseCats"):T("showAllCats")+" ("+list.length+")";
@@ -3982,8 +3975,7 @@ let liveDirectoryTimer=null,liveDirectorySeq=0,liveDirectoryCache=new Map(),live
 let liveDirectoryCategoryOverride="",liveDirectoryListingTypeOverride="";
 let liveDirectoryLastData=null,liveDirectoryVisibleCount=8,liveDirectoryCoords=null,liveSharedMatches=[],liveSharedCache=new Map();
 function liveLocalData(){
- try{const value=JSON.parse(localStorage.getItem(LIVE_LOCAL_KEY)||"{}");return value&&typeof value==="object"?value:{ratings:{},photos:{}};}
- catch(_){return {ratings:{},photos:{}};}
+ try{const value=JSON.parse(localStorage.getItem(LIVE_LOCAL_KEY)||"{}");const data=value&&typeof value==="object"&&!Array.isArray(value)?value:{};return {ratings:data.ratings&&typeof data.ratings==="object"&&!Array.isArray(data.ratings)?data.ratings:{},photos:data.photos&&typeof data.photos==="object"&&!Array.isArray(data.photos)?data.photos:{}};}catch(_){return {ratings:{},photos:{}};}
 }
 function saveLiveLocalData(value){
  try{localStorage.setItem(LIVE_LOCAL_KEY,JSON.stringify(value));return true;}
@@ -4082,29 +4074,41 @@ async function liveFetchJson(path,params,signal,retries=1){
  }
  throw lastError||new Error("تعذر الوصول إلى خادم الإعلانات.");
 }
-let liveCatalogManifestPromise=null,liveCatalogFiles=new Map(),liveSharedLoadError="";
+let liveCatalogManifestPromise=null,liveCatalogManifest=null,liveCatalogFiles=new Map(),liveSharedLoadError="";
+let liveMarketplaceCounts={all:{},governorates:{}};
+function normalizeRegionalCatalogItems(payload){return window.DalilnaRegionalCatalog?.normalizeItems(payload)||[];}
+function catalogManifestRecord(gov){return (liveCatalogManifest?.governorates||[]).find(row=>normalizePlace(row?.name)===normalizePlace(gov))||null;}
+function catalogStatsForScope(){
+ const manifest=liveCatalogManifest;if(!manifest)return null;const ctx=regionCurrentContext();
+ if(!ctx.gov){const categories={};for(const row of manifest.governorates||[])for(const [key,count] of Object.entries(row?.categories||{}))categories[key]=(categories[key]||0)+Number(count||0);return {count:Number(manifest.totalCount||0),categories,snapshotDate:manifest.snapshotDate||""};}
+ const region=catalogManifestRecord(ctx.gov);if(!region)return null;
+ if(ctx.type==="governorate")return {count:Number(region.count||0),categories:region.categories||{},snapshotDate:manifest.snapshotDate||""};
+ const cached=liveCatalogFiles.get(region.file);if(!cached||!Array.isArray(cached.items))return null;
+ const rows=cached.items.filter(item=>ctx.type==="district"?normalizePlace(item?.district)===normalizePlace(ctx.district):ctx.type==="subdistrict"?(normalizePlace(item?.area)===normalizePlace(ctx.area)||normalizePlace(item?.village)===normalizePlace(ctx.area)):true);
+ const categories={};for(const item of rows){const key=String(item?.category||"");if(key)categories[key]=(categories[key]||0)+1;}
+ return {count:rows.length,categories,snapshotDate:cached.snapshotDate||manifest.snapshotDate||""};
+}
+function getMarketplaceCount(category){const ctx=regionCurrentContext(),counts=ctx.gov?liveMarketplaceCounts.governorates?.[ctx.gov]:liveMarketplaceCounts.all;return Number(counts?.[category]||0);}
+function getDirectoryCategoryCount(category){const stats=catalogStatsForScope(),categories=stats?.categories||{};const aliases=category==="land"?["real_estate"]:category==="parts"?["vehicles"]:[];return Number(categories?.[category]||0)+aliases.reduce((sum,key)=>sum+Number(categories?.[key]||0),0)+getMarketplaceCount(category);}
 async function loadRegionalCatalogManifest(force){
  if(!force&&liveCatalogManifestPromise)return liveCatalogManifestPromise;
- liveCatalogManifestPromise=fetch(LIVE_CATALOG_BASE+"manifest.json",{headers:{Accept:"application/json"},cache:"no-cache"})
-  .then(async response=>{
-   if(!response.ok)throw new Error("ملف فهرس المحافظات غير متاح حالياً.");
-   const data=await response.json();
-   if(!data||!Array.isArray(data.governorates))throw new Error("صيغة فهرس المحافظات غير صالحة.");
-   return data;
-  }).catch(error=>{liveCatalogManifestPromise=null;throw error;});
+ liveCatalogManifestPromise=fetch(LIVE_CATALOG_BASE+"manifest.json",{headers:{Accept:"application/json"},cache:"no-cache"}).then(async response=>{
+  if(!response.ok)throw new Error("ملف فهرس المحافظات غير متاح حالياً.");
+  const data=await response.json();if(!data||!Array.isArray(data.governorates))throw new Error("صيغة فهرس المحافظات غير صالحة.");
+  liveCatalogManifest=data;buildScopeSelector();renderCategories();renderRegionInfo();return data;
+ }).catch(error=>{liveCatalogManifestPromise=null;throw error;});
  return liveCatalogManifestPromise;
 }
 async function loadRegionalCatalog(gov,force){
- const manifest=await loadRegionalCatalogManifest(force),key=normalizePlace(gov);
- const region=(manifest.governorates||[]).find(item=>normalizePlace(item.name)===key);
- if(!region)throw new Error("لا توجد قائمة بيانات لهذه المحافظة في ملف الفهرس.");
- const cached=liveCatalogFiles.get(region.file);
- if(!force&&cached)return {region,manifest,data:cached};
+ const manifest=await loadRegionalCatalogManifest(force),key=normalizePlace(gov),region=(manifest.governorates||[]).find(item=>normalizePlace(item?.name)===key);
+ if(!region||!region.file)throw new Error("لا توجد قائمة بيانات لهذه المحافظة في ملف الفهرس.");
+ const cached=liveCatalogFiles.get(region.file);if(!force&&cached)return {region,manifest,data:cached};
  const response=await fetch(LIVE_CATALOG_BASE+encodeURIComponent(region.file),{headers:{Accept:"application/json"},cache:force?"reload":"default"});
  if(!response.ok)throw new Error("تعذر تحميل سجل المحافظة.");
- const data=await response.json();
- if(!data||!Array.isArray(data.items))throw new Error("ملف بيانات المحافظة غير مكتمل.");
- liveCatalogFiles.set(region.file,data);
+ const payload=await response.json(),items=normalizeRegionalCatalogItems(payload);
+ if(!items.length&&Number(region.count||0)>0)throw new Error("ملف المحافظة لا يحتوي سجلات قابلة للقراءة.");
+ const data=payload&&typeof payload==="object"&&!Array.isArray(payload)?{...payload,items}:{governorate:region.name,items,snapshotDate:manifest.snapshotDate};
+ data.items=items;liveCatalogFiles.set(region.file,data);buildScopeSelector();renderCategories();renderRegionInfo();
  return {region,manifest,data};
 }
 function regionalCatalogMatches(items,context,query,category,productType){
