@@ -48,7 +48,7 @@ test("scope count is described as local entries", () => {
 
 
 test("live search is bounded and offers retry after a timeout", () => {
-  assert.match(html, /controller\.abort\(\),35000/);
+  assert.match(html, /controller\.abort\(\),30000/);
   assert.match(html, /id="liveDirectoryRetry"/);
   assert.match(html, /liveDirectoryRetry/);
   assert.match(html, /انتهت مهلة الاتصال/);
