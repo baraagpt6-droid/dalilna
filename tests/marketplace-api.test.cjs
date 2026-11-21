@@ -51,3 +51,12 @@ test("rent is restricted to homes, land and vehicles",()=>{
  assert.equal(valid.listingType,"rent");
  assert.throws(()=>validate({title:"جوال للإيجار",category:"souq",productType:"phone",listingType:"rent"}),/خيار الإيجار مخصص/);
 });
+
+
+test("supports validated listingType filtering for rental searches",()=>{
+ const source=fs.readFileSync("marketplace-api.js","utf8");
+ assert.ok(source.includes('listingType=clean(url.searchParams.get("listingType"),16)'));
+ assert.ok(source.includes('add("listing_type = ?",listingType)'));
+ const rent=validate({title:"شقة للإيجار",category:"land",productType:"apartment",listingType:"rent"});
+ assert.equal(rent.listingType,"rent");
+});

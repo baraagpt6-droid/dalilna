@@ -121,7 +121,9 @@ def classify(tags):
     transport = str(tags.get("public_transport") or "").lower()
     landuse = str(tags.get("landuse") or "").lower()
 
-    if shop in {"supermarket", "convenience", "grocery", "general", "greengrocer", "butcher"} or amenity == "marketplace":
+    if amenity == "marketplace":
+        return "market"
+    if shop in {"supermarket", "convenience", "grocery", "general", "greengrocer", "butcher"}:
         return "grocery"
     if amenity in {"restaurant", "fast_food", "food_court"} or shop == "bakery":
         return "food"
@@ -139,6 +141,8 @@ def classify(tags):
         return "gov"
     if office == "estate_agent" or shop == "estate_agent":
         return "real_estate"
+    if shop in {"jewelry", "jewellery"}:
+        return "gold"
     if amenity in {"bank", "atm", "bureau_de_change"}:
         return "money"
     if amenity == "place_of_worship" or tags.get("building") == "mosque":
@@ -165,7 +169,7 @@ def classify(tags):
         return "build"
     if craft:
         return "craft"
-    if amenity in {"bus_station", "taxi", "fuel"} or transport in {"station", "stop_position", "platform"}:
+    if amenity in {"bus_station", "taxi", "fuel"} or transport in {"station", "stop_position", "platform"} or tags.get("railway") == "station":
         return "transport"
     if amenity == "post_office" or shop in {"parcel", "travel_agency"}:
         return "delivery"

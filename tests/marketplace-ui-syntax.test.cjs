@@ -25,3 +25,7 @@ test("legacy migration keeps opening hours, websites and coordinates",()=>{
 test("marketplace client displays rental labels",()=>{
  assert.ok(client.includes('item.listingType === "rent") labels.push("للإيجار")'));
 });
+
+test("PWA version metadata is 1.9.1",()=>{
+ assert.ok(html.includes('content="1.9.1"'));
+});

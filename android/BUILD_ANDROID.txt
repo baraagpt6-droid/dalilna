@@ -2,7 +2,7 @@ Android wrapper
 ===============
 
 Application ID: ye.dalilna.app.debug (debug build)
-Version: 1.9.0 (versionCode 180)
+Version: 1.9.1 (versionCode 181)
 Minimum Android: 7.0 / API 24
 Target SDK: 35
 

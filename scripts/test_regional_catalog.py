@@ -51,6 +51,11 @@ class RegionalCatalogTests(unittest.TestCase):
         self.assertEqual(catalog.assign_region(14, 44, gov, districts, []),
                          ("إب", "حبيش", "approximate-district-centroid"))
 
+    def test_classifies_markets_jewellery_and_rail_stations(self):
+        self.assertEqual(catalog.classify({"amenity": "marketplace"}), "market")
+        self.assertEqual(catalog.classify({"shop": "jewelry"}), "gold")
+        self.assertEqual(catalog.classify({"railway": "station"}), "transport")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

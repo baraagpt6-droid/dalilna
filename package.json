@@ -1,6 +1,6 @@
 {
   "name": "dalilna-yemen",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "private": true,
   "description": "Dalilna Yemen directory and shared marketplace API",
   "engines": {"node": ">=20"},

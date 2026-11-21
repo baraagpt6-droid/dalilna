@@ -1,16 +1,16 @@
-Dalilna 1.9.0 — Build and deployment status
+Dalilna 1.9.1 — Build and deployment status
 ===========================================
 
-- Main source release: 1.9.0 (Android versionCode 180).
-- Place discovery no longer depends on live Geoapify, Nominatim, Photon, or Overpass requests from the app's primary directory screen.
-- A static regional catalogue is built from the Geofabrik Yemen OpenStreetMap extract. The build creates a manifest and 22 per-governorate JSON files and refuses to publish an empty catalogue.
-- Scheduled refresh: weekly via .github/workflows/refresh-regional-catalog.yml. The workflow checks the administrative source, builds a new snapshot, commits changed files, and triggers web and Android deployment workflows.
+- Release target: 1.9.1 (Android versionCode 181).
+- Primary place discovery uses a static per-governorate OpenStreetMap catalogue. The app's regional directory does not depend on live Geoapify, Nominatim, Photon, or Overpass requests.
+- The current catalogue snapshot contains 14,837 named places across 22 governorates. It is refreshed weekly by GitHub Actions from a Geofabrik Yemen extract.
+- Catalogue categories include health, grocery, mosques, food, education, hotels, transport, pharmacies, banks, vehicles, clothing, telecoms, government, electronics, weddings, household goods, books, building supplies, delivery, cafes, beauty, crafts, salons, estate agents, farms and watches. The 1.9.1 refresh adds dedicated categories for markets and jewellery shops.
 - OpenStreetMap-derived records use ODbL-1.0 attribution. Administrative reference data comes from Open Admin Data Yemen under CC BY 4.0.
-- Administrative polygon assignments are preferred when a matching polygon exists. Nearest-centroid fallbacks are explicitly labelled approximate, not official boundary verification.
-- The catalogue may be incomplete because not every business or public facility is mapped in OpenStreetMap. A missing result is not evidence that the business or facility does not exist.
-- Individual place cards keep optional map links. Maps are no longer queried to populate the app's regional directory.
-- User-added shops, jobs, vehicles, products, real estate, and rental adverts remain in the shared PostgreSQL marketplace and require admin approval.
-- The production Neon project dalilna-production-frankfurt uses marketplace schema version 2. Marketplace records were empty during the previous review; legacy entries must still be migrated from each device.
-- Render dalilna-live remains the shared marketplace API. The old Render directory API and static site are retained until compatibility is confirmed.
-- Vercel build checks previously showed build-rate-limit errors; the local catalogue avoids using Vercel as a live map-search dependency.
-- Android is a debug-signed testing build. Production signing and Play Store publication remain separate tasks.
+- Administrative polygon assignments are preferred when a matching polygon exists. Nearest-centroid fallbacks are explicitly labelled approximate.
+- OpenStreetMap coverage is incomplete. A missing result does not prove that a business or facility does not exist.
+- Individual place cards keep optional OpenStreetMap links. Maps are not queried to populate the regional directory.
+- Marketplace listings include jobs, products, cars, motorcycles, land, houses, apartments and rentals. The public API supports exact listing-type filtering; public results contain approved, non-expired listings only.
+- New submissions remain pending until server-side admin approval. The production Neon database uses marketplace schema version 2.
+- Legacy listings must still be migrated from each device using the in-app migration action.
+- Render dalilna-live remains the shared marketplace API. Legacy Render services remain untouched until old clients are checked.
+- Android APK is debug-signed for testing. Play Store production signing remains separate.

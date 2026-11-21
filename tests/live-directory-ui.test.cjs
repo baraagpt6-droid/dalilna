@@ -32,10 +32,18 @@ test("photos and ratings remain device-local",()=>{
 });
 
 
-test("region category shortcuts use the actual category filter",()=>{
- assert.ok(html.includes('const key=category.dataset.regionCategory||"all"'));
- assert.ok(html.includes('go("cat",key)'));
+test("region category shortcuts apply the selected category inside the regional directory",()=>{
+ assert.ok(html.includes('liveDirectoryCategoryOverride=category.dataset.regionCategory||"all"'));
+ assert.ok(html.includes('liveDirectoryListingTypeOverride=category.dataset.regionListingType||""'));
+ assert.ok(html.includes('data-region-listing-type='));
+ assert.ok(html.includes('params.set("listingType",listingType)'));
 });
 test("approved market ads map directory sections to their product types",()=>{
  for(const token of ['vehicles:["car","motorcycle","vehicle_parts","construction_equipment"]','real_estate:["land","property","apartment","house"]','categoryProductTypes.includes(item.productType)',"للإيجار"])assert.ok(html.includes(token),token);
+});
+
+test("local-service categories do not fetch unrelated marketplace ads",()=>{
+ assert.ok(html.includes('marketplaceCategories=["all","jobs","souq","land","marketplace"]'));
+ assert.ok(html.includes('if(!productType&&!categoryProductTypes&&!marketplaceCategories.includes(category))'));
+ assert.ok(html.includes('context.type==="subdistrict"'));
 });

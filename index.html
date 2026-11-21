@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.9.0">
+<meta name="app-version" content="1.9.1">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -3044,7 +3044,7 @@ function go(v,c){
 }
 $("#logoHome").addEventListener("click",e=>{
   e.preventDefault();
-  $("#q").value="";flt={open:false,ver:false,fav:false,near:false};scope="";buildScopeSelector();go("home");
+  $("#q").value="";liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";flt={open:false,ver:false,fav:false,near:false};scope="";buildScopeSelector();go("home");
 });
 $("#aiFab").addEventListener("click",()=>go("fb"));
 document.querySelector(".bottom").addEventListener("click",e=>{
@@ -3200,8 +3200,8 @@ function renderRichRegionProfile(){
   out+='<div class="region-profile-hero"><h3>'+esc(heading)+(ctx.gov?" — "+esc(ctx.gov):"")+'</h3><p>'+(ctx.type==="district"||ctx.type==="subdistrict"?"هذا الملف خاص بالمستوى الإداري المحدد، وليس بالمحافظة كاملة.":"منطقة محلية ضمن بيانات الدليل، وقد تكون قرية أو حيًا أو تجمعًا سكانيًا.")+' '+(parent?esc(parent.summary):"أضف وصفًا محليًا موثقًا لمساعدة الزوار على التعرف على المنطقة.")+'</p><div class="region-profile-metrics"><div class="region-profile-metric"><b>غير متاح</b><span>سكان هذه المديرية أو العزلة — لا يوجد رقم معتمد في ملف التطبيق</span></div>'+(parent?'<div class="region-profile-metric"><b>'+regionNumber(parent.population2023)+'</b><span>إسقاط سكان محافظة '+esc(ctx.gov)+' لعام 2023 — لا يمثل سكان المديرية</span></div>':"")+(ctx.type==="district"?'<div class="region-profile-metric"><b>'+regionNumber(dc)+'</b><span>مديريات المحافظة في المرجع الإداري</span></div>':"")+'</div><p class="region-profile-muted">منهجية Yemen PTI تستخدم بيانات WorldPop 2024 وإسقاطات الجهاز المركزي للإحصاء وتعديلات النزوح. هذه تقديرات وليست تعدادًا حديثًا مؤكد الدقة، لذلك لا نضع رقمًا محليًا غير متحقق منه.</p><div class="region-source-links"><a href="'+esc(sources.districtPopulation||"https://docs.yemen-pti.org/methodology/")+'" target="_blank" rel="noopener">منهجية تقدير سكان المديريات</a></div></div>';
   if(parent)out+='<div class="region-profile-section"><h3>معالم معروفة في المحافظة الأم</h3><div class="region-landmarks">'+parent.landmarks.map(x=>'<div class="region-landmark">'+esc(x)+'</div>').join("")+'</div><p class="region-profile-muted">هذه معالم على مستوى المحافظة، وليست تأكيدًا أن كل معلم يقع داخل حدود المديرية المختارة. أضف المعلم المحلي مع صورته وموقعه للمساعدة في توثيقه.</p></div>';
  }
- const categories=[["all","كل المحلات والخدمات",""],["grocery","بقالات وتموينات","بقالة"],["food","مطاعم ومخابز","مطعم"],["cafe","مقاهٍ وبوفيهات","قهوة"],["pharmacy","صيدليات","صيدلية"],["health","مستشفيات ومراكز صحية","مستشفى"],["edu","مدارس ومعاهد","مدرسة"],["mosque","مساجد وجوامع","مسجد"],["books","مكتبات وقرطاسيات","قرطاسية"],["vehicles","معارض وورش سيارات","معرض سيارات"],["real_estate","مكاتب عقارية","عقار"],["transport","نقل ومواصلات","نقل"],["hotel","فنادق وسكن","فندق"],["money","بنوك وصرافة","صرافة"],["watches","ساعات","ساعة"],["telecom","جوالات واتصالات","جوال"],["elec","إلكترونيات","إلكترونيات"],["build","مواد بناء","مواد بناء"],["gold","ذهب ومجوهرات","ذهب"],["clothes","ملابس وأحذية","ملابس"],["home","أدوات منزلية","أثاث"],["beauty","عطور وتجميل","عطور"],["salon","صالونات","صالون"],["laundry","مغاسل","مغسلة"],["solar","طاقة شمسية","طاقة شمسية"],["delivery","توصيل وبريد","توصيل"],["farm","زراعة ومواشٍ","زراعة"],["gov","جهات حكومية","مكتب حكومي"],["craft","حرف وصيانة","صيانة"]];
- out+='<div class="region-profile-section"><h3>تصفح المحلات والخدمات في هذه المنطقة</h3><p class="region-profile-muted">اختر قسماً لعرض السجلات المحلية المتوفرة. قد تكون بيانات بعض المديريات ناقصة، وغياب نتيجة لا يعني عدم وجود النشاط.</p><div class="region-map-links">'+categories.map(item=>'<button type="button" data-region-category="'+esc(item[0])+'" data-region-query="'+esc(item[2])+'">'+esc(item[1])+'</button>').join("")+'</div><p class="region-profile-muted">افتح خريطة المكان من بطاقته عند الحاجة فقط.</p></div>';
+ const categories=[["all","كل المحلات والخدمات",""],["grocery","بقالات وتموينات","بقالة"],["food","مطاعم ومخابز","مطعم"],["cafe","مقاهٍ وبوفيهات","قهوة"],["pharmacy","صيدليات","صيدلية"],["health","مستشفيات ومراكز صحية","مستشفى"],["edu","مدارس ومعاهد","مدرسة"],["mosque","مساجد وجوامع","مسجد"],["books","مكتبات وقرطاسيات","قرطاسية"],["vehicles","معارض وورش سيارات","معرض سيارات"],["real_estate","مكاتب عقارية","عقار"],["real_estate","عقارات للإيجار","","rent"],["jobs","وظائف",""],["souq","سوق المنتجات",""],["land","أراضٍ للبيع",""],["transport","نقل ومواصلات","نقل"],["hotel","فنادق وسكن","فندق"],["money","بنوك وصرافة","صرافة"],["watches","ساعات","ساعة"],["telecom","جوالات واتصالات","جوال"],["elec","إلكترونيات","إلكترونيات"],["build","مواد بناء","مواد بناء"],["gold","ذهب ومجوهرات","ذهب"],["market","أسواق محلية","سوق"],["clothes","ملابس وأحذية","ملابس"],["home","أدوات منزلية","أثاث"],["beauty","عطور وتجميل","عطور"],["salon","صالونات","صالون"],["laundry","مغاسل","مغسلة"],["solar","طاقة شمسية","طاقة شمسية"],["delivery","توصيل وبريد","توصيل"],["farm","زراعة ومواشٍ","زراعة"],["gov","جهات حكومية","مكتب حكومي"],["craft","حرف وصيانة","صيانة"]]
+ out+='<div class="region-profile-section"><h3>تصفح المحلات والخدمات في هذه المنطقة</h3><p class="region-profile-muted">اختر قسماً لعرض السجلات المحلية المتوفرة. قد تكون بيانات بعض المديريات ناقصة، وغياب نتيجة لا يعني عدم وجود النشاط.</p><div class="region-map-links">'+categories.map(item=>'<button type="button" data-region-category="'+esc(item[0])+'" data-region-query="'+esc(item[2])+'" data-region-listing-type="'+esc(item[3]||"")+'">'+esc(item[1])+'</button>').join("")+'</div><p class="region-profile-muted">افتح خريطة المكان من بطاقته عند الحاجة فقط.</p></div>';
 out+='<div class="region-profile-section"><h3>مصادر البيانات</h3><div class="region-source-links"><a href="'+esc(sources.population||"https://cso-ye.org/en/population-statistics/")+'" target="_blank" rel="noopener">الجهاز المركزي للإحصاء — السكان</a><a href="'+esc(sources.heritageInventory||"https://whc.unesco.org/document/135204")+'" target="_blank" rel="noopener">جرد التراث 2013</a><a href="'+esc(sources.unescoYemen||"https://whc.unesco.org/en/statesparties/ye/")+'" target="_blank" rel="noopener">مواقع اليمن في اليونسكو</a><a href="'+esc(sources.geography||"https://visit-yemen.com/geography")+'" target="_blank" rel="noopener">الدليل الجغرافي</a><a href="'+esc(sources.administrative||"https://github.com/open-admin-data/yemen-administrative-divisions")+'" target="_blank" rel="noopener">التقسيم الإداري</a></div></div>';
  $("#regionProfileDetails").innerHTML=out;renderRegionCommunity(ctx);
 }
@@ -3223,7 +3223,7 @@ $("#regionProfileDetails").addEventListener("click",function(e){
  const gov=e.target.closest("[data-region-gov]");
  if(gov){scope="gov:"+gov.dataset.regionGov;liveDirectoryCoords=null;liveDirectoryVisibleCount=8;buildScopeSelector();render();$("#regionInfoCard").scrollIntoView({behavior:"smooth",block:"start"});return;}
  const category=e.target.closest("[data-region-category]");
- if(category){const key=category.dataset.regionCategory||"all";$("#q").value="";if(key==="all")go("home");else go("cat",key);const panel=$("#liveDirectoryPanel");if(panel)panel.scrollIntoView({behavior:"smooth",block:"start"});}
+ if(category){liveDirectoryCategoryOverride=category.dataset.regionCategory||"all";liveDirectoryListingTypeOverride=category.dataset.regionListingType||"";$("#q").value="";if(view!=="home")go("home");else render();const panel=$("#liveDirectoryPanel");if(panel)panel.scrollIntoView({behavior:"smooth",block:"start"});}
 });
 $("#regionLikeButton").addEventListener("click",function(){
  const ctx=regionCurrentContext();S.regionLikes=S.regionLikes||{};
@@ -3923,6 +3923,10 @@ function directoryMapSearchInfo(q){
     {category:"elec",productType:"camera",label:"محلات الكاميرات",test:/(كاميرا|كاميرات)/},
     {category:"beauty",productType:"perfume",label:"محلات العطور",test:/(عطر|عطور|بخور)/},
     {category:"beauty",productType:"cosmetics",label:"محلات التجميل",test:/(تجميل|مكياج|كوزمتك|مستحضرات)/},
+    {category:"gold",productType:"jewelry",label:"محلات الذهب والمجوهرات",test:/(ذهب|مجوهرات|صياغة)/},
+    {category:"real_estate",productType:"apartment",label:"الشقق المعروضة",test:/(شقة|شقق)/},
+    {category:"real_estate",productType:"house",label:"المنازل المعروضة",test:/(منزل|منازل|بيت|بيوت)/},
+    {category:"real_estate",productType:"land",label:"الأراضي المعروضة",test:/(أرض|أراضي|اراضي)/},
     {category:"grocery",productType:"honey",label:"محلات العسل",test:/(عسل|عسل طبيعي)/},
     {category:"grocery",productType:"coffee",label:"محلات البن والقهوة",test:/(بن|قهوه|قهوة|حبوب قهوه)/},
     {category:"grocery",productType:"spices",label:"محلات البهارات",test:/(بهارات|توابل|هيل|فلفل اسود)/},
@@ -3948,7 +3952,9 @@ function directoryMapSearchInfo(q){
     {category:"hotel",label:"فنادق وشقق",test:/فندق|فنادق|شقق مفروشه|سكن/},
     {category:"salon",label:"حلاقون وصالونات",test:/حلاق|حلاقه|صالون/},
     {category:"laundry",label:"مغاسل ملابس",test:/مغسله|مغاسل|غسيل ملابس|كوي/},
-    {category:"market",label:"أسواق ومحلات",test:/سوق مركزي|اسواق|مول|مركز تجاري/}
+    {category:"market",label:"أسواق ومحلات",test:/سوق مركزي|اسواق|مول|مركز تجاري/},
+    {category:"real_estate",label:"مكاتب عقارية",test:/مكتب عقاري|مكاتب عقاريه|وسيط عقاري/},
+    {category:"jobs",label:"وظائف وإعلانات توظيف",test:/وظيفه|وظائف|توظيف|فرص عمل/}
   ];
   const service=services.find(item=>item.test.test(text));
   if(!product&&!service)return null;
@@ -3972,6 +3978,7 @@ const LIVE_CATALOG_BASE="./regional-catalog/";
 const LIVE_LOCAL_KEY="dalilna_live_places_159";
 let liveGeoapifyEnabled=false;
 let liveDirectoryTimer=null,liveDirectorySeq=0,liveDirectoryCache=new Map(),liveDirectoryLast={query:"",category:"all"};
+let liveDirectoryCategoryOverride="",liveDirectoryListingTypeOverride="";
 let liveDirectoryLastData=null,liveDirectoryVisibleCount=8,liveDirectoryCoords=null,liveSharedMatches=[],liveSharedCache=new Map();
 function liveLocalData(){
  try{const value=JSON.parse(localStorage.getItem(LIVE_LOCAL_KEY)||"{}");return value&&typeof value==="object"?value:{ratings:{},photos:{}};}
@@ -4100,7 +4107,7 @@ async function loadRegionalCatalog(gov,force){
  return {region,manifest,data};
 }
 function regionalCatalogMatches(items,context,query,category,productType){
- if(productType||category==="jobs"||category==="souq"||category==="land"||category==="marketplace")return [];
+ if(category==="jobs"||category==="souq"||category==="land"||category==="marketplace")return [];
  const wanted=String(category||"all");
  const categoryWords={
   grocery:["بقالة","بقاله","بقالات","بقال","تموين","تموينات","سوبرماركت"],
@@ -4117,6 +4124,8 @@ function regionalCatalogMatches(items,context,query,category,productType){
   money:["بنك","بنوك","صراف","صرافة","صرافات"],
   craft:["حرفي","حرفيون","صيانة","إصلاح","ورشة","ورش"],
   real_estate:["عقار","عقارات","مكتب","مكاتب","عقاري","عقارية"],
+  gold:["ذهب","مجوهرات","صياغة"],
+  market:["سوق","أسواق","سوق مركزي","سوق محلي"],
   watches:["ساعة","ساعات","ساعاتي"],
   telecom:["جوال","جوالات","هواتف","اتصالات"],
   elec:["إلكترونيات","الكترونيات","كهربائيات","كمبيوتر"],
@@ -4137,13 +4146,13 @@ function regionalCatalogMatches(items,context,query,category,productType){
  const tokens=normalizePlace(query).split(/\s+/).filter(token=>token&&!ignored.has(token));
  return (items||[]).filter(item=>{
   if(wanted!=="all"&&item.category!==wanted)return false;
-  if(context&&context.type==="district"&&context.district&&normalizePlace(item.district)!==normalizePlace(context.district))return false;
+  if(context&&(context.type==="district"||context.type==="subdistrict")&&context.district&&normalizePlace(item.district)!==normalizePlace(context.district))return false;
   const hay=normalizePlace([item.name,item.address,item.description,item.governorate,item.district,item.category].filter(Boolean).join(" "));
   return tokens.every(token=>hay.includes(token));
  });
 }
 function regionalCatalogCardHTML(item){
- const labels={vehicles:"معارض وورش سيارات",watches:"ساعات",real_estate:"مكاتب عقارية",telecom:"جوالات واتصالات",elec:"إلكترونيات",build:"مواد بناء",gold:"ذهب ومجوهرات",clothes:"ملابس وأحذية",home:"أدوات منزلية",beauty:"عطور وتجميل",salon:"صالونات",laundry:"مغاسل",solar:"طاقة شمسية",delivery:"توصيل وبريد",farm:"زراعة ومواشٍ",gov:"جهات حكومية"};
+ const labels={market:"أسواق",vehicles:"معارض وورش سيارات",watches:"ساعات",real_estate:"مكاتب عقارية",telecom:"جوالات واتصالات",elec:"إلكترونيات",build:"مواد بناء",gold:"ذهب ومجوهرات",clothes:"ملابس وأحذية",home:"أدوات منزلية",beauty:"عطور وتجميل",salon:"صالونات",laundry:"مغاسل",solar:"طاقة شمسية",delivery:"توصيل وبريد",farm:"زراعة ومواشٍ",gov:"جهات حكومية"};
  let card=liveDirectoryCardHTML(item);
  const label=labels[item.category];
  if(label)card=card.replace('<span class="tag">خدمة</span>','<span class="tag">'+esc(label)+'</span>');
@@ -4182,18 +4191,21 @@ function liveDirectoryLocationPrompt(manifest){
  const buttons=rows.map(row=>'<button type="button" class="region-governorate-pill" data-region-gov="'+esc(row.name)+'">'+esc(row.name)+' <small>'+Number(row.count||0).toLocaleString("ar")+'</small></button>').join("");
  box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">اختر المحافظة لعرض المحلات والخدمات والمدارس والمرافق المسجلة فيها. السجل لا يحصر كل نشاط موجود في الواقع.</div><div class="region-governorate-pills">'+buttons+'</div>';
 }
-async function loadLiveMarketplaceMatches(query,category,productType,signal,force){
- const region=regionCurrentContext(),gov=region.gov||"",district=region.district||"",key=[query,category,productType,gov,district].join("|");
+async function loadLiveMarketplaceMatches(query,category,productType,signal,force,listingType){
+ const region=regionCurrentContext(),gov=region.gov||"",district=region.district||"",key=[query,category,productType,listingType||"",gov,district].join("|");
  const cached=liveSharedCache.get(key);
  if(!force&&cached&&Date.now()-cached.at<120000){liveSharedMatches=cached.items;liveSharedLoadError="";return liveSharedMatches;}
  liveSharedMatches=[];liveSharedLoadError="";
  const productTypesByCategory={grocery:["food","honey","coffee","spices"],food:["food","honey","coffee","spices"],cafe:["coffee"],books:["books","stationery"],vehicles:["car","motorcycle","vehicle_parts","construction_equipment"],real_estate:["land","property","apartment","house"],watches:["watch"],telecom:["phone","phone_accessories"],elec:["electronics","computer","computer_accessories","tablet","camera","appliance"],build:["building_materials","tools","construction_equipment"],gold:["jewelry"],clothes:["clothing","shoes"],home:["appliance","furniture","household_items","kitchenware"],beauty:["perfume","cosmetics"],solar:["solar_equipment"],farm:["livestock","agriculture","animal_feed","seeds"]};
  const categoryProductTypes=productTypesByCategory[category]||null;
+ const marketplaceCategories=["all","jobs","souq","land","marketplace"];
+ if(!productType&&!categoryProductTypes&&!marketplaceCategories.includes(category)){liveSharedMatches=[];liveSharedLoadError="";return liveSharedMatches;}
  const params=new URLSearchParams({limit:"24",includeImages:"1"});
  if(productType){params.set("category","marketplace");params.set("productType",productType);}
  else if(categoryProductTypes)params.set("category","marketplace");
  else if(category&&category!=="all")params.set("category",category);
  if(query)params.set("q",query);
+ if(listingType)params.set("listingType",listingType);
  if(gov)params.set("governorate",gov);
  if(district)params.set("district",district);
  try{
@@ -4206,7 +4218,7 @@ async function loadLiveMarketplaceMatches(query,category,productType,signal,forc
 async function runLiveDirectorySearch(force){
  const box=$("#liveDirectoryItems"),status=$("#liveDirectoryStatus");
  if(!box||!status)return;
- const context=regionCurrentContext(),query=liveDirectoryLast.query||"",category=liveDirectoryLast.category||"all",productType=liveDirectoryLast.productType||"";
+ const context=regionCurrentContext(),query=liveDirectoryLast.query||"",category=liveDirectoryLast.category||"all",productType=liveDirectoryLast.productType||"",listingType=liveDirectoryLast.listingType||"";
  liveDirectoryVisibleCount=8;liveDirectoryLastData=null;
  const seq=++liveDirectorySeq;
  status.textContent="جارٍ تحميل فهرس الأماكن المحلي والإعلانات المعتمدة…";
@@ -4215,14 +4227,14 @@ async function runLiveDirectorySearch(force){
  liveDirectoryTimer=setTimeout(async()=>{
   const controller=new AbortController(),requestTimer=setTimeout(()=>controller.abort(),18000);
   try{
-   const sharedPromise=loadLiveMarketplaceMatches(query,category,productType,controller.signal,force);
+   const sharedPromise=loadLiveMarketplaceMatches(query,category,productType,controller.signal,force,listingType);
    if(!context.gov){
     const manifest=await loadRegionalCatalogManifest(force);
     await sharedPromise;
     if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
     liveDirectoryLocationPrompt(manifest);return;
    }
-   const classifiedOnly=!!productType||["jobs","souq","land","marketplace"].includes(category);
+   const classifiedOnly=["jobs","souq","land","marketplace"].includes(category);
    const loaded=classifiedOnly?null:await loadRegionalCatalog(context.gov,force);
    await sharedPromise;
    if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
@@ -4790,7 +4802,7 @@ function render(){
   const q=$("#q").value.trim().toLowerCase();
   const liveWanted=view==="home"||view==="cat";
   const liveInfo=directoryMapSearchInfo(q);
-  liveDirectoryLast={query:q||(view==="cat"?(CN[curCat]||curCat):""),category:liveInfo?liveInfo.category:(view==="cat"?curCat:"all"),productType:liveInfo?liveInfo.productType:""};
+  liveDirectoryLast={query:q||(view==="cat"?(CN[curCat]||curCat):""),category:liveDirectoryCategoryOverride||(liveInfo?liveInfo.category:(view==="cat"?curCat:"all")),productType:liveDirectoryCategoryOverride?"":(liveInfo?liveInfo.productType:""),listingType:liveDirectoryListingTypeOverride};
   const liveTop=$("#liveDirectoryTop");
   if(liveTop)liveTop.innerHTML=liveWanted?liveDirectoryPanelHTML():"";
   if(liveWanted)runLiveDirectorySearch(false);
@@ -4825,7 +4837,7 @@ function render(){
   }
 }
 
-$("#q").addEventListener("input",()=>{if(view==="fb")go("home");else render();});
+$("#q").addEventListener("input",()=>{liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";if(view==="fb")go("home");else render();});
 
 $("#more").addEventListener("click",()=>{homeLim+=24;render();});
 
