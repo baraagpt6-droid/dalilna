@@ -4,7 +4,7 @@ const http = require("node:http");
 const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.5.10";
+const VERSION = "1.6.0";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -75,7 +75,7 @@ function setCors(req, res) {
   const pathname = String(req.url || "").split("?")[0];
   // These endpoints return public map data only. Wildcard CORS avoids brittle
   // hostname allowlists for Render previews, PWA hosts and Android WebView.
-  if (pathname === "/health" || pathname.startsWith("/api/places/")) {
+  if (pathname === "/health" || pathname.startsWith("/api/places/") || pathname.startsWith("/api/google/places/")) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Accept, Content-Type");
@@ -189,6 +189,121 @@ function inferCategoryFromQuery(query) {
   ];
   const match = rules.find(([, pattern]) => pattern.test(text));
   return match ? match[0] : "";
+}
+
+function googlePlacesEnabled() {
+  return Boolean(String(process.env.GOOGLE_MAPS_API_KEY || "").trim());
+}
+
+function safeGoogleMapsUri(value) {
+  try {
+    const parsed = new URL(String(value || ""));
+    const host = parsed.hostname.toLowerCase();
+    if (parsed.protocol !== "https:") return "";
+    if (host === "google.com" || host.endsWith(".google.com") || host === "maps.app.goo.gl") return parsed.href;
+  } catch (_) {}
+  return "";
+}
+
+async function searchGooglePlaces(params) {
+  const apiKey = String(process.env.GOOGLE_MAPS_API_KEY || "").trim();
+  if (!apiKey) {
+    const error = new Error("بيانات Google Maps غير مفعّلة بعد. يلزم إعداد مفتاح Places API على الخادم.");
+    error.statusCode = 503;
+    error.code = "GOOGLE_PLACES_NOT_CONFIGURED";
+    throw error;
+  }
+
+  const query = cleanText(params.q, 100);
+  const place = cleanText(params.place, 180);
+  if (query.length < 2 || !place) {
+    const error = new Error("اكتب اسم الخدمة وحدد المحافظة أو المديرية أولاً.");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const body = {
+    textQuery: query + " في " + place,
+    languageCode: "ar",
+    regionCode: "YE",
+    pageSize: 12,
+    rankPreference: "RELEVANCE"
+  };
+  const lat = Number(params.lat), lon = Number(params.lon);
+  if (Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
+    body.locationBias = { circle: { center: { latitude: lat, longitude: lon }, radius: 7000 } };
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
+  const fieldMask = [
+    "places.id",
+    "places.displayName",
+    "places.formattedAddress",
+    "places.primaryType",
+    "places.primaryTypeDisplayName",
+    "places.nationalPhoneNumber",
+    "places.internationalPhoneNumber",
+    "places.googleMapsUri"
+  ].join(",");
+  try {
+    const response = await fetch("https://places.googleapis.com/v1/places:searchText", {
+      method: "POST",
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-Goog-Api-Key": apiKey,
+        "X-Goog-FieldMask": fieldMask
+      },
+      body: JSON.stringify(body)
+    });
+    if (!response.ok) {
+      const status = response.status;
+      const error = new Error(status === 429
+        ? "وصل البحث إلى حد طلبات Google الحالي. حاول لاحقاً."
+        : status === 403
+          ? "رفض Google الطلب. تحقق من تفعيل Places API وصلاحيات مفتاح الخادم والفوترة."
+          : "تعذر جلب نتائج Google Maps حالياً.");
+      error.statusCode = status === 429 ? 429 : 502;
+      error.code = status === 429 ? "GOOGLE_PLACES_RATE_LIMIT" : "GOOGLE_PLACES_UPSTREAM_ERROR";
+      throw error;
+    }
+    const payload = await response.json();
+    const places = Array.isArray(payload.places) ? payload.places : [];
+    const items = places.map(placeItem => {
+      const displayName = cleanText(placeItem.displayName && placeItem.displayName.text, 180);
+      if (!displayName || !placeItem.id) return null;
+      const phone = cleanText(placeItem.nationalPhoneNumber || placeItem.internationalPhoneNumber || "", 50);
+      return {
+        id: cleanText(placeItem.id, 180),
+        name: displayName,
+        category: cleanText(placeItem.primaryTypeDisplayName && placeItem.primaryTypeDisplayName.text, 100) || cleanText(placeItem.primaryType, 100) || "خدمة",
+        address: cleanText(placeItem.formattedAddress, 240),
+        phone,
+        mapsUrl: safeGoogleMapsUri(placeItem.googleMapsUri),
+        source: "Google Maps"
+      };
+    }).filter(Boolean);
+    return {
+      source: "Google Maps",
+      items,
+      count: items.length,
+      attribution: "Google Maps",
+      cached: false,
+      note: "الأسماء والأقسام والأرقام حسب البيانات المتاحة في Google Maps. قد لا يتوفر رقم هاتف لكل نشاط."
+    };
+  } catch (error) {
+    if (error.name === "AbortError") {
+      const timeout = new Error("تأخر رد Google Maps. أعد المحاولة.");
+      timeout.statusCode = 504;
+      timeout.code = "GOOGLE_PLACES_TIMEOUT";
+      throw timeout;
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function classifyCategory(tags) {
@@ -550,6 +665,41 @@ const server = http.createServer(async (req, res) => {
     json(res, 400, { error: "Invalid URL" });
     return;
   }
+  if (url.pathname === "/api/google/places/status") {
+    json(res, 200, {
+      provider: "Google Maps",
+      googlePlacesEnabled: googlePlacesEnabled(),
+      phoneNumbersIncluded: true,
+      resultStorage: "not-stored"
+    });
+    return;
+  }
+  if (url.pathname === "/api/google/places/search") {
+    const searchStartedAt = Date.now();
+    if (req.method !== "GET") {
+      json(res, 405, { error: "Method not allowed" }, { "Allow": "GET, OPTIONS" });
+      return;
+    }
+    if (!rateLimit(req)) {
+      json(res, 429, { code: "RATE_LIMITED", error: "عدد عمليات البحث كبير. انتظر قليلاً ثم حاول مجدداً." });
+      return;
+    }
+    try {
+      const result = await searchGooglePlaces({
+        q: url.searchParams.get("q"),
+        place: url.searchParams.get("place"),
+        lat: url.searchParams.get("lat"),
+        lon: url.searchParams.get("lon")
+      });
+      console.info(JSON.stringify({ event: "google.places.search.complete", count: result.count, durationMs: Date.now() - searchStartedAt }));
+      json(res, 200, result);
+    } catch (error) {
+      const status = Number(error.statusCode) || 502;
+      console.warn(JSON.stringify({ event: "google.places.search.error", status, code: cleanText(error.code, 80), durationMs: Date.now() - searchStartedAt }));
+      json(res, status, { code: cleanText(error.code, 80) || "GOOGLE_PLACES_ERROR", error: cleanText(error.message, 240) || "تعذر البحث في Google Maps." });
+    }
+    return;
+  }
   if (url.pathname === "/api/places/status") {
     json(res,200,{activeProvider:"OpenStreetMap",paidProvidersDisabled:true,photoProvider:"Wikimedia Commons",ratingsStorage:"local-device"});
     return;
@@ -620,4 +770,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, inferCategoryFromQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, createIntervalGate, searchCommonsPhotos, server };
+module.exports = { buildOverpassQuery, inferCategoryFromQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGooglePlaces, googlePlacesEnabled, createIntervalGate, searchCommonsPhotos, server };
