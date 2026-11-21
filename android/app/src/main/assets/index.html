@@ -3709,7 +3709,7 @@ function directoryMapSearchInfo(q){
 function liveDirectoryPanelHTML(){
   return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>أماكن من الخريطة المفتوحة</b><div class="live-directory-sub">نتائج مباشرة من OpenStreetMap إلى جانب إدراجات دليلنا</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث النتائج</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تجهيز البحث حسب المنطقة المحددة…</div><div class="live-directory-list" id="liveDirectoryItems"></div><div class="live-directory-attribution">المصدر: © OpenStreetMap contributors · قد تكون بعض البيانات غير مكتملة أو قديمة. تحقق من المحل قبل زيارته.</div></section>';
 }
-const LIVE_DIRECTORY_API="https://dalilna-directory-api.onrender.com";
+const LIVE_DIRECTORY_API="https://dalilna-live.onrender.com";
 let liveDirectoryTimer=null,liveDirectorySeq=0,liveDirectoryCache=new Map(),liveDirectoryLast={query:"",category:"all"};
 let liveDirectoryCoords=null;
 function liveDirectoryContext(){

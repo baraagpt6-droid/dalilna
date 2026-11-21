@@ -7,6 +7,7 @@ const PORT = Number(process.env.PORT || 10000);
 const VERSION = "1.5.0";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
+  "https://dalilna-live.onrender.com",
   "https://baraagpt6-droid.github.io",
   "https://appassets.androidplatform.net",
   "http://localhost:3000",
