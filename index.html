@@ -4933,7 +4933,9 @@ function render(){
     $("#areaLbl").textContent=ar||(curLang==="en"?`All Areas (${areas.length})`:`كل المناطق (${areas.length})`);
     const shown=applyFilters(inCat.filter(i=>(!ar||i.area===ar)&&match(i)));
     $("#count").textContent=`${shown.length} نتيجة`;
-    $("#clist").innerHTML=shown.map(cardHTML).join("")||emptySearchFallbackHTML($("#q").value.trim()||CN[curCat]||curCat);
+    const healthSources=curCat==="health"?'<section class="directory-source-strip"><b>السجل الصحي الرسمي – وزارة الصحة العامة والسكان</b><p>القائمة الأساسية المنشورة من الوزارة تسرد أسماء المرافق ورموزها وأنواعها. نسخة ديسمبر 2023 اقتصرت على المرافق التي جرى التحقق منها في المناطق المحررة؛ لا تعتبر قائمة كاملة أو دليلاً على أن كل مرفق يعمل حالياً.</p><div class="acts"><a class="lnk" href="https://www.moh-ye.org/?page_id=7297" target="_blank" rel="noopener noreferrer">فتح القائمة الأساسية للمرافق</a><a class="lnk" href="https://www.moh-ye.org/?p=13868" target="_blank" rel="noopener noreferrer">تقرير HeRAMS 2026 الأولي</a></div></section>':"";
+    const educationSources=curCat==="edu"?'<section class="directory-source-strip"><b>المدارس والجامعات</b><p>تظهر هنا الأماكن المسجلة في البحث الجغرافي. لا نضيف أسماء مدارس من دون سجل أو مصدر منشور يمكن مراجعته.</p></section>':"";
+    $("#clist").innerHTML=(shown.map(cardHTML).join("")||emptySearchFallbackHTML($("#q").value.trim()||CN[curCat]||curCat))+healthSources+educationSources;
   }else if(view==="jobs"){
     const jobs=applyFilters(S.items.filter(i=>i.cat==="jobs"&&(!i.expiresAt||i.expiresAt>Date.now())&&match(i)));
     const portals='<section class="directory-source-strip"><b>مصادر وظائف إضافية</b><p>تصفح الإعلانات الأحدث وتأكد من شروط كل وظيفة وموعدها في صفحة المصدر.</p><div class="acts"><a class="lnk" href="https://yemenhr.com/" target="_blank" rel="noopener noreferrer">Yemen HR</a><a class="lnk" href="https://www.yemenboard.com/" target="_blank" rel="noopener noreferrer">Yemen Board</a></div></section>';
