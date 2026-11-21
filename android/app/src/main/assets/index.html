@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.6.0">
+<meta name="app-version" content="1.6.1">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2304,7 +2304,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="1.6.0";
+const APP_VERSION="1.6.1";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -3721,11 +3721,11 @@ function directoryMapSearchInfo(q){
   return {category:service.category,label:service.label,place,mapQuery,url:regionMapSearch(mapQuery)};
 }
 function liveDirectoryPanelHTML(){
- return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>محلات وخدمات من Google Maps</b><div class="live-directory-sub">تظهر الأسماء والأقسام وأرقام الهواتف هنا. لا تُفتح الخريطة إلا عندما تضغط على رابط المكان.</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث النتائج</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تجهيز البحث حسب المنطقة المحددة…</div><div class="live-directory-list" id="liveDirectoryItems"></div><div class="live-directory-attribution" id="liveDirectoryAttribution">Google Maps · قد لا يتوفر رقم هاتف لبعض الأنشطة.</div><div class="live-directory-legal"><a href="./privacy.html">سياسة الخصوصية</a><a href="./terms.html">شروط الاستخدام</a></div></section>';
+ return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>محلات وخدمات داخل دليلنا</b><div class="live-directory-sub">تظهر النتائج هنا مباشرة. رقم الهاتف يظهر عند توفره، ولا تُفتح الخريطة إلا باختيارك.</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث النتائج</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تجهيز البحث حسب المنطقة المحددة…</div><div class="live-directory-list" id="liveDirectoryItems"></div><div class="live-directory-attribution" id="liveDirectoryAttribution">مصادر الأماكن المفتوحة: Geoapify وOpenStreetMap.</div><div class="live-directory-legal"><a href="./privacy.html">سياسة الخصوصية</a><a href="./terms.html">شروط الاستخدام</a></div></section>';
 }
 const LIVE_DIRECTORY_API="https://dalilna-live.onrender.com";
 const LIVE_LOCAL_KEY="dalilna_live_places_159";
-let liveGooglePlacesEnabled=false;
+let liveGeoapifyEnabled=false;
 let liveDirectoryTimer=null,liveDirectorySeq=0,liveDirectoryCache=new Map(),liveDirectoryLast={query:"",category:"all"};
 let liveDirectoryLastData=null,liveDirectoryVisibleCount=8,liveDirectoryCoords=null;
 function liveLocalData(){
@@ -3760,18 +3760,22 @@ function liveDirectoryCardHTML(item){
  photoSearch+'<label class="live-directory-photo-upload">إضافة صورة من جهازك<input type="file" accept="image/jpeg,image/png,image/webp" data-live-photo-input="'+esc(item.id)+'"></label>'+
  '<small class="live-directory-local-note">التقييمات والصور محفوظة على هذا الجهاز فقط ولا تظهر للمستخدمين الآخرين.</small></article>';
 }
-function googleMapsDirectoryCardHTML(item){
- const phone=String(item.phone||"").trim();
- const phoneHref=phone.replace(/[^+\\d]/g,"");
+function geoapifyDirectoryCardHTML(item){
+ const phone=String(item.phone||"").trim(),phoneHref=phone.replace(/[^+\\d]/g,"");
  const phoneHtml=phone
   ?'<p class="google-place-phone">الهاتف: <a href="tel:'+esc(phoneHref)+'">'+esc(phone)+'</a></p>'
-  :'<p class="google-place-phone muted">رقم الهاتف غير متوفر لهذا المكان في Google Maps.</p>';
+  :'<p class="google-place-phone muted">رقم الهاتف غير متوفر في بيانات هذا المكان.</p>';
+ const website=item.website
+  ?'<p><a href="'+esc(item.website)+'" target="_blank" rel="noopener noreferrer">الموقع الإلكتروني</a></p>'
+  :"";
+ const hours=item.openingHours?'<p>ساعات العمل: '+esc(item.openingHours)+'</p>':"";
  const maps=item.mapsUrl
-  ?'<a class="google-place-open" href="'+esc(item.mapsUrl)+'" target="_blank" rel="noopener noreferrer">فتح الموقع في Google Maps</a>'
-  :'';
+  ?'<a class="google-place-open" href="'+esc(item.mapsUrl)+'" target="_blank" rel="noopener noreferrer">فتح الموقع على الخريطة</a>'
+  :"";
  return '<article class="live-directory-card google-place-card"><div class="live-directory-card-head"><h3>'+esc(item.name)+'</h3><span class="tag">'+esc(item.category||"خدمة")+'</span></div>'+
-  (item.address?'<p>العنوان: '+esc(item.address)+'</p>':"")+phoneHtml+
-  '<div class="live-directory-actions">'+maps+'</div><small class="live-directory-local-note">بيانات هذا المحل مقدمة من Google Maps. تحقق من الرقم قبل الاتصال.</small></article>';
+  (item.address?'<p>العنوان: '+esc(item.address)+'</p>':"")+phoneHtml+website+hours+
+  '<div class="live-directory-actions">'+maps+(item.sourceUrl?'<a href="'+esc(item.sourceUrl)+'" target="_blank" rel="noopener noreferrer">مصدر بيانات المكان</a>':"")+'</div>'+
+  '<small class="live-directory-local-note">الرقم يظهر فقط إذا كان مسجلاً في بيانات المصدر. اتصل للتحقق قبل الزيارة.</small></article>';
 }
 function liveDirectoryLocationPrompt(){
  const box=$("#liveDirectoryItems");if(!box)return;
@@ -3790,42 +3794,39 @@ async function runLiveDirectorySearch(force){
  }
  const key=[context?context.place:"",coords?Number(coords.lat).toFixed(3)+","+Number(coords.lon||coords.lng).toFixed(3):"",category,query].join("|");
  liveDirectoryVisibleCount=8;liveDirectoryLastData=null;
- const seq=++liveDirectorySeq;status.textContent="نتحقق من مصدر البحث…";
+ const seq=++liveDirectorySeq;status.textContent="نتحقق من مصادر البحث المجانية…";
  box.innerHTML='<div class="live-directory-empty">جارٍ البحث عن المحلات والخدمات في المنطقة المحددة.</div>';
  clearTimeout(liveDirectoryTimer);
  liveDirectoryTimer=setTimeout(async()=>{
-  const controller=new AbortController(),requestTimer=setTimeout(()=>controller.abort(),35000);
+  const controller=new AbortController(),requestTimer=setTimeout(()=>controller.abort(),45000);
   try{
    const health=await fetch(LIVE_DIRECTORY_API+"/health",{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
    if(!health.ok)throw new Error("خدمة البحث غير جاهزة (HTTP "+health.status+").");
-   const googleStatusResponse=await fetch(LIVE_DIRECTORY_API+"/api/google/places/status",{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
-   const googleStatus=await googleStatusResponse.json().catch(()=>({}));
-   if(!googleStatusResponse.ok)throw new Error("تعذر التحقق من مصدر Google Maps.");
-   liveGooglePlacesEnabled=googleStatus.googlePlacesEnabled===true;
+   const geoStatusResponse=await fetch(LIVE_DIRECTORY_API+"/api/geoapify/status",{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
+   const geoStatus=await geoStatusResponse.json().catch(()=>({}));
+   if(!geoStatusResponse.ok)throw new Error("تعذر التحقق من مصدر البحث المجاني.");
+   liveGeoapifyEnabled=geoStatus.geoapifyEnabled===true;
    if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
-   if(liveGooglePlacesEnabled){
-    status.textContent="نبحث مباشرة في Google Maps…";
-    const params=new URLSearchParams({q:query,place:context?context.place:"اليمن"});
-    if(coords){params.set("lat",String(coords.lat));params.set("lon",String(coords.lon||coords.lng));}
-    const response=await fetch(LIVE_DIRECTORY_API+"/api/google/places/search?"+params.toString(),{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
-    const data=await response.json().catch(()=>({}));
-    if(!response.ok)throw new Error(data.error||"تعذر جلب نتائج Google Maps.");
+   if(liveGeoapifyEnabled){
+    status.textContent="نبحث في قائمة المحلات المجانية…";
+    const params=new URLSearchParams({q:query,category});
+    if(context){params.set("place",context.place);if(context.fallbackPlace)params.set("fallbackPlace",context.fallbackPlace);}
+    if(coords){params.set("lat",String(coords.lat));params.set("lon",String(coords.lon||coords.lng));params.set("radius","7000");}
+    const response=await fetch(LIVE_DIRECTORY_API+"/api/geoapify/search?"+params.toString(),{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
+    const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||"تعذر جلب نتائج الأماكن.");
     if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
     renderLiveDirectoryResponse(data);
     return;
    }
    const cached=liveDirectoryCache.get(key);
-   if(!force&&cached&&Date.now()-cached.at<10*60*1000){
-    cached.data.googlePlacesUnavailable=true;renderLiveDirectoryResponse(cached.data);return;
-   }
-   status.textContent="Google Maps غير مفعّل بعد. نعرض نتائج OpenStreetMap مؤقتاً…";
+   if(!force&&cached&&Date.now()-cached.at<10*60*1000){renderLiveDirectoryResponse(cached.data);return;}
+   status.textContent="مصدر Geoapify المجاني غير مفعّل بعد. نستخدم OpenStreetMap مؤقتاً…";
    const params=new URLSearchParams({q:query,category});
    if(context){params.set("place",context.place);if(context.fallbackPlace)params.set("fallbackPlace",context.fallbackPlace);}
    if(coords){params.set("lat",String(coords.lat));params.set("lon",String(coords.lon||coords.lng));params.set("radius","7000");}
    const response=await fetch(LIVE_DIRECTORY_API+"/api/places/search?"+params.toString(),{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
    const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||("تعذر تحميل الأماكن (HTTP "+response.status+")."));
    if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
-   data.googlePlacesUnavailable=true;
    liveDirectoryCache.set(key,{data,at:Date.now()});
    renderLiveDirectoryResponse(data);
   }catch(error){
@@ -3838,28 +3839,28 @@ async function runLiveDirectorySearch(force){
     :(timedOut?"تأخر البحث. أعد المحاولة بعد قليل.":(rawMessage||"تعذر الاتصال بخدمة البحث."));
    box.innerHTML='<div class="live-directory-empty">'+(networkFailure?"لم يصل الطلب إلى خادم البحث. هذا لا يعني عدم وجود محلات أو خدمات في المنطقة.":"تعذر جلب النتائج الآن. أعد المحاولة.")+'</div><button type="button" class="live-directory-refresh" id="liveDirectoryRetry">إعادة المحاولة</button>';
   }finally{clearTimeout(requestTimer);}
- },600);
+ },400);
 }
 function renderLiveDirectoryResponse(data){
  const status=$("#liveDirectoryStatus"),box=$("#liveDirectoryItems"),attribution=$("#liveDirectoryAttribution");if(!status||!box)return;
  const items=Array.isArray(data.items)?data.items:[];
- liveDirectoryLastData=data.source==="Google Maps"?null:data;
- if(data.source==="Google Maps"){
-  status.textContent="المصدر: Google Maps · عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة";
+ liveDirectoryLastData=data;
+ if(data.source==="Geoapify"){ 
+  status.textContent="المصدر: Geoapify وOpenStreetMap · عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة";
   box.classList.add("live-google-results");
-  if(attribution)attribution.textContent="Google Maps · تُعرض بيانات المحلات هنا داخل دليلنا. افتح الموقع فقط عند الضغط على الرابط.";
-  if(!items.length){
-   box.innerHTML='<div class="live-directory-empty">لم يعثر Google Maps على نتائج مطابقة لهذه الخدمة في المنطقة المحددة.</div>';
-   return;
-  }
-  box.innerHTML=items.slice(0,liveDirectoryVisibleCount).map(googleMapsDirectoryCardHTML).join("");
+  if(attribution)attribution.innerHTML='<a href="https://www.geoapify.com/" target="_blank" rel="noopener noreferrer">Powered by Geoapify</a> · © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>';
+  if(!items.length){box.innerHTML='<div class="live-directory-empty">لم يعثر مصدر البيانات على أماكن مسجلة لهذه الفئة في المنطقة المحددة.</div>';return;}
+  const visible=items.slice(0,liveDirectoryVisibleCount);
+  let cards=visible.map(geoapifyDirectoryCardHTML).join("");
+  if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">عرض المزيد ('+(items.length-visible.length)+')</button>';
+  box.innerHTML=cards;
   return;
  }
- status.textContent=(data.googlePlacesUnavailable?"Google Maps غير مفعّل؛ ":"")+(data.scopeFallback?"لم نجد حدود المديرية؛ هذه نتائج على مستوى المحافظة. ":"")+"المصدر: OpenStreetMap · عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة"+(data.cached?" · من التخزين المؤقت":"");
+ liveDirectoryLastData=data;
+
+ status.textContent=(data.scopeFallback?"لم نجد حدود المديرية؛ هذه نتائج على مستوى المحافظة. ":"")+"المصدر: OpenStreetMap · عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة"+(data.cached?" · من التخزين المؤقت":"");
  box.classList.remove("live-google-results");
- if(attribution)attribution.textContent="OpenStreetMap contributors · Google Maps يحتاج إلى تفعيل مفتاح Places API لعرض بيانات Google.";
- box.classList.remove("live-google-results");
- if(attribution)attribution.textContent="المصدر: © OpenStreetMap contributors · الصور من Wikimedia Commons مع صفحة المصدر والترخيص.";
+ if(attribution)attribution.innerHTML='المصدر: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · الصور من Wikimedia Commons.';
  if(!items.length){
   const ctx=liveDirectoryContext(),term=liveDirectoryLast.query||(CN[liveDirectoryLast.category]||"محلات وخدمات"),place=ctx?ctx.place:"اليمن";
   box.innerHTML='<div class="live-directory-empty">لم يعثر مصدر البيانات على أماكن مسجلة لهذه الفئة في النطاق المحدد. هذا لا يؤكد عدم وجودها على أرض الواقع.</div><a class="ai-map-search-link" href="https://www.openstreetmap.org/search?query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في OpenStreetMap</a>';return;
