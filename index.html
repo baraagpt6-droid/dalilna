@@ -3487,7 +3487,7 @@ function cardHTML(i){
       ${km!==null?` · <span class="dist-badge">${km<1?Math.round(km*1000)+" m":km.toFixed(1)+" km"}</span>`:""}
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      ${i.isPublicSeed?(i.seedKind==="product"?'<span class="tag">عرض من متجر خارجي</span>':'<span class="tag">بيانات عامة · غير موثّقة</span>'):(i.verifiedAt?`<span class="ok">${T("verified")}</span>`:`<span class="where">${T("community")}</span>`)}
+      ${i.verifiedAt?'<span class="ok">موثّق ✓</span>':""}
       ${i.aiChecked?`<span class="tag">فحص آلي أولي</span>`:""}
       ${avg?`<span class="dist-badge">★ ${avg} (${rObj.n})</span>`:""}
       ${i.price?`<span class="price">${esc(i.price)}</span>`:""}
@@ -4001,11 +4001,13 @@ function liveDirectoryCardHTML(item){
  const phoneActions=phone?'<div class="live-directory-actions">'+(phoneInfo.isMobile?'<a href="'+esc(yemenWhatsAppUrl(phone,"مرحباً، وجدت محلكم في تطبيق دليلنا وأريد الاستفسار عن الخدمة."))+'" target="_blank" rel="noopener noreferrer">واتساب</a>':"")+'<a href="tel:'+esc(phone.replace(/[^+\d]/g,""))+'">اتصال</a></div>':"";
  const lat=Number(record.lat??record.latitude),lon=Number(record.lon??record.lng??record.longitude);
  const mapMarkup=Number.isFinite(lat)&&Number.isFinite(lon)?'<div class="live-directory-actions"><button type="button" data-map-toggle data-lat="'+lat+'" data-lon="'+lon+'" data-title="'+esc(record.name||"الموقع")+'">عرض الخريطة</button></div><div class="dalilna-map" hidden></div>':(record.mapsUrl?'<div class="live-directory-actions"><a href="'+esc(record.mapsUrl)+'" target="_blank" rel="noopener noreferrer">فتح الموقع في OpenStreetMap</a></div>':"");
+ const sourceMarkup=record.sourceUrl?'<div class="live-directory-actions"><a href="'+esc(record.sourceUrl)+'" target="_blank" rel="noopener noreferrer">مصدر OpenStreetMap</a></div>':"";
+
  const photoSearch='<button type="button" class="live-directory-photo-search" data-commons-photos data-place-name="'+esc(record.name||"")+'">البحث عن صور مرخصة</button><div class="live-directory-commons-panel" hidden></div>';
  return '<article class="live-directory-card"><div class="live-directory-card-head"><h3>'+esc(record.name||"مكان بدون اسم")+'</h3><span class="tag">'+esc(CN[record.category]||"خدمة")+'</span></div>'+
  (record.address?'<p>العنوان: '+esc(record.address)+'</p>':"")+(record.description?'<p>'+esc(record.description)+'</p>':"")+
  (phone?'<p>الهاتف: '+esc(phone)+'</p>':"")+(record.website?'<p><a href="'+esc(record.website)+'" target="_blank" rel="noopener noreferrer">الموقع الإلكتروني</a></p>':"")+
- (record.openingHours?'<p>ساعات العمل: '+esc(record.openingHours)+'</p>':"")+phoneActions+mapMarkup+
+ (record.openingHours?'<p>ساعات العمل: '+esc(record.openingHours)+'</p>':"")+phoneActions+mapMarkup+sourceMarkup+
  '<section class="live-directory-local-rating"><b>تقييم المستخدمين على هذا الجهاز</b><strong>★ '+average+' ('+Number(rating.count||0).toLocaleString("ar")+' تقييمات)</strong><div class="live-directory-rate-actions">'+[1,2,3,4,5].map(n=>'<button type="button" data-live-rate-id="'+esc(itemId)+'" data-stars="'+n+'">'+n+' ★</button>').join("")+'</div></section>'+
  (images?'<section class="live-directory-local-photos"><b>الصور المحفوظة</b><div class="live-directory-photo-grid">'+images+'</div></section>':"")+
  photoSearch+'<label class="live-directory-photo-upload">إضافة صورة من جهازك<input type="file" accept="image/jpeg,image/png,image/webp" data-live-photo-input="'+esc(itemId)+'"></label>'+
@@ -4072,6 +4074,7 @@ async function liveFetchJson(path,params,signal,retries=1){
 }
 let liveCatalogManifestPromise=null,liveCatalogManifest=null,liveCatalogFiles=new Map(),liveSharedLoadError="";
 let liveMarketplaceCounts={all:{},governorates:{}};
+window.addEventListener("dalilna:marketplace-counts",event=>{const detail=event.detail||{};liveMarketplaceCounts={all:detail.all||{},governorates:detail.governorates||{}};renderCategories();buildScopeSelector();});
 function normalizeRegionalCatalogItems(payload){return window.DalilnaRegionalCatalog?.normalizeItems(payload)||[];}
 function catalogManifestRecord(gov){return (liveCatalogManifest?.governorates||[]).find(row=>normalizePlace(row?.name)===normalizePlace(gov))||null;}
 function catalogStatsForScope(){

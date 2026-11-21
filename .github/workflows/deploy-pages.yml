@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'regional-catalog-runtime.js'
       - 'marketplace-client.js'
       - 'privacy.html'
       - 'terms.html'
@@ -42,7 +43,7 @@ jobs:
       - name: Prepare website files
         run: |
           mkdir -p _site/icons _site/regional-catalog
-          cp index.html marketplace-client.js manifest.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html _site/
+          cp index.html regional-catalog-runtime.js marketplace-client.js manifest.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html _site/
           cp icons/* _site/icons/
           cp regional-catalog/*.json _site/regional-catalog/
           touch _site/.nojekyll

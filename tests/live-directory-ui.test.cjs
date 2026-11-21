@@ -25,10 +25,10 @@ test("jobs, products and property adverts remain in the shared marketplace",()=>
  for(const token of ["/api/marketplace/listings","إعلانات معتمدة","أرض","شقة","منزل","للإيجار"])assert.ok(html.includes(token),token);
 });
 test("individual place cards use optional map and source links from catalogue data",()=>{
- for(const token of ["item.mapsUrl","item.sourceUrl","الموقع والاتجاهات","مصدر OpenStreetMap"])assert.ok(html.includes(token),token);
+ for(const token of ["record.mapsUrl","record.sourceUrl","data-map-toggle","عرض الخريطة","OpenStreetMap"])assert.ok(html.includes(token),token);
 });
 test("photos and ratings remain device-local",()=>{
- for(const token of ["data-live-rate-id","data-live-photo-input","محفوظة على هذا الجهاز فقط"])assert.ok(html.includes(token),token);
+ for(const token of ["data-live-rate-id","data-live-photo-input","تقييم المستخدمين على هذا الجهاز","صورة محفوظة"])assert.ok(html.includes(token),token);
 });
 
 

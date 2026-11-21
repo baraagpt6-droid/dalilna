@@ -60,3 +60,10 @@ test("supports validated listingType filtering for rental searches",()=>{
  const rent=validate({title:"شقة للإيجار",category:"land",productType:"apartment",listingType:"rent"});
  assert.equal(rent.listingType,"rent");
 });
+
+test("shared marketplace exposes grouped approved listing counts",()=>{
+ const source=fs.readFileSync("marketplace-api.js","utf8");
+ assert.match(source,/async function counts\(req,res\)/);
+ assert.match(source,/GROUP BY governorate,category/);
+ assert.ok(source.includes('r==="counts"'));
+});
