@@ -32,7 +32,7 @@ test("region counts no longer mislabel public seed listings as device-local",()=
 });
 test("curated Yemen seed data has sources, review timestamps and useful starter content",()=>{
  const start=html.indexOf("const SEED_ITEMS=")+ "const SEED_ITEMS=".length;
- const end=html.indexOf(";\\nconst LEGACY_DEMO_IDS",start);
+ const end=html.indexOf("const LEGACY_DEMO_IDS",start);
  assert.ok(start>0&&end>start,"SEED_ITEMS must remain a JSON-readable starter directory");
  const seeds=JSON.parse(html.slice(start,end));
  assert.ok(seeds.length>=24);
