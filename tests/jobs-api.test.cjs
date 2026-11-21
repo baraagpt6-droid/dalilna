@@ -5,6 +5,31 @@ test("jobs portal supports the eight requested Arab countries",()=>{assert.equal
 test("country codes resolve to stable names",()=>{assert.equal(COUNTRY_CODES.YE,"Yemen");assert.equal(COUNTRY_CODES.SA,"Saudi Arabia");assert.equal(COUNTRY_CODES.AE,"United Arab Emirates");});
 test("candidate WhatsApp phone validation accepts international numbers",()=>{assert.equal(validPhone("+967 777 123 456"),"967777123456");assert.equal(validPhone("+966 50 123 4567"),"966501234567");assert.equal(validPhone("123"),"");assert.equal(validPhone("1".repeat(16)),"");});
 test("daily jobs index is valid and stores source metadata",()=>{const feed=JSON.parse(fs.readFileSync("jobs-feed.json","utf8"));assert.equal(feed.schemaVersion,1);assert.ok(Array.isArray(feed.sources));assert.ok(Array.isArray(feed.items));});
+
+test("public YemenHR HTML parser extracts job metadata and original detail URLs",()=>{
+ const {parseYemenHrJobs}=require("../scripts/refresh-jobs.cjs");
+ const html='<div class="tgme_widget_message_wrap"><div data-post="hr_yemen/9999"></div><div class="tgme_widget_message_text js-message_text">📋 المسمى الوظيفي:<br>Project Officer<br>🏢 الجهة:<br>Test NGO<br>📍 الموقع:<br>Aden<br>📅 تاريخ النشر:<br>18 نوفمبر 2026<br>⏰ آخر موعد للتقديم:<br>24 نوفمبر 2026</div><a href="https://telegra.ph/Project-Officer-11-18">details</a></div>';
+ const items=parseYemenHrJobs(html);
+ assert.equal(items.length,1);
+ assert.equal(items[0].title,"Project Officer");
+ assert.equal(items[0].organization,"Test NGO");
+ assert.equal(items[0].country,"Yemen");
+ assert.equal(items[0].url,"https://telegra.ph/Project-Officer-11-18");
+});
+test("Careers.sa parser retains exact job links, location, organization and freshness date",()=>{
+ const {parseCareersSaIndex,parseCareersSaJob}=require("../scripts/refresh-jobs.cjs");
+ const index='<a href="/en/jobs/example-position">Example Position</a>';
+ const links=parseCareersSaIndex(index);
+ assert.equal(links.length,1);
+ const html='<h1>Example Position</h1><p>Jobs / Example Employer</p><p>Riyadh, Saudi Arabia</p><p>First found 21 Nov 2026</p>';
+ const job=parseCareersSaJob(html,links[0].url,links[0].title);
+ assert.equal(job.title,"Example Position");
+ assert.equal(job.organization,"Example Employer");
+ assert.equal(job.country,"Saudi Arabia");
+ assert.equal(job.city,"Riyadh");
+ assert.equal(job.publishedAt,"2026-11-21T00:00:00.000Z");
+});
+
 test("daily refresh script includes UN RSS and optional ReliefWeb configuration",()=>{const script=fs.readFileSync("scripts/refresh-jobs.cjs","utf8");assert.match(script,/careers\.un\.org/);assert.match(script,/RELIEFWEB_APPNAME/);assert.match(script,/DALILNA_JOB_RSS_FEEDS/);assert.match(script,/expiresAt/);});
 test("job seeker records require public consent and expire after 60 days",()=>{const api=fs.readFileSync("jobs-api.js","utf8");assert.match(api,/body\.consentPublic===true/);assert.match(api,/consent_public=TRUE/);assert.match(api,/INTERVAL '60 days'/);});
 test("marketplace exposes category groups and 60-day market expiry",()=>{const api=fs.readFileSync("marketplace-api.js","utf8");assert.match(api,/PRODUCT_GROUPS/);assert.match(api,/productGroup/);assert.match(api,/NOW\(\)\+INTERVAL '60 days'/);});
