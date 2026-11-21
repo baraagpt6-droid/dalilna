@@ -59,3 +59,11 @@ test("first-run public starter catalog includes real sourced businesses and prod
  assert.match(html,/https:\/\/hubloh\.com\/en\/cell-phones/);
  assert.match(html,/https:\/\/www\.google\.com\/maps\/search/);
 });
+
+test("Arabic search routes pharmacies, hospitals, schools and mobile shops to separate categories",()=>{
+ assert.match(html,/category:"health".*مستشف.*عياده/);
+ assert.match(html,/category:"pharmacy".*صيدل.*دواء/);
+ assert.match(html,/category:"edu".*مدرس.*جامعه/);
+ assert.match(html,/category:"telecom".*جوال.*موبايل/);
+ assert.match(html,/category:"elec".*الكترونيات.*لابتوب/);
+});
