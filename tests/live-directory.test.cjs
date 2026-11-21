@@ -26,7 +26,7 @@ test("normalizes OSM features and retains source identifiers",()=>{
 test("normalizes extra OSM business details when available",()=>{
  const item=normalizeElement({type:"node",id:321,lat:13.3,lon:43.1,tags:{name:"مطعم تجريبي",amenity:"restaurant",cuisine:"yemeni",brand:"علامة محلية",operator:"المشغل",description:"وصف المكان",email:"contact@example.test",website:"https://example.test"}},"حبيش");
  assert.equal(item.cuisine,"yemeni");assert.equal(item.brand,"علامة محلية");assert.equal(item.operator,"المشغل");
- assert.equal(item.description,"وصف المكان");assert.equal(item.email,"contact@example.test");assert.equal(item.website,"https://example.test");
+ assert.equal(item.description,"وصف المكان");assert.equal(item.email,"contact@example.test");assert.equal(item.website,"https://example.test/");
 });
 test("ignores unnamed or unlocated map objects",()=>{
  assert.equal(normalizeElement({type:"way",id:9,center:{lat:13,lon:43},tags:{shop:"convenience"}},"إب"),null);
