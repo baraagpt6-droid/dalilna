@@ -8,7 +8,7 @@ const html = fs.readFileSync('index.html', 'utf8');
 
 test('admin always has a visible shortcut when review requests are pending', () => {
   assert.match(html, /id="admPendingShortcut"/);
-  assert.match(html, /color:var\\(--ink\\)/, 'shortcut uses the existing theme text token');
+  assert.ok(html.includes("color:var(--ink)"), "shortcut uses the existing theme text token");
   const renderStart = html.indexOf('function renderAdminPanel(){');
   const renderEnd = html.indexOf('/* Admin Dashboard */', renderStart);
   const panel = html.slice(renderStart, renderEnd > renderStart ? renderEnd : renderStart + 18000);
