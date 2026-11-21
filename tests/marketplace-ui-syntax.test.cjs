@@ -47,7 +47,7 @@ test("emergency contacts remain direct tel links and include a return-to-search 
 
 test("search icon is a working submit button and Enter reveals results",()=>{
  assert.ok(html.includes('id="searchSubmit"'));
- assert.ok(html.includes('id="searchSubmit").addEventListener("click",renderSearchAndRevealResults)'));
+ assert.ok(inline.join("\n").includes('$("#searchSubmit").addEventListener("click",renderSearchAndRevealResults)'));
  assert.ok(html.includes('event.key==="Enter"'));
  assert.ok(html.includes('searchRenderTimer=window.setTimeout'));
 });
