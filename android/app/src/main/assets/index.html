@@ -3712,7 +3712,7 @@ $("#f").addEventListener("submit",e=>{
     area,village:String(fd.village||"").trim(),phone:String(fd.phone||"").trim(),
     hours:String(fd.hours||"").trim(),price:String(fd.price||"").trim(),
     country:String(fd.country||"اليمن").trim(),desc:String(fd.desc||"").trim(),
-    productType:String(fd.productType||"other").trim(),listingType:String(fd.listingType||"sale").trim(),
+    productType:fd.cat==="souq"?String(fd.productType||"other").trim():"other",listingType:String(fd.listingType||"sale").trim(),
     condition:String(fd.condition||"unknown").trim(),deadline:String(fd.deadline||"").trim(),
     img:pendingImgData||"",
     ownerPhone:S.session.merchant?.phone||phoneKey(fd.phone)||"",
