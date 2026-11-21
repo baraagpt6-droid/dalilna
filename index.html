@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.1.2">
+<meta name="app-version" content="2.1.3">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -3991,7 +3991,7 @@ const LIVE_DIRECTORY_API="https://dalilna-live.onrender.com";
 const LIVE_CATALOG_BASE="./regional-catalog/";
 const LIVE_LOCAL_KEY="dalilna_live_places_159";
 let liveGeoapifyEnabled=false;
-let liveDirectoryTimer=null,liveDirectorySeq=0,liveDirectoryCache=new Map(),liveDirectoryLast={query:"",category:"all"};
+let liveDirectoryTimer=null,liveDirectoryController=null,liveDirectorySeq=0,liveDirectoryCache=new Map(),liveDirectoryLast={query:"",category:"all"};
 let liveDirectoryCategoryOverride="",liveDirectoryListingTypeOverride="";
 let liveDirectoryLastData=null,liveDirectoryVisibleCount=8,liveDirectoryCoords=null,liveSharedMatches=[],liveSharedCache=new Map();
 function liveLocalData(){
@@ -4244,34 +4244,43 @@ async function loadLiveMarketplaceMatches(query,category,productType,signal,forc
 }
 async function runLiveDirectorySearch(force){
  const box=$("#liveDirectoryItems"),status=$("#liveDirectoryStatus");
+ clearTimeout(liveDirectoryTimer);
+ if(liveDirectoryController){liveDirectoryController.abort();liveDirectoryController=null;}
+ const seq=++liveDirectorySeq;
  if(!box||!status)return;
  const context=regionCurrentContext(),query=liveDirectoryLast.query||"",category=liveDirectoryLast.category||"all",productType=liveDirectoryLast.productType||"",listingType=liveDirectoryLast.listingType||"";
  liveDirectoryVisibleCount=8;liveDirectoryLastData=null;
- const seq=++liveDirectorySeq;
  status.textContent="جارٍ تحميل فهرس الأماكن المحلي والإعلانات المعتمدة…";
  box.innerHTML='<div class="live-directory-empty">جارٍ فتح سجل المحافظة المحفوظ في الموقع.</div>';
- clearTimeout(liveDirectoryTimer);
  liveDirectoryTimer=setTimeout(async()=>{
-  const controller=new AbortController(),requestTimer=setTimeout(()=>controller.abort(),18000);
+  const controller=new AbortController();
+  liveDirectoryController=controller;
+  const requestTimer=setTimeout(()=>controller.abort(),18000);
   try{
    const sharedPromise=loadLiveMarketplaceMatches(query,category,productType,controller.signal,force,listingType);
    if(!context.gov){
     const manifest=await loadRegionalCatalogManifest(force);
-    if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
-    liveDirectoryLocationPrompt(manifest);sharedPromise.then(()=>{if(seq===liveDirectorySeq)liveDirectoryLocationPrompt(manifest);});return;
+    if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
+    liveDirectoryLocationPrompt(manifest);
+    sharedPromise.then(()=>{if(seq===liveDirectorySeq&&!controller.signal.aborted)liveDirectoryLocationPrompt(manifest);});
+    return;
    }
    const classifiedOnly=["jobs","souq","land","marketplace"].includes(category);
    const loaded=classifiedOnly?null:await loadRegionalCatalog(context.gov,force);
-   if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
+   if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
    const rows=loaded?regionalCatalogMatches(loaded.data.items,context,query,category,productType):[];
    const responseData={items:rows,manifest:loaded?.manifest,snapshotDate:loaded?.data?.snapshotDate,regionName:context.gov,context,classifiedOnly};
-   renderLiveDirectoryResponse(responseData);sharedPromise.then(()=>{if(seq===liveDirectorySeq)renderLiveDirectoryResponse(responseData);});
+   renderLiveDirectoryResponse(responseData);
+   sharedPromise.then(()=>{if(seq===liveDirectorySeq&&!controller.signal.aborted)renderLiveDirectoryResponse(responseData);});
   }catch(error){
-   if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
+   if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
    status.textContent="تعذر تحميل ملف البيانات المحلي: "+String(error&&error.message||"خطأ غير معروف");
    box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">لم يصل ملف المحافظة إلى التطبيق. هذا خلل في تحميل البيانات وليس دليلاً على عدم وجود محلات أو خدمات.</div><button type="button" class="live-directory-refresh" id="liveDirectoryRetry">إعادة تحميل السجل</button>';
-  }finally{clearTimeout(requestTimer);}
- },120);
+  }finally{
+   clearTimeout(requestTimer);
+   if(liveDirectoryController===controller)liveDirectoryController=null;
+  }
+ },260);
 }
 async function loadLiveCommonsPhotos(button){
  const panel=button.parentElement.querySelector(".live-directory-commons-panel");if(!panel)return;
@@ -4835,6 +4844,7 @@ function render(){
   else if(liveTop&&liveAnchor?.parentNode)liveAnchor.parentNode.insertBefore(liveTop,liveAnchor.nextSibling);
   if(liveTop)liveTop.innerHTML=liveWanted?liveDirectoryPanelHTML():"";
   if(liveWanted)runLiveDirectorySearch(false);
+  else{clearTimeout(liveDirectoryTimer);if(liveDirectoryController){liveDirectoryController.abort();liveDirectoryController=null;}}
   const match=i=>{
     if(!q)return true;
     const hay=window.DalilnaRegionalCatalog?.normalizeArabic([i.name,i.desc,i.area,i.village,i.dist,i.gov,i.phone,i.country,CN[i.cat],CN_EN[i.cat],CAT_SYN[i.cat]||""].join(" "))||"";
@@ -4888,7 +4898,7 @@ $("#q").addEventListener("input",()=>{
  searchRenderTimer=window.setTimeout(()=>{
   searchRenderTimer=0;
   if(view==="fb")go("home");else render();
- },140);
+ },240);
 });
 $("#searchSubmit").addEventListener("click",renderSearchAndRevealResults);
 $("#q").addEventListener("keydown",event=>{

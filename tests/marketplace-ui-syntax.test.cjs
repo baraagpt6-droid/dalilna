@@ -28,8 +28,8 @@ test("marketplace client displays rental labels",()=>{
  assert.ok(client.includes('item.listingType === "rent") labels.push("للإيجار")'));
 });
 
-test("PWA version metadata is 2.1.2",()=>{
- assert.ok(html.includes('content="2.1.2"'));
+test("PWA version metadata is 2.1.3",()=>{
+ assert.ok(html.includes('content="2.1.3"'));
 });
 
 test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});
@@ -56,4 +56,16 @@ test("emergency card stays visible until search is cleared or back-to-search is 
  assert.ok(!features.includes('classList.remove("quick-jump-reveal-emergency"),1600'));
  assert.ok(features.includes('if(!active)document.body.classList.remove("quick-jump-reveal-emergency")'));
  assert.ok(features.includes('scrollIntoView({behavior:"smooth",block:"center"})'));
+});
+
+test("search state observer cannot recursively observe its own hidden updates",()=>{
+ const sync=features.slice(features.indexOf("function syncSearch"),features.indexOf("function scrollToQuickTarget"));
+ assert.ok(sync.includes("clear.hidden!==shouldHide"));
+ assert.ok(features.includes('attributeFilter:["aria-pressed"]'));
+ assert.ok(!features.includes('attributeFilter:["aria-pressed","hidden"]'));
+});
+test("regional catalogue requests are cancelled before a newer search starts",()=>{
+ assert.ok(html.includes("liveDirectoryController.abort()"));
+ assert.ok(html.includes("controller.signal.aborted"));
+ assert.ok(html.includes("},260);"));
 });
