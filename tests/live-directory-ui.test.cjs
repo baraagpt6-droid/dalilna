@@ -35,14 +35,19 @@ test("curated Yemen seed data has sources, review timestamps and useful starter 
  const end=html.indexOf("const LEGACY_DEMO_IDS",start);
  assert.ok(start>0&&end>start,"SEED_ITEMS must remain a JSON-readable starter directory");
  const seeds=JSON.parse(html.slice(start,end).trim().replace(/;$/,""));
- assert.ok(seeds.length>=24);
+ assert.ok(seeds.length>=43);
  assert.ok(seeds.some(x=>x.name==="المتجر العالمي Global Store"));
  assert.ok(seeds.some(x=>x.name==="مطاعم الشيباني جولدن"));
  assert.ok(seeds.some(x=>x.cat==="souq"&&x.sourceType==="official_product"));
  assert.ok(seeds.filter(x=>x.cat==="jobs").length>=7);
  assert.ok(seeds.filter(x=>x.sourceType==="brand_dealer").length>=10);
+ assert.ok(seeds.filter(x=>x.cat==="edu").length>=8);
+ assert.ok(seeds.filter(x=>x.cat==="health").length>=7);
  assert.ok(seeds.every(x=>x.sourceName&&x.sourceUrl&&x.sourceCheckedAt));
  assert.ok(seeds.every(x=>!x.verifiedAt));
+ assert.ok(seeds.some(x=>x.name.includes("الهلال الأحمر")&&x.sourceUrl.includes("yemenredcrescent")));
+ assert.ok(seeds.some(x=>x.name.includes("جامعة العلوم والتكنولوجيا")));
+ assert.ok(html.includes("الإضافة الحالية تُحفظ على هذا الجهاز فقط"));
 });
 test("seed records merge with saved user listings and admin seed removals persist",()=>{
  assert.ok(html.includes("const items=[...activeSeeds,...storedItems.filter"));
