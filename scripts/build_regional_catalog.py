@@ -129,7 +129,7 @@ def classify(tags):
         return "cafe"
     if shop in {"books", "stationery"} or amenity == "library":
         return "books"
-    if shop == "pharmacy" or healthcare == "pharmacy":
+    if shop in {"pharmacy", "chemist"} or amenity == "pharmacy" or healthcare == "pharmacy":
         return "pharmacy"
     if amenity in {"hospital", "clinic", "doctors", "dentist"} or healthcare in {"hospital", "clinic", "doctor", "dentist"}:
         return "health"
@@ -137,6 +137,8 @@ def classify(tags):
         return "edu"
     if office in {"government", "administrative"}:
         return "gov"
+    if office == "estate_agent" or shop == "estate_agent":
+        return "real_estate"
     if amenity in {"bank", "atm", "bureau_de_change"}:
         return "money"
     if amenity == "place_of_worship" or tags.get("building") == "mosque":

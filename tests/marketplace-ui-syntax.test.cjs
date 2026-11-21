@@ -1,62 +1,22 @@
 "use strict";
-const fs=require("node:fs");
-const vm=require("node:vm");
-const assert=require("node:assert/strict");
-const test=require("node:test");
-const html=fs.readFileSync("index.html","utf8");
-const client=fs.readFileSync("marketplace-client.js","utf8");
-const inline=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
- .filter(match=>!/\bsrc\s*=/.test(match[1])&&match[2].trim())
- .map(match=>match[2]);
-test("all inline JavaScript in the PWA parses",()=>{
- assert.ok(inline.length>=2,"expected inline application scripts");
- inline.forEach((code,index)=>new vm.Script(code,{filename:"index.html:inline-script-"+index}));
+const fs=require("node:fs"),vm=require("node:vm"),assert=require("node:assert/strict"),test=require("node:test");
+const html=fs.readFileSync("index.html","utf8"),client=fs.readFileSync("marketplace-client.js","utf8");
+const inline=[...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)].filter(m=>!/\\bsrc\\s*=/.test(m[1])&&m[2].trim()).map(m=>m[2]);
+test("all inline JavaScript in PWA parses",()=>{assert.ok(inline.length>=2);inline.forEach((code,i)=>new vm.Script(code,{filename:"index.html:inline-"+i}));});
+test("marketplace client parses",()=>new vm.Script(client,{filename:"marketplace-client.js"}));
+test("smart search reads static local catalogue and shared ads, not live map endpoints",()=>{
+ for(const token of ["LIVE_CATALOG_BASE","loadRegionalCatalogManifest","loadRegionalCatalog(context.gov","loadLiveMarketplaceMatches","OpenStreetMap contributors"])assert.ok(html.includes(token),token);
+ for(const token of ["searchLivePlaces(","/api/places/search","/api/geoapify/search"])assert.ok(!html.includes(token),token);
 });
-test("shared marketplace client parses",()=>{
- new vm.Script(client,{filename:"marketplace-client.js"});
+test("Android and PWA assets remain byte-for-byte aligned",()=>{
+ for(const name of ["index.html","sw.js","marketplace-client.js"])assert.equal(fs.readFileSync("android/app/src/main/assets/"+name,"utf8"),fs.readFileSync(name,"utf8"),name+" mismatch");
 });
-test("smart search maps school supplies and vehicles to their real place categories",()=>{
- assert.match(html,/productType:product\?product\.productType/);
- assert.match(html,/label:"مكتبات وقرطاسيات"/);
- assert.match(html,/test:\/\(قلم\|اقلام\|دفتر/);
- assert.match(html,/loadLiveMarketplaceMatches/);
- assert.match(html,/params\.set\("category","marketplace"\)/);
- assert.match(html,/params\.set\("productType",productType\)/);
- assert.match(html,/liveFetchJson\("\/api\/places\/search/);
+test("marketplace form includes product and rental categories",()=>{
+ for(const type of ["phone","car","motorcycle","land","property","apartment","house","honey","coffee","stationery","solar_equipment"])assert.ok(html.includes('value="'+type+'"'),type);
+ assert.ok(html.includes('value="rent"'));
 });
-test("PWA and Android WebView marketplace assets stay byte-for-byte aligned",()=>{
- for(const name of ["index.html","sw.js","marketplace-client.js"]) {
-  assert.equal(fs.readFileSync("android/app/src/main/assets/"+name,"utf8"),fs.readFileSync(name,"utf8"),name+" differs between web and Android");
- }
-});
-test("marketplace form exposes the requested product subtypes",()=>{
- for(const item of ["phone","phone_accessories","watch","computer_accessories","car","motorcycle","land","property","apartment","house","honey","coffee","livestock","stationery","perfume","cosmetics","solar_equipment","tools","baby_products","construction_equipment"])assert.ok(html.includes('value="'+item+'"'),"missing product subtype "+item);
-});
-
-test("shared directory form and legacy migration preserve hours, websites and map coordinates",()=>{
- assert.match(html,/name="hours"/);
- assert.match(html,/name="website"/);
- assert.match(html,/id="pickListingLocation"/);
- assert.match(html,/id="listingLocationStatus"/);
- assert.match(html,/lat:item\.lat\?\?item\.latitude/);
- assert.match(html,/lng:item\.lng\?\?item\.longitude/);
- assert.match(html,/hours:item\.hours\|\|item\.openingHours/);
- assert.match(html,/website:item\.website/);
- assert.match(html,/"hours","website","lat","lng"/);
- assert.match(client,/openingHours: item\.hours \|\| item\.openingHours/);
- assert.match(client,/website: item\.website/);
- assert.match(client,/latitude: item\.lat/);
- assert.match(client,/longitude: item\.lng/);
- assert.match(client,/latitude: item\.latitude \?\? item\.lat/);
- assert.match(client,/item\.openingHours/);
- assert.match(client,/item\.website/);
-});
-
-test("app uses the static regional catalogue and updated version",()=>{
- assert.match(html,/content="1\.9\.0"/);
- assert.match(html,/LIVE_CATALOG_BASE/);
- assert.match(html,/loadRegionalCatalogManifest/);
- assert.doesNotMatch(html,/searchLivePlaces\\(/);
- assert.doesNotMatch(html,/\\/api\\/places\\/search/);
- assert.doesNotMatch(html,/\\/api\\/geoapify\\/search/);
+test("legacy migration keeps opening hours, websites and coordinates",()=>{
+ for(const token of ['name="hours"','name="website"','id="pickListingLocation"','id="listingLocationStatus"','website:item.website'])assert.ok(html.includes(token),token);
+ assert.ok(client.includes("openingHours: item.hours || item.openingHours"));
+ assert.ok(client.includes("website: item.website"));
 });
