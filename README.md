@@ -4,7 +4,7 @@
 
 ## الإصدار
 
-- Version: 1.6.1
+- Version: 1.6.2
 - Web app: PWA (installable from supported browsers)
 - Android: WebView application source included in `android/`
 - Offline: cached application shell and local device storage
@@ -44,7 +44,7 @@
 
 Pending shop submissions are shown in a prominent dashboard shortcut. Open it to inspect the request details and choose approve/publish or reject. In this offline-first release, pending requests remain local to the device until a shared backend is connected.
 
-## البحث المباشر عن الأماكن — الإصدار 1.6.1
+## البحث المباشر عن الأماكن — الإصدار 1.6.2
 
 يعتمد دليلنا على Geoapify Places كواجهة مجانية منظمة لبيانات الأماكن المبنية على OpenStreetMap، مع الرجوع إلى OpenStreetMap مباشرة إذا لم يتم إعداد المفتاح أو توقف الخدمة.
 
@@ -65,3 +65,15 @@ Pending shop submissions are shown in a prominent dashboard shortcut. Open it to
 - Wikimedia Commons: https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia
 
 راجع `SECURITY_LIMITATIONS.txt` قبل الإطلاق العام.
+
+## محتوى البداية العام — 1.6.2
+
+تتضمن النسخة قائمة بداية ثابتة من أنشطة عامة في إب وتعز وصنعاء وعدن، إضافة إلى منتجات مرتبطة بصفحات متاجر خارجية. مصدر النشاط أو المنتج ورابطه يظهران على البطاقة. سجلات الأعمال العامة ليست موثقة من إدارة دليلنا، ويجب الاتصال بالمنشأة لتأكيد الرقم والموقع والخدمة. أسعار المنتجات الخارجية والأسهم والمخزون قد تتغير، والشراء يتم لدى المتجر الخارجي.
+
+تُحمّل قائمة البداية مرة واحدة على كل جهاز، ثم تُحفظ ضمن بيانات ذلك الجهاز. الإضافات الجديدة التي يرسلها الزائر في هذا الإصدار لا تزال محلية على جهازه؛ لم يتم إعداد قاعدة بيانات مشتركة لمزامنة إدخالات جميع العملاء والتجار بعد.
+
+المصادر المنشورة المستخدمة في أمثلة المتجر:
+- Hubloh: https://hubloh.com/en/cell-phones
+- SMSM Market: https://smsm.market/
+- Al-Jeel Al-Arabi Digital: https://www.alarabiye.com/en
+- Saddam Store: https://www.saddamstores.com/
