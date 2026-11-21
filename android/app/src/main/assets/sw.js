@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "dalilna-pwa-";
-const CACHE_NAME = CACHE_PREFIX + "v1.5.3";
+const CACHE_NAME = CACHE_PREFIX + "v1.5.4";
 const APP_SHELL = ["./", "./index.html", "./manifest.json", "./regions-yemen.js", "./regions-profiles.js", "./icons/icon.svg"];
 
 self.addEventListener("install", event => {

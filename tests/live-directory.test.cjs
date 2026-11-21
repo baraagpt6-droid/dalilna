@@ -2,7 +2,7 @@
 
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { buildOverpassQuery, classifyCategory, normalizeElement, normalizeText } = require("../server");
+const { buildOverpassQuery, classifyCategory, normalizeElement, normalizeText, createIntervalGate } = require("../server");
 
 test("builds a narrow grocery query for a supplied bounding box", () => {
   const query = buildOverpassQuery({south:13.1, west:43.2, north:13.4, east:43.5}, "grocery");
@@ -54,4 +54,14 @@ test("Vercel Places route exports a Node handler and a bounded duration", () => 
   const handler = require("../api/places/search");
   assert.equal(typeof handler, "function");
   assert.equal(handler.config.maxDuration, 60);
+});
+
+
+test("central request gate serializes concurrent callers", async () => {
+  const waitForSlot=createIntervalGate(35);
+  const started=[];
+  await Promise.all(Array.from({length:3},async()=>{await waitForSlot();started.push(Date.now());}));
+  started.sort((a,b)=>a-b);
+  assert.ok(started[1]-started[0]>=25);
+  assert.ok(started[2]-started[1]>=25);
 });

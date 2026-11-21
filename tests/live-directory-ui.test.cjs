@@ -8,8 +8,8 @@ const html = fs.readFileSync("index.html", "utf8");
 
 test("live map discovery panel appears for scoped home and category searches", () => {
   assert.match(html, /function liveDirectoryPanelHTML\(\)/);
-  assert.match(html, /nominatim\.openstreetmap\.org\/search/);
-  assert.match(html, /overpass-api\.de\/api\/interpreter/);
+  assert.match(html, /dalilna-live\.onrender\.com/);
+  assert.match(html, /\/api\/places\/search/);
   assert.match(html, /runLiveDirectorySearch\(false\)/);
 });
 
@@ -56,9 +56,8 @@ test("live search is bounded and offers retry after a timeout", () => {
 
 
 test("direct OSM search is throttled, cached and bounded", () => {
-  assert.match(html, /liveDirectoryLastGeocodeAt/);
-  assert.match(html, /1100-\(Date\.now\(\)-liveDirectoryLastGeocodeAt\)/);
-  assert.match(html, /controller\.abort\(\),30000/);
-  assert.match(html, /liveDirectoryRetry/);
-  assert.doesNotMatch(html, /const LIVE_DIRECTORY_API=/);
+  assert.match(html, /LIVE_DIRECTORY_API\+"\/health"/);
+  assert.match(html, /controller\.abort\(\),100000/);
+  assert.match(html, /id="liveDirectoryRetry"/);
+  assert.match(html, /تأخر تشغيل خدمة البحث/);
 });

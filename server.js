@@ -4,7 +4,7 @@ const http = require("node:http");
 const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.5.0";
+const VERSION = "1.5.4";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -20,6 +20,7 @@ const resultCache = new Map();
 const geocodeCache = new Map();
 const rateBuckets = new Map();
 let lastGeocodeAt = 0;
+let lastOverpassAt = 0;
 
 const FILTERS = {
   all: [
@@ -132,6 +133,23 @@ function rateLimit(req) {
   return true;
 }
 
+
+function createIntervalGate(intervalMs) {
+  let nextAt = 0;
+  let queue = Promise.resolve();
+  return function waitForSlot() {
+    const reservation = queue.then(async () => {
+      const delay = Math.max(0, nextAt - Date.now());
+      if (delay) await sleep(delay);
+      nextAt = Date.now() + intervalMs;
+    });
+    queue = reservation.catch(() => {});
+    return reservation;
+  };
+}
+const waitForNominatimSlot = createIntervalGate(1100);
+const waitForOverpassSlot = createIntervalGate(1100);
+
 function buildOverpassQuery(bbox, category) {
   const filters = FILTERS[category] || FILTERS.all;
   const box = [bbox.south, bbox.west, bbox.north, bbox.east].map(n => Number(n).toFixed(6)).join(",");
@@ -221,8 +239,7 @@ async function geocodePlace(place) {
   const candidates=[...new Set([place,cleanedPlace+"، اليمن"].filter(Boolean))];
   let lastError=null;
   for(const candidate of candidates){
-    const wait=Math.max(0,1100-(Date.now()-lastGeocodeAt));
-    if(wait)await sleep(wait);
+    await waitForNominatimSlot();
     lastGeocodeAt=Date.now();
     const url=new URL("https://nominatim.openstreetmap.org/search");
     url.search=new URLSearchParams({q:candidate,format:"jsonv2",addressdetails:"1",limit:"5",countrycodes:"ye","accept-language":"ar,en"}).toString();
@@ -256,6 +273,8 @@ async function fetchOverpass(bbox,category,label){
   const endpoints=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
   let lastError=null;
   for(const [index,endpoint] of endpoints.entries()){
+    await waitForOverpassSlot();
+    lastOverpassAt=Date.now();
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),index===0?12000:10000),startedAt=Date.now();
     try{
       const response=await fetch(endpoint,{method:"POST",signal:controller.signal,headers:{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8","Accept":"application/json","User-Agent":"DalilnaYemenDirectory/1.5.2 (+https://dalilna-yemen.vercel.app)"},body:new URLSearchParams({data:query})});
@@ -442,4 +461,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, server };
+module.exports = { buildOverpassQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, createIntervalGate, server };

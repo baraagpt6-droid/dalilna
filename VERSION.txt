@@ -1,4 +1,4 @@
-Dalilna 1.5.3
+Dalilna 1.5.4
 Application release: PWA + Android WebView
 Backend directory API service version: 1.5.0 (separate service package version)
 Gemini cloud assistant (optional, server-side)
@@ -18,3 +18,5 @@ Google Places is not enabled until a restricted billing-enabled API key is confi
 Live place search uses the Vercel Node Function as primary, with a 35-second client timeout, retry action, and Google Maps fallback.
 
 Live place discovery now queries Nominatim and Overpass directly from the browser. Geocoding is throttled to one request per 1.1 seconds and cached. Overpass has two public endpoints. The interface has a 30-second timeout and retry plus Google Maps fallback.
+
+Live search uses the shared Render API proxy. Nominatim and Overpass requests are globally serialized per API process at 1.1-second intervals, with caching. The browser checks /health before searching and allows up to 100 seconds for free-service wake-up, then offers retry and Google Maps fallback.
