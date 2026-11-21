@@ -20,7 +20,8 @@ test("smart search maps school supplies and vehicles to their real place categor
  assert.match(html,/label:"مكتبات وقرطاسيات"/);
  assert.match(html,/test:\/\(قلم\|اقلام\|دفتر/);
  assert.match(html,/loadLiveMarketplaceMatches/);
- assert.match(html,/params\.set\("category","marketplace"\)/);\n assert.match(html,/params\.set\("productType",productType\)/);
+ assert.match(html,/params\.set\("category","marketplace"\)/);
+ assert.match(html,/params\.set\("productType",productType\)/);
  assert.match(html,/liveFetchJson\("\/api\/places\/search/);
 });
 test("PWA and Android WebView marketplace assets stay byte-for-byte aligned",()=>{
