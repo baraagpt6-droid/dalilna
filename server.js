@@ -4,7 +4,7 @@ const http = require("node:http");
 const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.5.5";
+const VERSION = "1.5.6";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -64,7 +64,8 @@ const GOOGLE_INCLUDED_TYPES = {
   beauty: "beauty_salon", salon: "hair_salon", laundry: "laundry",
   delivery: "post_office", utility: "gas_station", gold: "jewelry_store"
 };
-const GOOGLE_PLACES_FIELD_MASK = "places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri";
+const GOOGLE_PLACES_FIELD_MASK = "places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri,places.businessStatus,places.nationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.regularOpeningHours,places.currentOpeningHours,places.priceLevel,places.primaryTypeDisplayName";
+const GOOGLE_DETAILS_FIELD_MASK = "id,displayName,formattedAddress,location,googleMapsUri,businessStatus,nationalPhoneNumber,internationalPhoneNumber,websiteUri,rating,userRatingCount,regularOpeningHours,currentOpeningHours,priceLevel,photos,reviews";
 
 const FILTERS = {
   all: [
@@ -371,14 +372,56 @@ function normalizeGooglePlace(place, category, placeLabel) {
   if (!name || !placeId || !Number.isFinite(lat) || !Number.isFinite(lon)) return null;
   const mapsUrl = cleanText(place.googleMapsUri, 500) ||
     ("https://www.google.com/maps/search/?api=1&query_place_id=" + encodeURIComponent(placeId));
+  const currentHours = place.currentOpeningHours || {};
+  const regularHours = place.regularOpeningHours || {};
+  const openingHours = Array.isArray(currentHours.weekdayDescriptions) && currentHours.weekdayDescriptions.length
+    ? currentHours.weekdayDescriptions
+    : Array.isArray(regularHours.weekdayDescriptions) ? regularHours.weekdayDescriptions : [];
   return {
     id: "google-" + placeId,
-    name, category,
+    googlePlaceId: placeId,
+    name,
+    category,
+    categoryName: cleanText(place.primaryTypeDisplayName && place.primaryTypeDisplayName.text, 80),
     address: cleanText(place.formattedAddress || placeLabel, 220),
-    phone: "", website: "", openingHours: "",
-    lat, lon, sourceUrl: mapsUrl, mapsUrl,
+    phone: cleanText(place.nationalPhoneNumber || "", 60),
+    website: cleanText(place.websiteUri || "", 500),
+    openingHours,
+    openNow: typeof currentHours.openNow === "boolean" ? currentHours.openNow : null,
+    rating: Number.isFinite(Number(place.rating)) ? Number(place.rating) : null,
+    ratingCount: Number.isFinite(Number(place.userRatingCount)) ? Number(place.userRatingCount) : 0,
+    priceLevel: cleanText(place.priceLevel || "", 40),
+    businessStatus: cleanText(place.businessStatus || "", 40),
+    lat,
+    lon,
+    sourceUrl: mapsUrl,
+    mapsUrl,
     provider: "Google Maps"
   };
+}
+
+function normalizeGooglePlaceDetails(place) {
+  const base = normalizeGooglePlace(place, "all", "");
+  if (!base) return null;
+  const photos = Array.isArray(place.photos) ? place.photos.slice(0, 3).map(photo => ({
+    name: cleanText(photo.name, 600),
+    authorAttributions: Array.isArray(photo.authorAttributions) ? photo.authorAttributions.slice(0, 3).map(author => ({
+      displayName: cleanText(author.displayName, 120),
+      uri: cleanText(author.uri, 500),
+      photoUri: cleanText(author.photoUri, 500)
+    })) : []
+  })).filter(photo => photo.name) : [];
+  const reviews = Array.isArray(place.reviews) ? place.reviews.slice(0, 5).map(review => ({
+    rating: Number.isFinite(Number(review.rating)) ? Number(review.rating) : null,
+    text: cleanText(review.text && review.text.text, 1200),
+    publishTime: cleanText(review.relativePublishTimeDescription, 100),
+    author: {
+      displayName: cleanText(review.authorAttribution && review.authorAttribution.displayName, 120),
+      uri: cleanText(review.authorAttribution && review.authorAttribution.uri, 500),
+      photoUri: cleanText(review.authorAttribution && review.authorAttribution.photoUri, 500)
+    }
+  })) : [];
+  return { ...base, photos, reviews };
 }
 
 function isGooglePlacesEnabled(env = process.env) {
@@ -419,6 +462,97 @@ async function searchGooglePlaces(area, category, query, placeLabel) {
     return items.slice(0, 20);
   } catch (error) {
     if (error.name === "AbortError") throw new Error("انتهت مهلة الاتصال بمصدر Google Places.");
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+
+async function searchGooglePlaceDetails(placeId) {
+  const apiKey = String(process.env.GOOGLE_PLACES_API_KEY || "").trim();
+  if (!apiKey) {
+    const error = new Error("مفتاح Google Places غير مضبوط على الخادم.");
+    error.statusCode = 503;
+    throw error;
+  }
+  const url = "https://places.googleapis.com/v1/places/" + encodeURIComponent(placeId);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        "Accept": "application/json",
+        "X-Goog-Api-Key": apiKey,
+        "X-Goog-FieldMask": GOOGLE_DETAILS_FIELD_MASK
+      }
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const error = new Error("تعذر جلب تفاصيل المكان من Google Places (HTTP " + response.status + ").");
+      error.statusCode = response.status === 429 ? 429 : 502;
+      throw error;
+    }
+    const details = normalizeGooglePlaceDetails(payload);
+    if (!details) {
+      const error = new Error("لم تُرجع Google تفاصيل صالحة لهذا المكان.");
+      error.statusCode = 404;
+      throw error;
+    }
+    return details;
+  } catch (error) {
+    if (error.name === "AbortError") throw new Error("انتهت مهلة جلب تفاصيل المكان.");
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function fetchGooglePlacePhoto(placeId, photoName) {
+  const apiKey = String(process.env.GOOGLE_PLACES_API_KEY || "").trim();
+  if (!apiKey) {
+    const error = new Error("مفتاح Google Places غير مضبوط على الخادم.");
+    error.statusCode = 503;
+    throw error;
+  }
+  const prefix = "places/" + placeId + "/photos/";
+  const photoId = photoName.startsWith(prefix) ? photoName.slice(prefix.length) : "";
+  if (!/^[A-Za-z0-9_-]{8,120}$/.test(placeId) || !/^[A-Za-z0-9_-]{8,500}$/.test(photoId)) {
+    const error = new Error("معرّف صورة Google غير صالح.");
+    error.statusCode = 400;
+    throw error;
+  }
+  const url = new URL("https://places.googleapis.com/v1/" + photoName + "/media");
+  url.searchParams.set("maxWidthPx", "900");
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: { "X-Goog-Api-Key": apiKey, "Accept": "image/*" },
+      redirect: "follow"
+    });
+    if (!response.ok) {
+      const error = new Error("تعذر تحميل صورة المكان من Google.");
+      error.statusCode = response.status === 429 ? 429 : 502;
+      throw error;
+    }
+    const contentType = response.headers.get("content-type") || "image/jpeg";
+    if (!contentType.startsWith("image/")) {
+      const error = new Error("مصدر الصورة لم يُرجع ملف صورة.");
+      error.statusCode = 502;
+      throw error;
+    }
+    const bytes = Buffer.from(await response.arrayBuffer());
+    if (!bytes.length || bytes.length > 5 * 1024 * 1024) {
+      const error = new Error("حجم صورة المكان غير صالح.");
+      error.statusCode = 502;
+      throw error;
+    }
+    return { bytes, contentType };
+  } catch (error) {
+    if (error.name === "AbortError") throw new Error("انتهت مهلة تحميل صورة المكان.");
     throw error;
   } finally {
     clearTimeout(timer);
@@ -473,7 +607,7 @@ async function searchPlaces(params) {
     throw error;
   }
 
-  let googleFallbackReason = "";
+  let googleFallbackReason = googleEnabled ? "" : "Google Places غير مفعّل حالياً على الخادم. تُعرض نتائج OpenStreetMap فقط إلى أن تتم إضافة مفتاح Places API وتفعيل Google.";
   if (googleEnabled) {
     try {
       const googleItems = await searchGooglePlaces(area, category, query, usedPlace);
@@ -584,8 +718,54 @@ const server = http.createServer(async (req, res) => {
     json(res, 400, { error: "Invalid URL" });
     return;
   }
+  if (url.pathname === "/api/places/status") {
+    json(res, 200, {
+      googleEnabled: isGooglePlacesEnabled(),
+      googleKeyConfigured: Boolean(String(process.env.GOOGLE_PLACES_API_KEY || "").trim()),
+      googleFlagEnabled: String(process.env.GOOGLE_PLACES_ENABLED || "").toLowerCase() === "true",
+      activeProvider: isGooglePlacesEnabled() ? "Google Places" : "OpenStreetMap"
+    });
+    return;
+  }
   if (url.pathname === "/health") {
     json(res, 200, { ok: true, service: "dalilna-directory-api", version: VERSION });
+    return;
+  }
+  if (url.pathname === "/api/places/details" || url.pathname === "/api/places/photo") {
+    if (req.method !== "GET") {
+      json(res, 405, { error: "Method not allowed" }, { "Allow": "GET, OPTIONS" });
+      return;
+    }
+    if (!isGooglePlacesEnabled()) {
+      json(res, 503, { error: "Google Places غير مفعّل. أضف مفتاح Places API وفعّل الخدمة أولاً." });
+      return;
+    }
+    if (!rateLimit(req)) {
+      json(res, 429, { error: "عدد الطلبات كبير. انتظر قليلاً ثم حاول مجدداً." });
+      return;
+    }
+    try {
+      const placeId = cleanText(url.searchParams.get("placeId"), 120);
+      if (!/^[A-Za-z0-9_-]{8,120}$/.test(placeId)) {
+        json(res, 400, { error: "معرّف المكان غير صالح." });
+        return;
+      }
+      if (url.pathname === "/api/places/details") {
+        const details = await searchGooglePlaceDetails(placeId);
+        json(res, 200, { source: "Google Maps", details });
+      } else {
+        const photoName = cleanText(url.searchParams.get("photoName"), 600);
+        const photo = await fetchGooglePlacePhoto(placeId, photoName);
+        res.writeHead(200, {
+          "Content-Type": photo.contentType,
+          "Cache-Control": "no-store",
+          "X-Content-Type-Options": "nosniff"
+        });
+        res.end(photo.bytes);
+      }
+    } catch (error) {
+      json(res, Number(error.statusCode) || 502, { error: cleanText(error.message, 220) || "تعذر جلب تفاصيل المكان." });
+    }
     return;
   }
   if (url.pathname === "/api/places/search") {
@@ -631,4 +811,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, buildGoogleTextSearchBody, normalizeGooglePlace, isGooglePlacesEnabled, classifyCategory, normalizeElement, normalizeText, searchPlaces, createIntervalGate, server };
+module.exports = { buildOverpassQuery, buildGoogleTextSearchBody, normalizeGooglePlace, normalizeGooglePlaceDetails, isGooglePlacesEnabled, searchGooglePlaceDetails, fetchGooglePlacePhoto, classifyCategory, normalizeElement, normalizeText, searchPlaces, createIntervalGate, server };

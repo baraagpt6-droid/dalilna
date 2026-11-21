@@ -75,3 +75,22 @@ test("changing selected region clears prior GPS coordinates",()=>{
   assert.match(html,/liveDirectoryCoords=null/);
   assert.match(html,/liveDirectoryVisibleCount=8/);
 });
+
+test("Google business cards show ratings and on-demand place details",()=>{
+  assert.match(html,/item\.rating/);
+  assert.match(html,/item\.ratingCount/);
+  assert.match(html,/item\.phone/);
+  assert.match(html,/item\.website/);
+  assert.match(html,/data-google-place-details/);
+});
+test("Google details include photos and attributed visitor reviews",()=>{
+  assert.match(html,/api\/places\/details/);
+  assert.match(html,/api\/places\/photo/);
+  assert.match(html,/آراء الزوار من Google Maps/);
+  assert.match(html,/authorAttributions/);
+  assert.match(html,/cache:\"no-store\"/);
+});
+test("live directory links to privacy and terms pages",()=>{
+  assert.match(html,/\.\/privacy\.html/);
+  assert.match(html,/\.\/terms\.html/);
+});

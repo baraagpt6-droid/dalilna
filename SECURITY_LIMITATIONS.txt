@@ -22,3 +22,5 @@
 16. Google Places names and addresses are displayed live and must not be copied to local merchant listings or cached. Show Google Maps attribution and follow Google Maps Platform storage, display, terms, and privacy requirements.
 17. The current IP rate limit and provider request gates are process-local. They are not shared across multiple service instances. Configure Google Cloud daily quotas, budget alerts, and API restrictions before enabling the key.
 18. Keep GOOGLE_PLACES_ENABLED unset or false until the app publishes a Privacy Policy and Terms of Use covering Google Maps Platform requirements.
+
+19. Google Place Details and Photos are requested only after the user opens place details. Reviews and photos are shown with the author attributions supplied by Google. The responses are not stored or cached.

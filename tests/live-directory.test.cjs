@@ -2,7 +2,7 @@
 
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { buildOverpassQuery, buildGoogleTextSearchBody, normalizeGooglePlace, isGooglePlacesEnabled, classifyCategory, normalizeElement, normalizeText, createIntervalGate } = require("../server");
+const { buildOverpassQuery, buildGoogleTextSearchBody, normalizeGooglePlace, normalizeGooglePlaceDetails, isGooglePlacesEnabled, classifyCategory, normalizeElement, normalizeText, createIntervalGate } = require("../server");
 
 test("builds a narrow grocery query for a supplied bounding box", () => {
   const query = buildOverpassQuery({south:13.1, west:43.2, north:13.4, east:43.5}, "grocery");
@@ -95,7 +95,7 @@ test("normalizes Google Places but does not copy phone or website", () => {
   assert.equal(item.provider,"Google Maps");
   assert.equal(item.phone,"");
   assert.equal(item.website,"");
-  assert.equal(item.openingHours,"");
+  assert.deepEqual(item.openingHours,[]);
   assert.equal(item.id,"google-ChIJTestPlaceId");
   assert.match(item.mapsUrl,/google\.com\/maps/);
 });
@@ -106,4 +106,49 @@ test("Google Places stays disabled unless both the feature flag and API key are 
   assert.equal(isGooglePlacesEnabled({GOOGLE_PLACES_ENABLED:"true"}), false);
   assert.equal(isGooglePlacesEnabled({GOOGLE_PLACES_ENABLED:"true",GOOGLE_PLACES_API_KEY:"test-key"}), true);
   assert.equal(isGooglePlacesEnabled({GOOGLE_PLACES_ENABLED:"false",GOOGLE_PLACES_API_KEY:"test-key"}), false);
+});
+
+test("normalizes Google search results with rating and business information", () => {
+  const item=normalizeGooglePlace({
+    id:"ChIJBusinessPlace",
+    displayName:{text:"مطعم الاختبار"},
+    formattedAddress:"صنعاء، اليمن",
+    location:{latitude:15.35,longitude:44.2},
+    googleMapsUri:"https://www.google.com/maps/place/test",
+    nationalPhoneNumber:"+9671234567",
+    websiteUri:"https://example.test",
+    rating:4.6,
+    userRatingCount:128,
+    businessStatus:"OPERATIONAL",
+    priceLevel:"PRICE_LEVEL_MODERATE",
+    currentOpeningHours:{openNow:true,weekdayDescriptions:["الأحد: 8 ص – 10 م"]},
+    primaryTypeDisplayName:{text:"مطعم"}
+  },"food","صنعاء، اليمن");
+  assert.equal(item.phone,"+9671234567");
+  assert.equal(item.website,"https://example.test");
+  assert.equal(item.rating,4.6);
+  assert.equal(item.ratingCount,128);
+  assert.equal(item.openNow,true);
+  assert.equal(item.businessStatus,"OPERATIONAL");
+  assert.equal(item.priceLevel,"PRICE_LEVEL_MODERATE");
+  assert.deepEqual(item.openingHours,["الأحد: 8 ص – 10 م"]);
+});
+
+test("normalizes Google photos and visitor reviews with author attribution", () => {
+  const item=normalizeGooglePlaceDetails({
+    id:"ChIJBusinessPlace",
+    displayName:{text:"مطعم الاختبار"},
+    formattedAddress:"صنعاء، اليمن",
+    location:{latitude:15.35,longitude:44.2},
+    googleMapsUri:"https://www.google.com/maps/place/test",
+    rating:4.7,
+    userRatingCount:51,
+    photos:[{name:"places/ChIJBusinessPlace/photos/PhotoIdentifier123",authorAttributions:[{displayName:"صاحب الصورة",uri:"https://maps.google.com/maps/contrib/123",photoUri:"https://example.test/avatar"}]}],
+    reviews:[{rating:5,text:{text:"خدمة ممتازة"},relativePublishTimeDescription:"قبل شهر",authorAttribution:{displayName:"زائر",uri:"https://maps.google.com/maps/contrib/456",photoUri:"https://example.test/reviewer"}}]
+  });
+  assert.equal(item.rating,4.7);
+  assert.equal(item.photos[0].authorAttributions[0].displayName,"صاحب الصورة");
+  assert.equal(item.reviews[0].text,"خدمة ممتازة");
+  assert.equal(item.reviews[0].author.displayName,"زائر");
+  assert.equal(item.reviews[0].rating,5);
 });

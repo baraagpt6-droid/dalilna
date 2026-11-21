@@ -1,29 +1,30 @@
-Dalilna 1.5.5 — Build and deployment status
+Dalilna 1.5.6 — Build and deployment status
 ===========================================
 
 Application
 - Progressive Web App and Android WebView.
 - Android workflow builds a debug-signed testing APK, not a Play Store production package.
 - Root and Android WebView assets must stay synchronized.
+- Public Privacy Policy and Terms pages are included in PWA and Android assets.
 
 Live directory
-- Primary provider: Google Places API (New) only when both GOOGLE_PLACES_API_KEY and GOOGLE_PLACES_ENABLED=true are configured on Render service dalilna-live. The feature flag is disabled by default.
-- Fallback provider: OpenStreetMap Nominatim and Overpass when Google is not configured, returns no results, or fails.
-- Google content is live-only and is not stored in local merchant listings or cached.
-- Empty searches provide a direct Google Maps search link.
-- Selected area changes clear a previously selected GPS coordinate.
+- Google Places API (New), when explicitly activated, returns name, address, rating, rating count, phone, website, business status, opening hours and price level when Google has the data.
+- Place details (photos and reviews) are fetched only after the user taps the details button. Author attributions are displayed.
+- Google Places content is not written to local merchant listings or caches.
+- OpenStreetMap Nominatim and Overpass remain the fallback provider.
+- Google Places remains disabled until GOOGLE_PLACES_API_KEY and GOOGLE_PLACES_ENABLED=true are configured on Render.
 
 Google setup required before live Google results work
 1. Create or select a Google Cloud project.
 2. Enable Places API (New) and attach billing.
 3. Create a server-side API key restricted to Places API (New).
-4. Configure daily quotas and billing alerts.
+4. Set API quotas and budget alerts in Google Cloud.
 5. Add GOOGLE_PLACES_API_KEY as a Sensitive environment variable to Render service dalilna-live.
-6. Keep GOOGLE_PLACES_ENABLED unset or false until a public Privacy Policy and Terms of Use are available.
-7. Set GOOGLE_PLACES_ENABLED=true only after the policies, API restrictions, quotas, and billing alerts are ready.
+6. Review and publish privacy.html and terms.html.
+7. Set GOOGLE_PLACES_ENABLED=true only after the API restrictions, quotas, billing alerts and legal pages are ready.
 8. Test category and district searches in several Yemen governorates.
 
 Security and operations
-- Do not put API secrets in the web app, Android assets, or GitHub.
-- User accounts, admin roles, moderation, reviews, contributions, and local listings are still device-local. This is not yet a central multi-user production system.
+- Do not put API secrets in the web app, Android assets or GitHub.
+- User accounts, admin roles, moderation, reviews, contributions and local listings are still device-local. This is not yet a central multi-user production system.
 - A stable Android release keystore and field testing are still required for a public Android production release.

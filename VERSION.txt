@@ -1,4 +1,4 @@
-Dalilna 1.5.5
+Dalilna 1.5.6
 Application release: PWA + Android WebView
 Backend directory API service version: 1.5.0 (separate service package version)
 Gemini cloud assistant (optional, server-side)
@@ -21,9 +21,9 @@ Live place discovery now queries Nominatim and Overpass directly from the browse
 
 Live search uses the shared Render API proxy. Nominatim and Overpass requests are globally serialized per API process at 1.1-second intervals, with caching. The browser checks /health before searching and allows up to 100 seconds for free-service wake-up, then offers retry and Google Maps fallback.
 
-Live directory search v1.5.5
-- Google Places API (New) is the preferred live source when GOOGLE_PLACES_API_KEY is configured on Render.
-- OpenStreetMap remains the fallback.
-- Google Places results are live-only and are not saved in local listings or cached.
-- Empty live searches offer a direct Google Maps search action.
-- Changing a selected region clears old GPS coordinates.
+Live directory search v1.5.6
+- Google Places search returns rating, rating count, phone, website, opening hours, price level and business status when present in Google's data.
+- Place details load on demand and include photos and visitor reviews with author attribution.
+- Google Places content is not persisted or cached by Dalilna.
+- OpenStreetMap remains the fallback. The Google API key and activation flag remain server-only.
+- Privacy and Terms pages are included in the PWA and Android app.

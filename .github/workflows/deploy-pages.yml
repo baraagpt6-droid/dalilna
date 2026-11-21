@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'privacy.html'
+      - 'terms.html'
       - 'manifest.json'
       - 'sw.js'
       - 'regions-yemen.js'
@@ -38,7 +40,7 @@ jobs:
       - name: Prepare website files
         run: |
           mkdir -p _site/icons
-          cp index.html manifest.json sw.js regions-yemen.js regions-profiles.js _site/
+          cp index.html manifest.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html _site/
           cp icons/* _site/icons/
           touch _site/.nojekyll
           test -s _site/index.html
