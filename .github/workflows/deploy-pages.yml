@@ -41,6 +41,7 @@ jobs:
           cp index.html manifest.json sw.js regions-yemen.js regions-profiles.js _site/
           cp icons/* _site/icons/
           touch _site/.nojekyll
+          test -s _site/index.html
       - name: Upload PWA files
         uses: actions/upload-pages-artifact@v3
         with:
