@@ -56,3 +56,6 @@ body.search-active.quick-jump-reveal-emergency #emBox{display:block!important}
 /* Search submit and long-distance jump stability. */
 .search .search-submit{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 body.quick-jump-reveal-emergency #emBox{display:block!important}
+
+/* Keep search controls responsive during local catalogue updates. */
+.search input{touch-action:manipulation}

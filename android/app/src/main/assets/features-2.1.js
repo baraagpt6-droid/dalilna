@@ -186,7 +186,8 @@
   const active=!!(input&&input.value.trim())||filterActive;
   document.body.classList.toggle("search-active",active);
   if(!active)document.body.classList.remove("quick-jump-reveal-emergency");
-  const clear=$("clearSearch");if(clear)clear.hidden=!(input&&input.value);
+  const clear=$("clearSearch"),shouldHide=!(input&&input.value);
+  if(clear&&clear.hidden!==shouldHide)clear.hidden=shouldHide;
  }
  function scrollToQuickTarget(id){
   const target=document.getElementById(id);
@@ -263,7 +264,8 @@
    }
   });
   const observer=new MutationObserver(syncSearch);
-  observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:["aria-pressed","hidden"]});
+  // Watch filter state only. syncSearch also updates the clear button hidden state.
+  observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:["aria-pressed"]});
   loadJobs();loadCandidates();syncSearch();
  }
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bind);else bind();
