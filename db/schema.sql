@@ -46,3 +46,27 @@ CREATE TABLE IF NOT EXISTS marketplace_moderation_log (
 );
 CREATE TABLE IF NOT EXISTS dalilna_schema_migrations(version INTEGER PRIMARY KEY,applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
 INSERT INTO dalilna_schema_migrations(version) VALUES(1),(2) ON CONFLICT(version) DO NOTHING;
+
+
+-- Migration 3: opt-in public job-seeker profiles and 60-day marketplace expiry.
+UPDATE marketplace_listings
+SET expires_at=LEAST(expires_at,created_at+INTERVAL '60 days')
+WHERE category IN ('souq','land') AND expires_at>created_at+INTERVAL '60 days';
+
+CREATE TABLE IF NOT EXISTS job_seekers (
+ id UUID PRIMARY KEY,
+ full_name VARCHAR(100) NOT NULL,
+ specialty VARCHAR(120) NOT NULL,
+ experience_years INTEGER NOT NULL CHECK(experience_years BETWEEN 0 AND 60),
+ country VARCHAR(80) NOT NULL,
+ governorate VARCHAR(80) NOT NULL DEFAULT '',
+ bio VARCHAR(800) NOT NULL,
+ phone VARCHAR(24) NOT NULL,
+ consent_public BOOLEAN NOT NULL DEFAULT FALSE,
+ status VARCHAR(16) NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
+ created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ expires_at TIMESTAMPTZ NOT NULL DEFAULT (NOW()+INTERVAL '60 days')
+);
+CREATE INDEX IF NOT EXISTS job_seekers_public_idx ON job_seekers(country,status,created_at DESC) WHERE consent_public=TRUE;
+CREATE INDEX IF NOT EXISTS job_seekers_expiry_idx ON job_seekers(expires_at);
+INSERT INTO dalilna_schema_migrations(version) VALUES(1),(2),(3) ON CONFLICT(version) DO NOTHING;

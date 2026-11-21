@@ -1,0 +1,10 @@
+"use strict";
+const test=require("node:test"),assert=require("node:assert/strict"),fs=require("node:fs");
+const {validPhone,COUNTRIES,COUNTRY_CODES}=require("../jobs-api");
+test("jobs portal supports the eight requested Arab countries",()=>{assert.equal(COUNTRIES.size,8);for(const x of ["Yemen","Saudi Arabia","United Arab Emirates","Oman","Qatar","Bahrain","Iraq","Jordan"])assert.ok(COUNTRIES.has(x));});
+test("country codes resolve to stable names",()=>{assert.equal(COUNTRY_CODES.YE,"Yemen");assert.equal(COUNTRY_CODES.SA,"Saudi Arabia");assert.equal(COUNTRY_CODES.AE,"United Arab Emirates");});
+test("candidate WhatsApp phone validation accepts international numbers",()=>{assert.equal(validPhone("+967 777 123 456"),"967777123456");assert.equal(validPhone("+966 50 123 4567"),"966501234567");assert.equal(validPhone("123"),"");assert.equal(validPhone("1".repeat(16)),"");});
+test("daily jobs index is valid and stores source metadata",()=>{const feed=JSON.parse(fs.readFileSync("jobs-feed.json","utf8"));assert.equal(feed.schemaVersion,1);assert.ok(Array.isArray(feed.sources));assert.ok(Array.isArray(feed.items));});
+test("daily refresh script includes UN RSS and optional ReliefWeb configuration",()=>{const script=fs.readFileSync("scripts/refresh-jobs.cjs","utf8");assert.match(script,/careers\.un\.org/);assert.match(script,/RELIEFWEB_APPNAME/);assert.match(script,/DALILNA_JOB_RSS_FEEDS/);assert.match(script,/expiresAt/);});
+test("job seeker records require public consent and expire after 60 days",()=>{const api=fs.readFileSync("jobs-api.js","utf8");assert.match(api,/body\.consentPublic===true/);assert.match(api,/consent_public=TRUE/);assert.match(api,/INTERVAL '60 days'/);});
+test("marketplace exposes category groups and 60-day market expiry",()=>{const api=fs.readFileSync("marketplace-api.js","utf8");assert.match(api,/PRODUCT_GROUPS/);assert.match(api,/productGroup/);assert.match(api,/NOW\(\)\+INTERVAL '60 days'/);});

@@ -3,9 +3,10 @@
 const http = require("node:http");
 const { URL } = require("node:url");
 const { handleMarketplaceRequest } = require("./marketplace-api");
+const { handleJobsRequest } = require("./jobs-api");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "2.0.0";
+const VERSION = "2.1.0";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -79,9 +80,9 @@ function setCors(req, res) {
   const pathname = String(req.url || "").split("?")[0];
   // These endpoints return public map data only. Wildcard CORS avoids brittle
   // hostname allowlists for Render previews, PWA hosts and Android WebView.
-  if (pathname === "/health" || pathname.startsWith("/api/places/") || pathname.startsWith("/api/geoapify/") || pathname.startsWith("/api/marketplace/")) {
+  if (pathname === "/health" || pathname.startsWith("/api/places/") || pathname.startsWith("/api/geoapify/") || pathname.startsWith("/api/marketplace/") || pathname === "/api/jobs" || pathname.startsWith("/api/jobs/")) {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", pathname.startsWith("/api/marketplace/") ? "GET, POST, OPTIONS" : "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", (pathname.startsWith("/api/marketplace/") || pathname.startsWith("/api/jobs/")) ? "GET, POST, OPTIONS" : "GET, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Accept, Content-Type, Authorization");
     res.setHeader("Access-Control-Max-Age", "600");
     return;
@@ -907,6 +908,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
   if (await handleMarketplaceRequest(req, res, url)) return;
+  if (await handleJobsRequest(req, res, url)) return;
   if (url.pathname === "/api/geoapify/status") {
     json(res, 200, {
       provider: "Geoapify",
@@ -961,7 +963,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
   if (url.pathname === "/health") {
-    json(res, 200, { ok: true, service: "dalilna-directory-api", version: VERSION });
+    json(res, 200, { ok: true, service: "dalilna-live", version: VERSION });
     return;
   }
   if(url.pathname==="/api/places/details"||url.pathname==="/api/places/photo"){

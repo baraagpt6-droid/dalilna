@@ -67,3 +67,15 @@ test("shared marketplace exposes grouped approved listing counts",()=>{
  assert.match(source,/GROUP BY governorate,category/);
  assert.ok(source.includes('r==="counts"'));
 });
+
+
+test("supports product-group marketplace filtering",()=>{
+ const source=fs.readFileSync("marketplace-api.js","utf8");
+ assert.match(source,/PRODUCT_GROUPS/);
+ assert.match(source,/product_type = ANY/);
+ assert.ok(source.includes('group=clean(url.searchParams.get("productGroup"),32)'));
+});
+test("marketplace public records return their expiry timestamp",()=>{
+ const source=fs.readFileSync("marketplace-api.js","utf8");
+ assert.match(source,/expiresAt:row\.expires_at/);
+});
