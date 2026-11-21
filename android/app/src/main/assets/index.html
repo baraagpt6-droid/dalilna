@@ -4,13 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.3.0">
+<meta name="app-version" content="1.4.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="دليلنا">
 <link rel="manifest" href="./manifest.json">
 <script src="./regions-yemen.js"></script>
+<script src="./regions-profiles.js"></script>
 <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
 <title>دليلنا | دليل الخدمات والمحلات في اليمن</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23181411'/%3E%3Cpath d='M18 54 A32 32 0 0 1 82 54 Z' fill='none' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M22 54 L36 54 A14 14 0 0 1 42 42 L29 33 A28 28 0 0 0 22 54 Z' fill='%233A7EC2'/%3E%3Cpath d='M29 33 L42 42 A14 14 0 0 1 50 40 L50 26 A28 28 0 0 0 29 33 Z' fill='%23E8A025'/%3E%3Cpath d='M50 26 L50 40 A14 14 0 0 1 58 42 L71 33 A28 28 0 0 0 50 26 Z' fill='%23D6455D'/%3E%3Cpath d='M71 33 L58 42 A14 14 0 0 1 64 54 L78 54 A28 28 0 0 0 71 33 Z' fill='%23E8A025'/%3E%3Ccircle cx='50' cy='54' r='11' fill='%23F2B949' stroke='%23F4EFE6' stroke-width='3'/%3E%3Crect x='18' y='54' width='64' height='24' rx='4' fill='%23181411' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M50 54 v24 M18 66 h64' stroke='%23F4EFE6' stroke-width='3'/%3E%3C/svg%3E">
@@ -442,6 +443,74 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 .ai-mode-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:999px;background:rgba(56,182,166,.12);border:1px solid var(--line);font-size:10px;color:var(--acc)}
 @media(max-width:420px){.region-stats{gap:5px}.region-stat{padding:8px 3px}.region-stat b{font-size:19px}}
 
+
+.region-profile-details{display:grid;gap:10px;margin-top:12px}
+.region-profile-hero,.region-profile-section{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px}
+.region-profile-hero h3,.region-profile-section h3{margin:0 0 7px;font-size:15px}
+.region-profile-hero p{margin:0;font-size:13px;line-height:1.8;color:var(--ink)}
+.region-profile-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.region-profile-metric{border:1px solid var(--line);border-radius:11px;padding:9px;background:var(--card);min-width:0}
+.region-profile-metric b{display:block;color:var(--gold);font-size:17px;overflow-wrap:anywhere}
+.region-profile-metric span{display:block;color:var(--mute);font-size:10px;line-height:1.5}
+.region-landmarks{display:grid;gap:7px}
+.region-landmark{padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:12px;line-height:1.7}
+.region-source-links,.region-map-links,.region-governorate-pills{display:flex;flex-wrap:wrap;gap:7px}
+.region-source-links a,.region-map-links a,.region-governorate-pills button{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:11px;text-decoration:none}
+.region-map-links a{flex:1 1 42%}
+.region-source-links a{color:var(--acc)}
+.region-profile-muted,.region-local-note{font-size:10px;line-height:1.7;color:var(--mute);margin:8px 0 0}
+.region-community{margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
+.region-community-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.region-community-head .where{font-size:11px;margin:4px 0 0}
+#regionLikeButton{white-space:nowrap;min-height:36px}
+#regionLikeButton[aria-pressed="true"]{background:rgba(56,182,166,.14);border-color:var(--acc);color:var(--acc)}
+.region-contribution-form{display:grid;gap:9px;padding:11px;margin-top:10px;background:var(--bg);border:1px solid var(--line);border-radius:12px}
+.region-contribution-form[hidden]{display:none}
+.region-contribution-form input[type=file]{min-height:38px;padding:7px}
+.region-image-preview img{display:block;max-width:100%;max-height:180px;object-fit:contain;border-radius:10px}
+.region-community-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.region-community-card{min-width:0;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:var(--bg)}
+.region-community-card img{width:100%;height:115px;object-fit:cover;display:block}
+.region-community-card .body{padding:9px}
+.region-community-card b{font-size:12px;display:block;overflow-wrap:anywhere}
+.region-community-card p{font-size:11px;line-height:1.6;margin:5px 0;color:var(--mute);white-space:pre-wrap;overflow-wrap:anywhere}
+.region-community-card small{font-size:9px;color:var(--mute)}
+@media(max-width:390px){.region-profile-metric b{font-size:15px}}
+
+
+.region-profile-details{display:grid;gap:10px;margin-top:12px}
+.region-profile-hero,.region-profile-section{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px}
+.region-profile-hero h3,.region-profile-section h3{margin:0 0 7px;font-size:15px}
+.region-profile-hero p{margin:0;font-size:13px;line-height:1.8;color:var(--ink)}
+.region-profile-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.region-profile-metric{border:1px solid var(--line);border-radius:11px;padding:9px;background:var(--card);min-width:0}
+.region-profile-metric b{display:block;color:var(--gold);font-size:17px;overflow-wrap:anywhere}
+.region-profile-metric span{display:block;color:var(--mute);font-size:10px;line-height:1.5}
+.region-landmarks{display:grid;gap:7px}
+.region-landmark{padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:12px;line-height:1.7}
+.region-source-links,.region-map-links,.region-governorate-pills{display:flex;flex-wrap:wrap;gap:7px}
+.region-source-links a,.region-map-links a,.region-governorate-pills button{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:11px;text-decoration:none}
+.region-map-links a{flex:1 1 42%}
+.region-source-links a{color:var(--acc)}
+.region-profile-muted,.region-local-note{font-size:10px;line-height:1.7;color:var(--mute);margin:8px 0 0}
+.region-community{margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
+.region-community-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.region-community-head .where{font-size:11px;margin:4px 0 0}
+#regionLikeButton{white-space:nowrap;min-height:36px}
+#regionLikeButton[aria-pressed="true"]{background:rgba(56,182,166,.14);border-color:var(--acc);color:var(--acc)}
+.region-contribution-form{display:grid;gap:9px;padding:11px;margin-top:10px;background:var(--bg);border:1px solid var(--line);border-radius:12px}
+.region-contribution-form[hidden]{display:none}
+.region-contribution-form input[type=file]{min-height:38px;padding:7px}
+.region-image-preview img{display:block;max-width:100%;max-height:180px;object-fit:contain;border-radius:10px}
+.region-community-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.region-community-card{min-width:0;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:var(--bg)}
+.region-community-card img{width:100%;height:115px;object-fit:cover;display:block}
+.region-community-card .body{padding:9px}
+.region-community-card b{font-size:12px;display:block;overflow-wrap:anywhere}
+.region-community-card p{font-size:11px;line-height:1.6;margin:5px 0;color:var(--mute);white-space:pre-wrap;overflow-wrap:anywhere}
+.region-community-card small{font-size:9px;color:var(--mute)}
+@media(max-width:390px){.region-profile-metric b{font-size:15px}}
+
 </style>
 </head>
 <body>
@@ -575,6 +644,32 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       </div>
       <div id="regionDistrictMeta" class="region-meta"></div>
       <div id="regionCategoryBreakdown" class="region-breakdown"></div>
+
+      <div id="regionProfileDetails" class="region-profile-details"></div>
+      <section class="region-community" id="regionCommunity">
+        <div class="region-community-head">
+          <div><b>شارك معلومات منطقتك</b><p class="where">أضف اسم معلم أو وصفًا أو صورة للمساعدة في إثراء الملف.</p></div>
+          <button type="button" class="ghost" id="regionLikeButton" aria-pressed="false">أعجبني 0</button>
+        </div>
+        <p class="region-local-note">الإعجابات والصور والمساهمات تحفظ على هذا الجهاز فقط. لا تظهر لبقية العملاء دون قاعدة بيانات مركزية.</p>
+        <div class="fbtn"><button type="button" class="add" id="regionAddContribution">أضف صورة أو معلومة</button></div>
+        <form id="regionContributionForm" hidden class="region-contribution-form">
+          <label>نوع المساهمة
+            <select id="regionContributionType">
+              <option value="landmark">معلم أو مكان مشهور</option>
+              <option value="heritage">موقع تراثي أو أثري</option>
+              <option value="service">جامع أو مدرسة أو مستشفى</option>
+              <option value="description">وصف أو معلومة</option>
+            </select>
+          </label>
+          <label>اسم المكان أو عنوان المعلومة<input id="regionContributionTitle" maxlength="100" required placeholder="مثلاً: اسم القرية أو المعلم"></label>
+          <label>التفاصيل<textarea id="regionContributionText" rows="3" maxlength="700" required placeholder="اكتب ما تعرفه عن المكان وموقعه داخل المنطقة"></textarea></label>
+          <label>صورة من جهازك (اختياري)<input id="regionImageInput" type="file" accept="image/jpeg,image/png,image/webp"></label>
+          <div id="regionImagePreviewBox" hidden class="region-image-preview"><img id="regionImagePreview" alt="معاينة الصورة"></div>
+          <div class="fbtn"><button type="submit" class="add">حفظ المساهمة على هذا الجهاز</button><button type="button" class="ghost" id="regionContributionCancel">إلغاء</button></div>
+        </form>
+        <div id="regionCommunityGallery" class="region-community-gallery"></div>
+      </section>
       <p class="region-disclaimer">الأرقام أعلاه تخص الإدراجات الموجودة في نسخة دليلنا على هذا الجهاز، ولا تمثل إحصاءً رسمياً شاملاً للسكان أو المحلات. المعلومات الإدارية مرجعية وقد تختلف كتابة بعض الأسماء محلياً.</p>
       <p class="region-source">مصادر التقسيم الإداري: Open Admin Data Yemen (CC BY 4.0). قائمة عزل حبيش: مصدر محلي، وعددها 22 وفق صفحة التقسيم الإداري لمحافظة إب.</p>
     </section>
@@ -2376,6 +2471,10 @@ const DEFAULT_STATE={
   rates:{},
   favs:[],
   recent:[],
+  regionPosts:[],
+  regionLikes:{},
+  regionPosts:[],
+  regionLikes:{},
   reports:[],
   logs:[{at:Date.now(),who:"النظام",act:"تهيئة قاعدة البيانات في الذاكرة المحلية"}],
   emerg:"الإسعاف والطوارئ: 191\nالشرطة والنجدة: 199\nالدفاع المدني: 190\nطوارئ الكهرباء والمياه: 171",
@@ -2472,6 +2571,20 @@ function normalizeState(raw){
     fx:{s:rateGroup("s"),a:rateGroup("a"),date:cleanText(fxRaw.date,40)||base.fx.date},
     rates,favs:Array.isArray(raw.favs)?[...new Set(raw.favs.filter(x=>typeof x==="string").map(x=>x.slice(0,80)))]:[],
     recent:Array.isArray(raw.recent)?raw.recent.filter(x=>typeof x==="string").slice(0,8):[],
+    regionPosts:arrayOfObjects(raw.regionPosts).slice(0,120).map((p,i)=>({
+      id:cleanText(p.id,80)||("region_"+i),scope:cleanText(p.scope,180),
+      type:["landmark","heritage","service","description"].includes(p.type)?p.type:"description",
+      title:cleanText(p.title,100),text:cleanText(p.text,700),img:safeImageData(p.img),
+      createdAt:cleanNumber(p.createdAt,Date.now(),0,Number.MAX_SAFE_INTEGER)
+    })).filter(p=>p.scope&&p.title&&p.text),
+    regionLikes:(()=>{const src=raw.regionLikes&&typeof raw.regionLikes==="object"&&!Array.isArray(raw.regionLikes)?raw.regionLikes:{};const out={};for(const [k,v] of Object.entries(src).slice(0,500)){const key=cleanText(k,180);if(key)out[key]=v===true;}return out;})(),
+    regionPosts:arrayOfObjects(raw.regionPosts).slice(0,120).map((p,i)=>({
+      id:cleanText(p.id,80)||("region_"+i),scope:cleanText(p.scope,180),
+      type:["landmark","heritage","service","description"].includes(p.type)?p.type:"description",
+      title:cleanText(p.title,100),text:cleanText(p.text,700),img:safeImageData(p.img),
+      createdAt:cleanNumber(p.createdAt,Date.now(),0,Number.MAX_SAFE_INTEGER)
+    })).filter(p=>p.scope&&p.title&&p.text),
+    regionLikes:(()=>{const src=raw.regionLikes&&typeof raw.regionLikes==="object"&&!Array.isArray(raw.regionLikes)?raw.regionLikes:{};const out={};for(const [k,v] of Object.entries(src).slice(0,500)){const key=cleanText(k,180);if(key)out[key]=v===true;}return out;})(),
     reports:arrayOfObjects(raw.reports).slice(0,500).map(r=>({id:cleanText(r.id,80),itemId:cleanText(r.itemId,80),reason:cleanText(r.reason,300),at:cleanNumber(r.at,Date.now(),0,Number.MAX_SAFE_INTEGER)})),
     logs:arrayOfObjects(raw.logs).slice(0,200).map(l=>({at:cleanNumber(l.at,Date.now(),0,Number.MAX_SAFE_INTEGER),who:cleanText(l.who,120),act:cleanText(l.act,300)})),
     emerg:cleanText(raw.emerg,2000)||base.emerg,
@@ -2825,6 +2938,93 @@ function renderRegionInfo(){
   const labels=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k,n])=>`<span class="tag">${esc(catLabel(k))} (${n})</span>`).join("");
   $("#regionCategoryBreakdown").innerHTML=labels||`<span class="where">لا توجد إدراجات مسجلة في هذه المنطقة بعد. يمكن للسكان وأصحاب المحلات إضافة المعلومات بعد التحقق منها.</span>`;
 }
+
+
+function regionCurrentContext(){
+ const selected=scope||"";
+ if(!selected)return {key:"country:Yemen",type:"country",gov:"",district:"",place:"اليمن"};
+ if(selected.startsWith("gov:")){const gov=selected.slice(4);return {key:selected,type:"governorate",gov:gov,district:"",place:"محافظة "+gov};}
+ if(selected.startsWith("district:")){const parts=selected.slice(9).split("|");return {key:selected,type:"district",gov:parts[0]||"",district:parts[1]||"",place:"مديرية "+(parts[1]||"")};}
+ if(selected==="dist:حبيش")return {key:"district:إب|حبيش",type:"district",gov:"إب",district:"حبيش",place:"مديرية حبيش"};
+ if(selected.startsWith("hubaish-area:")){const area=canonicalHubaishArea(selected.slice(13));return {key:selected,type:"subdistrict",gov:"إب",district:"حبيش",area:area,place:"عزلة "+area};}
+ if(selected.startsWith("area:")){const area=selected.slice(5),m=publicItems().find(i=>normalizePlace(i.area)===normalizePlace(area));return {key:selected,type:"local-area",gov:m?m.gov:"",district:m?m.dist:"",area:area,place:area};}
+ return {key:selected,type:"local-area",gov:"",district:"",place:selected};
+}
+function regionNumber(n){return Number(n||0).toLocaleString("ar-YE");}
+function regionMapSearch(q){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q);}
+function regionScopeLabel(ctx){if(ctx.type==="country")return "اليمن";return [ctx.place,ctx.gov&&ctx.type!=="governorate"?ctx.gov:"","اليمن"].filter(Boolean).join("، ");}
+function renderRichRegionProfile(){
+ const ctx=regionCurrentContext(),profiles=window.DALILNA_REGION_PROFILES||{},sources=window.DALILNA_REGION_SOURCES||{},parent=ctx.gov?profiles[ctx.gov]:null,heritage=window.DALILNA_HERITAGE_COUNTS_2013||{};
+ let out="";
+ if(ctx.type==="country"){
+  const total=Object.keys(profiles).reduce((sum,k)=>sum+Number(profiles[k].population2023||0),0);
+  out+='<div class="region-profile-hero"><h3>استكشف محافظات اليمن</h3><p>اختر محافظة لفتح ملفها. يحتوي المرجع الإداري على '+regionNumber(YEMEN_GOV_TOTAL)+' محافظة و'+regionNumber(YEMEN_DISTRICT_TOTAL)+' مديرية.</p><div class="region-profile-metrics"><div class="region-profile-metric"><b>'+regionNumber(total)+'</b><span>مجموع إسقاطات المحافظات لعام 2023</span></div><div class="region-profile-metric"><b>'+regionNumber(YEMEN_DISTRICT_TOTAL)+'</b><span>مديرية في المرجع الإداري</span></div></div><p class="region-profile-muted">أرقام السكان إسقاطات 2023 وليست تعدادًا حديثًا.</p></div>';
+  out+='<div class="region-profile-section"><h3>المحافظات</h3><div class="region-governorate-pills">'+GOVS.map(g=>'<button type="button" data-region-gov="'+esc(g)+'">'+esc(g)+'</button>').join("")+'</div></div>';
+ }else if(ctx.type==="governorate"&&parent){
+  const dc=(YEMEN_DISTRICTS[ctx.gov]||[]).length,hc=heritage[ctx.gov];
+  out+='<div class="region-profile-hero"><h3>محافظة '+esc(ctx.gov)+'</h3><p>'+esc(parent.summary)+'</p><div class="region-profile-metrics"><div class="region-profile-metric"><b>'+regionNumber(parent.population2023)+'</b><span>إسقاط السكان 2023 — نسمة</span></div><div class="region-profile-metric"><b>'+regionNumber(dc)+'</b><span>مديرية في المرجع الإداري</span></div><div class="region-profile-metric"><b>'+esc(parent.capital)+'</b><span>العاصمة الإدارية المذكورة في المرجع الجغرافي</span></div><div class="region-profile-metric"><b>'+(hc===undefined?"—":regionNumber(hc))+'</b><span>عناصر في جرد تراثي منشور عام 2013</span></div></div><p class="region-profile-muted">إسقاط السكان للمحافظة لعام 2023 وليس تعدادًا ميدانيًا جديدًا. عدد الجرد التراثي يعود إلى سنة 2013 وليس إحصاءً محدثًا.</p></div>';
+  out+='<div class="region-profile-section"><h3>الطبيعة الجغرافية</h3><p class="where">'+esc(parent.nature)+'</p></div>';
+  out+='<div class="region-profile-section"><h3>المعالم والأماكن المعروفة</h3><div class="region-landmarks">'+parent.landmarks.map(x=>'<div class="region-landmark">'+esc(x)+'</div>').join("")+'</div><p class="region-profile-muted">'+esc(parent.heritageStatus)+'</p></div>';
+ }else if(ctx.type==="district"||ctx.type==="subdistrict"||ctx.type==="local-area"){
+  const heading=ctx.type==="subdistrict"?"عزلة "+ctx.area:ctx.type==="district"?"مديرية "+ctx.district:"المنطقة "+(ctx.area||ctx.place),dc=ctx.gov?(YEMEN_DISTRICTS[ctx.gov]||[]).length:0;
+  out+='<div class="region-profile-hero"><h3>'+esc(heading)+(ctx.gov?" — "+esc(ctx.gov):"")+'</h3><p>'+(ctx.type==="district"||ctx.type==="subdistrict"?"هذا الملف خاص بالمستوى الإداري المحدد، وليس بالمحافظة كاملة.":"منطقة محلية ضمن بيانات الدليل، وقد تكون قرية أو حيًا أو تجمعًا سكانيًا.")+' '+(parent?esc(parent.summary):"أضف وصفًا محليًا موثقًا لمساعدة الزوار على التعرف على المنطقة.")+'</p><div class="region-profile-metrics"><div class="region-profile-metric"><b>غير متاح</b><span>سكان هذه المديرية أو العزلة — لا يوجد رقم معتمد في ملف التطبيق</span></div>'+(parent?'<div class="region-profile-metric"><b>'+regionNumber(parent.population2023)+'</b><span>إسقاط سكان محافظة '+esc(ctx.gov)+' لعام 2023 — لا يمثل سكان المديرية</span></div>':"")+(ctx.type==="district"?'<div class="region-profile-metric"><b>'+regionNumber(dc)+'</b><span>مديريات المحافظة في المرجع الإداري</span></div>':"")+'</div><p class="region-profile-muted">منهجية Yemen PTI تستخدم بيانات WorldPop 2024 وإسقاطات الجهاز المركزي للإحصاء وتعديلات النزوح. هذه تقديرات وليست تعدادًا حديثًا مؤكد الدقة، لذلك لا نضع رقمًا محليًا غير متحقق منه.</p><div class="region-source-links"><a href="'+esc(sources.districtPopulation||"https://docs.yemen-pti.org/methodology/")+'" target="_blank" rel="noopener">منهجية تقدير سكان المديريات</a></div></div>';
+  if(parent)out+='<div class="region-profile-section"><h3>معالم معروفة في المحافظة الأم</h3><div class="region-landmarks">'+parent.landmarks.map(x=>'<div class="region-landmark">'+esc(x)+'</div>').join("")+'</div><p class="region-profile-muted">هذه معالم على مستوى المحافظة، وليست تأكيدًا أن كل معلم يقع داخل حدود المديرية المختارة. أضف المعلم المحلي مع صورته وموقعه للمساعدة في توثيقه.</p></div>';
+ }
+ const place=regionScopeLabel(ctx),maps=[["المساجد والجوامع","مساجد وجوامع"],["المدارس والمعاهد","مدارس ومعاهد"],["المستشفيات والمراكز الصحية","مستشفيات ومراكز صحية"],["المعالم التراثية والأثرية","معالم تراثية وأثرية"],["الأسواق والخدمات","أسواق وخدمات"]];
+ out+='<div class="region-profile-section"><h3>الخدمات والمواقع على الخريطة</h3><div class="region-map-links"><a href="'+regionMapSearch(place)+'" target="_blank" rel="noopener">عرض المنطقة على الخريطة</a>'+maps.map(m=>'<a href="'+regionMapSearch(m[1]+" في "+place)+'" target="_blank" rel="noopener">البحث عن '+m[0]+'</a>').join("")+'</div><p class="region-profile-muted">هذه روابط بحث لدى خرائط Google وليست قائمة مواقع موثقة أو إحداثيات مؤكدة. قد لا تكون جميع المواقع مسجلة أو محدثة.</p></div>';
+ out+='<div class="region-profile-section"><h3>مصادر البيانات</h3><div class="region-source-links"><a href="'+esc(sources.population||"https://cso-ye.org/en/population-statistics/")+'" target="_blank" rel="noopener">الجهاز المركزي للإحصاء — السكان</a><a href="'+esc(sources.heritageInventory||"https://whc.unesco.org/document/135204")+'" target="_blank" rel="noopener">جرد التراث 2013</a><a href="'+esc(sources.unescoYemen||"https://whc.unesco.org/en/statesparties/ye/")+'" target="_blank" rel="noopener">مواقع اليمن في اليونسكو</a><a href="'+esc(sources.geography||"https://visit-yemen.com/geography")+'" target="_blank" rel="noopener">الدليل الجغرافي</a><a href="'+esc(sources.administrative||"https://github.com/open-admin-data/yemen-administrative-divisions")+'" target="_blank" rel="noopener">التقسيم الإداري</a></div></div>';
+ $("#regionProfileDetails").innerHTML=out;renderRegionCommunity(ctx);
+}
+function regionPostInScope(post,ctx){
+ if(post.scope===ctx.key)return true;
+ if(ctx.type==="country")return true;
+ if(ctx.type==="governorate"&&post.scope.indexOf("district:"+ctx.gov+"|")===0)return true;
+ if(ctx.type==="governorate"&&ctx.gov==="إب"&&post.scope.indexOf("hubaish-area:")===0)return true;
+ return false;
+}
+function renderRegionCommunity(ctx){
+ const liked=S.regionLikes&&S.regionLikes[ctx.key]===true;
+ $("#regionLikeButton").textContent=(liked?"أعجبك ":"أعجبني ")+(liked?"1":"0");
+ $("#regionLikeButton").setAttribute("aria-pressed",liked?"true":"false");
+ const posts=(S.regionPosts||[]).filter(p=>regionPostInScope(p,ctx)).slice(0,30);
+ $("#regionCommunityGallery").innerHTML=posts.map(p=>'<article class="region-community-card">'+(p.img?'<img src="'+esc(p.img)+'" alt="'+esc(p.title)+'" loading="lazy">':"")+'<div class="body"><b>'+esc(p.title)+'</b><p>'+esc(p.text)+'</p><small>'+esc(({landmark:"معلم",heritage:"تراث",service:"خدمة",description:"وصف"}[p.type]||"معلومة"))+' · '+new Date(p.createdAt).toLocaleDateString("ar-YE")+' · على هذا الجهاز</small></div></article>').join("")||'<p class="region-profile-muted">لا توجد صور أو مساهمات محلية لهذه المنطقة على هذا الجهاز بعد.</p>';
+}
+$("#regionProfileDetails").addEventListener("click",function(e){
+ const b=e.target.closest("[data-region-gov]");if(!b)return;
+ scope="gov:"+b.dataset.regionGov;buildScopeSelector();render();
+ $("#regionInfoCard").scrollIntoView({behavior:"smooth",block:"start"});
+});
+$("#regionLikeButton").addEventListener("click",function(){
+ const ctx=regionCurrentContext();S.regionLikes=S.regionLikes||{};
+ S.regionLikes[ctx.key]=!S.regionLikes[ctx.key];saveState();renderRegionCommunity(ctx);
+});
+let regionPendingImage="";
+$("#regionAddContribution").addEventListener("click",function(){
+ if(!scope){toast("اختر المحافظة أو المديرية أولاً حتى ترتبط المساهمة بالمكان الصحيح.");return;}
+ const form=$("#regionContributionForm");form.hidden=!form.hidden;
+});
+$("#regionContributionCancel").addEventListener("click",function(){
+ $("#regionContributionForm").reset();$("#regionContributionForm").hidden=true;
+ $("#regionImagePreviewBox").hidden=true;$("#regionImagePreview").removeAttribute("src");regionPendingImage="";
+});
+$("#regionImageInput").addEventListener("change",async function(e){
+ const file=e.target.files&&e.target.files[0];if(!file)return;
+ try{regionPendingImage=await compressImage(file);$("#regionImagePreview").src=regionPendingImage;$("#regionImagePreviewBox").hidden=false;}
+ catch(err){regionPendingImage="";e.target.value="";toast("تعذّر معالجة الصورة. استخدم JPG أو PNG أو WebP أقل من 8 ميجابايت.");}
+});
+$("#regionContributionForm").addEventListener("submit",function(e){
+ e.preventDefault();
+ const ctx=regionCurrentContext(),title=$("#regionContributionTitle").value.trim(),textValue=$("#regionContributionText").value.trim();
+ if(!scope||!title||!textValue){toast("اختر منطقة واكتب اسم المكان والتفاصيل.");return;}
+ const photos=(S.regionPosts||[]).filter(p=>!!p.img).length;
+ if(regionPendingImage&&photos>=12){toast("وصلت صور المساهمات على هذا الجهاز إلى الحد التجريبي (12 صورة).");return;}
+ S.regionPosts=S.regionPosts||[];
+ S.regionPosts.unshift({id:"rp_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,7),scope:ctx.key,type:$("#regionContributionType").value,title:title.slice(0,100),text:textValue.slice(0,700),img:regionPendingImage,createdAt:Date.now()});
+ S.regionPosts=S.regionPosts.slice(0,120);saveState();
+ $("#regionContributionForm").reset();$("#regionContributionForm").hidden=true;
+ $("#regionImagePreviewBox").hidden=true;$("#regionImagePreview").removeAttribute("src");regionPendingImage="";
+ renderRegionCommunity(ctx);toast("حُفظت المساهمة على هذا الجهاز فقط. لا تظهر بعد لبقية العملاء.");
+});
 
 let pickerCb=null,pickerData=[];
 function openCustomPicker({title,searchable,options,selected,onSelect}){
@@ -3884,6 +4084,7 @@ function renderAdminPanel(){
 /* Main Render Loop */
 function render(){
   renderRegionInfo();
+  renderRichRegionProfile();
   renderCategories();
   renderFilterChips();
   renderRecent();
