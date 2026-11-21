@@ -187,6 +187,26 @@
   document.body.classList.toggle("search-active",active);
   const clear=$("clearSearch");if(clear)clear.hidden=!(input&&input.value);
  }
+ function scrollToQuickTarget(id){
+  const target=document.getElementById(id);
+  if(!target)return;
+  if(id==="emBox")document.body.classList.add("quick-jump-reveal-emergency");
+  target.classList.remove("quick-jump-highlight");
+  void target.offsetWidth;
+  target.classList.add("quick-jump-highlight");
+  target.scrollIntoView({behavior:"smooth",block:"center"});
+  window.setTimeout(()=>target.classList.remove("quick-jump-highlight"),1100);
+  if(id==="emBox")window.setTimeout(()=>document.body.classList.remove("quick-jump-reveal-emergency"),1600);
+ }
+ function scrollBackToSearch(){
+  const target=document.querySelector(".search-bar")||document.getElementById("q");
+  if(!target)return;
+  target.classList.remove("quick-jump-highlight");
+  void target.offsetWidth;
+  target.classList.add("quick-jump-highlight");
+  target.scrollIntoView({behavior:"smooth",block:"start"});
+  window.setTimeout(()=>target.classList.remove("quick-jump-highlight"),1100);
+ }
  function bind(){
   buildJobs();buildSouq();renderTabs();
   $("jobsCountryTabs")?.addEventListener("click",event=>{
@@ -210,6 +230,9 @@
   $("q")?.addEventListener("input",syncSearch);
   $("clearSearch")?.addEventListener("click",()=>setTimeout(syncSearch,0));
   document.addEventListener("click",event=>{
+   const jump=event.target.closest("[data-quick-jump]");
+   if(jump){event.preventDefault();scrollToQuickTarget(jump.dataset.quickJump);}
+   if(event.target.closest("#emBackToTop")){event.preventDefault();scrollBackToSearch();}
    if(event.target.closest("#tiles .tile,[data-flt]")){
     setTimeout(()=>{
      syncSearch();
