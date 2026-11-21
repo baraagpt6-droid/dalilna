@@ -136,7 +136,7 @@ function buildOverpassQuery(bbox, category) {
   const filters = FILTERS[category] || FILTERS.all;
   const box = [bbox.south, bbox.west, bbox.north, bbox.east].map(n => Number(n).toFixed(6)).join(",");
   const union = filters.map(filter => "nwr" + filter + "(" + box + ");").join("\n");
-  return "[out:json][timeout:12][maxsize:134217728];\n(\n" + union + "\n);\nout center tags 80;
+  return "[out:json][timeout:12][maxsize:134217728];\n(\n" + union + "\n);\nout center tags 80;";
 }
 
 function classifyCategory(tags) {
