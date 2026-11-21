@@ -4,7 +4,7 @@ const html=fs.readFileSync("index.html","utf8"),client=fs.readFileSync("marketpl
 const inline=html.split("<script").slice(1).map(part=>{const start=part.indexOf(">");const end=part.indexOf("</script>");return start>=0&&end>start?part.slice(start+1,end):"";}).filter(code=>code.trim());
 test("all inline JavaScript in PWA parses",()=>{assert.ok(inline.length>=2);inline.forEach((code,i)=>new vm.Script(code,{filename:"index.html:inline-"+i}));});
 test("marketplace client parses",()=>new vm.Script(client,{filename:"marketplace-client.js"}));
-test("Dalilna 2.1 feature layer parses and exposes job and marketplace filters",()=>{new vm.Script(features,{filename:"features-2.1.js"});for(const token of ['id:"jobsCountryTabs"','id:"souqTransactionTabs"','id:"souqCategoryTabs"','/api/jobs/candidates'])assert.ok(features.includes(token),token);});
+test("Dalilna 2.1 feature layer parses and exposes job and marketplace filters",()=>{new vm.Script(features,{filename:"features-2.1.js"});for(const token of ['id="jobsCountryTabs"','id="souqTransactionTabs"','id="souqCategoryTabs"','/api/jobs/candidates'])assert.ok(features.includes(token),token);});
 test("regional catalogue runtime exports safe parsers",()=>{const runtime=require("../regional-catalog-runtime");assert.equal(typeof runtime.normalizeItems,"function");assert.equal(typeof runtime.yemenPhone,"function");});
 test("smart search reads static local catalogue and shared ads, not live map endpoints",()=>{
  for(const token of ["LIVE_CATALOG_BASE","loadRegionalCatalogManifest","loadRegionalCatalog(context.gov","loadLiveMarketplaceMatches","OpenStreetMap contributors"])assert.ok(html.includes(token),token);
@@ -31,3 +31,5 @@ test("marketplace client displays rental labels",()=>{
 test("PWA version metadata is 2.1.0",()=>{
  assert.ok(html.includes('content="2.1.0"'));
 });
+
+test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});
