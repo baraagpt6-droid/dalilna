@@ -4,7 +4,7 @@
 
 ## الإصدار
 
-- Version: 1.5.2
+- Version: 1.5.3
 - Web app: PWA (installable from supported browsers)
 - Android: WebView application source included in `android/`
 - Offline: cached application shell and local device storage
@@ -61,3 +61,8 @@ Pending shop submissions are shown in a prominent dashboard shortcut. Open it to
 ## Faster live directory search
 
 The primary OpenStreetMap endpoint is a Vercel Node Function at `/api/places/search`, avoiding Render free-service idle spin-down. Browser requests abort after 35 seconds and show retry and Google Maps fallback actions. OpenStreetMap/Nominatim can still be rate-limited and coverage in Yemen may be incomplete.
+
+
+## Direct live place discovery
+
+The PWA now queries Nominatim and Overpass directly from the browser instead of depending on the free Render API service. Nominatim requests are throttled to at most one per 1.1 seconds per app page and successful geocodes are cached for 12 hours. Overpass queries use a 12-second QL timeout and try a second public instance if the first is unavailable. The UI stops after 30 seconds and provides retry plus a Google Maps fallback. OSM results are attributed and may be incomplete in Yemen.

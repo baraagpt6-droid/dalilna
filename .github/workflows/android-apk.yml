@@ -50,7 +50,7 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dalilna-1.5.2-android-debug
+          name: dalilna-1.5.3-android-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
@@ -58,11 +58,11 @@ jobs:
       - name: Publish APK as a GitHub pre-release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.5.2
-          name: Dalilna 1.5.2 Android APK (Testing)
+          tag_name: v1.5.3
+          name: Dalilna 1.5.3 Android APK (Testing)
           prerelease: true
           make_latest: false
           files: android/app/build/outputs/apk/debug/app-debug.apk
           body: |
-            Dalilna 1.5.2 testing APK.
+            Dalilna 1.5.3 testing APK.
             This is a debug-signed test build, not a Play Store production release.
