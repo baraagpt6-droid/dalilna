@@ -114,7 +114,7 @@ test("Wikimedia Commons search returns author and license metadata",async()=>{
  const original=global.fetch;
  global.fetch=async(input,options={})=>{
   const url=new URL(String(input));assert.equal(url.hostname,"commons.wikimedia.org");
-  assert.match(options.headers["User-Agent"],/DalilnaDirectory\/1\.6\.2/);
+  assert.match(options.headers["User-Agent"],/DalilnaDirectory\\/1\\.7\\.0/);
   return new Response(JSON.stringify({query:{pages:[{title:"File:Dalilna place.jpg",imageinfo:[{thumburl:"https://upload.wikimedia.org/wikipedia/commons/thumb/dalilna.jpg",descriptionurl:"https://commons.wikimedia.org/wiki/File:Dalilna_place.jpg",extmetadata:{LicenseShortName:{value:"CC BY-SA 4.0"},Artist:{value:"Photographer One"}}}]}]}}),{status:200,headers:{"content-type":"application/json"}});
  };
  try{const result=await searchCommonsPhotos("Dalilna Commons unique test","Yemen");assert.equal(result.source,"Wikimedia Commons");assert.equal(result.count,1);assert.equal(result.items[0].license,"CC BY-SA 4.0");assert.equal(result.items[0].author,"Photographer One");assert.match(result.items[0].sourceUrl,/commons\.wikimedia\.org/);}
