@@ -1,23 +1,27 @@
-name: Verify free OpenStreetMap and Wikimedia sources
+name: Verify public directory and shared marketplace
 
 on:
   pull_request:
     branches: [main]
     paths:
       - 'server.js'
+      - 'marketplace-api.js'
+      - 'marketplace-client.js'
+      - 'db/**'
       - 'index.html'
       - 'tests/**'
-      - 'scripts/places-proxy-integration.cjs'
-      - 'scripts/live-places-smoke.cjs'
+      - 'scripts/**'
       - '.github/workflows/places-proxy-verification.yml'
   push:
     branches: [main]
     paths:
       - 'server.js'
+      - 'marketplace-api.js'
+      - 'marketplace-client.js'
+      - 'db/**'
       - 'index.html'
       - 'tests/**'
-      - 'scripts/places-proxy-integration.cjs'
-      - 'scripts/live-places-smoke.cjs'
+      - 'scripts/**'
       - '.github/workflows/places-proxy-verification.yml'
   workflow_dispatch:
 
@@ -35,6 +39,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: npm
+      - name: Install dependencies
+        run: npm install
       - name: Run unit and UI tests
         run: npm test
       - name: Verify real HTTP routes with mocked OSM and Commons providers
