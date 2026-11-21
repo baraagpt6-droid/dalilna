@@ -1,4 +1,4 @@
-Dalilna 1.4.2
+Dalilna 1.5.0
 PWA + Android WebView
 Gemini cloud assistant (optional, server-side)
 Assistant replies disclose source: Gemini, fixed administrative reference, local, or cloud fallback
@@ -10,3 +10,6 @@ Admin root credential reset applied once through adminCredentialVersion=2.
 Regional profiles, population projections, map searches, local photos and likes. Local directory searches now offer a Google Maps fallback when no listing is stored on the device.
 
 Admin review requests are surfaced in a full-width dashboard shortcut; pending rows show shop details and explicit approve/reject actions.
+
+Live place discovery is sourced from OpenStreetMap on selected governorate/district or user-approved GPS location. Results show attribution and are not copied into local user listings.
+Google Places is not enabled until a restricted billing-enabled API key is configured.

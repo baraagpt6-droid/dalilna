@@ -4,7 +4,7 @@
 
 ## الإصدار
 
-- Version: 1.4.2
+- Version: 1.5.0
 - Web app: PWA (installable from supported browsers)
 - Android: WebView application source included in `android/`
 - Offline: cached application shell and local device storage
@@ -43,3 +43,13 @@
 ## Admin review queue
 
 Pending shop submissions are shown in a prominent dashboard shortcut. Open it to inspect the request details and choose approve/publish or reject. In this offline-first release, pending requests remain local to the device until a shared backend is connected.
+
+## البحث المباشر عن الأماكن
+
+يعرض الإصدار 1.5.0 نتائج الأماكن من OpenStreetMap حسب المحافظة أو المديرية المحددة، أو حول موقع المستخدم بعد موافقته. تظهر نسبة المصدر وتاريخ جلب النتائج وروابط المصدر والخريطة. يمكن أن تكون البيانات غير مكتملة أو قديمة.
+
+خدمة البحث API موجودة على Render بعنوان `https://dalilna-directory-api.onrender.com` وتعمل بالخطة المجانية للاختبار. خدمات Render المجانية قد تتوقف مؤقتاً عند عدم الاستخدام، وقد يتأخر أول اتصال بعد الاستيقاظ.
+
+لا ينسخ التطبيق بيانات Google Places إلى قاعدة بياناته. Google Places غير مفعّل حتى يتم إعداد مشروع Google Cloud ومفتاح مقيد وفوترة مناسبة.
+
+طلبات التجار والمراجعة ما زالت محلية على الجهاز في هذا الإصدار. ربطها بقاعدة بيانات مشتركة ودائمة مرحلة مستقلة قبل الاستخدام الإنتاجي.

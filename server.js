@@ -314,22 +314,33 @@ async function searchPlaces(params) {
   const fallbackPlace = cleanText(params.fallbackPlace, 180);
   const category = FILTERS[params.category] ? params.category : "all";
   const query = cleanText(params.q, 100);
-  if (!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen") {
-    const error = new Error("اختر محافظة أو مديرية أولاً حتى نبحث في نطاق مناسب.");
+  const lat = Number(params.lat);
+  const lon = Number(params.lon);
+  const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
+  const radius = Math.min(15000, Math.max(1000, Number(params.radius) || 7000));
+  if ((!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen") && !hasCoordinates) {
+    const error = new Error("اختر محافظة أو مديرية أولاً، أو فعّل البحث حول موقعك.");
     error.statusCode = 400;
     throw error;
   }
 
-  const cacheKey = normalizeText(place) + "|" + category;
+  const cacheKey = (hasCoordinates ? "near:" + lat.toFixed(3) + ":" + lon.toFixed(3) : normalizeText(place)) + "|" + category;
   const cached = readCache(resultCache, cacheKey);
   if (cached) {
     const copy = { ...cached, fetchedAt: new Date().toISOString(), cached: true };
-    return filterByQuery(copy, query);
+    return filterByQuery(copy, query, category);
   }
 
-  let area = await geocodePlace(place);
+  let area = null;
   let scopeFallback = false;
-  let usedPlace = place;
+  let usedPlace = place || "بالقرب من موقعك";
+  if (hasCoordinates) {
+    const latDelta = radius / 111000;
+    const lonDelta = radius / (111000 * Math.max(0.2, Math.cos(lat * Math.PI / 180)));
+    area = { bbox: { south: lat - latDelta, north: lat + latDelta, west: lon - lonDelta, east: lon + lonDelta }, label: "بالقرب من موقعك" };
+  } else {
+    area = await geocodePlace(place);
+  }
   if (!area && fallbackPlace && normalizeText(fallbackPlace) !== normalizeText(place)) {
     area = await geocodePlace(fallbackPlace);
     scopeFallback = true;
@@ -343,6 +354,7 @@ async function searchPlaces(params) {
 
   const items = await fetchOverpass(area.bbox, category, area.label || usedPlace);
   const result = {
+    category,
     items,
     count: items.length,
     source: "OpenStreetMap",
@@ -356,11 +368,11 @@ async function searchPlaces(params) {
     note: "قد تكون بيانات الخريطة غير مكتملة أو قديمة. تحقق من رقم التواصل وساعات العمل قبل الزيارة."
   };
   touchCache(resultCache, cacheKey, result);
-  return filterByQuery(result, query);
+  return filterByQuery(result, query, category);
 }
 
-function filterByQuery(result, query) {
-  if (!query) return result;
+function filterByQuery(result, query, category) {
+  if (!query || category !== "all") return result;
   const words = normalizeText(query).split(/\s+/).filter(word => word.length > 2);
   if (!words.length) return result;
   const items = result.items.filter(item => {
@@ -440,7 +452,10 @@ const server = http.createServer(async (req, res) => {
         q: url.searchParams.get("q"),
         place: url.searchParams.get("place"),
         fallbackPlace: url.searchParams.get("fallbackPlace"),
-        category: url.searchParams.get("category")
+        category: url.searchParams.get("category"),
+        lat: url.searchParams.get("lat"),
+        lon: url.searchParams.get("lon"),
+        radius: url.searchParams.get("radius")
       });
       json(res, 200, result);
     } catch (error) {
