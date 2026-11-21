@@ -4935,11 +4935,13 @@ function render(){
     $("#count").textContent=`${shown.length} نتيجة`;
     $("#clist").innerHTML=shown.map(cardHTML).join("")||emptySearchFallbackHTML($("#q").value.trim()||CN[curCat]||curCat);
   }else if(view==="jobs"){
-    const jobs=applyFilters(S.items.filter(i=>i.cat==="jobs"&&match(i)));
-    $("#jobs").innerHTML=jobs.map(cardHTML).join("")||`<div class="empty">لا توجد وظائف متاحة حالياً.</div>`;
+    const jobs=applyFilters(S.items.filter(i=>i.cat==="jobs"&&(!i.expiresAt||i.expiresAt>Date.now())&&match(i)));
+    const portals='<section class="directory-source-strip"><b>مصادر وظائف إضافية</b><p>تصفح الإعلانات الأحدث وتأكد من شروط كل وظيفة وموعدها في صفحة المصدر.</p><div class="acts"><a class="lnk" href="https://yemenhr.com/" target="_blank" rel="noopener noreferrer">Yemen HR</a><a class="lnk" href="https://www.yemenboard.com/" target="_blank" rel="noopener noreferrer">Yemen Board</a></div></section>';
+    $("#jobs").innerHTML=(jobs.map(cardHTML).join("")||'<div class="empty">لا توجد وظائف نشطة ضمن المنطقة المحددة. راجع مصادر الوظائف أدناه.</div>')+portals;
   }else if(view==="souq"){
-    const sq=applyFilters(S.items.filter(i=>i.cat==="souq"&&match(i)));
-    $("#sqList").innerHTML=sq.map(cardHTML).join("")||`<div class="empty">لا توجد عروض في السوق حالياً.</div>`;
+    const sq=applyFilters(S.items.filter(i=>i.cat==="souq"&&(!i.expiresAt||i.expiresAt>Date.now())&&match(i)));
+    const marketplaces='<section class="directory-source-strip"><b>إعلانات ومنتجات إضافية</b><p>يمكنك تصفح المواقع الخارجية مباشرة. لا ننسخ إعلاناتهم أو أرقام البائعين؛ افتح المصدر للتواصل مع المعلن.</p><div class="acts"><a class="lnk" href="https://ye.opensooq.com/" target="_blank" rel="noopener noreferrer">السوق المفتوح اليمن</a><a class="lnk" href="https://sooqyemen.com/" target="_blank" rel="noopener noreferrer">سوق اليمن</a></div></section>';
+    $("#sqList").innerHTML=(sq.map(cardHTML).join("")||'<div class="empty">لا توجد عروض محلية أخرى مسجلة. أضف إعلانك أو تصفح المتاجر المعروضة.</div>')+marketplaces;
   }
 }
 
