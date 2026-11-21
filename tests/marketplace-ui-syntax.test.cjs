@@ -10,7 +10,7 @@ test("smart search reads static local catalogue and shared ads, not live map end
  for(const token of ["searchLivePlaces(","/api/places/search","/api/geoapify/search"])assert.ok(!html.includes(token),token);
 });
 test("Android and PWA assets remain byte-for-byte aligned",()=>{
- for(const name of ["index.html","sw.js","marketplace-client.js","regional-catalog-runtime.js"])assert.equal(fs.readFileSync("android/app/src/main/assets/"+name,"utf8"),fs.readFileSync(name,"utf8"),name+" mismatch");
+ for(const name of ["index.html","sw.js","marketplace-client.js","regional-catalog-runtime.js","features-2.1.js","features-2.1.css","jobs-feed.json"])assert.equal(fs.readFileSync("android/app/src/main/assets/"+name,"utf8"),fs.readFileSync(name,"utf8"),name+" mismatch");
 });
 test("marketplace form includes product and rental categories",()=>{
  for(const type of ["phone","car","motorcycle","land","property","apartment","house","honey","coffee","stationery","solar_equipment"])assert.ok(html.includes('value="'+type+'"'),type);
@@ -27,6 +27,6 @@ test("marketplace client displays rental labels",()=>{
  assert.ok(client.includes('item.listingType === "rent") labels.push("للإيجار")'));
 });
 
-test("PWA version metadata is 2.0.0",()=>{
- assert.ok(html.includes('content="2.0.0"'));
+test("PWA version metadata is 2.1.0",()=>{
+ assert.ok(html.includes('content="2.1.0"'));
 });

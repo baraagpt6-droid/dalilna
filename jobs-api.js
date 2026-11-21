@@ -3,7 +3,6 @@ const fs=require("node:fs");
 const path=require("node:path");
 const crypto=require("node:crypto");
 const {URL}=require("node:url");
-const {Pool}=require("pg");
 const COUNTRIES=new Set(["Yemen","Saudi Arabia","United Arab Emirates","Oman","Qatar","Bahrain","Iraq","Jordan"]);
 const COUNTRY_CODES={YE:"Yemen",SA:"Saudi Arabia",AE:"United Arab Emirates",OM:"Oman",QA:"Qatar",BH:"Bahrain",IQ:"Iraq",JO:"Jordan"};
 let pool=null;
@@ -11,7 +10,7 @@ const buckets=new Map();
 function clean(value,max=160){return String(value==null?"":value).replace(/[\u0000-\u001F\u007F]/g," ").replace(/\s+/g," ").trim().slice(0,max);}
 function send(res,status,payload){res.writeHead(status,{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"});res.end(JSON.stringify(payload));}
 function limit(req,key,max,windowMs){const ip=String(req.headers["x-forwarded-for"]||req.socket?.remoteAddress||"unknown").split(",")[0].trim(),k=key+":"+ip,now=Date.now(),times=(buckets.get(k)||[]).filter(t=>now-t<windowMs);if(times.length>=max){buckets.set(k,times);return false;}times.push(now);buckets.set(k,times);if(buckets.size>3000)for(const [id,arr] of buckets)if(!arr.length||now-arr[arr.length-1]>3600000)buckets.delete(id);return true;}
-function getPool(){if(!process.env.DATABASE_URL){const e=new Error("قاعدة بيانات دليلنا غير مهيأة على الخادم.");e.statusCode=503;throw e;}if(pool)return pool;const u=new URL(process.env.DATABASE_URL),ssl=u.searchParams.get("sslmode")==="require"||process.env.DATABASE_SSL==="true";pool=new Pool({connectionString:process.env.DATABASE_URL,max:5,idleTimeoutMillis:30000,connectionTimeoutMillis:7000,ssl:ssl?{rejectUnauthorized:false}:undefined,application_name:"dalilna-jobs"});pool.on("error",e=>console.error(JSON.stringify({event:"jobs.pool.error",code:clean(e.code,40)})));return pool;}
+function getPool(){if(!process.env.DATABASE_URL){const e=new Error("قاعدة بيانات دليلنا غير مهيأة على الخادم.");e.statusCode=503;throw e;}if(pool)return pool;const {Pool}=require("pg");const u=new URL(process.env.DATABASE_URL),ssl=u.searchParams.get("sslmode")==="require"||process.env.DATABASE_SSL==="true";pool=new Pool({connectionString:process.env.DATABASE_URL,max:5,idleTimeoutMillis:30000,connectionTimeoutMillis:7000,ssl:ssl?{rejectUnauthorized:false}:undefined,application_name:"dalilna-jobs"});pool.on("error",e=>console.error(JSON.stringify({event:"jobs.pool.error",code:clean(e.code,40)})));return pool;}
 function readFeed(){try{const data=JSON.parse(fs.readFileSync(path.join(__dirname,"jobs-feed.json"),"utf8")),items=Array.isArray(data.items)?data.items:[];return {fetchedAt:data.fetchedAt||null,sources:Array.isArray(data.sources)?data.sources:[],items:items.filter(x=>x&&x.title&&x.url&&(!x.expiresAt||Date.parse(x.expiresAt)>Date.now()))};}catch(_){return {fetchedAt:null,sources:[],items:[]};}}
 function asCountry(value){const s=clean(value,80);return COUNTRY_CODES[s.toUpperCase()]||s;}
 function validPhone(value){const digits=String(value||"").replace(/\D/g,"");return digits.length>=9&&digits.length<=15?digits:"";}
