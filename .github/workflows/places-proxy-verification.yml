@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - 'server.js'
+      - 'jobs-api.js'
+      - 'features-2.1.js'
+      - 'features-2.1.css'
+      - 'jobs-feed.json'
       - 'marketplace-api.js'
       - 'marketplace-client.js'
       - 'db/**'
@@ -16,6 +20,10 @@ on:
     branches: [main]
     paths:
       - 'server.js'
+      - 'jobs-api.js'
+      - 'features-2.1.js'
+      - 'features-2.1.css'
+      - 'jobs-feed.json'
       - 'marketplace-api.js'
       - 'marketplace-client.js'
       - 'db/**'
@@ -50,3 +58,34 @@ jobs:
         env:
           LIVE_API_BASE_URL: https://dalilna-live.onrender.com
         run: node scripts/live-places-smoke.cjs
+      - name: Verify Dalilna 2.1 live API, marketplace database and jobs endpoints
+        if: github.event_name == 'push'
+        env:
+          LIVE_API_BASE_URL: https://dalilna-live.onrender.com
+        run: |
+          node --input-type=module <<'NODE'
+          const base = process.env.LIVE_API_BASE_URL;
+          async function get(path) {
+            const response = await fetch(base + path, { headers: { Accept: "application/json" } });
+            const body = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(path + " returned HTTP " + response.status + ": " + JSON.stringify(body));
+            return body;
+          }
+          const health = await get("/health");
+          if (health.version !== "2.1.0") throw new Error("Expected API version 2.1.0, got " + health.version);
+          const market = await get("/api/marketplace/status");
+          if (market.ready !== true || market.databaseConfigured !== true) {
+            throw new Error("Marketplace database is not ready: " + JSON.stringify(market));
+          }
+          const jobs = await get("/api/jobs?country=YE&limit=10");
+          if (!Array.isArray(jobs.items)) throw new Error("Jobs endpoint did not return an items array.");
+          const seekers = await get("/api/jobs/candidates?country=Yemen&limit=10");
+          if (!Array.isArray(seekers.items)) throw new Error("Job-seeker endpoint did not return an items array.");
+          console.log(JSON.stringify({
+            apiVersion: health.version,
+            marketplaceDatabaseReady: market.ready,
+            jobsReturned: jobs.items.length,
+            jobSeekersReturned: seekers.items.length,
+            jobsFeedUpdatedAt: jobs.fetchedAt
+          }, null, 2));
+          NODE
