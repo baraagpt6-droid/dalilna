@@ -4,6 +4,29 @@ const {validPhone,COUNTRIES,COUNTRY_CODES}=require("../jobs-api");
 test("jobs portal supports the eight requested Arab countries",()=>{assert.equal(COUNTRIES.size,8);for(const x of ["Yemen","Saudi Arabia","United Arab Emirates","Oman","Qatar","Bahrain","Iraq","Jordan"])assert.ok(COUNTRIES.has(x));});
 test("country codes resolve to stable names",()=>{assert.equal(COUNTRY_CODES.YE,"Yemen");assert.equal(COUNTRY_CODES.SA,"Saudi Arabia");assert.equal(COUNTRY_CODES.AE,"United Arab Emirates");});
 test("candidate WhatsApp phone validation accepts international numbers",()=>{assert.equal(validPhone("+967 777 123 456"),"967777123456");assert.equal(validPhone("+966 50 123 4567"),"966501234567");assert.equal(validPhone("123"),"");assert.equal(validPhone("1".repeat(16)),"");});
+
+test("jobs feed API pulls the latest GitHub index and filters expired records",async()=>{
+ const {readFeed}=require("../jobs-api");
+ const calls=[];
+ const fresh={
+  schemaVersion:1,fetchedAt:"2026-11-22T00:00:00.000Z",sources:[{name:"YemenHR",status:"ok"}],
+  items:[
+   {title:"Current Yemen job",url:"https://example.org/current",country:"Yemen",expiresAt:"2026-12-22T00:00:00.000Z"},
+   {title:"Expired Yemen job",url:"https://example.org/expired",country:"Yemen",expiresAt:"2026-11-20T00:00:00.000Z"}
+  ]
+ };
+ const result=await readFeed(async(url,options)=>{
+  calls.push({url,cache:options.cache,method:options.method});
+  return {ok:true,json:async()=>fresh};
+ },true);
+ assert.equal(calls.length,1);
+ assert.match(calls[0].url,/raw\.githubusercontent\.com\/baraagpt6-droid\/dalilna\/main\/jobs-feed\.json/);
+ assert.equal(calls[0].cache,"no-store");
+ assert.equal(result.fetchedAt,fresh.fetchedAt);
+ assert.equal(result.items.length,1);
+ assert.equal(result.items[0].title,"Current Yemen job");
+});
+
 test("daily jobs index is valid and stores source metadata",()=>{const feed=JSON.parse(fs.readFileSync("jobs-feed.json","utf8"));assert.equal(feed.schemaVersion,1);assert.ok(Array.isArray(feed.sources));assert.ok(Array.isArray(feed.items));});
 
 test("public YemenHR HTML parser extracts job metadata and original detail URLs",()=>{
