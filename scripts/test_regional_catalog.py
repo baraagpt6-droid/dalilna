@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+import sys
+import unittest
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import build_regional_catalog as catalog
+
+
+class RegionalCatalogTests(unittest.TestCase):
+    def test_normalizes_arabic_search_names(self):
+        self.assertEqual(catalog.normalize("أَبْرَاء"), "ابراء")
+        self.assertEqual(catalog.normalize("بقالة"), catalog.normalize("بقاله"))
+
+    def test_classifies_service_and_market_tags(self):
+        self.assertEqual(catalog.classify({"shop": "convenience"}), "grocery")
+        self.assertEqual(catalog.classify({"amenity": "pharmacy"}), "pharmacy")
+        self.assertEqual(catalog.classify({"amenity": "school"}), "edu")
+        self.assertEqual(catalog.classify({"shop": "mobile_phone"}), "telecom")
+        self.assertEqual(catalog.classify({"shop": "car"}), "vehicles")
+        self.assertIsNone(catalog.classify({"amenity": "bench"}))
+
+    def test_centres_polygon_and_linestring_geometry(self):
+        self.assertEqual(catalog.geometry_point({"type": "Point", "coordinates": [44.0, 15.0]}), (15.0, 44.0))
+        polygon = {"type": "Polygon", "coordinates": [[[44, 15], [46, 15], [46, 17], [44, 17], [44, 15]]]}
+        self.assertEqual(catalog.geometry_point(polygon), (16.0, 45.0))
+
+    def test_polygon_membership_and_holes(self):
+        polygon = {"type": "Polygon", "coordinates": [
+            [[43, 13], [45, 13], [45, 15], [43, 15], [43, 13]],
+            [[43.5, 13.5], [44.5, 13.5], [44.5, 14.5], [43.5, 14.5], [43.5, 13.5]]
+        ]}
+        self.assertTrue(catalog.point_in_geometry(43.2, 13.2, polygon))
+        self.assertFalse(catalog.point_in_geometry(44.0, 14.0, polygon))
+
+    def test_builds_named_openstreetmap_records_and_deduplicates(self):
+        gov = [{"name": "إب", "lat": 14.0, "lon": 44.0}]
+        districts = [{"governorate": "إب", "name": "حبيش", "lat": 14.0, "lon": 44.0}]
+        feature = {"type": "Feature", "id": "node/123", "geometry": {"type": "Point", "coordinates": [44, 14]},
+                   "properties": {"name:ar": "بقالة الاختبار", "shop": "convenience", "phone": "777123456"}}
+        rows = catalog.build_items([feature, feature], gov, districts, [])
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["governorate"], "إب")
+        self.assertEqual(rows[0]["district"], "حبيش")
+        self.assertEqual(rows[0]["phone"], "777123456")
+        self.assertEqual(rows[0]["sourceUrl"], "https://www.openstreetmap.org/node/123")
+
+    def test_nearest_centroid_assignments_are_explicitly_approximate(self):
+        gov = [{"name": "إب", "lat": 14, "lon": 44}]
+        districts = [{"governorate": "إب", "name": "حبيش", "lat": 14, "lon": 44}]
+        self.assertEqual(catalog.assign_region(14, 44, gov, districts, []),
+                         ("إب", "حبيش", "approximate-district-centroid"))
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

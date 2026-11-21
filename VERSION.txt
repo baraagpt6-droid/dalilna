@@ -1,10 +1,12 @@
-Dalilna 1.8.2
+Dalilna 1.9.0
 Application release: PWA + Android WebView
-Android versionCode: 167
-Web app version: 1.8.2
-Live place discovery: Geoapify Places with OpenStreetMap-based fallbacks and provider attribution.
-Shared marketplace: PostgreSQL API with schema version 2, including opening_hours, website, latitude and longitude.
-New community listings are submitted as pending and appear publicly only after server-side admin approval.
-Legacy local listings must be migrated from each device using “نقل إضافاتي القديمة للمراجعة”. clientRef uniqueness prevents duplicate database records on retry.
-Server configuration: DATABASE_URL and DALILNA_ADMIN_TOKEN must be stored as server environment secrets, never in the client or APK.
-Android APK: debug-signed testing build only; not a Google Play production release.
+Android versionCode: 180
+Web app version: 1.9.0
+Primary place discovery: a static per-governorate OpenStreetMap catalogue, refreshed weekly from Geofabrik extracts.
+OpenStreetMap data license: ODbL-1.0; attribution: © OpenStreetMap contributors.
+Administrative names and district centroids: Open Admin Data Yemen, CC BY 4.0.
+Catalogue files: regional-catalog/manifest.json and one JSON file per governorate. The current build pipeline refuses to publish an empty catalogue.
+Map APIs are not required to open or browse regional place lists. Individual place cards retain optional OpenStreetMap direction links.
+Jobs, vehicles, products, homes, apartments, land and rental adverts are user-submitted shared listings. All new listings remain pending until server-side admin approval.
+Marketplace schema version: 2. Server secrets DATABASE_URL and DALILNA_ADMIN_TOKEN remain server-only.
+Android APK is a debug-signed testing build, not a Google Play production release.

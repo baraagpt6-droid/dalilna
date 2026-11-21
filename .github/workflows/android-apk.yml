@@ -13,6 +13,8 @@ on:
       - 'sw.js'
       - 'regions-yemen.js'
       - 'regions-profiles.js'
+      - 'regional-catalog/**'
+      - 'DATA_SOURCES.md'
       - 'icons/**'
       - 'android/**'
       - 'tests/**'
@@ -42,6 +44,16 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Sync PWA and regional catalogue into Android WebView assets
+        shell: bash
+        run: |
+          mkdir -p android/app/src/main/assets/icons android/app/src/main/assets/regional-catalog
+          cp index.html marketplace-client.js manifest.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html android/app/src/main/assets/
+          cp icons/* android/app/src/main/assets/icons/
+          cp regional-catalog/*.json android/app/src/main/assets/regional-catalog/
+          cmp -s index.html android/app/src/main/assets/index.html
+          cmp -s sw.js android/app/src/main/assets/sw.js
+          cmp -s marketplace-client.js android/app/src/main/assets/marketplace-client.js
       - name: Test application and shared marketplace validation
         run: npm test
       - name: Build signed debug APK
@@ -72,6 +84,6 @@ jobs:
           make_latest: false
           files: android/app/build/outputs/apk/debug/app-debug.apk
           body: |
-            Dalilna ${{ steps.app-version.outputs.version }} testing APK.
+            Dalilna ${{ steps.app-version.outputs.version }} testing APK with the Yemen regional places catalogue.
             Shared marketplace requires PostgreSQL setup on Render.
             This is a debug-signed test build, not a Play Store production release.

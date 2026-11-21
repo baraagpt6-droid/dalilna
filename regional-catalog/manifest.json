@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "status": "pending-first-refresh",
+  "snapshotDate": null,
+  "totalCount": 0,
+  "source": "OpenStreetMap contributors",
+  "license": "ODbL-1.0",
+  "attribution": "© OpenStreetMap contributors",
+  "administrativeSource": "Open Admin Data Yemen (CC BY 4.0)",
+  "governorates": [],
+  "assignmentNote": "الملف المحلي سيُبنى من مصادر مفتوحة عند تشغيل مهمة تحديث البيانات."
+}

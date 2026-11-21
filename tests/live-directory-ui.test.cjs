@@ -1,85 +1,60 @@
 "use strict";
 const test=require("node:test"),assert=require("node:assert/strict"),fs=require("node:fs");
 const html=fs.readFileSync("index.html","utf8");
-test("live place discovery prefers Geoapify free data and falls back to OpenStreetMap",()=>{
- assert.ok(html.includes("function liveDirectoryPanelHTML()"));
- assert.ok(html.includes("/api/geoapify/search"));
- assert.ok(html.includes("/api/places/search"));
- assert.match(html,/runLiveDirectorySearch/);
- assert.match(html,/OpenStreetMap contributors/);
-});
-test("map search retries and falls back when a provider is unavailable",()=>{
- assert.match(html,/async function liveFetchJson\(/);
- assert.match(html,/async function searchLivePlaces\(/);
- assert.match(html,/liveFetchJson\("\/api\/geoapify\/search"/);
- assert.match(html,/liveFetchJson\("\/api\/places\/search"/);
- assert.match(html,/تعذر مصدر Geoapify/);
- assert.doesNotMatch(html,/const health=await fetch\(LIVE_DIRECTORY_API/);
-});
-test("AI assistant searches live maps and approved shared listings for shop intents",()=>{
- assert.match(html,/searchLivePlaces\(q,serviceIntent,controller\.signal\)/);
- assert.match(html,/loadLiveMarketplaceMatches\(q,serviceIntent\.category,serviceIntent\.productType/);
- assert.match(html,/محلات ظهرت في مصدر الخرائط/);
- assert.match(html,/إعلانات أضافها المستخدمون واعتمدتها إدارة دليلنا/);
- assert.match(html,/mode:places\.length\|\|approved\.length\?"live-directory"/);
-});
-test("live results retain source links and geographic selection",()=>{
- assert.ok(html.includes("item.mapsUrl"));
- assert.match(html,/function liveDirectoryContext\(\)/);assert.match(html,/fallbackPlace/);
- assert.match(html,/navigator\.geolocation\.getCurrentPosition/);
-});
-test("external place data is not inserted into local merchant listings",()=>{
- const a=html.indexOf("async function runLiveDirectorySearch"),b=html.indexOf("function renderLiveDirectoryResponse",a);
- assert.doesNotMatch(html.slice(a,b),/S\.items\.unshift|S\.items\.push|saveState\(/);
-});
-test("live search offers retry and explains network failures in Arabic",()=>{
- assert.match(html,/id="liveDirectoryRetry"/);assert.match(html,/هذا لا يؤكد عدم وجود محلات أو خدمات على أرض الواقع/);
- assert.match(html,/تعذر الوصول إلى خدمة البحث بعد محاولات الاتصال/);assert.doesNotMatch(html,/Failed to fetch/);
-});
-test("home opens in browse mode and shows shared approved listings without a search term",()=>{
- assert.match(html,/const liveWanted=view==="home"\|\|view==="cat"/);
- assert.match(html,/if\(liveWanted\)runLiveDirectorySearch\(false\)/);
- assert.match(html,/loadLiveMarketplaceMatches/);
- assert.match(html,/الإعلانات المنشورة المعتمدة ظاهرة من جميع المحافظات/);
- assert.match(html,/اختيار المحافظة أو المديرية/);
-});
-test("region count is clearly labeled as device-local",()=>{
- assert.match(html,/إدراج محلي على هذا الجهاز/);
-});
-test("local ratings and photos are clearly device-local",()=>{
- assert.match(html,/data-live-rate-id/);assert.match(html,/data-live-photo-input/);
- assert.match(html,/dalilna_live_places_159/);assert.match(html,/محفوظة على هذا الجهاز فقط/);
-});
-test("optional Wikimedia photo search shows author and license",()=>{
- assert.match(html,/api\/places\/photos/);assert.match(html,/data-commons-photos/);
- assert.match(html,/p\.author/);assert.match(html,/p\.license/);assert.match(html,/p\.sourceUrl/);
-});
-test("Geoapify results render in-app business cards with phone and optional map links",()=>{
- assert.match(html,/\/api\/geoapify\/search/);
- assert.match(html,/function geoapifyDirectoryCardHTML\(item\)/);
- assert.match(html,/Powered by Geoapify/);
- assert.match(html,/فتح الموقع على الخريطة/);
- assert.ok(html.includes("item.mapsUrl"));
- assert.match(html,/tel:/);
- assert.doesNotMatch(html,/GEOAPIFY_API_KEY|GOOGLE_MAPS_API_KEY|places\.googleapis\.com/);
-});
-test("live directory links to privacy and terms pages",()=>{assert.match(html,/\.\/privacy\.html/);assert.match(html,/\.\/terms\.html/);});
 
-test("first-run public starter catalog includes sourced businesses and products",()=>{
- assert.ok(html.includes("const PUBLIC_BUSINESSES=["));
- assert.ok(html.includes("const PUBLIC_PRODUCTS=["));
- assert.ok(html.includes("seedCatalogVersion"));
- assert.ok(html.includes("بيانات عامة · غير موثّقة"));
- assert.ok(html.includes("عرض من متجر خارجي"));
- assert.ok(html.includes("function safeExternalUrl(value)"));
- assert.ok(html.includes("sourceUrl:safeExternalUrl"));
- assert.ok(html.includes("https://hubloh.com/en/cell-phones"));
- assert.ok(html.includes("https://www.google.com/maps/search/"));
+test("primary places directory loads a static regional catalogue, not live map searches",()=>{
+ assert.match(html,/const LIVE_CATALOG_BASE="\.\/regional-catalog\//);
+ assert.match(html,/async function loadRegionalCatalogManifest/);
+ assert.match(html,/async function loadRegionalCatalog/);
+ assert.match(html,/async function runLiveDirectorySearch/);
+ assert.doesNotMatch(html,/searchLivePlaces\(/);
+ assert.doesNotMatch(html,/\/api\/places\/search/);
+ assert.doesNotMatch(html,/\/api\/geoapify\/search/);
 });
-test("Arabic search routes pharmacies, hospitals, schools and mobile shops to separate categories",()=>{
- assert.match(html,/category:"health".*مستشف.*عياده/);
- assert.match(html,/category:"pharmacy".*صيدل.*دواء/);
- assert.match(html,/category:"edu".*مدرس.*جامعه/);
- assert.match(html,/category:"telecom".*جوال.*موبايل/);
- assert.match(html,/category:"elec".*الكترونيات.*لابتوب/);
+
+test("the country catalogue exposes governorate choices and per-governorate counts",()=>{
+ assert.match(html,/function liveDirectoryLocationPrompt\(manifest\)/);
+ assert.match(html,/manifest\.governorates/);
+ assert.match(html,/data-region-gov=/);
+ assert.match(html,/فهرس اليمن المحلي/);
+});
+
+test("the local directory keeps open-data attribution and explains incomplete coverage",()=>{
+ assert.match(html,/OpenStreetMap contributors/);
+ assert.match(html,/Open Admin Data/);
+ assert.match(html,/هذا لا يعني أن المكان غير موجود/);
+ assert.match(html,/تقدير تقريبي من أقرب مركز إداري/);
+});
+
+test("regional profiles open local directory categories instead of sending searches to Google Maps",()=>{
+ assert.match(html,/data-region-category=/);
+ assert.match(html,/تصفح المحلات والخدمات في هذه المنطقة/);
+ assert.doesNotMatch(html,/regionMapSearch\(/);
+ assert.doesNotMatch(html,/google\.com\/maps\/search/);
+});
+
+test("AI business lookup uses local regional data and approved shared adverts",()=>{
+ assert.match(html,/loadRegionalCatalog\(context\.gov/);
+ assert.match(html,/loadLiveMarketplaceMatches/);
+ assert.match(html,/فهرس OpenStreetMap المحلي/);
+ assert.match(html,/إعلانات أضافها المستخدمون واعتمدتها إدارة دليلنا/);
+ assert.doesNotMatch(html,/searchLivePlaces\(/);
+});
+
+test("jobs and market sections continue to use reviewed shared listings",()=>{
+ assert.match(html,/\/api\/marketplace\/listings/);
+ assert.match(html,/إعلانات معتمدة/);
+ assert.match(html,/الإعلانات المعتمدة/);
+});
+
+test("open maps only from a specific place card",()=>{
+ assert.match(html,/openstreetmap\.org\/?mlat=/);
+ assert.match(html,/الموقع والاتجاهات/);
+ assert.doesNotMatch(html,/google\.com\/maps\/search/);
+});
+
+test("local photos and ratings remain labelled as device-only",()=>{
+ assert.match(html,/data-live-rate-id/);
+ assert.match(html,/data-live-photo-input/);
+ assert.match(html,/محفوظة على هذا الجهاز فقط/);
 });

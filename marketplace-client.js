@@ -17,7 +17,7 @@
   const PRODUCTS = [
     ["phone","جوال"],["phone_accessories","إكسسوارات جوال"],["watch","ساعة"],["computer","كمبيوتر / لابتوب"],["computer_accessories","ملحقات كمبيوتر"],["tablet","جهاز لوحي"],
     ["camera","كاميرا"],["car","سيارة"],["motorcycle","دراجة نارية"],["vehicle_parts","قطع غيار مركبات"],
-    ["land","أرض"],["property","عقار / منزل"],["electronics","إلكترونيات"],["appliance","أجهزة منزلية"],
+    ["land","أرض"],["property","عقار"],["apartment","شقة"],["house","منزل"],["electronics","إلكترونيات"],["appliance","أجهزة منزلية"],
     ["furniture","أثاث"],["clothing","ملابس"],["shoes","أحذية"],["jewelry","ذهب ومجوهرات"],
     ["honey","عسل"],["coffee","بن وقهوة"],["spices","بهارات"],["food","مواد غذائية"],
     ["livestock","مواشٍ"],["agriculture","منتجات زراعية"],["building_materials","مواد بناء"],

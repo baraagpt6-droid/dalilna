@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.8.2">
+<meta name="app-version" content="1.9.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1080,7 +1080,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <label>نوع المعروض<select name="productType">
         <option value="phone">جوال</option><option value="phone_accessories">إكسسوارات جوال</option><option value="watch">ساعة</option><option value="computer">كمبيوتر / لابتوب</option><option value="computer_accessories">ملحقات كمبيوتر</option><option value="tablet">جهاز لوحي</option>
         <option value="camera">كاميرا</option><option value="car">سيارة</option><option value="motorcycle">دراجة نارية</option><option value="vehicle_parts">قطع غيار مركبات</option>
-        <option value="land">أرض</option><option value="property">عقار / منزل</option><option value="electronics">إلكترونيات</option><option value="appliance">أجهزة منزلية</option>
+        <option value="land">أرض</option><option value="property">عقار</option><option value="apartment">شقة</option><option value="house">منزل</option><option value="electronics">إلكترونيات</option><option value="appliance">أجهزة منزلية</option>
         <option value="furniture">أثاث</option><option value="clothing">ملابس</option><option value="shoes">أحذية</option><option value="jewelry">ذهب ومجوهرات</option>
         <option value="honey">عسل</option><option value="coffee">بن وقهوة</option><option value="spices">بهارات</option><option value="food">مواد غذائية</option>
         <option value="livestock">مواشٍ</option><option value="agriculture">منتجات زراعية</option><option value="building_materials">مواد بناء</option><option value="books">كتب</option><option value="stationery">قرطاسية وأدوات مدرسية</option>
@@ -1088,7 +1088,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
         <option value="household_items">مستلزمات منزلية</option><option value="kitchenware">أدوات مطبخ</option><option value="baby_products">منتجات أطفال</option><option value="games">ألعاب</option>
         <option value="sports_equipment">معدات رياضية</option><option value="animal_feed">أعلاف</option><option value="seeds">بذور ومحاصيل</option><option value="construction_equipment">معدات إنشاءات</option><option value="other">أخرى</option>
       </select></label>
-      <label>نوع الإعلان<select name="listingType"><option value="sale">للبيع</option><option value="wanted">مطلوب</option><option value="barter">مقايضة</option><option value="free">مجاني</option></select></label>
+      <label>نوع الإعلان<select name="listingType"><option value="sale">للبيع</option><option value="wanted">مطلوب</option><option value="barter">مقايضة</option><option value="free">مجاني</option><option value="rent">للإيجار</option></select></label>
       <label>حالة المعروض<select name="condition"><option value="unknown">غير محدد</option><option value="new">جديد</option><option value="used">مستعمل</option></select></label>
     </div>
     <div class="two" id="jobFields" hidden><label>آخر موعد للتقديم<input name="deadline" type="date"></label></div>
@@ -2484,7 +2484,7 @@ const CAT_SYN={
   telecom:"شريحة شرائح رصيد نت انترنت جوال جوالات هاتف هواتف موبايل موبايلات اتصالات اكسسوارات الجوال",
   health:"مستشفى مستشفيات مستوصف عيادة عيادات دكتور طبيب اطباء مختبر اسعاف مركز صحي مركز طبي اسنان",
   jobs:"وظيفة عمل وظائف توظيف مطلوب موظف عامل راتب",
-  land:"ارض اراضي عقار عقارات شقة ايجار بيع ارض",
+  land:"ارض اراضي عقار عقارات شقة شقق ايجار للايجار بيع ارض منزل",
   build:"اسمنت حديد بلوك مواد بناء سباكة دهان",
   parts:"قطع غيار سيارات مكينة اطارات كفرات بطارية",
   transport:"باص نقل مواصلات تاكسي سيارة توصيل",
@@ -2582,7 +2582,7 @@ const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");clearT
 async function sha256(str){if(!window.crypto||!window.crypto.subtle)throw new Error("secure-context-required");const buf=await window.crypto.subtle.digest("SHA-256",new TextEncoder().encode(str));return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");}
 
 const SEED_CATALOG_VERSION=1;
-const mapsSearch=(name,area,gov)=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent([name,area,gov,"اليمن"].filter(Boolean).join(" "));
+const mapsSearch=(name,area,gov)=>"https://www.openstreetmap.org/search?query="+encodeURIComponent([name,area,gov,"اليمن"].filter(Boolean).join(" "));
 const PUBLIC_BUSINESSES=[
  {id:"pub-ibb-dhamran",name:"مركز ظمران — إب",cat:"grocery",gov:"إب",area:"مدينة إب، الطريق N1",phone:"+967 4 456 747",desc:"مركز تسوق وسوبرماركت. بيانات عامة من دليل أعمال؛ يرجى التأكد من ساعات العمل والتوفر قبل الزيارة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
  {id:"pub-ibb-makkah-grocery",name:"بقالة مكة",cat:"grocery",gov:"إب",area:"X5FH+F4P، مدينة إب",phone:"+967 772 348 425",desc:"بقالة وسوبرماركت محلي. بيانات عامة من دليل أعمال؛ يرجى التأكد من الرقم والموقع قبل الزيارة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
@@ -3182,7 +3182,6 @@ function regionCurrentContext(){
  return {key:selected,type:"local-area",gov:"",district:"",place:selected};
 }
 function regionNumber(n){return Number(n||0).toLocaleString("ar-YE");}
-function regionMapSearch(q){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q);}
 function regionScopeLabel(ctx){if(ctx.type==="country")return "اليمن";return [ctx.place,ctx.gov&&ctx.type!=="governorate"?ctx.gov:"","اليمن"].filter(Boolean).join("، ");}
 function renderRichRegionProfile(){
  const ctx=regionCurrentContext(),profiles=window.DALILNA_REGION_PROFILES||{},sources=window.DALILNA_REGION_SOURCES||{},parent=ctx.gov?profiles[ctx.gov]:null,heritage=window.DALILNA_HERITAGE_COUNTS_2013||{};
@@ -3201,9 +3200,9 @@ function renderRichRegionProfile(){
   out+='<div class="region-profile-hero"><h3>'+esc(heading)+(ctx.gov?" — "+esc(ctx.gov):"")+'</h3><p>'+(ctx.type==="district"||ctx.type==="subdistrict"?"هذا الملف خاص بالمستوى الإداري المحدد، وليس بالمحافظة كاملة.":"منطقة محلية ضمن بيانات الدليل، وقد تكون قرية أو حيًا أو تجمعًا سكانيًا.")+' '+(parent?esc(parent.summary):"أضف وصفًا محليًا موثقًا لمساعدة الزوار على التعرف على المنطقة.")+'</p><div class="region-profile-metrics"><div class="region-profile-metric"><b>غير متاح</b><span>سكان هذه المديرية أو العزلة — لا يوجد رقم معتمد في ملف التطبيق</span></div>'+(parent?'<div class="region-profile-metric"><b>'+regionNumber(parent.population2023)+'</b><span>إسقاط سكان محافظة '+esc(ctx.gov)+' لعام 2023 — لا يمثل سكان المديرية</span></div>':"")+(ctx.type==="district"?'<div class="region-profile-metric"><b>'+regionNumber(dc)+'</b><span>مديريات المحافظة في المرجع الإداري</span></div>':"")+'</div><p class="region-profile-muted">منهجية Yemen PTI تستخدم بيانات WorldPop 2024 وإسقاطات الجهاز المركزي للإحصاء وتعديلات النزوح. هذه تقديرات وليست تعدادًا حديثًا مؤكد الدقة، لذلك لا نضع رقمًا محليًا غير متحقق منه.</p><div class="region-source-links"><a href="'+esc(sources.districtPopulation||"https://docs.yemen-pti.org/methodology/")+'" target="_blank" rel="noopener">منهجية تقدير سكان المديريات</a></div></div>';
   if(parent)out+='<div class="region-profile-section"><h3>معالم معروفة في المحافظة الأم</h3><div class="region-landmarks">'+parent.landmarks.map(x=>'<div class="region-landmark">'+esc(x)+'</div>').join("")+'</div><p class="region-profile-muted">هذه معالم على مستوى المحافظة، وليست تأكيدًا أن كل معلم يقع داخل حدود المديرية المختارة. أضف المعلم المحلي مع صورته وموقعه للمساعدة في توثيقه.</p></div>';
  }
- const place=regionScopeLabel(ctx),maps=[["المساجد والجوامع","مساجد وجوامع"],["المدارس والمعاهد","مدارس ومعاهد"],["المستشفيات والمراكز الصحية","مستشفيات ومراكز صحية"],["المعالم التراثية والأثرية","معالم تراثية وأثرية"],["الأسواق والخدمات","أسواق وخدمات"]];
- out+='<div class="region-profile-section"><h3>الخدمات والمواقع على الخريطة</h3><div class="region-map-links"><a href="'+regionMapSearch(place)+'" target="_blank" rel="noopener">عرض المنطقة على الخريطة</a>'+maps.map(m=>'<a href="'+regionMapSearch(m[1]+" في "+place)+'" target="_blank" rel="noopener">البحث عن '+m[0]+'</a>').join("")+'</div><p class="region-profile-muted">هذه روابط بحث لدى خرائط Google وليست قائمة مواقع موثقة أو إحداثيات مؤكدة. قد لا تكون جميع المواقع مسجلة أو محدثة.</p></div>';
- out+='<div class="region-profile-section"><h3>مصادر البيانات</h3><div class="region-source-links"><a href="'+esc(sources.population||"https://cso-ye.org/en/population-statistics/")+'" target="_blank" rel="noopener">الجهاز المركزي للإحصاء — السكان</a><a href="'+esc(sources.heritageInventory||"https://whc.unesco.org/document/135204")+'" target="_blank" rel="noopener">جرد التراث 2013</a><a href="'+esc(sources.unescoYemen||"https://whc.unesco.org/en/statesparties/ye/")+'" target="_blank" rel="noopener">مواقع اليمن في اليونسكو</a><a href="'+esc(sources.geography||"https://visit-yemen.com/geography")+'" target="_blank" rel="noopener">الدليل الجغرافي</a><a href="'+esc(sources.administrative||"https://github.com/open-admin-data/yemen-administrative-divisions")+'" target="_blank" rel="noopener">التقسيم الإداري</a></div></div>';
+ const categories=[["all","كل المحلات والخدمات",""],["grocery","بقالات وتموينات","بقالة"],["food","مطاعم ومخابز","مطعم"],["cafe","مقاهٍ وبوفيهات","قهوة"],["pharmacy","صيدليات","صيدلية"],["health","مستشفيات ومراكز صحية","مستشفى"],["edu","مدارس ومعاهد","مدرسة"],["mosque","مساجد وجوامع","مسجد"],["books","مكتبات وقرطاسيات","قرطاسية"],["vehicles","معارض وورش سيارات","معرض سيارات"],["transport","نقل ومواصلات","نقل"],["hotel","فنادق وسكن","فندق"],["money","بنوك وصرافة","صرافة"],["craft","حرف وصيانة","صيانة"],["market","أسواق","سوق"],["beauty","تجميل وعناية","عطور"]];
+ out+='<div class="region-profile-section"><h3>تصفح المحلات والخدمات في هذه المنطقة</h3><p class="region-profile-muted">اختر قسماً لعرض السجلات المحلية المتوفرة. قد تكون بيانات بعض المديريات ناقصة، وغياب نتيجة لا يعني عدم وجود النشاط.</p><div class="region-map-links">'+categories.map(item=>'<button type="button" data-region-category="'+esc(item[0])+'" data-region-query="'+esc(item[2])+'">'+esc(item[1])+'</button>').join("")+'</div><p class="region-profile-muted">افتح خريطة المكان من بطاقته عند الحاجة فقط.</p></div>';
+out+='<div class="region-profile-section"><h3>مصادر البيانات</h3><div class="region-source-links"><a href="'+esc(sources.population||"https://cso-ye.org/en/population-statistics/")+'" target="_blank" rel="noopener">الجهاز المركزي للإحصاء — السكان</a><a href="'+esc(sources.heritageInventory||"https://whc.unesco.org/document/135204")+'" target="_blank" rel="noopener">جرد التراث 2013</a><a href="'+esc(sources.unescoYemen||"https://whc.unesco.org/en/statesparties/ye/")+'" target="_blank" rel="noopener">مواقع اليمن في اليونسكو</a><a href="'+esc(sources.geography||"https://visit-yemen.com/geography")+'" target="_blank" rel="noopener">الدليل الجغرافي</a><a href="'+esc(sources.administrative||"https://github.com/open-admin-data/yemen-administrative-divisions")+'" target="_blank" rel="noopener">التقسيم الإداري</a></div></div>';
  $("#regionProfileDetails").innerHTML=out;renderRegionCommunity(ctx);
 }
 function regionPostInScope(post,ctx){
@@ -3221,9 +3220,10 @@ function renderRegionCommunity(ctx){
  $("#regionCommunityGallery").innerHTML=posts.map(p=>'<article class="region-community-card">'+(p.img?'<img src="'+esc(p.img)+'" alt="'+esc(p.title)+'" loading="lazy">':"")+'<div class="body"><b>'+esc(p.title)+'</b><p>'+esc(p.text)+'</p><small>'+esc(({landmark:"معلم",heritage:"تراث",service:"خدمة",description:"وصف"}[p.type]||"معلومة"))+' · '+new Date(p.createdAt).toLocaleDateString("ar-YE")+' · على هذا الجهاز</small></div></article>').join("")||'<p class="region-profile-muted">لا توجد صور أو مساهمات محلية لهذه المنطقة على هذا الجهاز بعد.</p>';
 }
 $("#regionProfileDetails").addEventListener("click",function(e){
- const b=e.target.closest("[data-region-gov]");if(!b)return;
- scope="gov:"+b.dataset.regionGov;liveDirectoryCoords=null;liveDirectoryCache.clear();liveDirectoryVisibleCount=8;buildScopeSelector();render();
- $("#regionInfoCard").scrollIntoView({behavior:"smooth",block:"start"});
+ const gov=e.target.closest("[data-region-gov]");
+ if(gov){scope="gov:"+gov.dataset.regionGov;liveDirectoryCoords=null;liveDirectoryVisibleCount=8;buildScopeSelector();render();$("#regionInfoCard").scrollIntoView({behavior:"smooth",block:"start"});return;}
+ const category=e.target.closest("[data-region-category]");
+ if(category){$("#q").value=category.dataset.regionQuery||"";if(view!=="home")go("home");else render();const panel=$("#liveDirectoryPanel");if(panel)panel.scrollIntoView({behavior:"smooth",block:"start"});}
 });
 $("#regionLikeButton").addEventListener("click",function(){
  const ctx=regionCurrentContext();S.regionLikes=S.regionLikes||{};
@@ -3962,12 +3962,13 @@ function directoryMapSearchInfo(q){
     :scope?regionScopeLabel(regionCurrentContext()):"اليمن";
   const category=product?product.category:service.category,label=product?product.label:service.label;
   const mapQuery=label+" "+String(q||"").trim()+" "+place;
-  return {category,productType:product?product.productType:"",label,place,mapQuery,url:regionMapSearch(mapQuery),productSearch:!!product};
+  return {category,productType:product?product.productType:"",label,place,mapQuery,productSearch:!!product};
 }
 function liveDirectoryPanelHTML(){
- return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>محلات وخدمات داخل دليلنا</b><div class="live-directory-sub">تظهر النتائج هنا مباشرة. رقم الهاتف يظهر عند توفره، ولا تُفتح الخريطة إلا باختيارك.</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث النتائج</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تجهيز البحث حسب المنطقة المحددة…</div><div class="live-directory-list" id="liveDirectoryItems"></div><div class="live-directory-attribution" id="liveDirectoryAttribution">مصادر الأماكن المفتوحة: Geoapify وOpenStreetMap.</div><div class="live-directory-legal"><a href="./privacy.html">سياسة الخصوصية</a><a href="./terms.html">شروط الاستخدام</a></div></section>';
+ return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>دليل المحلات والخدمات حسب المحافظة</b><div class="live-directory-sub">يعرض سجلاً محلياً من بيانات مفتوحة. افتح خريطة المكان من بطاقته عند الحاجة إلى الاتجاهات.</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث السجل</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تحميل سجل المحافظة…</div><div class="live-directory-list" id="liveDirectoryItems"></div><div class="live-directory-attribution" id="liveDirectoryAttribution">© OpenStreetMap contributors · التقسيم الإداري: Open Admin Data (CC BY 4.0).</div><div class="live-directory-legal"><a href="./privacy.html">سياسة الخصوصية</a><a href="./terms.html">شروط الاستخدام</a></div></section>';
 }
 const LIVE_DIRECTORY_API="https://dalilna-live.onrender.com";
+const LIVE_CATALOG_BASE="./regional-catalog/";
 const LIVE_LOCAL_KEY="dalilna_live_places_159";
 let liveGeoapifyEnabled=false;
 let liveDirectoryTimer=null,liveDirectorySeq=0,liveDirectoryCache=new Map(),liveDirectoryLast={query:"",category:"all"};
@@ -4038,7 +4039,7 @@ function liveApprovedListingCardHTML(item){
  const lat=Number(item.latitude),lon=Number(item.longitude);
  const map=Number.isFinite(lat)&&Number.isFinite(lon)
   ?'https://www.openstreetmap.org/?mlat='+encodeURIComponent(lat)+'&mlon='+encodeURIComponent(lon)+'#map=17/'+encodeURIComponent(lat)+'/'+encodeURIComponent(lon)
-  :(place?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([item.title,place,"اليمن"].join(" ")):"");
+  :(place?'https://www.openstreetmap.org/search?query='+encodeURIComponent([item.title,place,"اليمن"].join(" ")):"");
  const mapLink=map?'<div class="shared-listing-actions"><a href="'+esc(map)+'" target="_blank" rel="noopener noreferrer">الموقع على الخريطة</a></div>':"";
  return '<article class="shared-listing-card">'+image+'<div class="shared-listing-card-head"><h3>'+esc(item.title||"إعلان معتمد")+'</h3><span class="tag">اعتمدته الإدارة</span></div>'+
   '<div class="shared-listing-tags"><span>'+esc(category)+'</span>'+(type?'<span>'+esc(type)+'</span>':"")+(item.condition==="new"?'<span>جديد</span>':item.condition==="used"?'<span>مستعمل</span>':"")+'</div>'+
@@ -4058,66 +4059,101 @@ async function liveFetchJson(path,params,signal,retries=1){
    const response=await fetch(url,{headers:{Accept:"application/json"},signal,cache:"no-store"});
    const data=await response.json().catch(()=>({}));
    if(!response.ok){
-    const error=new Error(data.error||("تعذر الاتصال بمصدر البحث (HTTP "+response.status+")."));
+    const error=new Error(data.error||("تعذر الاتصال بخادم الإعلانات (HTTP "+response.status+")."));
     error.status=response.status;
-    if(attempt<retries&&(response.status>=500||response.status===429)){
-     lastError=error;
-     await new Promise(resolve=>setTimeout(resolve,650*(attempt+1)));
-     continue;
-    }
+    if(attempt<retries&&(response.status>=500||response.status===429)){lastError=error;await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)));continue;}
     throw error;
    }
    return data;
   }catch(error){
-   lastError=error;
-   if(signal&&signal.aborted)throw error;
+   lastError=error;if(signal&&signal.aborted)throw error;
    const transient=!Number.isFinite(error&&error.status)||error.status>=500||error.status===429;
    if(attempt>=retries||!transient)throw error;
-   await new Promise(resolve=>setTimeout(resolve,650*(attempt+1)));
+   await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)));
   }
  }
- throw lastError||new Error("تعذر الوصول إلى خدمة البحث.");
+ throw lastError||new Error("تعذر الوصول إلى خادم الإعلانات.");
 }
-async function searchLivePlaces(query,intent,signal){
- const context=liveDirectoryContext();
- const params=new URLSearchParams({q:String(query||""),category:intent&&intent.category||"all"});
- if(context){
-  params.set("place",context.place);
-  if(context.fallbackPlace)params.set("fallbackPlace",context.fallbackPlace);
- }else if(userPos&&flt.near){
-  params.set("lat",String(userPos.lat));params.set("lon",String(userPos.lng));params.set("radius","7000");
- }else{
-  throw new Error("اختر محافظة أو مديرية حتى نبحث في نطاق صحيح.");
+let liveCatalogManifestPromise=null,liveCatalogFiles=new Map(),liveSharedLoadError="";
+async function loadRegionalCatalogManifest(force){
+ if(!force&&liveCatalogManifestPromise)return liveCatalogManifestPromise;
+ liveCatalogManifestPromise=fetch(LIVE_CATALOG_BASE+"manifest.json",{headers:{Accept:"application/json"},cache:"no-cache"})
+  .then(async response=>{
+   if(!response.ok)throw new Error("ملف فهرس المحافظات غير متاح حالياً.");
+   const data=await response.json();
+   if(!data||!Array.isArray(data.governorates))throw new Error("صيغة فهرس المحافظات غير صالحة.");
+   return data;
+  }).catch(error=>{liveCatalogManifestPromise=null;throw error;});
+ return liveCatalogManifestPromise;
+}
+async function loadRegionalCatalog(gov,force){
+ const manifest=await loadRegionalCatalogManifest(force),key=normalizePlace(gov);
+ const region=(manifest.governorates||[]).find(item=>normalizePlace(item.name)===key);
+ if(!region)throw new Error("لا توجد قائمة بيانات لهذه المحافظة في ملف الفهرس.");
+ const cached=liveCatalogFiles.get(region.file);
+ if(!force&&cached)return {region,manifest,data:cached};
+ const response=await fetch(LIVE_CATALOG_BASE+encodeURIComponent(region.file),{headers:{Accept:"application/json"},cache:force?"reload":"default"});
+ if(!response.ok)throw new Error("تعذر تحميل سجل المحافظة.");
+ const data=await response.json();
+ if(!data||!Array.isArray(data.items))throw new Error("ملف بيانات المحافظة غير مكتمل.");
+ liveCatalogFiles.set(region.file,data);
+ return {region,manifest,data};
+}
+function regionalCatalogMatches(items,context,query,category,productType){
+ if(productType||category==="jobs"||category==="souq"||category==="land"||category==="marketplace")return [];
+ const wanted=String(category||"all"),tokens=normalizePlace(query).split(/\s+/).filter(Boolean);
+ return (items||[]).filter(item=>{
+  if(wanted!=="all"&&item.category!==wanted)return false;
+  if(context&&context.district&&normalizePlace(item.district)!==normalizePlace(context.district))return false;
+  const hay=normalizePlace([item.name,item.address,item.description,item.governorate,item.district,item.category].filter(Boolean).join(" "));
+  return tokens.every(token=>hay.includes(token));
+ });
+}
+function regionalCatalogCardHTML(item){
+ const card=liveDirectoryCardHTML(item);
+ const note=item.assignmentQuality==="osm-boundary"
+  ?"التصنيف الإداري مستند إلى مضلع حدود منشور في OpenStreetMap."
+  :"المحافظة والمديرية تقدير تقريبي من أقرب مركز إداري؛ تحقق من الموقع قبل الاعتماد عليه.";
+ return card.replace("</article>",'<small class="live-directory-local-note">'+esc(note)+'</small></article>');
+}
+function renderLiveDirectoryResponse(data){
+ const status=$("#liveDirectoryStatus"),box=$("#liveDirectoryItems"),attribution=$("#liveDirectoryAttribution");
+ if(!status||!box)return;
+ const items=Array.isArray(data.items)?data.items:[];
+ liveDirectoryLastData=data;
+ const shared=liveDirectorySharedMatchesHTML();
+ box.classList.remove("live-google-results");
+ if(attribution)attribution.innerHTML='المصدر: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · التقسيم الإداري: <a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.';
+ const date=data.snapshotDate||data.manifest&&data.manifest.snapshotDate||"غير محدد";
+ status.textContent=(data.regionName?"محافظة "+data.regionName+" · ":"")+Number(items.length).toLocaleString("ar")+" نتيجة من الفهرس المحلي · آخر تحديث: "+date+(liveSharedMatches.length?" · إعلانات معتمدة: "+liveSharedMatches.length:"")+(liveSharedLoadError?" · تعذر تحديث الإعلانات المشتركة":"");
+ if(!items.length){
+  const msg=data.classifiedOnly
+   ?"هذا القسم يعتمد على إعلانات المستخدمين والتجار التي تعتمدها الإدارة. لم توجد إعلانات معتمدة تطابق البحث حالياً."
+   :"لم نجد سجلات مطابقة في فهرس OpenStreetMap الحالي. هذا لا يعني أن المكان غير موجود. يمكنك إرسال بياناته إلى دليلنا لمراجعتها.";
+  box.innerHTML=shared+'<div class="live-directory-empty">'+esc(msg)+'</div>'+(liveSharedLoadError?'<div class="live-directory-empty">تعذر تحديث الإعلانات المشتركة الآن. سجل الأماكن المحلي ما زال يعمل.</div>':"");
+  return;
  }
- let geoData=null,geoError=null;
- try{
-  geoData=await liveFetchJson("/api/geoapify/search",params,signal,0);
-  if(Array.isArray(geoData.items)&&geoData.items.length)return geoData;
- }catch(error){geoError=error;}
- try{
-  const osmData=await liveFetchJson("/api/places/search",params,signal,1);
-  osmData.fallbackFromGeoapify=true;
-  if(geoError)osmData.providerNote="تعذر مصدر Geoapify؛ تم الانتقال إلى OpenStreetMap.";
-  return osmData;
- }catch(osmError){
-  if(geoData&&Array.isArray(geoData.items))return {...geoData,fallbackError:osmError.message};
-  const message=geoError&&geoError.message
-   ?geoError.message+" ثم تعذر مصدر OpenStreetMap: "+osmError.message
-   :osmError.message;
-  throw new Error(message||"تعذر الوصول إلى مصادر البحث المفتوحة.");
- }
+ const visible=items.slice(0,liveDirectoryVisibleCount);
+ let cards=visible.map(regionalCatalogCardHTML).join("");
+ if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">عرض المزيد ('+(items.length-visible.length)+')</button>';
+ box.innerHTML=shared+cards;
+}
+function liveDirectoryLocationPrompt(manifest){
+ const box=$("#liveDirectoryItems");if(!box)return;
+ const rows=manifest&&manifest.governorates||[];
+ const total=rows.reduce((sum,row)=>sum+Number(row.count||0),0);
+ $("#liveDirectoryStatus").textContent="فهرس اليمن المحلي: "+Number(total).toLocaleString("ar")+" مكاناً مسجلاً موزعة على "+rows.length+" محافظة. اختر المحافظة لعرض القائمة.";
+ const buttons=rows.map(row=>'<button type="button" class="region-governorate-pill" data-region-gov="'+esc(row.name)+'">'+esc(row.name)+' <small>'+Number(row.count||0).toLocaleString("ar")+'</small></button>').join("");
+ box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">اختر المحافظة لعرض المحلات والخدمات والمدارس والمرافق المسجلة فيها. السجل لا يحصر كل نشاط موجود في الواقع.</div><div class="region-governorate-pills">'+buttons+'</div>';
 }
 async function loadLiveMarketplaceMatches(query,category,productType,signal,force){
- const region=regionCurrentContext(),gov=region.gov||"",district=region.district||"";
- const key=[query,category,productType,gov,district].join("|");
+ const region=regionCurrentContext(),gov=region.gov||"",district=region.district||"",key=[query,category,productType,gov,district].join("|");
  const cached=liveSharedCache.get(key);
- if(!force&&cached&&Date.now()-cached.at<120000){liveSharedMatches=cached.items;return liveSharedMatches;}
- liveSharedMatches=[];
+ if(!force&&cached&&Date.now()-cached.at<120000){liveSharedMatches=cached.items;liveSharedLoadError="";return liveSharedMatches;}
+ liveSharedMatches=[];liveSharedLoadError="";
  const params=new URLSearchParams({limit:"12",includeImages:"1"});
- if(productType){
-  params.set("category","marketplace");
-  params.set("productType",productType);
- }else if(category&&category!=="all")params.set("category",category);
+ if(productType){params.set("category","marketplace");params.set("productType",productType);}
+ else if(category&&category!=="all")params.set("category",category);
  if(query)params.set("q",query);
  if(gov)params.set("governorate",gov);
  if(district)params.set("district",district);
@@ -4125,86 +4161,40 @@ async function loadLiveMarketplaceMatches(query,category,productType,signal,forc
   const result=await liveFetchJson("/api/marketplace/listings",params,signal,1);
   if(Array.isArray(result.items))liveSharedMatches=result.items;
   liveSharedCache.set(key,{items:liveSharedMatches,at:Date.now()});
- }catch(_){liveSharedMatches=[];}
+ }catch(error){liveSharedLoadError=String(error&&error.message||"تعذر الاتصال بخدمة الإعلانات.");liveSharedMatches=[];}
  return liveSharedMatches;
 }
-function liveDirectoryLocationPrompt(){
- const box=$("#liveDirectoryItems");if(!box)return;
- $("#liveDirectoryStatus").textContent=liveSharedMatches.length?"الإعلانات المنشورة المعتمدة ظاهرة من جميع المحافظات. اختر محافظة لتصفح المحلات المسجلة على الخريطة.":"اختر محافظة أو مديرية لتصفح المحلات والخدمات المسجلة على الخريطة.";
- box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">اختر المنطقة من القائمة بالأعلى لعرض المحلات والخدمات المسجلة فيها. الإعلانات المعتمدة من المستخدمين تظهر هنا من جميع المحافظات.</div><button type="button" class="add" id="liveDirectoryChooseRegion">اختيار المحافظة أو المديرية</button>';
-}
 async function runLiveDirectorySearch(force){
- const box=$("#liveDirectoryItems"),status=$("#liveDirectoryStatus");if(!box||!status)return;
- const context=liveDirectoryContext(),coords=liveDirectoryCoords||(!context&&flt.near&&userPos?userPos:null);
- const query=liveDirectoryLast.query||"",category=liveDirectoryLast.category||"all",productType=liveDirectoryLast.productType||"";
- const key=[context?context.place:"",coords?Number(coords.lat).toFixed(3)+","+Number(coords.lon||coords.lng).toFixed(3):"",category,productType,query].join("|");
+ const box=$("#liveDirectoryItems"),status=$("#liveDirectoryStatus");
+ if(!box||!status)return;
+ const context=regionCurrentContext(),query=liveDirectoryLast.query||"",category=liveDirectoryLast.category||"all",productType=liveDirectoryLast.productType||"";
  liveDirectoryVisibleCount=8;liveDirectoryLastData=null;
- const seq=++liveDirectorySeq;status.textContent="نبحث في الإعلانات المعتمدة ومصادر الخرائط…";
- box.innerHTML='<div class="live-directory-empty">جارٍ تحميل الإعلانات والبحث في Geoapify وOpenStreetMap.</div>';
+ const seq=++liveDirectorySeq;
+ status.textContent="جارٍ تحميل فهرس الأماكن المحلي والإعلانات المعتمدة…";
+ box.innerHTML='<div class="live-directory-empty">جارٍ فتح سجل المحافظة المحفوظ في الموقع.</div>';
  clearTimeout(liveDirectoryTimer);
  liveDirectoryTimer=setTimeout(async()=>{
-  const controller=new AbortController(),requestTimer=setTimeout(()=>controller.abort(),70000);
+  const controller=new AbortController(),requestTimer=setTimeout(()=>controller.abort(),18000);
   try{
    const sharedPromise=loadLiveMarketplaceMatches(query,category,productType,controller.signal,force);
-   if(!context&&!coords){
+   if(!context.gov){
+    const manifest=await loadRegionalCatalogManifest(force);
     await sharedPromise;
     if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
-    liveDirectoryLocationPrompt();return;
+    liveDirectoryLocationPrompt(manifest);return;
    }
-   status.textContent="نبحث في بيانات المحلات والقرطاسيات…";
-   const data=await searchLivePlaces(query,{category,productType},controller.signal);
-   if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
+   const classifiedOnly=!!productType||["jobs","souq","land","marketplace"].includes(category);
+   const loaded=classifiedOnly?null:await loadRegionalCatalog(context.gov,force);
    await sharedPromise;
    if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
-   if(Array.isArray(data.items)&&data.items.length)liveDirectoryCache.set(key,{data:data,at:Date.now()});
-   renderLiveDirectoryResponse(data);
-   if(data.providerNote)status.textContent+=" · "+data.providerNote;
+   const rows=loaded?regionalCatalogMatches(loaded.data.items,context,query,category,productType):[];
+   renderLiveDirectoryResponse({items:rows,manifest:loaded&&loaded.manifest,snapshotDate:loaded&&loaded.data.snapshotDate,regionName:context.gov,context,classifiedOnly});
   }catch(error){
    if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
-   const timedOut=error&&error.name==="AbortError",rawMessage=String(error&&error.message||"");
-   const networkFailure=/failed to fetch|networkerror|load failed|fetch failed/i.test(rawMessage);
-   status.textContent=timedOut?"تأخر البحث؛ جربنا مصادر بديلة ولم يكتمل الرد.":(networkFailure?"تعذر الوصول إلى خدمة البحث بعد محاولات الاتصال.":"تعذر إكمال البحث: "+rawMessage);
-   const hint=networkFailure
-    ?"قد تكون خدمة الاستضافة نائمة أو الاتصال محجوباً مؤقتاً. أعد المحاولة، أو افتح البحث الخارجي."
-    :"تعذر الوصول إلى بيانات الأماكن الآن. هذا لا يدل على عدم وجود محلات في المنطقة.";
-   const term=query||CN[category]||"محلات وخدمات",place=context?context.place:"اليمن";
-   box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">'+esc(hint)+'</div><div class="live-directory-actions"><a href="https://www.openstreetmap.org/search?query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في OpenStreetMap</a><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في خرائط Google</a></div><button type="button" class="live-directory-refresh" id="liveDirectoryRetry">إعادة المحاولة</button>';
+   status.textContent="تعذر تحميل ملف البيانات المحلي: "+String(error&&error.message||"خطأ غير معروف");
+   box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">لم يصل ملف المحافظة إلى التطبيق. هذا خلل في تحميل البيانات وليس دليلاً على عدم وجود محلات أو خدمات.</div><button type="button" class="live-directory-refresh" id="liveDirectoryRetry">إعادة تحميل السجل</button>';
   }finally{clearTimeout(requestTimer);}
- },200);
-}
-function renderLiveDirectoryResponse(data){
- const status=$("#liveDirectoryStatus"),box=$("#liveDirectoryItems"),attribution=$("#liveDirectoryAttribution");if(!status||!box)return;
- const items=Array.isArray(data.items)?data.items:[];
- liveDirectoryLastData=data;
- const shared=liveDirectorySharedMatchesHTML();
- if(data.source==="Geoapify"){
-  status.textContent=(data.fallbackFromGeoapify?"لم يعط Geoapify نتائج؛ عثر OpenStreetMap على ":"المصدر: Geoapify وOpenStreetMap · عُثر على ")+Number(items.length||0).toLocaleString("ar")+" نتيجة للمحلات"+(liveSharedMatches.length?" · وإعلانات معتمدة: "+liveSharedMatches.length:"");
-  box.classList.add("live-google-results");
-  if(attribution)attribution.innerHTML='<a href="https://www.geoapify.com/" target="_blank" rel="noopener noreferrer">Powered by Geoapify</a> · © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>';
-  if(!items.length){
-   const ctx=liveDirectoryContext(),term=liveDirectoryLast.query||(CN[liveDirectoryLast.category]||"محلات وخدمات"),place=ctx?ctx.place:"اليمن";
-   box.innerHTML=shared+'<div class="live-directory-empty">لم تسجل مصادر الخرائط محلات تطابق هذه الفئة في النطاق. هذا لا يعني عدم وجودها في الواقع. جرّب توسيع النطاق أو افتح البحث الخارجي.</div><div class="live-directory-actions"><a href="https://www.openstreetmap.org/search?query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في OpenStreetMap</a><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في خرائط Google</a></div>';
-   return;
-  }
-  const visible=items.slice(0,liveDirectoryVisibleCount);
-  let cards=visible.map(geoapifyDirectoryCardHTML).join("");
-  if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">عرض المزيد ('+(items.length-visible.length)+')</button>';
-  box.innerHTML=shared+cards;
-  return;
- }
- status.textContent=(data.scopeFallback?"لم نجد حدود المديرية؛ هذه نتائج على مستوى المحافظة. ":"")+
-  (data.fallbackFromGeoapify?"المصدر البديل: OpenStreetMap بعد عدم وجود نتائج في Geoapify. ":"المصدر: OpenStreetMap · ")+
-  "عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة للمحلات"+(liveSharedMatches.length?" · وإعلانات معتمدة: "+liveSharedMatches.length:"")+(data.cached?" · من التخزين المؤقت":"");
- box.classList.remove("live-google-results");
- if(attribution)attribution.innerHTML='المصدر: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · الصور من Wikimedia Commons.';
- if(!items.length){
-  const ctx=liveDirectoryContext(),term=liveDirectoryLast.query||(CN[liveDirectoryLast.category]||"محلات وخدمات"),place=ctx?ctx.place:"اليمن";
-  box.innerHTML=shared+'<div class="live-directory-empty">لم يعثر مصدر البيانات على أماكن مسجلة في النطاق المحدد. هذا لا يؤكد عدم وجود محلات أو خدمات على أرض الواقع.</div><div class="live-directory-actions"><a href="https://www.openstreetmap.org/search?query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في OpenStreetMap</a><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في خرائط Google</a></div>';
-  return;
- }
- const visible=items.slice(0,liveDirectoryVisibleCount);let cards=visible.map(liveDirectoryCardHTML).join("");
- if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">عرض المزيد ('+(items.length-visible.length)+')</button>';
- box.innerHTML=shared+cards;if(data.note)status.textContent+=" · "+data.note;
+ },120);
 }
 async function loadLiveCommonsPhotos(button){
  const panel=button.parentElement.querySelector(".live-directory-commons-panel");if(!panel)return;
@@ -4250,14 +4240,10 @@ document.addEventListener("change",async event=>{
  finally{input.value="";}
 });
 function emptySearchFallbackHTML(term){
-  const raw=String(term||"").trim()||"محلات وخدمات";
-  const info=directoryMapSearchInfo(raw);
-  const place=info?info.place:(scope?regionScopeLabel(regionCurrentContext()):"اليمن");
-  const mapQuery=info?info.mapQuery:(raw+" في "+place);
-  const url=regionMapSearch(mapQuery);
-  const label=info?info.label:raw;
-  return '<div class="empty empty-search-help"><b>لا توجد إدراجات أضافها مستخدمون مطابقة حالياً.</b><p>سنبحث في مصدر الأماكن المفتوح بحسب النطاق المحدد، ويمكنك أيضاً فتح خرائط Google.</p><a class="ai-map-search-link" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">ابحث عن '+esc(label)+' في خرائط Google</a></div>';
+ const raw=String(term||"").trim()||"محلات وخدمات";
+ return '<div class="empty empty-search-help"><b>لا توجد إدراجات مطابقة حالياً.</b><p>اختر المحافظة أو أضف المحل أو الخدمة إلى دليلنا ليتم مراجعتها قبل ظهورها للجميع.</p></div>';
 }
+
 function hubaishSubdistrictAnswer(){
   const ibbDistricts=YEMEN_DISTRICTS["إب"]||[];
   return "التقسيم الإداري لمحافظة إب: تضم المحافظة 20 مديرية وفق مرجع المركز الوطني للمعلومات:\n"
@@ -4388,50 +4374,38 @@ async function askAssistant(q){
  const serviceIntent=directoryMapSearchInfo(q);
  if(serviceIntent){
   const localHits=localDirectorySearch(q,12).filter(item=>item.cat===serviceIntent.category&&(!scope||scopeMatchesItem(item)));
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),70000);
-  let places=[],approved=[],placeError="";
+  const context=regionCurrentContext(),query=String(q||"");
+  let places=[],approved=[];
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);
   try{
-   const results=await Promise.allSettled([
-    searchLivePlaces(q,serviceIntent,controller.signal),
-    loadLiveMarketplaceMatches(q,serviceIntent.category,serviceIntent.productType,controller.signal,true)
-   ]);
-   if(results[0].status==="fulfilled")places=Array.isArray(results[0].value.items)?results[0].value.items:[];
-   else placeError=String(results[0].reason&&results[0].reason.message||"تعذر الوصول إلى مصادر الخرائط.");
-   if(results[1].status==="fulfilled")approved=Array.isArray(results[1].value)?results[1].value.slice():liveSharedMatches.slice();
+   const tasks=[loadLiveMarketplaceMatches(query,serviceIntent.category,serviceIntent.productType,controller.signal,true)];
+   if(context.gov&&!serviceIntent.productType&&!["jobs","souq","land"].includes(serviceIntent.category)){
+    tasks.push(loadRegionalCatalog(context.gov,false).then(result=>regionalCatalogMatches(result.data.items,context,query,serviceIntent.category,"")));
+   }else tasks.push(Promise.resolve([]));
+   const results=await Promise.allSettled(tasks);
+   if(results[0].status==="fulfilled")approved=Array.isArray(results[0].value)?results[0].value.slice():liveSharedMatches.slice();
+   if(results[1].status==="fulfilled")places=Array.isArray(results[1].value)?results[1].value:[];
   }finally{clearTimeout(timer);}
   const parts=[];
-  if(localHits.length){
-   parts.push("إدراجات محفوظة داخل هذا الجهاز:\n"+localHits.slice(0,5).map((item,n)=>(n+1)+". "+item.name+" — "+[item.area,item.dist,item.gov].filter(Boolean).join(" / ")+(item.phone?" — "+item.phone:"")+(item.verifiedAt?" — موثّق":" — غير موثّق")).join("\n"));
-  }
-  if(places.length){
-   const mapSource=places[0]&&places[0].source==="OpenStreetMap"?"OpenStreetMap":"Geoapify";
-   parts.push("محلات ظهرت في مصدر الخرائط ("+mapSource+")، وليست إعلانات معتمدة من دليلنا:\n"+
-    places.slice(0,8).map((item,n)=>(n+1)+". "+(item.name||"اسم غير متوفر")+" — "+(item.address||"العنوان غير متوفر")+(item.phone?" — هاتف: "+item.phone:" — الهاتف غير متوفر في المصدر")).join("\n"));
-  }
-  if(approved.length){
-   parts.push("إعلانات أضافها المستخدمون واعتمدتها إدارة دليلنا:\n"+
-    approved.slice(0,8).map((item,n)=>(n+1)+". "+item.title+" — "+([item.area,item.district,item.governorate].filter(Boolean).join(" / ")||"الموقع غير مكتمل")+(item.price?" — "+item.price+" "+(item.currency||""):"")+(item.phone?" — هاتف: "+item.phone:"")).join("\n"));
-  }
-  if(!places.length&&!approved.length&&!localHits.length){
-   parts.push("لم نعثر على سجلات تطابق بحثك في بيانات دليلنا أو في مصادر الخرائط المفتوحة لهذه المنطقة. هذا لا يثبت عدم وجود محلات على أرض الواقع. "+(placeError?"تعذر الاتصال بمصدر البحث حالياً. ":"")+"جرّب توسيع النطاق أو افتح البحث الخارجي.");
-  }else if(placeError&&!places.length){
-   parts.push("تعذر تحديث نتائج الخرائط الآن، لكن هذه النتائج من مصادر أخرى متاحة. أعد المحاولة لاحقاً لمراجعة الخريطة.");
-  }
-  return {answer:parts.join("\n\n"),mode:places.length||approved.length?"live-directory":localHits.length?"directory":"maps",mapUrl:serviceIntent.url,mapLabel:serviceIntent.label};
+  if(localHits.length)parts.push("إدراجات محفوظة على هذا الجهاز:\\n"+localHits.slice(0,5).map((item,n)=>(n+1)+". "+item.name+" — "+[item.area,item.dist,item.gov].filter(Boolean).join(" / ")+(item.phone?" — "+item.phone:"")+(item.verifiedAt?" — موثّق":" — غير موثّق")).join("\\n"));
+  if(places.length)parts.push("أماكن مسجلة في فهرس OpenStreetMap المحلي، وليست إعلانات تجارية اعتمدتها إدارة دليلنا:\\n"+places.slice(0,8).map((item,n)=>(n+1)+". "+item.name+" — "+[item.district,item.governorate].filter(Boolean).join(" / ")+(item.phone?" — هاتف: "+item.phone:"")).join("\\n"));
+  if(approved.length)parts.push("إعلانات أضافها المستخدمون واعتمدتها إدارة دليلنا:\\n"+approved.slice(0,8).map((item,n)=>(n+1)+". "+item.title+" — "+([item.area,item.district,item.governorate].filter(Boolean).join(" / ")||"الموقع غير مكتمل")+(item.price?" — "+item.price+" "+(item.currency||""):"")+(item.phone?" — هاتف: "+item.phone:"")).join("\\n"));
+  if(!places.length&&!approved.length&&!localHits.length)parts.push(serviceIntent.productSearch||["jobs","souq","land"].includes(serviceIntent.category)
+   ?"لا توجد إعلانات معتمدة تطابق هذا البحث حالياً. أضف إعلانك ليصل إلى مراجعة المشرف."
+   :"لم نجد سجلات مطابقة في الفهرس المحلي الحالي. هذا لا يثبت عدم وجود محلات أو خدمات في المنطقة. يمكنك إرسال بياناته إلى دليلنا لمراجعتها.");
+  return {answer:parts.join("\\n\\n"),mode:places.length||approved.length?"live-directory":localHits.length?"directory":"reference"};
  }
  if(asksHubaishSubdistricts(q))return {answer:hubaishSubdistrictAnswer(),mode:"reference"};
  if(S.aiCloudConsent===true&&navigator.onLine){
   try{
    const response=await fetch(assistantApiUrl(),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:String(q).slice(0,1200),context:buildAssistantContext(q)})});
-   if(response.ok){
-    const data=await response.json();
-    if(data&&typeof data.answer==="string"&&data.answer.trim())return {answer:data.answer.trim(),mode:data.mode==="gemini"?"gemini":"reference"};
-   }
-  }catch(err){/* Keep local and live-directory search available if cloud AI is unavailable. */}
+   if(response.ok){const data=await response.json();if(data&&typeof data.answer==="string"&&data.answer.trim())return {answer:data.answer.trim(),mode:data.mode==="gemini"?"gemini":"reference"};}
+  }catch(err){/* Local catalogue and reviewed listings remain available without cloud AI. */}
   return {answer:answerAI(q),mode:"local-fallback"};
  }
  return {answer:answerAI(q),mode:navigator.onLine?"local":"offline"};
 }
+
 function appendChatMessage(type,text){
   const el=document.createElement("div");el.className=type==="user"?"m u":"m a";el.textContent=String(text||"");$("#msgs").appendChild(el);$("#msgs").scrollTop=$("#msgs").scrollHeight;
 }
@@ -4447,17 +4421,9 @@ $("#botf").addEventListener("submit",async e=>{
     source.className="where";
     source.style.display="block";
     source.style.marginTop="7px";
-    source.textContent=result.mode==="gemini"?"المصدر: Gemini":result.mode==="reference"?"المصدر: مرجع دليلنا الإداري":result.mode==="local-fallback"?"المصدر: المساعد المحلي — تعذر اتصال Gemini":result.mode==="offline"?"المصدر: المساعد المحلي دون إنترنت":result.mode==="directory"?"المصدر: إدراجات هذا الجهاز":result.mode==="live-directory"?"المصدر: بيانات خرائط مفتوحة وإعلانات معتمدة من دليلنا":result.mode==="maps"?"المصدر: بحث خارجي عبر خرائط Google":"المصدر: المساعد المحلي";
+    source.textContent=result.mode==="gemini"?"المصدر: Gemini":result.mode==="reference"?"المصدر: مرجع دليلنا الإداري":result.mode==="local-fallback"?"المصدر: المساعد المحلي — تعذر اتصال Gemini":result.mode==="offline"?"المصدر: المساعد المحلي دون إنترنت":result.mode==="directory"?"المصدر: إدراجات هذا الجهاز":result.mode==="live-directory"?"المصدر: فهرس OpenStreetMap المحلي وإعلانات اعتمدتها إدارة دليلنا":"المصدر: المساعد المحلي";
     pending.appendChild(source);
-    if(result.mapUrl){
-      const mapLink=document.createElement("a");
-      mapLink.className="ai-map-search-link";
-      mapLink.href=result.mapUrl;
-      mapLink.target="_blank";
-      mapLink.rel="noopener noreferrer";
-      mapLink.textContent="ابحث عن "+String(result.mapLabel||"الخدمة")+" في خرائط Google";
-      pending.appendChild(mapLink);
-    }
+
   }catch(err){
     pending.textContent=answerAI(q);
     const source=document.createElement("small");source.className="where";source.textContent="المصدر: المساعد المحلي";pending.appendChild(source);

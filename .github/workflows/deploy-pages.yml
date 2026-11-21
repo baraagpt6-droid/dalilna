@@ -13,6 +13,7 @@ on:
       - 'sw.js'
       - 'regions-yemen.js'
       - 'regions-profiles.js'
+      - 'regional-catalog/**'
       - 'icons/**'
       - '.github/workflows/deploy-pages.yml'
 
@@ -40,9 +41,10 @@ jobs:
           enablement: true
       - name: Prepare website files
         run: |
-          mkdir -p _site/icons
+          mkdir -p _site/icons _site/regional-catalog
           cp index.html marketplace-client.js manifest.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html _site/
           cp icons/* _site/icons/
+          cp regional-catalog/*.json _site/regional-catalog/
           touch _site/.nojekyll
           test -s _site/index.html
           test -s _site/marketplace-client.js

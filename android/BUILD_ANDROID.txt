@@ -2,11 +2,11 @@ Android wrapper
 ===============
 
 Application ID: ye.dalilna.app.debug (debug build)
-Version: 1.8.2 (versionCode 167)
+Version: 1.9.0 (versionCode 180)
 Minimum Android: 7.0 / API 24
 Target SDK: 35
 
-The Android project embeds the PWA files under app/src/main/assets and opens them using AndroidX WebViewAssetLoader at the secure appassets origin. LocalStorage persists in the WebView profile. The shared marketplace client calls the Dalilna Render API over HTTPS.
+The Android project embeds the PWA files under app/src/main/assets and opens them using AndroidX WebViewAssetLoader at the secure appassets origin. LocalStorage persists in the WebView profile. The shared marketplace client calls the Dalilna Render API over HTTPS. The regional place catalogue is bundled under assets/regional-catalog and loaded per governorate; individual map links are optional.
 
 Build command (requires JDK 17, Gradle 8.9, Android SDK 35):
   gradle --no-daemon :android:app:assembleDebug

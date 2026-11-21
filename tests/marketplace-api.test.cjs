@@ -2,7 +2,7 @@
 const test=require("node:test"),assert=require("node:assert/strict");
 const fs=require("node:fs");
 const {validate,PRODUCT_TYPES,CATEGORIES,GOVERNORATES}=require("../marketplace-api");
-test("taxonomy covers Yemen service categories and product types",()=>{assert.equal(GOVERNORATES.size,22);for(const x of ["phone","phone_accessories","watch","car","motorcycle","land","property","honey","coffee","stationery","perfume","cosmetics","solar_equipment","tools","baby_products","construction_equipment"])assert.ok(PRODUCT_TYPES.has(x));for(const x of ["jobs","souq","grocery","health","pharmacy"])assert.ok(CATEGORIES.has(x));});
+test("taxonomy covers Yemen service categories and product types",()=>{assert.equal(GOVERNORATES.size,22);for(const x of ["phone","phone_accessories","watch","car","motorcycle","land","property","apartment","house","honey","coffee","stationery","perfume","cosmetics","solar_equipment","tools","baby_products","construction_equipment"])assert.ok(PRODUCT_TYPES.has(x));for(const x of ["jobs","souq","grocery","health","pharmacy"])assert.ok(CATEGORIES.has(x));});
 test("normalizes a used phone listing",()=>{const x=validate({title:"هاتف",category:"souq",productType:"phone",condition:"used",governorate:"إب",district:"حبيش",area:"ربع ظلمة",clientRef:"local-1"});assert.equal(x.productType,"phone");assert.equal(x.condition,"used");assert.equal(x.governorate,"إب");assert.equal(x.clientRef,"local-1");});
 test("accepts land and property as classified marketplace listings",()=>{
  const land=validate({title:"أرض للبيع",category:"land",productType:"land",listingType:"sale",governorate:"إب",district:"حبيش"});
@@ -35,4 +35,12 @@ test("shared listings SQL migration adds backward-compatible shop detail columns
  assert.match(source,/item\.openingHours,item\.website/);
  assert.match(source,/openingHours:row\.opening_hours/);
  assert.match(source,/website:row\.website/);
+});
+
+
+test("supports apartment and house rentals in the land and property category",()=>{
+ const apartment=validate({title:"شقة للإيجار",category:"land",productType:"apartment",listingType:"rent",governorate:"إب"});
+ const house=validate({title:"منزل للبيع",category:"land",productType:"house",listingType:"sale",governorate:"تعز"});
+ assert.equal(apartment.productType,"apartment");assert.equal(apartment.listingType,"rent");
+ assert.equal(house.productType,"house");assert.equal(house.listingType,"sale");
 });

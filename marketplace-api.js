@@ -2,8 +2,8 @@
 const crypto=require("node:crypto");
 const {URL}=require("node:url");
 const CATEGORIES=new Set(["grocery","food","cafe","edu","health","pharmacy","gov","money","jobs","land","build","parts","craft","transport","telecom","utility","farm","mosque","gold","wedding","hotel","market","solar","elec","clothes","home","books","beauty","delivery","salon","laundry","souq","other","marketplace"]);
-const PRODUCT_TYPES=new Set(["phone","phone_accessories","watch","computer","computer_accessories","tablet","camera","car","motorcycle","vehicle_parts","land","property","electronics","appliance","furniture","clothing","shoes","jewelry","honey","coffee","spices","food","livestock","agriculture","building_materials","books","stationery","perfume","cosmetics","solar_equipment","tools","household_items","kitchenware","baby_products","games","sports_equipment","animal_feed","seeds","construction_equipment","other"]);
-const LISTING_TYPES=new Set(["sale","wanted","barter","free"]);
+const PRODUCT_TYPES=new Set(["phone","phone_accessories","watch","computer","computer_accessories","tablet","camera","car","motorcycle","vehicle_parts","land","property","apartment","house","electronics","appliance","furniture","clothing","shoes","jewelry","honey","coffee","spices","food","livestock","agriculture","building_materials","books","stationery","perfume","cosmetics","solar_equipment","tools","household_items","kitchenware","baby_products","games","sports_equipment","animal_feed","seeds","construction_equipment","other"]);
+const LISTING_TYPES=new Set(["sale","wanted","barter","free","rent"]);
 const CONDITIONS=new Set(["new","used","unknown"]);
 const CURRENCIES=new Set(["YER","SAR","USD","OMR","AED","other"]);
 const GOVERNORATES=new Set(["أمانة العاصمة","صنعاء","عدن","تعز","إب","الحديدة","ذمار","البيضاء","لحج","أبين","الضالع","مأرب","الجوف","صعدة","حجة","عمران","المحويت","ريمة","حضرموت","شبوة","المهرة","سقطرى"]);

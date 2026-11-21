@@ -28,8 +28,9 @@ test('2013 heritage inventory counts include all governorates',()=>{
 test('population, heritage, geography, administrative and district methodology sources exist',()=>{
  for(const key of ['administrative','population','populationBook','heritageInventory','unescoYemen','unescoTentative','geography','districtPopulation'])assert.match(sources[key],/^https:\/\//);
 });
-test('district estimates are not shown as exact and maps include facility searches',()=>{
- for(const token of ['regionProfileDetails','غير متاح','المساجد والجوامع','المدارس والمعاهد','المستشفيات والمراكز الصحية','WorldPop 2024','google.com/maps'])assert.ok(html.includes(token),token);
+test('regional profiles link to locally indexed service categories instead of Google Maps searches',()=>{
+ for(const token of ['regionProfileDetails','غير متاح','data-region-category=','المساجد والجوامع','المدارس والمعاهد','المستشفيات والمراكز الصحية','WorldPop 2024','تصفح المحلات والخدمات في هذه المنطقة'])assert.ok(html.includes(token),token);
+ assert.doesNotMatch(html,/google\\.com\\/maps\\/search/);
 });
 test('photos and likes are local and image data is sanitized',()=>{
  for(const token of ['regionPosts:[]','regionLikes:{}','safeImageData(p.img)','regionImageInput','regionLikeButton','على هذا الجهاز'])assert.ok(html.includes(token),token);

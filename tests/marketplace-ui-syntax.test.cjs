@@ -30,7 +30,7 @@ test("PWA and Android WebView marketplace assets stay byte-for-byte aligned",()=
  }
 });
 test("marketplace form exposes the requested product subtypes",()=>{
- for(const item of ["phone","phone_accessories","watch","computer_accessories","car","motorcycle","land","property","honey","coffee","livestock","stationery","perfume","cosmetics","solar_equipment","tools","baby_products","construction_equipment"])assert.ok(html.includes('value="'+item+'"'),"missing product subtype "+item);
+ for(const item of ["phone","phone_accessories","watch","computer_accessories","car","motorcycle","land","property","apartment","house","honey","coffee","livestock","stationery","perfume","cosmetics","solar_equipment","tools","baby_products","construction_equipment"])assert.ok(html.includes('value="'+item+'"'),"missing product subtype "+item);
 });
 
 test("shared directory form and legacy migration preserve hours, websites and map coordinates",()=>{
@@ -50,4 +50,13 @@ test("shared directory form and legacy migration preserve hours, websites and ma
  assert.match(client,/latitude: item\.latitude \?\? item\.lat/);
  assert.match(client,/item\.openingHours/);
  assert.match(client,/item\.website/);
+});
+
+test("app uses the static regional catalogue and updated version",()=>{
+ assert.match(html,/content="1\.9\.0"/);
+ assert.match(html,/LIVE_CATALOG_BASE/);
+ assert.match(html,/loadRegionalCatalogManifest/);
+ assert.doesNotMatch(html,/searchLivePlaces\\(/);
+ assert.doesNotMatch(html,/\\/api\\/places\\/search/);
+ assert.doesNotMatch(html,/\\/api\\/geoapify\\/search/);
 });

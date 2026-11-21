@@ -1,0 +1,100 @@
+name: Refresh Yemen regional places catalogue
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "20 2 * * 1"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/build_regional_catalog.py"
+      - "scripts/test_regional_catalog.py"
+      - "regions-yemen.js"
+      - ".github/workflows/refresh-regional-catalog.yml"
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: dalilna-regional-catalog
+  cancel-in-progress: false
+
+jobs:
+  build-catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - name: Install Osmium
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y osmium-tool
+          osmium --version
+      - name: Download current open datasets
+        run: |
+          curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen-latest.osm.pbf -o yemen-latest.osm.pbf
+          curl -fL --retry 4 --retry-delay 3 https://raw.githubusercontent.com/open-admin-data/yemen-administrative-divisions/master/data/all-governorate.json -o all-governorate.json
+          curl -fL --retry 4 --retry-delay 3 https://raw.githubusercontent.com/open-admin-data/yemen-administrative-divisions/master/data/all-district.json -o all-district.json
+          test -s yemen-latest.osm.pbf
+          test -s all-governorate.json
+          test -s all-district.json
+      - name: Extract named public places
+        run: |
+          osmium tags-filter yemen-latest.osm.pbf \
+            nwr/shop nwr/amenity nwr/healthcare nwr/tourism nwr/office \
+            nwr/craft nwr/leisure nwr/public_transport nwr/emergency \
+            nwr/building=mosque nwr/railway=station nwr/landuse=farmyard \
+            -o places.osm.pbf
+          osmium export places.osm.pbf -o places.geojson
+          test -s places.geojson
+      - name: Extract available administrative boundaries
+        shell: bash
+        run: |
+          if osmium tags-filter yemen-latest.osm.pbf a/boundary=administrative -o boundaries.osm.pbf \
+            && osmium export boundaries.osm.pbf -o boundaries.geojson; then
+            echo "Administrative polygons extracted."
+          else
+            echo '{"type":"FeatureCollection","features":[]}' > boundaries.geojson
+            echo "No administrative polygons; nearest-centroid assignments will be marked approximate."
+          fi
+      - name: Test and build the regional catalogue
+        run: |
+          python3 scripts/test_regional_catalog.py
+          python3 scripts/build_regional_catalog.py \
+            --places places.geojson \
+            --boundaries boundaries.geojson \
+            --governorates all-governorate.json \
+            --districts all-district.json \
+            --regions regions-yemen.js \
+            --output regional-catalog
+          python3 - <<'PY'
+          import json
+          with open("regional-catalog/manifest.json", encoding="utf-8") as f:
+              data = json.load(f)
+          assert data["totalCount"] > 0, "Refusing to publish an empty catalogue."
+          assert len(data["governorates"]) == 22, "Expected all 22 governorates."
+          assert data["license"] == "ODbL-1.0"
+          print("Catalogue records:", data["totalCount"])
+          print("Governorates with places:", sum(1 for item in data["governorates"] if item["count"]))
+          PY
+      - name: Publish catalogue and trigger web and Android builds
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ -n "$(git status --porcelain -- regional-catalog)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add regional-catalog
+            git commit -m "data: refresh Yemen regional places catalogue"
+            git push origin main
+            gh workflow run deploy-pages.yml --ref main
+            gh workflow run android-apk.yml --ref main
+            gh workflow run places-proxy-verification.yml --ref main
+          else
+            echo "The generated catalogue has no changes."
+          fi
