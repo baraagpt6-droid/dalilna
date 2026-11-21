@@ -5,7 +5,7 @@ const { URL } = require("node:url");
 const { handleMarketplaceRequest } = require("./marketplace-api");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.8.1";
+const VERSION = "1.8.2";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -310,7 +310,7 @@ async function geoapifyRequest(url, timeoutMs = 10000) {
   try {
     const response = await fetch(url, {
       signal: controller.signal,
-      headers: { "Accept": "application/json", "User-Agent": "DalilnaDirectory/1.8.1 (+https://dalilna-yemen.onrender.com)" }
+      headers: { "Accept": "application/json", "User-Agent": "DalilnaDirectory/1.8.2 (+https://dalilna-yemen.onrender.com)" }
     });
     if (!response.ok) {
       const error = new Error(response.status === 429
@@ -592,7 +592,7 @@ async function geocodePhotonFallback(candidates,key){
   url.search=new URLSearchParams({q:candidate,lang:"ar",limit:"10"}).toString();
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
   try{
-   const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/geo+json","User-Agent":"DalilnaDirectory/1.8.1 (+https://dalilna-live.onrender.com)"}});
+   const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/geo+json","User-Agent":"DalilnaDirectory/1.8.2 (+https://dalilna-live.onrender.com)"}});
    if(!response.ok){
     console.warn(JSON.stringify({event:"places.geocode.photon.retry",status:response.status}));
     continue;
@@ -636,7 +636,7 @@ async function geocodePlace(place) {
     url.search=new URLSearchParams({q:candidate,format:"jsonv2",addressdetails:"1",limit:"5",countrycodes:"ye","accept-language":"ar,en"}).toString();
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
     try{
-      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaDirectory/1.8.1 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
+      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaDirectory/1.8.2 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
       if(response.status===429){lastError=new Error("مصدر تحديد المنطقة مزدحم. حاول مرة أخرى بعد قليل.");continue;}
       if(!response.ok){lastError=new Error("تعذّر تحديد حدود المنطقة من مصدر الخريطة.");continue;}
       const rows=await response.json();
@@ -682,7 +682,7 @@ async function fetchOverpass(bbox,category,label){
         headers:{
           "Content-Type":"application/x-www-form-urlencoded; charset=UTF-8",
           "Accept":"application/json",
-          "User-Agent":"DalilnaDirectory/1.8.1 (+https://dalilna-live.onrender.com)"
+          "User-Agent":"DalilnaDirectory/1.8.2 (+https://dalilna-live.onrender.com)"
         },
         body:new URLSearchParams({data:query})
       });
@@ -742,7 +742,7 @@ async function searchCommonsPhotos(query, place) {
   try{
     const response=await fetch(url,{signal:controller.signal,headers:{
       "Accept":"application/json",
-      "User-Agent":"DalilnaDirectory/1.8.1 (https://dalilna-live.onrender.com; contact: dalilna project)"
+      "User-Agent":"DalilnaDirectory/1.8.2 (https://dalilna-live.onrender.com; contact: dalilna project)"
     }});
     if(response.status===429){const error=new Error("مكتبة الصور مزدحمة. حاول لاحقاً.");error.statusCode=429;throw error;}
     if(!response.ok)throw new Error("تعذر الاتصال بمكتبة Wikimedia Commons.");

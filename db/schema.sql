@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS marketplace_listings (
  country VARCHAR(80) NOT NULL DEFAULT 'اليمن',
  description VARCHAR(1800) NOT NULL DEFAULT '',
  phone VARCHAR(50) NOT NULL DEFAULT '',
+ opening_hours VARCHAR(120) NOT NULL DEFAULT '',
+ website VARCHAR(320) NOT NULL DEFAULT '',
  seller_name VARCHAR(100) NOT NULL DEFAULT '',
  price VARCHAR(80) NOT NULL DEFAULT '',
  currency VARCHAR(8) NOT NULL DEFAULT 'YER',
@@ -30,6 +32,8 @@ CREATE TABLE IF NOT EXISTS marketplace_listings (
  CHECK(latitude IS NULL OR latitude BETWEEN -90 AND 90),
  CHECK(longitude IS NULL OR longitude BETWEEN -180 AND 180)
 );
+ALTER TABLE marketplace_listings ADD COLUMN IF NOT EXISTS opening_hours VARCHAR(120) NOT NULL DEFAULT '';
+ALTER TABLE marketplace_listings ADD COLUMN IF NOT EXISTS website VARCHAR(320) NOT NULL DEFAULT '';
 CREATE INDEX IF NOT EXISTS marketplace_public_idx ON marketplace_listings(status,category,governorate,created_at DESC);
 CREATE INDEX IF NOT EXISTS marketplace_product_idx ON marketplace_listings(product_type,created_at DESC) WHERE category='souq';
 CREATE INDEX IF NOT EXISTS marketplace_jobs_deadline_idx ON marketplace_listings(deadline) WHERE category='jobs' AND status='approved';
@@ -41,4 +45,4 @@ CREATE TABLE IF NOT EXISTS marketplace_moderation_log (
  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE TABLE IF NOT EXISTS dalilna_schema_migrations(version INTEGER PRIMARY KEY,applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
-INSERT INTO dalilna_schema_migrations(version) VALUES(1) ON CONFLICT(version) DO NOTHING;
+INSERT INTO dalilna_schema_migrations(version) VALUES(1),(2) ON CONFLICT(version) DO NOTHING;

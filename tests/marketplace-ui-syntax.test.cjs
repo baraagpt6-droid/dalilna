@@ -32,3 +32,22 @@ test("PWA and Android WebView marketplace assets stay byte-for-byte aligned",()=
 test("marketplace form exposes the requested product subtypes",()=>{
  for(const item of ["phone","phone_accessories","watch","computer_accessories","car","motorcycle","land","property","honey","coffee","livestock","stationery","perfume","cosmetics","solar_equipment","tools","baby_products","construction_equipment"])assert.ok(html.includes('value="'+item+'"'),"missing product subtype "+item);
 });
+
+test("shared directory form and legacy migration preserve hours, websites and map coordinates",()=>{
+ assert.match(html,/name="hours"/);
+ assert.match(html,/name="website"/);
+ assert.match(html,/id="pickListingLocation"/);
+ assert.match(html,/id="listingLocationStatus"/);
+ assert.match(html,/lat:item\.lat\?\?item\.latitude/);
+ assert.match(html,/lng:item\.lng\?\?item\.longitude/);
+ assert.match(html,/hours:item\.hours\|\|item\.openingHours/);
+ assert.match(html,/website:item\.website/);
+ assert.match(html,/"hours","website","lat","lng"/);
+ assert.match(client,/openingHours: item\.hours \|\| item\.openingHours/);
+ assert.match(client,/website: item\.website/);
+ assert.match(client,/latitude: item\.lat/);
+ assert.match(client,/longitude: item\.lng/);
+ assert.match(client,/latitude: item\.latitude \?\? item\.lat/);
+ assert.match(client,/item\.openingHours/);
+ assert.match(client,/item\.website/);
+});

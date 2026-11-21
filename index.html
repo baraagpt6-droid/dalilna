@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.8.1">
+<meta name="app-version" content="1.8.2">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1065,6 +1065,16 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <div class="two">
       <label>رقم الجوال / واتساب<input name="phone" dir="ltr" inputmode="tel" placeholder="77xxxxxxx"></label>
       <label>أوقات العمل<input name="hours" placeholder="مثلاً: 8 ص - 10 م أو 24 ساعة"></label>
+    </div>
+    <div class="two">
+      <label>الموقع الإلكتروني للمحل<input name="website" type="url" maxlength="320" placeholder="https://example.com" dir="ltr"></label>
+      <div>
+        <label>موقع المحل على الخريطة</label>
+        <button type="button" class="ghost" id="pickListingLocation">تحديد موقعي الحالي</button>
+        <small id="listingLocationStatus" class="where">اختياري. لن نستخدم موقعك إلا بعد الضغط.</small>
+        <input type="hidden" name="lat">
+        <input type="hidden" name="lng">
+      </div>
     </div>
     <div class="two" id="productTypeFields" hidden>
       <label>نوع المعروض<select name="productType">
@@ -2385,7 +2395,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="1.8.1";
+const APP_VERSION="1.8.2";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -3661,6 +3671,20 @@ $("#imgInput").addEventListener("change",async e=>{
 $("#imgClearBtn").addEventListener("click",()=>{
   pendingImgData="";$("#imgInput").value="";$("#imgPreviewBox").hidden=true;
 });
+$("#pickListingLocation").addEventListener("click",()=>{
+  const button=$("#pickListingLocation"),status=$("#listingLocationStatus");
+  if(!navigator.geolocation){toast("تحديد الموقع غير متاح في هذا المتصفح.");return;}
+  button.disabled=true;button.textContent="جارٍ تحديد الموقع…";
+  navigator.geolocation.getCurrentPosition(pos=>{
+    $("#f").lat.value=String(pos.coords.latitude);
+    $("#f").lng.value=String(pos.coords.longitude);
+    status.textContent="تم حفظ الموقع من جهازك. اضغط حفظ لإرساله مع بيانات المحل.";
+    button.disabled=false;button.textContent="تحديث الموقع الحالي";
+  },error=>{
+    status.textContent=error&&error.code===1?"لم تسمح بإذن الموقع. يمكنك الإضافة دون إحداثيات.":"تعذر تحديد الموقع الآن. يمكنك الإضافة دون إحداثيات.";
+    button.disabled=false;button.textContent="إعادة تحديد الموقع";
+  },{enableHighAccuracy:true,timeout:15000,maximumAge:300000});
+});
 
 function openAdd(defaultCat){
   if(S.session.role==="merchant"&&isPhoneBlocked(S.session.merchant?.phone)){toast("حساب التاجر موقوف من الإدارة على هذا الجهاز.");return;}
@@ -3671,6 +3695,8 @@ function openAdd(defaultCat){
   }
   editingId=null;pendingImgData="";
   $("#f").reset();$("#imgPreviewBox").hidden=true;
+  $("#listingLocationStatus").textContent="اختياري. لن نستخدم موقعك إلا بعد الضغط.";
+  $("#pickListingLocation").disabled=false;$("#pickListingLocation").textContent="تحديد موقعي الحالي";
   if(defaultCat)$("#f").cat.value=defaultCat;
   updateFormPickerLabels();
   if(S.session.role==="merchant"&&S.session.merchant){
@@ -3684,9 +3710,11 @@ function openEdit(id){
   if(!canManage(it)){toast("ليست لديك صلاحية تعديل هذا الإدراج.");return;}
   editingId=id;pendingImgData=it.img||"";
   $("#f").reset();
-  for(const k of ["name","cat","gov","dist","area","village","phone","hours","price","country","desc"]){
-    if($("#f")[k])$("#f")[k].value=it[k]||"";
+  for(const k of ["name","cat","gov","dist","area","village","phone","hours","website","lat","lng","price","country","desc"]){
+    if($("#f")[k])$("#f")[k].value=it[k]||(k==="lat"?it.latitude:k==="lng"?it.longitude:"")||"";
   }
+  const locationStatus=$("#listingLocationStatus");
+  if(locationStatus)locationStatus.textContent=($("#f").lat.value&&$("#f").lng.value)?"تم حفظ إحداثيات هذا الإدراج.":"لم يتم تحديد إحداثيات لهذا الإدراج.";
   updateFormPickerLabels();
   if(pendingImgData){$("#imgPreview").src=pendingImgData;$("#imgPreviewBox").hidden=false;}
   else $("#imgPreviewBox").hidden=true;
@@ -3709,11 +3737,15 @@ $("#f").addEventListener("submit",e=>{
   if(!isAdm&&(isPhoneBlocked(fd.phone)||(S.session.merchant?.phone&&isPhoneBlocked(S.session.merchant.phone)))){toast("لا يمكن النشر من رقم موقوف. تواصل مع الإدارة إذا كان الإيقاف بالخطأ.");return;}
   if(editingId){const current=S.items.find(x=>x.id===editingId);if(!current||!canManage(current)){toast("ليست لديك صلاحية تعديل هذا الإدراج.");return;}}
   if(isAdm&&!hasPerm(editingId?"edit":"add")){toast("ليست لديك صلاحية تنفيذ العملية.");return;}
+  const listingLat=String(fd.lat||"").trim(),listingLng=String(fd.lng||"").trim();
+  if((listingLat==="")!==(listingLng==="")){toast("حدد خط العرض وخط الطول معاً.");return;}
   const obj={
     id:editingId||(window.crypto&&crypto.randomUUID?"it_"+crypto.randomUUID():"it_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,8)),
     name,cat:fd.cat||"other",gov:fd.gov||"إب",dist:String(fd.dist||"حبيش").trim(),
     area,village:String(fd.village||"").trim(),phone:String(fd.phone||"").trim(),
-    hours:String(fd.hours||"").trim(),price:String(fd.price||"").trim(),
+    hours:String(fd.hours||"").trim(),website:String(fd.website||"").trim(),
+    lat:listingLat?Number(listingLat):undefined,lng:listingLng?Number(listingLng):undefined,
+    price:String(fd.price||"").trim(),
     country:String(fd.country||"اليمن").trim(),desc:String(fd.desc||"").trim(),
     productType:(fd.cat==="souq"||fd.cat==="land")?String(fd.productType||"other").trim():"other",listingType:String(fd.listingType||"sale").trim(),
     condition:String(fd.condition||"unknown").trim(),deadline:String(fd.deadline||"").trim(),
@@ -3999,6 +4031,8 @@ function liveApprovedListingCardHTML(item){
  const type=typeNames[item.productType]||"";
  const price=item.price?'<p class="shared-listing-price">'+esc(item.price+" "+(item.currency||""))+'</p>':"";
  const description=item.description?'<p class="shared-listing-description">'+esc(item.description)+'</p>':"";
+ const hours=item.openingHours?'<p class="shared-listing-description">أوقات العمل: '+esc(item.openingHours)+'</p>':"";
+ const website=item.website?'<p><a href="'+esc(item.website)+'" target="_blank" rel="noopener noreferrer">الموقع الإلكتروني</a></p>':"";
  const phone=String(item.phone||"").trim(),tel=phone.replace(/[^+\d]/g,""),wa=phone.replace(/\D/g,"");
  const contact=phone?'<div class="shared-listing-actions"><a href="tel:'+esc(tel)+'">اتصال</a>'+(wa?'<a href="https://wa.me/'+esc(wa)+'" target="_blank" rel="noopener noreferrer">واتساب</a>':"")+'</div>':"";
  const lat=Number(item.latitude),lon=Number(item.longitude);
@@ -4008,7 +4042,7 @@ function liveApprovedListingCardHTML(item){
  const mapLink=map?'<div class="shared-listing-actions"><a href="'+esc(map)+'" target="_blank" rel="noopener noreferrer">الموقع على الخريطة</a></div>':"";
  return '<article class="shared-listing-card">'+image+'<div class="shared-listing-card-head"><h3>'+esc(item.title||"إعلان معتمد")+'</h3><span class="tag">اعتمدته الإدارة</span></div>'+
   '<div class="shared-listing-tags"><span>'+esc(category)+'</span>'+(type?'<span>'+esc(type)+'</span>':"")+(item.condition==="new"?'<span>جديد</span>':item.condition==="used"?'<span>مستعمل</span>':"")+'</div>'+
-  (place?'<p class="shared-listing-place">'+esc(place)+'</p>':"")+price+description+contact+mapLink+
+  (place?'<p class="shared-listing-place">'+esc(place)+'</p>':"")+price+description+hours+website+contact+mapLink+
   '<small class="live-directory-local-note">إعلان نشره مستخدم ووافقت عليه إدارة دليلنا.</small></article>';
 }
 function liveDirectorySharedMatchesHTML(){
@@ -4872,7 +4906,9 @@ renderMerchantTools();
 window.DalilnaMarketplaceBridge={
   exportLocalListings:()=>S.items.filter(item=>!item.isPublicSeed&&!item.sharedDatabaseId).map(item=>({
     id:item.id,name:item.name,cat:item.cat,gov:item.gov,dist:item.dist,area:item.area,village:item.village,
-    phone:item.phone,price:item.price,desc:item.desc,country:item.country||"اليمن",img:item.img||"",
+    phone:item.phone,hours:item.hours||item.openingHours||"",website:item.website||"",
+    lat:item.lat??item.latitude??null,lng:item.lng??item.longitude??null,
+    price:item.price,desc:item.desc,country:item.country||"اليمن",img:item.img||"",
     productType:item.productType||"other",listingType:item.listingType||"sale",condition:item.condition||"unknown",deadline:item.deadline||""
   }))
 };

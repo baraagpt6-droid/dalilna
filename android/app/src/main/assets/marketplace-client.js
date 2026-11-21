@@ -120,6 +120,20 @@
       desc.textContent = item.description;
       card.appendChild(desc);
     }
+    if (item.openingHours) {
+      const hours = document.createElement("p");
+      hours.className = "shared-listing-meta";
+      hours.textContent = "أوقات العمل: " + item.openingHours;
+      card.appendChild(hours);
+    }
+    if (item.website) {
+      const website = document.createElement("a");
+      website.href = item.website;
+      website.target = "_blank";
+      website.rel = "noopener noreferrer";
+      website.textContent = "الموقع الإلكتروني";
+      card.appendChild(website);
+    }
     if (item.category === "jobs" && item.deadline) {
       const deadline = document.createElement("p");
       deadline.className = "shared-listing-meta";
@@ -216,6 +230,8 @@
       country: item.country || "اليمن",
       description: item.desc,
       phone: item.phone,
+      openingHours: item.hours || item.openingHours || "",
+      website: item.website || "",
       sellerName: item.ownerName || "",
       price: item.price,
       currency: item.currency || "YER",
@@ -329,8 +345,9 @@
             productType: item.productType || "other", listingType: item.listingType || "sale",
             condition: item.condition || "unknown", governorate: item.gov, district: item.dist,
             area: item.area, village: item.village, phone: item.phone,
+            openingHours: item.hours || item.openingHours || "", website: item.website || "",
             description: item.desc, price: item.price, currency: item.currency || "YER",
-            imageData: item.img || "", deadline: item.deadline || ""
+            imageData: item.img || "", latitude: item.latitude ?? item.lat ?? null, longitude: item.longitude ?? item.lng ?? null, deadline: item.deadline || ""
           })
         });
         done++;
