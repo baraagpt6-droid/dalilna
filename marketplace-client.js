@@ -15,13 +15,16 @@
     ["souq","سوق البيع والشراء"],["other","أخرى"]
   ];
   const PRODUCTS = [
-    ["phone","جوال"],["watch","ساعة"],["computer","كمبيوتر / لابتوب"],["tablet","جهاز لوحي"],
+    ["phone","جوال"],["phone_accessories","إكسسوارات جوال"],["watch","ساعة"],["computer","كمبيوتر / لابتوب"],["computer_accessories","ملحقات كمبيوتر"],["tablet","جهاز لوحي"],
     ["camera","كاميرا"],["car","سيارة"],["motorcycle","دراجة نارية"],["vehicle_parts","قطع غيار مركبات"],
     ["land","أرض"],["property","عقار / منزل"],["electronics","إلكترونيات"],["appliance","أجهزة منزلية"],
     ["furniture","أثاث"],["clothing","ملابس"],["shoes","أحذية"],["jewelry","ذهب ومجوهرات"],
     ["honey","عسل"],["coffee","بن وقهوة"],["spices","بهارات"],["food","مواد غذائية"],
     ["livestock","مواشٍ"],["agriculture","منتجات زراعية"],["building_materials","مواد بناء"],
-    ["books","كتب وقرطاسية"],["other","أخرى"]
+    ["books","كتب"],["stationery","قرطاسية وأدوات مدرسية"],["perfume","عطور"],["cosmetics","مستحضرات تجميل"],
+    ["solar_equipment","معدات طاقة شمسية"],["tools","أدوات ومعدات"],["household_items","مستلزمات منزلية"],
+    ["kitchenware","أدوات مطبخ"],["baby_products","منتجات أطفال"],["games","ألعاب"],["sports_equipment","معدات رياضية"],
+    ["animal_feed","أعلاف"],["seeds","بذور ومحاصيل"],["construction_equipment","معدات إنشاءات"],["other","أخرى"]
   ];
   const GOVS = ["أمانة العاصمة","صنعاء","عدن","تعز","إب","الحديدة","ذمار","البيضاء","لحج","أبين","الضالع","مأرب","الجوف","صعدة","حجة","عمران","المحويت","ريمة","حضرموت","شبوة","المهرة","سقطرى"];
   let adminToken = "";
