@@ -51,7 +51,7 @@ test("live search is bounded and offers retry after a timeout", () => {
   assert.match(html, /controller\.abort\(\),100000/);
   assert.match(html, /id="liveDirectoryRetry"/);
   assert.match(html, /liveDirectoryRetry/);
-  assert.match(html, /تجاوز الاتصال 30 ثانية/);
+  assert.match(html, /تأخر تشغيل خدمة البحث/);
 });
 
 
