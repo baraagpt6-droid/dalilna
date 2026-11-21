@@ -8,11 +8,11 @@ async function get(path,extraHeaders={}){
 async function main(){
  const deadline=Date.now()+180000;let health=null,last="no response";
  while(Date.now()<deadline){
-  try{const r=await get("/health");if(r.response.ok&&r.payload.ok&&r.payload.version==="1.7.0"){health=r.payload;break;}last="unexpected health: "+JSON.stringify(r.payload);}
+  try{const r=await get("/health");if(r.response.ok&&r.payload.ok&&r.payload.version==="1.8.1"){health=r.payload;break;}last="unexpected health: "+JSON.stringify(r.payload);}
   catch(e){last=e.message;}
   await new Promise(resolve=>setTimeout(resolve,5000));
  }
- assert.ok(health,"Render service did not become healthy on v1.7.0: "+last);
+ assert.ok(health,"Render service did not become healthy on v1.8.1: "+last);
  process.stdout.write("PASS live Render health: "+health.version+"\n");
  let r=await get("/api/places/status",{Origin:"https://dalilna-yemen.onrender.com"});assert.equal(r.response.status,200);
  assert.equal(r.response.headers.get("access-control-allow-origin"),"*");
@@ -34,6 +34,32 @@ async function main(){
  assert.ok(Number.isFinite(r.payload.count));
  process.stdout.write("PASS live Geoapify grocery search returned "+r.payload.count+" results\n");
  r=await get("/api/places/photos?q=Sanaa%20mosque&place=Sanaa%20Yemen");assert.equal(r.response.status,200);assert.equal(r.payload.source,"Wikimedia Commons");assert.ok(Array.isArray(r.payload.items));
+ const marketplace=await get("/api/marketplace/status");
+ assert.equal(marketplace.response.status,200);
+ assert.equal(marketplace.payload.ready,true,"shared PostgreSQL must be reachable and migrated");
+ assert.equal(marketplace.payload.databaseConfigured,true);
+ process.stdout.write("PASS shared Neon PostgreSQL status and schema\n");
+ const listings=await get("/api/marketplace/listings?limit=5");
+ assert.equal(listings.response.status,200);
+ assert.ok(Array.isArray(listings.payload.items));
+ process.stdout.write("PASS shared listings endpoint returned "+listings.payload.count+" approved listings\n");
+ const schoolQuery=new URLSearchParams({q:"قلم",category:"books",lat:"15.3694",lon:"44.1910",radius:"7000"});
+ const geoSchool=await get("/api/geoapify/search?"+schoolQuery);
+ assert.equal(geoSchool.response.status,200);
+ assert.equal(geoSchool.payload.source,"Geoapify");
+ assert.ok(Array.isArray(geoSchool.payload.items));
+ process.stdout.write("PASS live Geoapify stationery search returned "+geoSchool.payload.count+" results\n");
+ const osmSchool=await get("/api/places/search?"+schoolQuery);
+ assert.equal(osmSchool.response.status,200);
+ assert.equal(osmSchool.payload.source,"OpenStreetMap");
+ assert.ok(Array.isArray(osmSchool.payload.items));
+ process.stdout.write("PASS live OpenStreetMap stationery fallback returned "+osmSchool.payload.count+" results\n");
+ const capitalQuery=new URLSearchParams({q:"قلم",category:"books",place:"محافظة أمانة العاصمة، اليمن"});
+ const capitalSearch=await get("/api/places/search?"+capitalQuery);
+ assert.equal(capitalSearch.response.status,200,"Amanat Al Asimah geocoding must work or return a valid result set");
+ assert.ok(Array.isArray(capitalSearch.payload.items));
+ process.stdout.write("PASS governorate-name geocoding for Amanat Al Asimah\n");
+
  process.stdout.write("PASS live Commons photo endpoint returned "+r.payload.count+" results\n");
  process.stdout.write("RESULT: live free-source smoke tests passed\n");
 }
