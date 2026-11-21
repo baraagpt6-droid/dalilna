@@ -216,6 +216,8 @@
       country: item.country || "اليمن",
       description: item.desc,
       phone: item.phone,
+      openingHours: item.hours || item.openingHours || "",
+      website: item.website || "",
       sellerName: item.ownerName || "",
       price: item.price,
       currency: item.currency || "YER",
@@ -329,8 +331,9 @@
             productType: item.productType || "other", listingType: item.listingType || "sale",
             condition: item.condition || "unknown", governorate: item.gov, district: item.dist,
             area: item.area, village: item.village, phone: item.phone,
+            openingHours: item.hours || item.openingHours || "", website: item.website || "",
             description: item.desc, price: item.price, currency: item.currency || "YER",
-            imageData: item.img || "", deadline: item.deadline || ""
+            imageData: item.img || "", latitude: item.latitude ?? item.lat ?? null, longitude: item.longitude ?? item.lng ?? null, deadline: item.deadline || ""
           })
         });
         done++;
