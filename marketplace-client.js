@@ -145,11 +145,11 @@
     const actions = document.createElement("div");
     actions.className = "shared-listing-actions";
     if (item.phone) {
-      const phone = window.DalilnaRegionalCatalog?.yemenPhone(item.phone) || {isMobile:false,whatsapp:""};
-      if (phone.isMobile) {
+      const phoneDigits = String(item.phone).replace(/[^0-9]/g, "");
+      if (phoneDigits.length >= 9 && phoneDigits.length <= 15) {
         const wa = document.createElement("a");
-        wa.href = "https://wa.me/" + phone.whatsapp + "?text=" + encodeURIComponent("مرحباً، وجدت محلكم في تطبيق دليلنا وأريد الاستفسار عن الإعلان.");
-        wa.target = "_blank"; wa.rel = "noopener noreferrer"; wa.textContent = "واتساب"; actions.appendChild(wa);
+        wa.href = "https://wa.me/" + phoneDigits + "?text=" + encodeURIComponent("مرحباً، وجدت إعلانكم في دليلنا وأريد الاستفسار.");
+        wa.target = "_blank"; wa.rel = "noopener noreferrer"; wa.textContent = "واتساب البائع"; actions.appendChild(wa);
       }
       const tel = document.createElement("a");
       tel.href = "tel:" + String(item.phone).replace(/[^0-9+]/g, "");
@@ -167,6 +167,18 @@
       const map = document.createElement("a");
       map.href = "https://www.openstreetmap.org/search?query=" + encodeURIComponent([item.title,place,"اليمن"].join(" "));
       map.target = "_blank"; map.rel = "noopener noreferrer"; map.textContent = "فتح الموقع في OpenStreetMap"; actions.appendChild(map);
+    }
+    if (item.expiresAt) {
+      const expiry = document.createElement("p"); expiry.className = "shared-listing-expiry";
+      const expiryDate = new Date(item.expiresAt);
+      expiry.textContent = Number.isNaN(expiryDate.getTime()) ? "إعلان مجاني لمدة 60 يوماً" : "إعلان مجاني · ينتهي " + expiryDate.toLocaleDateString("ar");
+      card.appendChild(expiry);
+    }
+    if (item.category === "souq" || item.category === "land") {
+      const share = document.createElement("button"); share.type = "button"; share.dataset.shareId = item.id; share.textContent = "مشاركة"; share._item = item; actions.appendChild(share);
+      let favs = []; try { favs = JSON.parse(localStorage.getItem("dalilna-marketplace-favs-v1") || "[]"); } catch (_) {}
+      const favorite = document.createElement("button"); favorite.type = "button"; favorite.dataset.favId = item.id;
+      favorite.setAttribute("aria-pressed",favs.includes(item.id)?"true":"false"); favorite.className = favs.includes(item.id)?"is-favorite":""; favorite.textContent = favs.includes(item.id)?"★ مفضلة":"☆ مفضلة"; actions.appendChild(favorite);
     }
     card.appendChild(actions);
     if (mapElement) card.appendChild(mapElement);
@@ -203,9 +215,13 @@
     }, "sharedDirectoryStatus", "sharedDirectoryItems");
   }
   function loadSouq() {
+    const selectedType = document.querySelector("#souqTransactionTabs [aria-pressed=true]");
+    const selectedGroup = document.querySelector("#souqCategoryTabs [aria-pressed=true]");
     return loadList({
-      category: "souq",
+      category: "marketplace",
       productType: $("sharedSouqType") && $("sharedSouqType").value,
+      listingType: selectedType && selectedType.dataset.transaction !== "all" ? selectedType.dataset.transaction : "",
+      productGroup: selectedGroup && selectedGroup.dataset.group !== "all" ? selectedGroup.dataset.group : "",
       governorate: $("sharedSouqGovernorate") && $("sharedSouqGovernorate").value
     }, "sharedSouqStatus", "sharedSouqItems");
   }
