@@ -61,3 +61,17 @@ test("direct OSM search is throttled, cached and bounded", () => {
   assert.match(html, /id="liveDirectoryRetry"/);
   assert.match(html, /تأخر تشغيل خدمة البحث/);
 });
+
+test("live search exposes Google Maps fallback and provider attribution",()=>{
+  assert.match(html,/google\.com\/maps\/search/);
+  assert.match(html,/liveDirectoryAttribution/);
+  assert.match(html,/Google Maps/);
+});
+test("Google Places results are not saved in the browser result cache",()=>{
+  assert.match(html,/data\.source!==\"Google Maps\"/);
+  assert.match(html,/live-google-source/);
+});
+test("changing selected region clears prior GPS coordinates",()=>{
+  assert.match(html,/liveDirectoryCoords=null/);
+  assert.match(html,/liveDirectoryVisibleCount=8/);
+});

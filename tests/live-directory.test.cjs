@@ -2,7 +2,7 @@
 
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { buildOverpassQuery, classifyCategory, normalizeElement, normalizeText, createIntervalGate } = require("../server");
+const { buildOverpassQuery, buildGoogleTextSearchBody, normalizeGooglePlace, classifyCategory, normalizeElement, normalizeText, createIntervalGate } = require("../server");
 
 test("builds a narrow grocery query for a supplied bounding box", () => {
   const query = buildOverpassQuery({south:13.1, west:43.2, north:13.4, east:43.5}, "grocery");
@@ -64,4 +64,38 @@ test("central request gate serializes concurrent callers", async () => {
   started.sort((a,b)=>a-b);
   assert.ok(started[1]-started[0]>=25);
   assert.ok(started[2]-started[1]>=25);
+});
+
+test("builds Google Places Text Search constrained to the selected district", () => {
+  const body=buildGoogleTextSearchBody({bbox:{south:13.1,west:44.1,north:13.3,east:44.3}},"grocery","بقالة","مديرية حبيش، محافظة إب، اليمن");
+  assert.match(body.textQuery,/grocery stores/);
+  assert.match(body.textQuery,/مديرية حبيش/);
+  assert.equal(body.pageSize,20);
+  assert.equal(body.regionCode,"YE");
+  assert.equal(body.locationRestriction.rectangle.low.latitude,13.1);
+  assert.equal(body.locationRestriction.rectangle.high.longitude,44.3);
+  assert.equal(body.includedType,"grocery_store");
+});
+
+test("allows Google text search by region name when Nominatim has no bounds", () => {
+  const body=buildGoogleTextSearchBody({bbox:null},"pharmacy","","مديرية حبيش، محافظة إب، اليمن");
+  assert.match(body.textQuery,/pharmacies/);
+  assert.equal(body.locationRestriction,undefined);
+});
+
+test("normalizes Google Places but does not copy phone or website", () => {
+  const item=normalizeGooglePlace({
+    id:"ChIJTestPlaceId",
+    displayName:{text:"بقالة الاختبار"},
+    formattedAddress:"حبيش، إب، اليمن",
+    location:{latitude:13.2,longitude:44.2},
+    googleMapsUri:"https://www.google.com/maps/place/test"
+  },"grocery","حبيش، إب");
+  assert.equal(item.name,"بقالة الاختبار");
+  assert.equal(item.provider,"Google Maps");
+  assert.equal(item.phone,"");
+  assert.equal(item.website,"");
+  assert.equal(item.openingHours,"");
+  assert.equal(item.id,"google-ChIJTestPlaceId");
+  assert.match(item.mapsUrl,/google\.com\/maps/);
 });

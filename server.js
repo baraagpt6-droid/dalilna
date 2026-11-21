@@ -4,7 +4,7 @@ const http = require("node:http");
 const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.5.4";
+const VERSION = "1.5.5";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -21,6 +21,50 @@ const geocodeCache = new Map();
 const rateBuckets = new Map();
 let lastGeocodeAt = 0;
 let lastOverpassAt = 0;
+
+
+const GOOGLE_CATEGORY_QUERIES = {
+  all: "shops businesses and public services محلات وخدمات",
+  grocery: "grocery stores supermarkets convenience stores بقالات ومحلات المواد الغذائية",
+  food: "restaurants takeaways مطاعم",
+  cafe: "cafes coffee shops مقاهي",
+  pharmacy: "pharmacies صيدليات",
+  health: "hospitals clinics doctors مستشفيات ومراكز صحية",
+  edu: "schools universities مدارس وجامعات",
+  gov: "government offices مكاتب حكومية",
+  money: "banks ATMs بنوك وصرافات",
+  craft: "craft repair and hardware shops ورش ومحلات حرفية",
+  transport: "bus stations taxi stands محطات باصات وتاكسي",
+  mosque: "mosques مساجد وجوامع",
+  hotel: "hotels and guest houses فنادق",
+  market: "markets and shopping centres أسواق ومراكز تسوق",
+  solar: "electronics and electrical shops محلات كهرباء وإلكترونيات",
+  parts: "auto parts shops محلات قطع غيار",
+  build: "building materials and hardware stores مواد بناء وحديد",
+  clothes: "clothing and shoe stores ملابس وأحذية",
+  home: "furniture and home goods stores أثاث وأدوات منزلية",
+  books: "bookshops and stationery shops مكتبات وقرطاسية",
+  beauty: "beauty and cosmetics stores تجميل ومستحضرات",
+  salon: "hair salons and barbers صالونات حلاقة",
+  laundry: "laundries مغاسل",
+  delivery: "post offices and courier services بريد وشحن",
+  utility: "fuel stations gas stations محطات وقود وغاز",
+  gold: "jewellery shops محلات ذهب ومجوهرات",
+  wedding: "event venues and wedding halls قاعات مناسبات وأفراح",
+  farm: "farm and agricultural supply stores محلات زراعية"
+};
+const GOOGLE_INCLUDED_TYPES = {
+  grocery: "grocery_store", food: "restaurant", cafe: "cafe",
+  pharmacy: "pharmacy", health: "hospital", edu: "school",
+  gov: "government_office", money: "bank", transport: "bus_station",
+  mosque: "mosque", hotel: "hotel", market: "market",
+  solar: "electronics_store", parts: "auto_parts_store",
+  build: "hardware_store", clothes: "clothing_store",
+  home: "furniture_store", books: "book_store",
+  beauty: "beauty_salon", salon: "hair_salon", laundry: "laundry",
+  delivery: "post_office", utility: "gas_station", gold: "jewelry_store"
+};
+const GOOGLE_PLACES_FIELD_MASK = "places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri";
 
 const FILTERS = {
   all: [
@@ -235,7 +279,7 @@ async function geocodePlace(place) {
   const key=normalizeText(place);
   const cached=readCache(geocodeCache,key);
   if(cached)return cached;
-  const cleanedPlace=cleanText(place.replace(/\b(?:محافظة|مديرية|عزلة)\s*/g," ").replace(/،\s*اليمن$/g,"").replace(/\s+/g," "),180);
+  const cleanedPlace=cleanText(place.replace(/(?:^|،\s*)(?:محافظة|مديرية|عزلة)\s*/gu," ").replace(/،\s*اليمن$/g,"").replace(/\s+/g," "),180);
   const candidates=[...new Set([place,cleanedPlace+"، اليمن"].filter(Boolean))];
   let lastError=null;
   for(const candidate of candidates){
@@ -245,7 +289,7 @@ async function geocodePlace(place) {
     url.search=new URLSearchParams({q:candidate,format:"jsonv2",addressdetails:"1",limit:"5",countrycodes:"ye","accept-language":"ar,en"}).toString();
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
     try{
-      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaYemenDirectory/1.5.4 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
+      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaYemenDirectory/1.5.5 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
       if(response.status===429){lastError=new Error("مصدر تحديد المنطقة مزدحم. حاول مرة أخرى بعد قليل.");continue;}
       if(!response.ok){lastError=new Error("تعذّر تحديد حدود المنطقة من مصدر الخريطة.");continue;}
       const rows=await response.json();
@@ -277,7 +321,7 @@ async function fetchOverpass(bbox,category,label){
     lastOverpassAt=Date.now();
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),index===0?12000:10000),startedAt=Date.now();
     try{
-      const response=await fetch(endpoint,{method:"POST",signal:controller.signal,headers:{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8","Accept":"application/json","User-Agent":"DalilnaYemenDirectory/1.5.4 (+https://dalilna-live.onrender.com)"},body:new URLSearchParams({data:query})});
+      const response=await fetch(endpoint,{method:"POST",signal:controller.signal,headers:{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8","Accept":"application/json","User-Agent":"DalilnaYemenDirectory/1.5.5 (+https://dalilna-live.onrender.com)"},body:new URLSearchParams({data:query})});
       if([429,503,504].includes(response.status)){lastError=new Error("مصدر بيانات الأماكن مشغول حالياً.");continue;}
       if(!response.ok){lastError=new Error("تعذّر جلب بيانات الأماكن من المصدر المفتوح.");continue;}
       const body=await response.json(),elements=Array.isArray(body.elements)?body.elements:[],items=elements.map(item=>normalizeElement(item,label)).filter(Boolean),seen=new Set();
@@ -289,6 +333,93 @@ async function fetchOverpass(bbox,category,label){
   }
   throw lastError||new Error("مصدر بيانات الأماكن غير متاح حالياً.");
 }
+
+function buildGoogleTextSearchBody(area, category, query, placeLabel) {
+  const bbox = area && area.bbox;
+  if (bbox && (![bbox.south,bbox.west,bbox.north,bbox.east].every(Number.isFinite) ||
+      bbox.north <= bbox.south || bbox.east <= bbox.west)) {
+    throw new Error("نطاق البحث الجغرافي غير صالح لمصدر Google Places.");
+  }
+  const selectedCategory = GOOGLE_CATEGORY_QUERIES[category] ? category : "all";
+  const categoryText = GOOGLE_CATEGORY_QUERIES[selectedCategory];
+  const userQuery = cleanText(query, 100);
+  const queryText = selectedCategory === "all" && userQuery
+    ? userQuery
+    : [userQuery, categoryText].filter(Boolean).join(" ");
+  const locationText = cleanText(placeLabel, 180);
+  const textQuery = cleanText([queryText || categoryText, locationText].filter(Boolean).join(" "), 300);
+  const body = { textQuery, languageCode: "ar", regionCode: "YE", pageSize: 20 };
+  if (bbox) {
+    body.locationRestriction = {
+      rectangle: {
+        low: { latitude: bbox.south, longitude: bbox.west },
+        high: { latitude: bbox.north, longitude: bbox.east }
+      }
+    };
+  }
+  const includedType = GOOGLE_INCLUDED_TYPES[selectedCategory];
+  if (includedType) body.includedType = includedType;
+  return body;
+}
+
+function normalizeGooglePlace(place, category, placeLabel) {
+  const location = place && place.location || {};
+  const name = cleanText(place && place.displayName && place.displayName.text, 140);
+  const lat = Number(location.latitude);
+  const lon = Number(location.longitude);
+  const placeId = cleanText(place && place.id, 120);
+  if (!name || !placeId || !Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+  const mapsUrl = cleanText(place.googleMapsUri, 500) ||
+    ("https://www.google.com/maps/search/?api=1&query_place_id=" + encodeURIComponent(placeId));
+  return {
+    id: "google-" + placeId,
+    name, category,
+    address: cleanText(place.formattedAddress || placeLabel, 220),
+    phone: "", website: "", openingHours: "",
+    lat, lon, sourceUrl: mapsUrl, mapsUrl,
+    provider: "Google Maps"
+  };
+}
+
+async function searchGooglePlaces(area, category, query, placeLabel) {
+  const apiKey = String(process.env.GOOGLE_PLACES_API_KEY || "").trim();
+  if (!apiKey) return null;
+  const body = buildGoogleTextSearchBody(area, category, query, placeLabel);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
+  const startedAt = Date.now();
+  try {
+    const response = await fetch("https://places.googleapis.com/v1/places:searchText", {
+      method: "POST",
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-Goog-Api-Key": apiKey,
+        "X-Goog-FieldMask": GOOGLE_PLACES_FIELD_MASK
+      },
+      body: JSON.stringify(body)
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const error = new Error("Google Places API لم يقبل الطلب (HTTP " + response.status + ").");
+      error.statusCode = response.status === 429 ? 429 : 503;
+      throw error;
+    }
+    const places = Array.isArray(payload.places) ? payload.places : [];
+    const seen = new Set();
+    const items = places.map(place => normalizeGooglePlace(place, category, placeLabel)).filter(Boolean)
+      .filter(item => { if (seen.has(item.id)) return false; seen.add(item.id); return true; });
+    console.info(JSON.stringify({event:"places.google.success",category,count:items.length,durationMs:Date.now()-startedAt}));
+    return items.slice(0, 20);
+  } catch (error) {
+    if (error.name === "AbortError") throw new Error("انتهت مهلة الاتصال بمصدر Google Places.");
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function searchPlaces(params) {
   const place = cleanText(params.place, 180);
   const fallbackPlace = cleanText(params.fallbackPlace, 180);
@@ -298,6 +429,7 @@ async function searchPlaces(params) {
   const lon = Number(params.lon);
   const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
   const radius = Math.min(15000, Math.max(1000, Number(params.radius) || 7000));
+  const googleEnabled = Boolean(String(process.env.GOOGLE_PLACES_API_KEY || "").trim());
   if ((!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen") && !hasCoordinates) {
     const error = new Error("اختر محافظة أو مديرية أولاً، أو فعّل البحث حول موقعك.");
     error.statusCode = 400;
@@ -305,10 +437,13 @@ async function searchPlaces(params) {
   }
 
   const cacheKey = (hasCoordinates ? "near:" + lat.toFixed(3) + ":" + lon.toFixed(3) : normalizeText(place)) + "|" + category;
-  const cached = readCache(resultCache, cacheKey);
-  if (cached) {
-    const copy = { ...cached, fetchedAt: new Date().toISOString(), cached: true };
-    return filterByQuery(copy, query, category);
+  // Google Places content must not be cached. Only read OSM cache when Google is disabled.
+  if (!googleEnabled) {
+    const cached = readCache(resultCache, cacheKey);
+    if (cached) {
+      const copy = { ...cached, fetchedAt: new Date().toISOString(), cached: true };
+      return filterByQuery(copy, query, category);
+    }
   }
 
   let area = null;
@@ -326,29 +461,59 @@ async function searchPlaces(params) {
     scopeFallback = true;
     usedPlace = fallbackPlace;
   }
+  if (!area && googleEnabled) area = { bbox: null, label: usedPlace };
   if (!area) {
-    const error = new Error("لم نعثر على حدود هذه المديرية في بيانات الخريطة. جرّب اختيار المحافظة أو افتح البحث في خرائط Google.");
+    const error = new Error("لم نعثر على حدود هذه المديرية في بيانات الخريطة. اختر المحافظة أو افتح البحث مباشرة في Google Maps.");
     error.statusCode = 404;
     throw error;
   }
 
+  let googleFallbackReason = "";
+  if (googleEnabled) {
+    try {
+      const googleItems = await searchGooglePlaces(area, category, query, usedPlace);
+      if (googleItems && googleItems.length) {
+        // Google Places content is returned live and is never written to result caches.
+        const googleResult = {
+          category, items: googleItems, count: googleItems.length,
+          source: "Google Maps", attribution: "Google Maps",
+          sourceUrl: "https://www.google.com/maps", place: usedPlace,
+          geocodedPlace: area.label, scopeFallback,
+          fetchedAt: new Date().toISOString(), cached: false,
+          googlePlacesEnabled: true,
+          note: "النتائج مباشرة من Google Maps. تحقق من بيانات المكان عند فتحه."
+        };
+        return filterByQuery(googleResult, query, category);
+      }
+      googleFallbackReason = "لم يعثر Google Places على نتائج لهذه الفئة في النطاق، فتمت تجربة OpenStreetMap.";
+    } catch (error) {
+      googleFallbackReason = "تعذّر جلب نتائج Google Places، فتمت تجربة OpenStreetMap.";
+      console.warn(JSON.stringify({event:"places.google.fallback",status:Number(error.statusCode)||503,message:cleanText(error.message,160)}));
+    }
+  }
+
+  if (!area.bbox) {
+    const error = new Error(googleFallbackReason || "تعذر تحديد نطاق المنطقة من مصادر الخرائط. افتح البحث مباشرة في Google Maps.");
+    error.statusCode = 404;
+    throw error;
+  }
+  const cachedOsm = readCache(resultCache, cacheKey);
+  if (cachedOsm) {
+    const copy = {...cachedOsm,fetchedAt:new Date().toISOString(),cached:true,googlePlacesEnabled:googleEnabled,googleFallbackReason};
+    return filterByQuery(copy,query,category);
+  }
   const items = await fetchOverpass(area.bbox, category, area.label || usedPlace);
   const result = {
-    category,
-    items,
-    count: items.length,
-    source: "OpenStreetMap",
-    attribution: "© OpenStreetMap contributors",
-    sourceUrl: "https://www.openstreetmap.org/copyright",
-    place: usedPlace,
-    geocodedPlace: area.label,
-    scopeFallback,
-    fetchedAt: new Date().toISOString(),
-    cached: false,
-    note: "قد تكون بيانات الخريطة غير مكتملة أو قديمة. تحقق من رقم التواصل وساعات العمل قبل الزيارة."
+    category,items,count:items.length,source:"OpenStreetMap",
+    attribution:"© OpenStreetMap contributors",
+    sourceUrl:"https://www.openstreetmap.org/copyright",
+    place:usedPlace,geocodedPlace:area.label,scopeFallback,
+    fetchedAt:new Date().toISOString(),cached:false,
+    googlePlacesEnabled:googleEnabled,googleFallbackReason,
+    note:"قد تكون بيانات الخريطة غير مكتملة أو قديمة. تحقق من رقم التواصل وساعات العمل قبل الزيارة."
   };
-  touchCache(resultCache, cacheKey, result);
-  return filterByQuery(result, query, category);
+  touchCache(resultCache,cacheKey,result);
+  return filterByQuery(result,query,category);
 }
 
 function filterByQuery(result, query, category) {
@@ -461,4 +626,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, createIntervalGate, server };
+module.exports = { buildOverpassQuery, buildGoogleTextSearchBody, normalizeGooglePlace, classifyCategory, normalizeElement, normalizeText, searchPlaces, createIntervalGate, server };
