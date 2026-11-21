@@ -7,7 +7,7 @@ Application
 - Root and Android WebView assets must stay synchronized.
 
 Live directory
-- Primary provider: Google Places API (New), only when GOOGLE_PLACES_API_KEY exists on Render service dalilna-live.
+- Primary provider: Google Places API (New) only when both GOOGLE_PLACES_API_KEY and GOOGLE_PLACES_ENABLED=true are configured on Render service dalilna-live. The feature flag is disabled by default.
 - Fallback provider: OpenStreetMap Nominatim and Overpass when Google is not configured, returns no results, or fails.
 - Google content is live-only and is not stored in local merchant listings or cached.
 - Empty searches provide a direct Google Maps search link.
@@ -19,8 +19,9 @@ Google setup required before live Google results work
 3. Create a server-side API key restricted to Places API (New).
 4. Configure daily quotas and billing alerts.
 5. Add GOOGLE_PLACES_API_KEY as a Sensitive environment variable to Render service dalilna-live.
-6. Publish a Privacy Policy and Terms of Use covering Google Maps Platform usage.
-7. Test category and district searches in several Yemen governorates.
+6. Keep GOOGLE_PLACES_ENABLED unset or false until a public Privacy Policy and Terms of Use are available.
+7. Set GOOGLE_PLACES_ENABLED=true only after the policies, API restrictions, quotas, and billing alerts are ready.
+8. Test category and district searches in several Yemen governorates.
 
 Security and operations
 - Do not put API secrets in the web app, Android assets, or GitHub.

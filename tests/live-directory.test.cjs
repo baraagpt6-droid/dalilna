@@ -2,7 +2,7 @@
 
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { buildOverpassQuery, buildGoogleTextSearchBody, normalizeGooglePlace, classifyCategory, normalizeElement, normalizeText, createIntervalGate } = require("../server");
+const { buildOverpassQuery, buildGoogleTextSearchBody, normalizeGooglePlace, isGooglePlacesEnabled, classifyCategory, normalizeElement, normalizeText, createIntervalGate } = require("../server");
 
 test("builds a narrow grocery query for a supplied bounding box", () => {
   const query = buildOverpassQuery({south:13.1, west:43.2, north:13.4, east:43.5}, "grocery");
@@ -98,4 +98,12 @@ test("normalizes Google Places but does not copy phone or website", () => {
   assert.equal(item.openingHours,"");
   assert.equal(item.id,"google-ChIJTestPlaceId");
   assert.match(item.mapsUrl,/google\.com\/maps/);
+});
+
+test("Google Places stays disabled unless both the feature flag and API key are present", () => {
+  assert.equal(isGooglePlacesEnabled({}), false);
+  assert.equal(isGooglePlacesEnabled({GOOGLE_PLACES_API_KEY:"test-key"}), false);
+  assert.equal(isGooglePlacesEnabled({GOOGLE_PLACES_ENABLED:"true"}), false);
+  assert.equal(isGooglePlacesEnabled({GOOGLE_PLACES_ENABLED:"true",GOOGLE_PLACES_API_KEY:"test-key"}), true);
+  assert.equal(isGooglePlacesEnabled({GOOGLE_PLACES_ENABLED:"false",GOOGLE_PLACES_API_KEY:"test-key"}), false);
 });

@@ -381,6 +381,11 @@ function normalizeGooglePlace(place, category, placeLabel) {
   };
 }
 
+function isGooglePlacesEnabled(env = process.env) {
+  return String(env.GOOGLE_PLACES_ENABLED || "").toLowerCase() === "true" &&
+    Boolean(String(env.GOOGLE_PLACES_API_KEY || "").trim());
+}
+
 async function searchGooglePlaces(area, category, query, placeLabel) {
   const apiKey = String(process.env.GOOGLE_PLACES_API_KEY || "").trim();
   if (!apiKey) return null;
@@ -429,7 +434,7 @@ async function searchPlaces(params) {
   const lon = Number(params.lon);
   const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
   const radius = Math.min(15000, Math.max(1000, Number(params.radius) || 7000));
-  const googleEnabled = Boolean(String(process.env.GOOGLE_PLACES_API_KEY || "").trim());
+  const googleEnabled = isGooglePlacesEnabled();
   if ((!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen") && !hasCoordinates) {
     const error = new Error("اختر محافظة أو مديرية أولاً، أو فعّل البحث حول موقعك.");
     error.statusCode = 400;
@@ -626,4 +631,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, buildGoogleTextSearchBody, normalizeGooglePlace, classifyCategory, normalizeElement, normalizeText, searchPlaces, createIntervalGate, server };
+module.exports = { buildOverpassQuery, buildGoogleTextSearchBody, normalizeGooglePlace, isGooglePlacesEnabled, classifyCategory, normalizeElement, normalizeText, searchPlaces, createIntervalGate, server };

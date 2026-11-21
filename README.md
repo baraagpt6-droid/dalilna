@@ -48,11 +48,11 @@ Pending shop submissions are shown in a prominent dashboard shortcut. Open it to
 
 يستخدم دليلنا خادم البحث على Render: `https://dalilna-live.onrender.com`.
 
-- عند إعداد `GOOGLE_PLACES_API_KEY` كمتغير Sensitive في خدمة Render، يبحث التطبيق أولاً عبر Google Places API (New) ويعرض النتائج مباشرة مع إسناد Google Maps.
+- لا يعمل Google Places افتراضياً. لتشغيله بعد نشر سياسة الخصوصية وشروط الاستخدام، أضف `GOOGLE_PLACES_API_KEY` كمتغير Sensitive و`GOOGLE_PLACES_ENABLED=true` في خدمة Render. يعرض التطبيق النتائج مباشرة مع إسناد Google Maps.
 - لا تُحفظ أسماء Google أو عناوينها أو تفاصيل الأماكن في قاعدة بيانات دليلنا أو التخزين المؤقت. تُعرض النتائج مباشرة وتُفتح تفاصيل المكان في Google Maps.
 - إذا لم يُفعّل Google Places أو لم يُرجع نتائج، يستخدم التطبيق OpenStreetMap وOverpass كمصدر بديل. قد تكون التغطية في اليمن غير مكتملة.
 - عند عدم العثور على نتائج يظهر رابط يفتح استعلام الفئة والمنطقة في Google Maps دون الحاجة إلى مفتاح API.
-- لا تضع مفتاح Google في `index.html` أو Android أو GitHub. خزّنه على Render فقط.
+- لا تضع مفتاح Google في `index.html` أو Android أو GitHub. خزّنه على Render فقط، واترك مفتاح التشغيل `GOOGLE_PLACES_ENABLED` معطلاً حتى اكتمال السياسات وحدود الإنفاق.
 - Google Places يتطلب تفعيل Places API (New) والفوترة في Google Cloud. راجع الأسعار وحدود الاستخدام قبل تفعيل المفتاح.
 
 قبل الاستخدام العام، راجع قيود الأمان وانشر سياسة الخصوصية وشروط الاستخدام التي تتضمن متطلبات Google Maps Platform.
