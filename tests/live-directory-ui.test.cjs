@@ -2,7 +2,7 @@
 const test=require("node:test"),assert=require("node:assert/strict"),fs=require("node:fs");
 const html=fs.readFileSync("index.html","utf8");
 test("primary places directory loads the static regional catalogue, not live map searches",()=>{
- for(const token of ["const LIVE_CATALOG_BASE="./regional-catalog/";","async function loadRegionalCatalogManifest","async function loadRegionalCatalog","async function runLiveDirectorySearch","regionalCatalogMatches"])assert.ok(html.includes(token),token);
+ for(const token of ['const LIVE_CATALOG_BASE="./regional-catalog/";',"async function loadRegionalCatalogManifest","async function loadRegionalCatalog","async function runLiveDirectorySearch","regionalCatalogMatches"])assert.ok(html.includes(token),token);
  for(const token of ["searchLivePlaces(","/api/places/search","/api/geoapify/search"])assert.ok(!html.includes(token),token);
 });
 test("the country catalogue exposes governorate choices and counts",()=>{
