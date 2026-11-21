@@ -2,13 +2,19 @@
 const test=require("node:test");
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {buildOverpassQuery,classifyCategory,normalizeElement,normalizeText,createIntervalGate,searchCommonsPhotos,server}=require("../server");
+const {buildOverpassQuery,inferCategoryFromQuery,classifyCategory,normalizeElement,normalizeText,createIntervalGate,searchCommonsPhotos,server}=require("../server");
 
 test("builds a narrow grocery query for a supplied bounding box",()=>{
  const query=buildOverpassQuery({south:13.1,west:43.2,north:13.4,east:43.5},"grocery");
  assert.match(query,/shop/);assert.match(query,/convenience/);assert.match(query,/supermarket/);
  assert.match(query,/13\.100000,43\.200000,13\.400000,43\.500000/);
  assert.match(query,/timeout:12/);assert.match(query,/out center tags 80/);
+});
+test("infers map categories from Arabic search terms",()=>{
+ assert.equal(inferCategoryFromQuery("بقال"),"grocery");
+ assert.equal(inferCategoryFromQuery("صيدلية"),"pharmacy");
+ assert.equal(inferCategoryFromQuery("مطعم"),"food");
+ assert.equal(inferCategoryFromQuery("اسم محل غير محدد"),"");
 });
 test("classifies common OpenStreetMap business tags",()=>{
  assert.equal(classifyCategory({shop:"convenience"}),"grocery");
@@ -49,7 +55,7 @@ test("Wikimedia Commons search returns author and license metadata",async()=>{
  const original=global.fetch;
  global.fetch=async(input,options={})=>{
   const url=new URL(String(input));assert.equal(url.hostname,"commons.wikimedia.org");
-  assert.match(options.headers["User-Agent"],/DalilnaDirectory\/1\.5\.9/);
+  assert.match(options.headers["User-Agent"],/DalilnaDirectory\/1\.5\.10/);
   return new Response(JSON.stringify({query:{pages:[{title:"File:Dalilna place.jpg",imageinfo:[{thumburl:"https://upload.wikimedia.org/wikipedia/commons/thumb/dalilna.jpg",descriptionurl:"https://commons.wikimedia.org/wiki/File:Dalilna_place.jpg",extmetadata:{LicenseShortName:{value:"CC BY-SA 4.0"},Artist:{value:"Photographer One"}}}]}]}}),{status:200,headers:{"content-type":"application/json"}});
  };
  try{const result=await searchCommonsPhotos("Dalilna Commons unique test","Yemen");assert.equal(result.source,"Wikimedia Commons");assert.equal(result.count,1);assert.equal(result.items[0].license,"CC BY-SA 4.0");assert.equal(result.items[0].author,"Photographer One");assert.match(result.items[0].sourceUrl,/commons\.wikimedia\.org/);}
@@ -59,8 +65,12 @@ test("Google details endpoint is unavailable and status confirms free providers"
  await new Promise((resolve,reject)=>{server.once("error",reject);server.listen(0,"127.0.0.1",resolve);});
  try{
   const base="http://127.0.0.1:"+server.address().port;
-  const status=await fetch(base+"/api/places/status").then(r=>r.json());
+  const statusResponse=await fetch(base+"/api/places/status",{headers:{Origin:"https://preview.example"}});
+  assert.equal(statusResponse.headers.get("access-control-allow-origin"),"*");
+  const status=await statusResponse.json();
   assert.equal(status.activeProvider,"OpenStreetMap");assert.equal(status.paidProvidersDisabled,true);assert.equal(status.photoProvider,"Wikimedia Commons");
+  const preflight=await fetch(base+"/api/places/search",{method:"OPTIONS",headers:{Origin:"https://preview.example","Access-Control-Request-Method":"GET"}});
+  assert.equal(preflight.status,204);assert.equal(preflight.headers.get("access-control-allow-origin"),"*");
   const details=await fetch(base+"/api/places/details?placeId=ChIJOldGooglePlaceId123");
   assert.equal(details.status,404);
  }finally{await new Promise(resolve=>server.close(resolve));}

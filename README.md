@@ -4,7 +4,7 @@
 
 ## الإصدار
 
-- Version: 1.5.9
+- Version: 1.5.10
 - Web app: PWA (installable from supported browsers)
 - Android: WebView application source included in `android/`
 - Offline: cached application shell and local device storage
@@ -44,12 +44,14 @@
 
 Pending shop submissions are shown in a prominent dashboard shortcut. Open it to inspect the request details and choose approve/publish or reject. In this offline-first release, pending requests remain local to the device until a shared backend is connected.
 
-## البحث المباشر عن الأماكن — الإصدار 1.5.9
+## البحث المباشر عن الأماكن — الإصدار 1.5.10
 
 يستخدم دليلنا مصادر مفتوحة ولا يحتاج مفتاح Google Places أو بطاقة بنكية أو حساب فوترة.
 
 - تحديد حدود المحافظة أو المديرية عبر OpenStreetMap Nominatim.
 - البحث عن الأماكن عبر OpenStreetMap Overpass مع التبديل بين FOSSGIS وPrivate.coffee وVK Maps عند التعطل أو الاستجابة غير المكتملة.
+- تفسير كلمات البحث العربية الشائعة كفئات على الخادم، وتجنب البحث الواسع تلقائياً عند اختيار منطقة دون كتابة خدمة.
+- واجهة API العامة تستخدم CORS مفتوحاً لبيانات القراءة فقط، ولا تحفظ استجابات الخريطة الفارغة في التخزين المؤقت.
 - عرض الاسم والعنوان والهاتف والموقع الإلكتروني وساعات العمل والوصف ونوع النشاط عندما تكون هذه البيانات مسجلة في الخريطة.
 - البحث الاختياري عن صور مرتبطة باسم المكان والمنطقة عبر Wikimedia Commons. يعرض التطبيق صفحة الملف واسم صاحب الصورة والترخيص عند توفر البيانات.
 - التقييمات والصور التي يضيفها المستخدم محفوظة على جهازه فقط ولا تتم مشاركتها أو مزامنتها في هذا الإصدار.

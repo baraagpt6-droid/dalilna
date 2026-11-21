@@ -4,7 +4,7 @@ const http = require("node:http");
 const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.5.9";
+const VERSION = "1.5.10";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -72,6 +72,16 @@ function json(res, status, payload, extraHeaders = {}) {
 }
 
 function setCors(req, res) {
+  const pathname = String(req.url || "").split("?")[0];
+  // These endpoints return public map data only. Wildcard CORS avoids brittle
+  // hostname allowlists for Render previews, PWA hosts and Android WebView.
+  if (pathname === "/health" || pathname.startsWith("/api/places/")) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Accept, Content-Type");
+    res.setHeader("Access-Control-Max-Age", "600");
+    return;
+  }
   const origin = req.headers.origin;
   res.setHeader("Vary", "Origin");
   if (origin && ALLOWED_ORIGINS.has(origin)) {
@@ -158,6 +168,27 @@ function buildOverpassQuery(bbox, category) {
   const box = [bbox.south, bbox.west, bbox.north, bbox.east].map(n => Number(n).toFixed(6)).join(",");
   const union = filters.map(filter => "nwr" + filter + "(" + box + ");").join("\n");
   return "[out:json][timeout:12][maxsize:134217728];\n(\n" + union + "\n);\nout center tags 80;";
+}
+
+function inferCategoryFromQuery(query) {
+  const text = normalizeText(query);
+  if (!text) return "";
+  const rules = [
+    ["grocery", /(بقال|تموين|سوبر\s?ماركت|مواد\s?غذائي|ميني\s?ماركت)/u],
+    ["pharmacy", /(صيدل|دواء|ادويه|علاج|عياده|مستشف|مركز صحي|مختبر|طبيب)/u],
+    ["food", /(مطعم|مطاعم|مخبز|مخابز|وجبات|فطور|غداء|عشاء)/u],
+    ["cafe", /(بوفيه|كافيه|كوفي|قهوه|كافتيريا)/u],
+    ["edu", /(مدرس|مدارس|معهد|جامعه|كليه)/u],
+    ["mosque", /(مسجد|مساجد|جامع|جوامع)/u],
+    ["money", /(بنك|صراف|صرافه|تحويل|صرف عمله)/u],
+    ["transport", /(تاكسي|باص|مواصلات|نقل)/u],
+    ["hotel", /(فندق|فنادق|نزل|شقق مفروشه)/u],
+    ["market", /(سوق|اسواق|سوق مركزي)/u],
+    ["salon", /(حلاق|حلاقه|صالون)/u],
+    ["laundry", /(مغسله|مغاسل|غسيل ملابس|كوي)/u]
+  ];
+  const match = rules.find(([, pattern]) => pattern.test(text));
+  return match ? match[0] : "";
 }
 
 function classifyCategory(tags) {
@@ -252,7 +283,7 @@ async function geocodePlace(place) {
     url.search=new URLSearchParams({q:candidate,format:"jsonv2",addressdetails:"1",limit:"5",countrycodes:"ye","accept-language":"ar,en"}).toString();
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
     try{
-      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaDirectory/1.5.9 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
+      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaDirectory/1.5.10 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
       if(response.status===429){lastError=new Error("مصدر تحديد المنطقة مزدحم. حاول مرة أخرى بعد قليل.");continue;}
       if(!response.ok){lastError=new Error("تعذّر تحديد حدود المنطقة من مصدر الخريطة.");continue;}
       const rows=await response.json();
@@ -283,6 +314,7 @@ async function fetchOverpass(bbox,category,label){
     {name:"VK Maps",url:"https://maps.mail.ru/osm/tools/overpass/api/interpreter",timeoutMs:18000}
   ];
   let lastError=null;
+  let hadValidEmpty=false;
   for(const provider of endpoints){
     await waitForOverpassSlot();
     lastOverpassAt=Date.now();
@@ -294,7 +326,7 @@ async function fetchOverpass(bbox,category,label){
         headers:{
           "Content-Type":"application/x-www-form-urlencoded; charset=UTF-8",
           "Accept":"application/json",
-          "User-Agent":"DalilnaDirectory/1.5.9 (+https://dalilna-live.onrender.com)"
+          "User-Agent":"DalilnaDirectory/1.5.10 (+https://dalilna-live.onrender.com)"
         },
         body:new URLSearchParams({data:query})
       });
@@ -321,6 +353,11 @@ async function fetchOverpass(bbox,category,label){
       }
       const elements=body.elements,items=elements.map(item=>normalizeElement(item,label)).filter(Boolean),seen=new Set();
       const unique=items.filter(item=>{const key=normalizeText(item.name)+"|"+item.lat.toFixed(4)+"|"+item.lon.toFixed(4);if(seen.has(key))return false;seen.add(key);return true;});
+      if(!unique.length){
+        hadValidEmpty=true;
+        console.info(JSON.stringify({event:"places.overpass.empty",provider:provider.name,category,durationMs:Date.now()-startedAt}));
+        continue;
+      }
       console.info(JSON.stringify({event:"places.overpass.success",provider:provider.name,category,count:unique.length,durationMs:Date.now()-startedAt}));
       return unique.slice(0,80);
     }catch(error){
@@ -328,6 +365,7 @@ async function fetchOverpass(bbox,category,label){
       console.warn(JSON.stringify({event:"places.overpass.retry",provider:provider.name,message:cleanText(lastError.message,140),durationMs:Date.now()-startedAt}));
     }finally{clearTimeout(timer);}
   }
+  if(hadValidEmpty)return [];
   throw lastError||new Error("مصادر بيانات الأماكن غير متاحة حالياً.");
 }
 
@@ -348,7 +386,7 @@ async function searchCommonsPhotos(query, place) {
   try{
     const response=await fetch(url,{signal:controller.signal,headers:{
       "Accept":"application/json",
-      "User-Agent":"DalilnaDirectory/1.5.9 (https://dalilna-live.onrender.com; contact: dalilna project)"
+      "User-Agent":"DalilnaDirectory/1.5.10 (https://dalilna-live.onrender.com; contact: dalilna project)"
     }});
     if(response.status===429){const error=new Error("مكتبة الصور مزدحمة. حاول لاحقاً.");error.statusCode=429;throw error;}
     if(!response.ok)throw new Error("تعذر الاتصال بمكتبة Wikimedia Commons.");
@@ -378,8 +416,11 @@ async function searchCommonsPhotos(query, place) {
 async function searchPlaces(params) {
   const place = cleanText(params.place, 180);
   const fallbackPlace = cleanText(params.fallbackPlace, 180);
-  const category = FILTERS[params.category] ? params.category : "all";
   const query = cleanText(params.q, 100);
+  const requestedCategory = FILTERS[params.category] ? params.category : "all";
+  const category = requestedCategory === "all"
+    ? (inferCategoryFromQuery(query) || "all")
+    : requestedCategory;
   const lat = Number(params.lat);
   const lon = Number(params.lon);
   const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
@@ -440,7 +481,9 @@ async function searchPlaces(params) {
     paidProvidersDisabled:true,
     note:"قد تكون بيانات الخريطة غير مكتملة أو قديمة. تحقق من رقم التواصل وساعات العمل قبل الزيارة."
   };
-  touchCache(resultCache,cacheKey,result);
+  // Do not cache empty map responses. A mirror may be temporarily incomplete;
+  // the next user retry should be able to query the other sources again.
+  if(items.length)touchCache(resultCache,cacheKey,result);
   return filterByQuery(result,query,category);
 }
 
@@ -539,7 +582,13 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     try {
-      console.info(JSON.stringify({event:"places.search.start",place:cleanText(url.searchParams.get("place"),100),category:cleanText(url.searchParams.get("category"),30)}));
+      console.info(JSON.stringify({
+        event:"places.search.start",
+        place:cleanText(url.searchParams.get("place"),100),
+        query:cleanText(url.searchParams.get("q"),100),
+        requestedCategory:cleanText(url.searchParams.get("category"),30),
+        origin:cleanText(req.headers.origin,180)
+      }));
       const result = await searchPlaces({
         q: url.searchParams.get("q"),
         place: url.searchParams.get("place"),
@@ -571,4 +620,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, createIntervalGate, searchCommonsPhotos, server };
+module.exports = { buildOverpassQuery, inferCategoryFromQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, createIntervalGate, searchCommonsPhotos, server };
