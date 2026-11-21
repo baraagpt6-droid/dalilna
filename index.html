@@ -3066,7 +3066,8 @@ function normalizeState(raw){
   const arrayOfObjects=(v)=>Array.isArray(v)?v.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)):[];
   return {
     ...base,...raw,
-    items:safeItems,\n    removedSeedIds:[...removedSeedIds].slice(0,500),
+    items:safeItems,
+    removedSeedIds:[...removedSeedIds].slice(0,500),
     pending:arrayOfObjects(raw.pending).map((x,i)=>({
       id:cleanText(x.id,80)||"pending_"+i,name:cleanText(x.name,80),cat:CAT_KEYS.has(x.cat)?x.cat:"other",
       gov:cleanText(x.gov,80),dist:cleanText(x.dist,80),area:cleanText(x.area,100),village:cleanText(x.village,120),
@@ -3396,7 +3397,8 @@ function buildScopeSelector(){
 }
 function scopeMatchesItem(item, selected=scope){
   if(!selected)return true;
-  if(item.nationwide===true)return true;\n   if(selected.startsWith("gov:"))return normalizePlace(item.gov)===normalizePlace(selected.slice(4));
+  if(item.nationwide===true)return true;
+   if(selected.startsWith("gov:"))return normalizePlace(item.gov)===normalizePlace(selected.slice(4));
   if(selected.startsWith("district:")){
     const [gov,dist]=selected.slice(9).split("|");
     return itemMatchesDistrict(item,gov,dist);
@@ -3725,6 +3727,10 @@ document.addEventListener("click",e=>{
     if(!target||!canDelete(target)){toast("ليست لديك صلاحية حذف هذا الإدراج.");return;}
     if(b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="تأكيد؟";setTimeout(()=>{b.dataset.sure="";b.textContent="حذف";},3500);return;}
     const it=S.items.find(x=>x.id===b.dataset.del);
+    if(it&&SEED_ITEMS.some(seed=>seed.id===it.id)){
+      S.removedSeedIds=Array.isArray(S.removedSeedIds)?S.removedSeedIds:[];
+      if(!S.removedSeedIds.includes(it.id))S.removedSeedIds.push(it.id);
+    }
     S.items=S.items.filter(x=>x.id!==b.dataset.del);
     logAction("حذف: "+(it?.name||b.dataset.del));
     saveState();buildScopeSelector();render();toast("تم الحذف");
