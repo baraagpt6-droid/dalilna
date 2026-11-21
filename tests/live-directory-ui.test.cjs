@@ -48,3 +48,14 @@ test("Geoapify results render in-app business cards with phone and optional map 
  assert.doesNotMatch(html,/GEOAPIFY_API_KEY|GOOGLE_MAPS_API_KEY|places\.googleapis\.com/);
 });
 test("live directory links to privacy and terms pages",()=>{assert.match(html,/\.\/privacy\.html/);assert.match(html,/\.\/terms\.html/);});
+
+test("first-run public starter catalog includes real sourced businesses and products",()=>{
+ assert.match(html,/const PUBLIC_BUSINESSES=\[/);
+ assert.match(html,/const PUBLIC_PRODUCTS=\[/);
+ assert.match(html,/seedCatalogVersion/);
+ assert.match(html,/بيانات عامة · غير موثّقة/);
+ assert.match(html,/عرض من متجر خارجي/);
+ assert.match(html,/sourceUrl:safeExternalUrl/);
+ assert.match(html,/https:\/\/hubloh\.com\/en\/cell-phones/);
+ assert.match(html,/https:\/\/www\.google\.com\/maps\/search/);
+});
