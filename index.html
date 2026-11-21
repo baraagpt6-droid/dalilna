@@ -3725,7 +3725,7 @@ function liveDirectoryPanelHTML(){
 }
 const LIVE_DIRECTORY_API="https://dalilna-live.onrender.com";
 const LIVE_LOCAL_KEY="dalilna_live_places_159";
-let liveGooglePlacesEnabled=false,liveGeoapifyEnabled=false;
+let liveGeoapifyEnabled=false;
 let liveDirectoryTimer=null,liveDirectorySeq=0,liveDirectoryCache=new Map(),liveDirectoryLast={query:"",category:"all"};
 let liveDirectoryLastData=null,liveDirectoryVisibleCount=8,liveDirectoryCoords=null;
 function liveLocalData(){
@@ -3759,19 +3759,6 @@ function liveDirectoryCardHTML(item){
  (images?'<section class="live-directory-local-photos"><b>الصور المضافة محلياً</b><div class="live-directory-photo-grid">'+images+'</div></section>':"")+
  photoSearch+'<label class="live-directory-photo-upload">إضافة صورة من جهازك<input type="file" accept="image/jpeg,image/png,image/webp" data-live-photo-input="'+esc(item.id)+'"></label>'+
  '<small class="live-directory-local-note">التقييمات والصور محفوظة على هذا الجهاز فقط ولا تظهر للمستخدمين الآخرين.</small></article>';
-}
-function googleMapsDirectoryCardHTML(item){
- const phone=String(item.phone||"").trim();
- const phoneHref=phone.replace(/[^+\\d]/g,"");
- const phoneHtml=phone
-  ?'<p class="google-place-phone">الهاتف: <a href="tel:'+esc(phoneHref)+'">'+esc(phone)+'</a></p>'
-  :'<p class="google-place-phone muted">رقم الهاتف غير متوفر لهذا المكان في Google Maps.</p>';
- const maps=item.mapsUrl
-  ?'<a class="google-place-open" href="'+esc(item.mapsUrl)+'" target="_blank" rel="noopener noreferrer">فتح الموقع في Google Maps</a>'
-  :'';
- return '<article class="live-directory-card google-place-card"><div class="live-directory-card-head"><h3>'+esc(item.name)+'</h3><span class="tag">'+esc(item.category||"خدمة")+'</span></div>'+
-  (item.address?'<p>العنوان: '+esc(item.address)+'</p>':"")+phoneHtml+
-  '<div class="live-directory-actions">'+maps+'</div><small class="live-directory-local-note">بيانات هذا المحل مقدمة من Google Maps. تحقق من الرقم قبل الاتصال.</small></article>';
 }
 function geoapifyDirectoryCardHTML(item){
  const phone=String(item.phone||"").trim(),phoneHref=phone.replace(/[^+\\d]/g,"");
@@ -3870,17 +3857,7 @@ function renderLiveDirectoryResponse(data){
   return;
  }
  liveDirectoryLastData=data.source==="Google Maps"?null:data;
- if(data.source==="Google Maps"){
-  status.textContent="المصدر: Google Maps · عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة";
-  box.classList.add("live-google-results");
-  if(attribution)attribution.textContent="Google Maps · تُعرض بيانات المحلات هنا داخل دليلنا. افتح الموقع فقط عند الضغط على الرابط.";
-  if(!items.length){
-   box.innerHTML='<div class="live-directory-empty">لم يعثر Google Maps على نتائج مطابقة لهذه الخدمة في المنطقة المحددة.</div>';
-   return;
-  }
-  box.innerHTML=items.slice(0,liveDirectoryVisibleCount).map(googleMapsDirectoryCardHTML).join("");
-  return;
- }
+
  status.textContent=(data.scopeFallback?"لم نجد حدود المديرية؛ هذه نتائج على مستوى المحافظة. ":"")+"المصدر: OpenStreetMap · عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة"+(data.cached?" · من التخزين المؤقت":"");
  box.classList.remove("live-google-results");
  if(attribution)attribution.textContent="© OpenStreetMap contributors · عند تفعيل Geoapify ستظهر نتائج الأماكن مع بيانات الاتصال المتاحة."; 
