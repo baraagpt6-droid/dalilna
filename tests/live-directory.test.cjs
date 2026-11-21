@@ -2,7 +2,7 @@
 const test=require("node:test");
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {buildOverpassQuery,inferCategoryFromQuery,classifyCategory,normalizeElement,normalizeText,createIntervalGate,searchCommonsPhotos,searchGooglePlaces,googlePlacesEnabled,searchGeoapifyPlaces,geoapifyEnabled,server}=require("../server");
+const {buildOverpassQuery,inferCategoryFromQuery,classifyCategory,normalizeElement,normalizeText,createIntervalGate,searchCommonsPhotos,searchGeoapifyPlaces,geoapifyEnabled,server}=require("../server");
 
 test("builds a narrow grocery query for a supplied bounding box",()=>{
  const query=buildOverpassQuery({south:13.1,west:43.2,north:13.4,east:43.5},"grocery");
@@ -46,55 +46,6 @@ test("central request gate serializes concurrent callers",async()=>{
  const wait=createIntervalGate(35),started=[];await Promise.all(Array.from({length:3},async()=>{await wait();started.push(Date.now());}));
  started.sort((a,b)=>a-b);assert.ok(started[1]-started[0]>=25);assert.ok(started[2]-started[1]>=25);
 });
-test("Google Places is disabled without a server-side key",async()=>{
- const originalKey=process.env.GOOGLE_MAPS_API_KEY;
- delete process.env.GOOGLE_MAPS_API_KEY;
- try{
-  assert.equal(googlePlacesEnabled(),false);
-  await assert.rejects(searchGooglePlaces({q:"بقالة",place:"صنعاء، اليمن"}),error=>error.code==="GOOGLE_PLACES_NOT_CONFIGURED"&&error.statusCode===503);
- }finally{
-  if(originalKey===undefined)delete process.env.GOOGLE_MAPS_API_KEY;else process.env.GOOGLE_MAPS_API_KEY=originalKey;
- }
-});
-test("Google Places search requests phone, category and Maps link fields and maps results",async()=>{
- const originalKey=process.env.GOOGLE_MAPS_API_KEY,originalFetch=global.fetch;
- process.env.GOOGLE_MAPS_API_KEY="server-only-test-key";
- global.fetch=async(input,options={})=>{
-  assert.equal(String(input),"https://places.googleapis.com/v1/places:searchText");
-  assert.equal(options.method,"POST");
-  assert.equal(options.headers["X-Goog-Api-Key"],"server-only-test-key");
-  assert.match(options.headers["X-Goog-FieldMask"],/places.nationalPhoneNumber/);
-  assert.match(options.headers["X-Goog-FieldMask"],/places.googleMapsUri/);
-  const body=JSON.parse(options.body);
-  assert.equal(body.textQuery,"بقالة في صنعاء، اليمن");
-  assert.equal(body.languageCode,"ar");
-  assert.equal(body.regionCode,"YE");
-  return new Response(JSON.stringify({places:[{
-   id:"ChIJDalilnaTest",
-   displayName:{text:"بقالة الاختبار"},
-   formattedAddress:"صنعاء، اليمن",
-   primaryType:"grocery_store",
-   primaryTypeDisplayName:{text:"متجر بقالة"},
-   nationalPhoneNumber:"+967 777 000 111",
-   googleMapsUri:"https://maps.google.com/?cid=123456"
-  }]}),{status:200,headers:{"content-type":"application/json"}});
- };
- try{
-  assert.equal(googlePlacesEnabled(),true);
-  const result=await searchGooglePlaces({q:"بقالة",place:"صنعاء، اليمن"});
-  assert.equal(result.source,"Google Maps");
-  assert.equal(result.count,1);
-  assert.equal(result.items[0].name,"بقالة الاختبار");
-  assert.equal(result.items[0].category,"متجر بقالة");
-  assert.equal(result.items[0].phone,"+967 777 000 111");
-  assert.equal(result.items[0].mapsUrl,"https://maps.google.com/?cid=123456");
-  assert.equal(result.cached,false);
- }finally{
-  global.fetch=originalFetch;
-  if(originalKey===undefined)delete process.env.GOOGLE_MAPS_API_KEY;else process.env.GOOGLE_MAPS_API_KEY=originalKey;
- }
-});
-
 test("Geoapify free integration stays disabled without a server-side key",async()=>{
  const originalKey=process.env.GEOAPIFY_API_KEY;
  delete process.env.GEOAPIFY_API_KEY;
