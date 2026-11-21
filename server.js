@@ -5,7 +5,7 @@ const { URL } = require("node:url");
 const { handleMarketplaceRequest } = require("./marketplace-api");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.8.0";
+const VERSION = "1.8.1";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -310,7 +310,7 @@ async function geoapifyRequest(url, timeoutMs = 10000) {
   try {
     const response = await fetch(url, {
       signal: controller.signal,
-      headers: { "Accept": "application/json", "User-Agent": "DalilnaDirectory/1.7.0 (+https://dalilna-yemen.onrender.com)" }
+      headers: { "Accept": "application/json", "User-Agent": "DalilnaDirectory/1.8.1 (+https://dalilna-yemen.onrender.com)" }
     });
     if (!response.ok) {
       const error = new Error(response.status === 429
@@ -586,12 +586,48 @@ function normalizeElement(element, placeLabel) {
   };
 }
 
+async function geocodePhotonFallback(candidates,key){
+ for(const candidate of candidates){
+  const url=new URL("https://photon.komoot.io/api/");
+  url.search=new URLSearchParams({q:candidate,lang:"ar",limit:"10"}).toString();
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
+  try{
+   const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/geo+json","User-Agent":"DalilnaDirectory/1.8.1 (+https://dalilna-live.onrender.com)"}});
+   if(!response.ok){
+    console.warn(JSON.stringify({event:"places.geocode.photon.retry",status:response.status}));
+    continue;
+   }
+   const data=await response.json();
+   const features=Array.isArray(data.features)?data.features:[];
+   for(const feature of features){
+    const properties=feature&&feature.properties||{},country=String(properties.countrycode||"").toLowerCase();
+    if(country&&country!=="ye")continue;
+    const extent=Array.isArray(properties.extent)?properties.extent.map(Number):[];
+    if(extent.length!==4||!extent.every(Number.isFinite))continue;
+    const bbox={west:extent[0],south:extent[1],east:extent[2],north:extent[3]};
+    if(bbox.north<=bbox.south||bbox.east<=bbox.west)continue;
+    const spanLat=bbox.north-bbox.south,spanLon=bbox.east-bbox.west;
+    if(spanLat>9||spanLon>9||spanLat*spanLon>42)continue;
+    const label=[properties.name,properties.city,properties.state,properties.country].filter(Boolean).join("، ");
+    const area={bbox,label:cleanText(label||candidate,220),geocoder:"Photon"};
+    console.info(JSON.stringify({event:"places.geocode.success",provider:"Photon",place:cleanText(candidate,100)}));
+    return touchCache(geocodeCache,key,area,6*60*60*1000);
+   }
+  }catch(error){
+   console.warn(JSON.stringify({event:"places.geocode.photon.error",code:error&&error.name==="AbortError"?"TIMEOUT":"UPSTREAM_ERROR"}));
+  }finally{clearTimeout(timer);}
+ }
+ return null;
+}
 async function geocodePlace(place) {
   const key=normalizeText(place);
   const cached=readCache(geocodeCache,key);
   if(cached)return cached;
   const cleanedPlace=cleanText(place.replace(/(?:^|،\s*)(?:محافظة|مديرية|عزلة)\s*/gu," ").replace(/،\s*اليمن$/g,"").replace(/\s+/g," "),180);
-  const candidates=[...new Set([place,cleanedPlace+"، اليمن"].filter(Boolean))];
+  const candidates=[...new Set([place,cleanedPlace+"، اليمن",
+    /أمانة\s*العاصمة/u.test(place)?"Amanat Al Asimah, Yemen":"",
+    /صنعاء/u.test(place)?"Sanaa, Yemen":""
+  ].filter(Boolean))];
   let lastError=null;
   for(const candidate of candidates){
     await waitForNominatimSlot();
@@ -600,7 +636,7 @@ async function geocodePlace(place) {
     url.search=new URLSearchParams({q:candidate,format:"jsonv2",addressdetails:"1",limit:"5",countrycodes:"ye","accept-language":"ar,en"}).toString();
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
     try{
-      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaDirectory/1.7.0 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
+      const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaDirectory/1.8.1 (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
       if(response.status===429){lastError=new Error("مصدر تحديد المنطقة مزدحم. حاول مرة أخرى بعد قليل.");continue;}
       if(!response.ok){lastError=new Error("تعذّر تحديد حدود المنطقة من مصدر الخريطة.");continue;}
       const rows=await response.json();
@@ -620,6 +656,9 @@ async function geocodePlace(place) {
       lastError=error.name==="AbortError"?new Error("تأخر مصدر تحديد المنطقة في الرد."):error;
     }finally{clearTimeout(timer);}
   }
+  if(lastError)console.warn(JSON.stringify({event:"places.geocode.nominatim.unavailable",code:lastError.name==="AbortError"?"TIMEOUT":"NO_RESULT"}));
+  const photonArea=await geocodePhotonFallback(candidates,key);
+  if(photonArea)return photonArea;
   if(lastError)throw lastError;
   return null;
 }
@@ -643,7 +682,7 @@ async function fetchOverpass(bbox,category,label){
         headers:{
           "Content-Type":"application/x-www-form-urlencoded; charset=UTF-8",
           "Accept":"application/json",
-          "User-Agent":"DalilnaDirectory/1.7.0 (+https://dalilna-live.onrender.com)"
+          "User-Agent":"DalilnaDirectory/1.8.1 (+https://dalilna-live.onrender.com)"
         },
         body:new URLSearchParams({data:query})
       });
@@ -703,7 +742,7 @@ async function searchCommonsPhotos(query, place) {
   try{
     const response=await fetch(url,{signal:controller.signal,headers:{
       "Accept":"application/json",
-      "User-Agent":"DalilnaDirectory/1.7.0 (https://dalilna-live.onrender.com; contact: dalilna project)"
+      "User-Agent":"DalilnaDirectory/1.8.1 (https://dalilna-live.onrender.com; contact: dalilna project)"
     }});
     if(response.status===429){const error=new Error("مكتبة الصور مزدحمة. حاول لاحقاً.");error.statusCode=429;throw error;}
     if(!response.ok)throw new Error("تعذر الاتصال بمكتبة Wikimedia Commons.");
