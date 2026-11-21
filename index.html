@@ -4080,8 +4080,10 @@ async function loadLiveMarketplaceMatches(query,category,productType,signal,forc
  if(!force&&cached&&Date.now()-cached.at<120000){liveSharedMatches=cached.items;return liveSharedMatches;}
  liveSharedMatches=[];
  const params=new URLSearchParams({limit:"12",includeImages:"1"});
- if(category&&category!=="all")params.set("category",category);
- if(productType)params.set("productType",productType);
+ if(productType){
+  params.set("category","marketplace");
+  params.set("productType",productType);
+ }else if(category&&category!=="all")params.set("category",category);
  if(query)params.set("q",query);
  if(gov)params.set("governorate",gov);
  if(district)params.set("district",district);
