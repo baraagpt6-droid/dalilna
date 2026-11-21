@@ -20,7 +20,7 @@ test("live search offers retry and explains network failures in Arabic",()=>{
  assert.match(html,/تعذر الوصول إلى خادم البحث/);assert.doesNotMatch(html,/Failed to fetch/);
 });
 test("home search does not request every category when the query is empty",()=>{
- assert.match(html,/لن نبحث في كل أنواع الأماكن تلقائياً/);
+ assert.match(html,/اكتب مثلاً «بقالة» أو «صيدلية» أو اختر فئة محددة لعرض المحلات هنا/);
  assert.match(html,/اكتب اسم الخدمة أو افتح فئة محددة لبدء البحث/);
 });
 test("region count is clearly labeled as device-local",()=>{
