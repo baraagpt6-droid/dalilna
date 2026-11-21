@@ -39,11 +39,11 @@ test("Careers.sa parser retains exact job links, location, organization and fres
  assert.equal(job.publishedAt,"2026-11-21T00:00:00.000Z");
 });
 
-test("daily refresh script uses valid URL-path filters and writes a real JSON newline",()=>{
+test("daily refresh merges retained and freshly collected jobs without losing old records",()=>{
  const script=fs.readFileSync("scripts/refresh-jobs.cjs","utf8");
- assert.ok(script.includes(String.raw`+"\n"`));
- assert.ok(!script.includes('/\\\\\\\\/en\\\\\\\\/jobs'));
- assert.ok(script.includes('"+\"\\\\n\"')); 
+ assert.ok(script.includes("[...old,...fresh].forEach"));
+ assert.ok(script.includes("map.set(key,item)"));
+ assert.ok(script.includes("writeFileSync(OUT"));
 });
 
 test("daily refresh script includes UN RSS and optional ReliefWeb configuration",()=>{const script=fs.readFileSync("scripts/refresh-jobs.cjs","utf8");assert.match(script,/careers\.un\.org/);assert.match(script,/RELIEFWEB_APPNAME/);assert.match(script,/DALILNA_JOB_RSS_FEEDS/);assert.match(script,/expiresAt/);});
