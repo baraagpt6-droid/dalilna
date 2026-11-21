@@ -1,7 +1,7 @@
 Dalilna 1.8.2 — Build and deployment status
 ===========================================
 
-- Main branch commit: 3618090729988c2c98f3b80d2b99eaabee2dedb7.
+- Application code commit for version 1.8.2: 3618090729988c2c98f3b80d2b99eaabee2dedb7.
 - PWA + Android WebView. Android versionCode 167; APK is debug-signed for testing, not Google Play production.
 - GitHub verification workflow, Android APK workflow, and GitHub Pages deployment completed successfully for the 1.8.2 release.
 - Live Render service dalilna-live deployed the 1.8.2 main commit successfully.
