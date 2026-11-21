@@ -1,8 +1,10 @@
-Dalilna 1.7.0
+Dalilna 1.8.2
 Application release: PWA + Android WebView
-Android versionCode: 164
-Live place discovery: Geoapify Places and OpenStreetMap with provider attribution.
-Shared marketplace: PostgreSQL API; every community submission remains pending until server-side review.
-Product types include phones, watches, computers, cars, motorcycles, land, property, electronics, appliances, furniture, clothing, jewelry, honey, coffee, spices, livestock and other goods.
-Approved listings are shared across devices and refreshed while the app is visible.
-DATABASE_URL and DALILNA_ADMIN_TOKEN must be configured as server environment secrets and the database schema must be applied.
+Android versionCode: 167
+Web app version: 1.8.2
+Live place discovery: Geoapify Places with OpenStreetMap-based fallbacks and provider attribution.
+Shared marketplace: PostgreSQL API with schema version 2, including opening_hours, website, latitude and longitude.
+New community listings are submitted as pending and appear publicly only after server-side admin approval.
+Legacy local listings must be migrated from each device using “نقل إضافاتي القديمة للمراجعة”. clientRef uniqueness prevents duplicate database records on retry.
+Server configuration: DATABASE_URL and DALILNA_ADMIN_TOKEN must be stored as server environment secrets, never in the client or APK.
+Android APK: debug-signed testing build only; not a Google Play production release.
