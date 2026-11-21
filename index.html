@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.7.0">
+<meta name="app-version" content="1.8.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1068,12 +1068,15 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     </div>
     <div class="two" id="productTypeFields" hidden>
       <label>نوع المعروض<select name="productType">
-        <option value="phone">جوال</option><option value="watch">ساعة</option><option value="computer">كمبيوتر / لابتوب</option><option value="tablet">جهاز لوحي</option>
+        <option value="phone">جوال</option><option value="phone_accessories">إكسسوارات جوال</option><option value="watch">ساعة</option><option value="computer">كمبيوتر / لابتوب</option><option value="computer_accessories">ملحقات كمبيوتر</option><option value="tablet">جهاز لوحي</option>
         <option value="camera">كاميرا</option><option value="car">سيارة</option><option value="motorcycle">دراجة نارية</option><option value="vehicle_parts">قطع غيار مركبات</option>
         <option value="land">أرض</option><option value="property">عقار / منزل</option><option value="electronics">إلكترونيات</option><option value="appliance">أجهزة منزلية</option>
         <option value="furniture">أثاث</option><option value="clothing">ملابس</option><option value="shoes">أحذية</option><option value="jewelry">ذهب ومجوهرات</option>
         <option value="honey">عسل</option><option value="coffee">بن وقهوة</option><option value="spices">بهارات</option><option value="food">مواد غذائية</option>
-        <option value="livestock">مواشٍ</option><option value="agriculture">منتجات زراعية</option><option value="building_materials">مواد بناء</option><option value="books">كتب وقرطاسية</option><option value="other">أخرى</option>
+        <option value="livestock">مواشٍ</option><option value="agriculture">منتجات زراعية</option><option value="building_materials">مواد بناء</option><option value="books">كتب</option><option value="stationery">قرطاسية وأدوات مدرسية</option>
+        <option value="perfume">عطور</option><option value="cosmetics">مستحضرات تجميل</option><option value="solar_equipment">معدات طاقة شمسية</option><option value="tools">أدوات ومعدات</option>
+        <option value="household_items">مستلزمات منزلية</option><option value="kitchenware">أدوات مطبخ</option><option value="baby_products">منتجات أطفال</option><option value="games">ألعاب</option>
+        <option value="sports_equipment">معدات رياضية</option><option value="animal_feed">أعلاف</option><option value="seeds">بذور ومحاصيل</option><option value="construction_equipment">معدات إنشاءات</option><option value="other">أخرى</option>
       </select></label>
       <label>نوع الإعلان<select name="listingType"><option value="sale">للبيع</option><option value="wanted">مطلوب</option><option value="barter">مقايضة</option><option value="free">مجاني</option></select></label>
       <label>حالة المعروض<select name="condition"><option value="unknown">غير محدد</option><option value="new">جديد</option><option value="used">مستعمل</option></select></label>
@@ -2382,7 +2385,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="1.7.0";
+const APP_VERSION="1.8.0";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -2640,7 +2643,7 @@ const PUBLIC_PRODUCTS=[
 }));
 const SEED_ITEMS=[...PUBLIC_BUSINESSES,...PUBLIC_PRODUCTS];
 const LEGACY_DEMO_IDS=new Set(["s1","s2","s3","s4","s5","s6","s7","s8","s9"]);
-const PRODUCT_TYPES_LOCAL=new Set(["phone","watch","computer","tablet","camera","car","motorcycle","vehicle_parts","land","property","electronics","appliance","furniture","clothing","shoes","jewelry","honey","coffee","spices","food","livestock","agriculture","building_materials","books","other"]);
+const PRODUCT_TYPES_LOCAL=new Set(["phone","phone_accessories","watch","computer","computer_accessories","tablet","camera","car","motorcycle","vehicle_parts","land","property","electronics","appliance","furniture","clothing","shoes","jewelry","honey","coffee","spices","food","livestock","agriculture","building_materials","books","stationery","perfume","cosmetics","solar_equipment","tools","household_items","kitchenware","baby_products","games","sports_equipment","animal_feed","seeds","construction_equipment","other"]);
 
 function loadState(){
   try{const raw=localStorage.getItem(STORE_KEY);if(raw)return JSON.parse(raw);}catch(e){}
@@ -3875,6 +3878,27 @@ function localDirectorySearch(q,limit=6){
 }
 function directoryMapSearchInfo(q){
   const text=normalizeQuery(q);
+  const productIntents=[
+    {category:"books",productType:"stationery",label:"مكتبات وقرطاسيات",test:/(قلم|اقلام|دفتر|دفاتر|كراس[ةه]|قرطاسي|ادوات مدرسيه|ممحاه|مبراة|مسطره)/},
+    {category:"books",productType:"books",label:"مكتبات وكتب",test:/(كتاب|كتب|روايه|روايات|مراجع)/},
+    {category:"telecom",productType:"phone_accessories",label:"محلات إكسسوارات الجوال",test:/(اكسسوارات الجوال|جراب|كفر جوال|شاحن جوال|سماعه جوال)/},
+    {category:"telecom",productType:"phone",label:"محلات الجوالات",test:/(جوال|جوالات|موبايل|موبايلات|هاتف|هواتف|ايفون|سامسونج)/},
+    {category:"watches",productType:"watch",label:"محلات الساعات",test:/(ساعه|ساعات|ساعات يد)/},
+    {category:"vehicles",productType:"car",label:"معارض السيارات",test:/(سياره|سيارات|معرض سيارات)/},
+    {category:"vehicles",productType:"motorcycle",label:"محلات الدراجات النارية",test:/(دراجه ناريه|دراجات ناريه|دباب)/},
+    {category:"vehicles",productType:"vehicle_parts",label:"محلات قطع غيار المركبات",test:/(قطع غيار|قطع سيارات|قطع مركبات)/},
+    {category:"elec",productType:"computer",label:"محلات الكمبيوتر واللابتوب",test:/(كمبيوتر|حاسوب|لابتوب|لاب توب)/},
+    {category:"elec",productType:"camera",label:"محلات الكاميرات",test:/(كاميرا|كاميرات)/},
+    {category:"beauty",productType:"perfume",label:"محلات العطور",test:/(عطر|عطور|بخور)/},
+    {category:"beauty",productType:"cosmetics",label:"محلات التجميل",test:/(تجميل|مكياج|كوزمتك|مستحضرات)/},
+    {category:"grocery",productType:"honey",label:"محلات العسل",test:/(عسل|عسل طبيعي)/},
+    {category:"grocery",productType:"coffee",label:"محلات البن والقهوة",test:/(بن|قهوه|قهوة|حبوب قهوه)/},
+    {category:"grocery",productType:"spices",label:"محلات البهارات",test:/(بهارات|توابل|هيل|فلفل اسود)/},
+    {category:"build",productType:"building_materials",label:"محلات مواد البناء",test:/(مواد بناء|اسمنت|حديد|دهانات|ادوات بناء)/},
+    {category:"home",productType:"furniture",label:"محلات الأثاث",test:/(اثاث|كنب|غرف نوم|طاولات)/},
+    {category:"home",productType:"appliance",label:"محلات الأجهزة المنزلية",test:/(اجهزه منزليه|ثلاجه|غساله|مكيف|فرن)/}
+  ];
+  const product=productIntents.find(item=>item.test.test(text));
   const services=[
     {category:"grocery",label:"بقالات ومحلات تموين",test:/بقال|تموين|سوبر\\s?ماركت|مواد غذائيه|جمعيه استهلاكيه/},
     {category:"health",label:"مستشفيات وعيادات ومراكز صحية",test:/مستشف|مستوصف|مركز صحي|مركز طبي|عياده|عيادات|مختبر|طبيب|دكتور|اسنان/},
@@ -3895,7 +3919,7 @@ function directoryMapSearchInfo(q){
     {category:"market",label:"أسواق ومحلات",test:/سوق مركزي|اسواق|مول|مركز تجاري/}
   ];
   const service=services.find(item=>item.test.test(text));
-  if(!service)return null;
+  if(!product&&!service)return null;
   const gov=GOVS.find(name=>text.includes(normalizePlace(name)));
   const districtEntry=Object.entries(YEMEN_DISTRICTS).find(([parent,districts])=>
     districts.some(name=>text.includes(normalizePlace(name)))
@@ -3904,8 +3928,9 @@ function directoryMapSearchInfo(q){
   const place=gov?("محافظة "+gov+"، اليمن")
     :districtEntry?("مديرية "+district+"، محافظة "+districtEntry[0]+"، اليمن")
     :scope?regionScopeLabel(regionCurrentContext()):"اليمن";
-  const mapQuery=service.label+" "+String(q||"").trim()+" "+place;
-  return {category:service.category,label:service.label,place,mapQuery,url:regionMapSearch(mapQuery)};
+  const category=product?product.category:service.category,label=product?product.label:service.label;
+  const mapQuery=label+" "+String(q||"").trim()+" "+place;
+  return {category,productType:product?product.productType:"",label,place,mapQuery,url:regionMapSearch(mapQuery),productSearch:!!product};
 }
 function liveDirectoryPanelHTML(){
  return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>محلات وخدمات داخل دليلنا</b><div class="live-directory-sub">تظهر النتائج هنا مباشرة. رقم الهاتف يظهر عند توفره، ولا تُفتح الخريطة إلا باختيارك.</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث النتائج</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تجهيز البحث حسب المنطقة المحددة…</div><div class="live-directory-list" id="liveDirectoryItems"></div><div class="live-directory-attribution" id="liveDirectoryAttribution">مصادر الأماكن المفتوحة: Geoapify وOpenStreetMap.</div><div class="live-directory-legal"><a href="./privacy.html">سياسة الخصوصية</a><a href="./terms.html">شروط الاستخدام</a></div></section>';
