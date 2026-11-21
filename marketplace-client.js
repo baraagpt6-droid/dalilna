@@ -120,6 +120,20 @@
       desc.textContent = item.description;
       card.appendChild(desc);
     }
+    if (item.openingHours) {
+      const hours = document.createElement("p");
+      hours.className = "shared-listing-meta";
+      hours.textContent = "أوقات العمل: " + item.openingHours;
+      card.appendChild(hours);
+    }
+    if (item.website) {
+      const website = document.createElement("a");
+      website.href = item.website;
+      website.target = "_blank";
+      website.rel = "noopener noreferrer";
+      website.textContent = "الموقع الإلكتروني";
+      card.appendChild(website);
+    }
     if (item.category === "jobs" && item.deadline) {
       const deadline = document.createElement("p");
       deadline.className = "shared-listing-meta";
