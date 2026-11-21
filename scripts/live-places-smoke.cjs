@@ -54,6 +54,12 @@ async function main(){
  assert.equal(osmSchool.payload.source,"OpenStreetMap");
  assert.ok(Array.isArray(osmSchool.payload.items));
  process.stdout.write("PASS live OpenStreetMap stationery fallback returned "+osmSchool.payload.count+" results\n");
+ const capitalQuery=new URLSearchParams({q:"قلم",category:"books",place:"محافظة أمانة العاصمة، اليمن"});
+ const capitalSearch=await get("/api/places/search?"+capitalQuery);
+ assert.equal(capitalSearch.response.status,200,"Amanat Al Asimah geocoding must work or return a valid result set");
+ assert.ok(Array.isArray(capitalSearch.payload.items));
+ process.stdout.write("PASS governorate-name geocoding for Amanat Al Asimah\n");
+
  process.stdout.write("PASS live Commons photo endpoint returned "+r.payload.count+" results\n");
  process.stdout.write("RESULT: live free-source smoke tests passed\n");
 }
