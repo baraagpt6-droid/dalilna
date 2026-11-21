@@ -2,7 +2,7 @@
 const test=require("node:test");
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {buildOverpassQuery,inferCategoryFromQuery,classifyCategory,normalizeElement,normalizeText,createIntervalGate,searchCommonsPhotos,server}=require("../server");
+const {buildOverpassQuery,inferCategoryFromQuery,classifyCategory,normalizeElement,normalizeText,createIntervalGate,searchCommonsPhotos,searchGooglePlaces,googlePlacesEnabled,server}=require("../server");
 
 test("builds a narrow grocery query for a supplied bounding box",()=>{
  const query=buildOverpassQuery({south:13.1,west:43.2,north:13.4,east:43.5},"grocery");
@@ -46,11 +46,55 @@ test("central request gate serializes concurrent callers",async()=>{
  const wait=createIntervalGate(35),started=[];await Promise.all(Array.from({length:3},async()=>{await wait();started.push(Date.now());}));
  started.sort((a,b)=>a-b);assert.ok(started[1]-started[0]>=25);assert.ok(started[2]-started[1]>=25);
 });
-test("server has no paid Google Places runtime dependency",()=>{
- const source=fs.readFileSync(require.resolve("../server"),"utf8");
- assert.doesNotMatch(source,/places\.googleapis\.com|GOOGLE_PLACES_API_KEY|GOOGLE_PLACES_ENABLED|Google Places/);
- assert.match(source,/paidProvidersDisabled:true/);
+test("Google Places is disabled without a server-side key",async()=>{
+ const originalKey=process.env.GOOGLE_MAPS_API_KEY;
+ delete process.env.GOOGLE_MAPS_API_KEY;
+ try{
+  assert.equal(googlePlacesEnabled(),false);
+  await assert.rejects(searchGooglePlaces({q:"بقالة",place:"صنعاء، اليمن"}),error=>error.code==="GOOGLE_PLACES_NOT_CONFIGURED"&&error.statusCode===503);
+ }finally{
+  if(originalKey===undefined)delete process.env.GOOGLE_MAPS_API_KEY;else process.env.GOOGLE_MAPS_API_KEY=originalKey;
+ }
 });
+test("Google Places search requests phone, category and Maps link fields and maps results",async()=>{
+ const originalKey=process.env.GOOGLE_MAPS_API_KEY,originalFetch=global.fetch;
+ process.env.GOOGLE_MAPS_API_KEY="server-only-test-key";
+ global.fetch=async(input,options={})=>{
+  assert.equal(String(input),"https://places.googleapis.com/v1/places:searchText");
+  assert.equal(options.method,"POST");
+  assert.equal(options.headers["X-Goog-Api-Key"],"server-only-test-key");
+  assert.match(options.headers["X-Goog-FieldMask"],/places.nationalPhoneNumber/);
+  assert.match(options.headers["X-Goog-FieldMask"],/places.googleMapsUri/);
+  const body=JSON.parse(options.body);
+  assert.equal(body.textQuery,"بقالة في صنعاء، اليمن");
+  assert.equal(body.languageCode,"ar");
+  assert.equal(body.regionCode,"YE");
+  return new Response(JSON.stringify({places:[{
+   id:"ChIJDalilnaTest",
+   displayName:{text:"بقالة الاختبار"},
+   formattedAddress:"صنعاء، اليمن",
+   primaryType:"grocery_store",
+   primaryTypeDisplayName:{text:"متجر بقالة"},
+   nationalPhoneNumber:"+967 777 000 111",
+   googleMapsUri:"https://maps.google.com/?cid=123456"
+  }]}),{status:200,headers:{"content-type":"application/json"}});
+ };
+ try{
+  assert.equal(googlePlacesEnabled(),true);
+  const result=await searchGooglePlaces({q:"بقالة",place:"صنعاء، اليمن"});
+  assert.equal(result.source,"Google Maps");
+  assert.equal(result.count,1);
+  assert.equal(result.items[0].name,"بقالة الاختبار");
+  assert.equal(result.items[0].category,"متجر بقالة");
+  assert.equal(result.items[0].phone,"+967 777 000 111");
+  assert.equal(result.items[0].mapsUrl,"https://maps.google.com/?cid=123456");
+  assert.equal(result.cached,false);
+ }finally{
+  global.fetch=originalFetch;
+  if(originalKey===undefined)delete process.env.GOOGLE_MAPS_API_KEY;else process.env.GOOGLE_MAPS_API_KEY=originalKey;
+ }
+});
+
 test("Wikimedia Commons search returns author and license metadata",async()=>{
  const original=global.fetch;
  global.fetch=async(input,options={})=>{
@@ -69,6 +113,12 @@ test("Google details endpoint is unavailable and status confirms free providers"
   assert.equal(statusResponse.headers.get("access-control-allow-origin"),"*");
   const status=await statusResponse.json();
   assert.equal(status.activeProvider,"OpenStreetMap");assert.equal(status.paidProvidersDisabled,true);assert.equal(status.photoProvider,"Wikimedia Commons");
+  const googleStatusResponse=await fetch(base+"/api/google/places/status",{headers:{Origin:"https://preview.example"}});
+  assert.equal(googleStatusResponse.headers.get("access-control-allow-origin"),"*");
+  const googleStatus=await googleStatusResponse.json();
+  assert.equal(googleStatus.provider,"Google Maps");
+  assert.equal(googleStatus.googlePlacesEnabled,false);
+  assert.equal(JSON.stringify(googleStatus).includes("GOOGLE_MAPS_API_KEY"),false);
   const preflight=await fetch(base+"/api/places/search",{method:"OPTIONS",headers:{Origin:"https://preview.example","Access-Control-Request-Method":"GET"}});
   assert.equal(preflight.status,204);assert.equal(preflight.headers.get("access-control-allow-origin"),"*");
   const details=await fetch(base+"/api/places/details?placeId=ChIJOldGooglePlaceId123");
