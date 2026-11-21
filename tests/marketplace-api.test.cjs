@@ -75,6 +75,10 @@ test("supports product-group marketplace filtering",()=>{
  assert.match(source,/product_type = ANY/);
  assert.ok(source.includes('group=clean(url.searchParams.get("productGroup"),32)'));
 });
+test("marketplace list query selects expiry timestamp for the 60-day card label",()=>{
+ const source=fs.readFileSync("marketplace-api.js","utf8");
+ assert.match(source,/updated_at,expires_at,COUNT\(\*\) OVER\(\) AS total_count/);
+});
 test("marketplace public records return their expiry timestamp",()=>{
  const source=fs.readFileSync("marketplace-api.js","utf8");
  assert.match(source,/expiresAt:row\.expires_at/);
