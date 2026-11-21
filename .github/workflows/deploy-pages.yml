@@ -9,6 +9,7 @@ on:
       - 'manifest.json'
       - 'sw.js'
       - 'regions-yemen.js'
+      - 'regions-profiles.js'
       - 'icons/**'
       - '.github/workflows/deploy-pages.yml'
 
@@ -37,7 +38,7 @@ jobs:
       - name: Prepare website files
         run: |
           mkdir -p _site/icons
-          cp index.html manifest.json sw.js regions-yemen.js _site/
+          cp index.html manifest.json sw.js regions-yemen.js regions-profiles.js _site/
           cp icons/* _site/icons/
           touch _site/.nojekyll
       - name: Upload PWA files
