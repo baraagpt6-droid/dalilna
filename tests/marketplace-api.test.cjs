@@ -1,5 +1,6 @@
 "use strict";
 const test=require("node:test"),assert=require("node:assert/strict");
+const fs=require("node:fs");
 const {validate,PRODUCT_TYPES,CATEGORIES,GOVERNORATES}=require("../marketplace-api");
 test("taxonomy covers Yemen service categories and product types",()=>{assert.equal(GOVERNORATES.size,22);for(const x of ["phone","phone_accessories","watch","car","motorcycle","land","property","honey","coffee","stationery","perfume","cosmetics","solar_equipment","tools","baby_products","construction_equipment"])assert.ok(PRODUCT_TYPES.has(x));for(const x of ["jobs","souq","grocery","health","pharmacy"])assert.ok(CATEGORIES.has(x));});
 test("normalizes a used phone listing",()=>{const x=validate({title:"هاتف",category:"souq",productType:"phone",condition:"used",governorate:"إب",district:"حبيش",area:"ربع ظلمة",clientRef:"local-1"});assert.equal(x.productType,"phone");assert.equal(x.condition,"used");assert.equal(x.governorate,"إب");assert.equal(x.clientRef,"local-1");});
@@ -14,3 +15,24 @@ test("requires expiry dates only for jobs",()=>{assert.equal(validate({title:"و
 test("rejects invalid categories, product types and governorates",()=>{assert.throws(()=>validate({title:"x",category:"nonsense"}),/القسم المحدد غير معروف/);assert.throws(()=>validate({title:"x",category:"souq",productType:"weapon"}),/نوع المعروض غير معروف/);assert.throws(()=>validate({title:"x",category:"souq",governorate:"خيالية"}),/اختر محافظة يمنية/);});
 test("rejects unsafe or oversized image data",()=>{assert.throws(()=>validate({title:"x",category:"grocery",img:"https://example.com/a.jpg"}),/صيغة الصورة غير مدعومة/);assert.throws(()=>validate({title:"x",category:"souq",img:"data:image/jpeg;base64,"+"A".repeat(400001)}),/حجم الصورة أكبر/);});
 test("validates coordinate pairs and currency",()=>{assert.throws(()=>validate({title:"x",category:"grocery",latitude:15.3}),/أرسل خط العرض وخط الطول معاً/);assert.throws(()=>validate({title:"x",category:"grocery",currency:"BTC"}),/العملة غير معروفة/);assert.equal(validate({title:"محل",category:"grocery",latitude:15.3,longitude:44.2}).latitude,15.3);});
+
+test("preserves opening hours, safe website links and optional map coordinates",()=>{
+ const x=validate({title:"مكتبة",category:"books",hours:"8 صباحاً - 10 مساءً",website:"example.org",latitude:15.3694,longitude:44.1910});
+ assert.equal(x.openingHours,"8 صباحاً - 10 مساءً");
+ assert.equal(x.website,"https://example.org/");
+ assert.equal(x.latitude,15.3694);
+ assert.equal(x.longitude,44.191);
+ assert.throws(()=>validate({title:"مكتبة",category:"books",website:"javascript:alert(1)"}),/رابط الموقع الإلكتروني/);
+ assert.throws(()=>validate({title:"مكتبة",category:"books",website:"https://user:pass@example.org"}),/رابط الموقع الإلكتروني/);
+});
+test("shared listings SQL migration adds backward-compatible shop detail columns",()=>{
+ const sql=fs.readFileSync("db/schema.sql","utf8");
+ assert.match(sql,/ADD COLUMN IF NOT EXISTS opening_hours/);
+ assert.match(sql,/ADD COLUMN IF NOT EXISTS website/);
+ assert.match(sql,/VALUES\(1\),\(2\) ON CONFLICT/);
+ const source=fs.readFileSync("marketplace-api.js","utf8");
+ assert.match(source,/opening_hours,website,seller_name/);
+ assert.match(source,/item\.openingHours,item\.website/);
+ assert.match(source,/openingHours:row\.opening_hours/);
+ assert.match(source,/website:row\.website/);
+});
