@@ -5,7 +5,7 @@ const { URL } = require("node:url");
 const { handleMarketplaceRequest } = require("./marketplace-api");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.7.0";
+const VERSION = "1.8.0";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -53,6 +53,8 @@ const FILTERS = {
   clothes: ['["shop"~"^(clothes|shoes)$"]'],
   home: ['["shop"~"^(furniture|houseware|appliance)$"]'],
   books: ['["shop"~"^(books|stationery)$"]'],
+  vehicles: ['["shop"~"^(car|motorcycle|car_repair|car_parts|vehicle)$"]'],
+  watches: ['["shop"="watches"]', '["craft"="watchmaker"]'],
   beauty: ['["shop"~"^(beauty|cosmetics|perfumery)$"]'],
   salon: ['["shop"="hairdresser"]'],
   laundry: ['["shop"="laundry"]'],
@@ -176,6 +178,9 @@ function inferCategoryFromQuery(query) {
   const text = normalizeText(query);
   if (!text) return "";
   const rules = [
+    ["books", /(قلم|اقلام|دفتر|دفاتر|كراس[ةه]|قرطاسي|مكتبه|مكتبات|كتاب|كتب|ادوات مدرسيه|ممحاه|مبراة|مسطره)/u],
+    ["vehicles", /(سياره|سيارات|مركبه|مركبات|معرض سيارات|دراجه ناريه|دراجات ناريه)/u],
+    ["watches", /(ساعه|ساعات|ساعات يد|ساعه يد)/u],
     ["grocery", /(بقال|تموين|سوبر\s?ماركت|مواد\s?غذائي|ميني\s?ماركت|جمعيه استهلاكيه)/u],
     ["pharmacy", /(صيدل|دواء|ادويه|علاج|حبوب|مستلزمات طبيه)/u],
     ["health", /(مستشف|مستوصف|مركز صحي|عياده|عيادات|مختبر|طبيب|اطباء|اسنان)/u],
@@ -226,7 +231,9 @@ const GEOAPIFY_CATEGORY_MAP = {
   build: ["commercial.houseware_and_hardware.building_materials", "commercial.houseware_and_hardware.hardware_and_tools"],
   clothes: ["commercial.clothing"],
   home: ["commercial.furniture_and_interior", "commercial.houseware_and_hardware"],
-  books: ["commercial.books", "commercial.stationery"],
+  books: ["commercial.books", "commercial.stationery", "commercial.newsagent"],
+  vehicles: ["commercial.vehicle"],
+  watches: ["commercial.watches"],
   beauty: ["commercial.health_and_beauty", "service.beauty"],
   salon: ["service.beauty.hairdresser"],
   laundry: ["service.cleaning.laundry"],
@@ -269,7 +276,7 @@ function geoapifyCategoryLabel(category, properties = {}) {
     transport:"مواصلات",mosque:"مساجد",hotel:"فنادق وسكن",
     market:"أسواق",solar:"طاقة شمسية وكهربائيات",parts:"قطع غيار",
     build:"مواد بناء",clothes:"ملابس",home:"أثاث ومستلزمات منزلية",
-    books:"مكتبات وقرطاسية",beauty:"تجميل وعناية",salon:"صالونات",
+    books:"مكتبات وقرطاسية",vehicles:"معارض سيارات ومركبات",watches:"محلات ساعات",beauty:"تجميل وعناية",salon:"صالونات",
     laundry:"مغاسل",delivery:"بريد وتوصيل",utility:"وقود وخدمات",
     gold:"ذهب ومجوهرات",wedding:"قاعات مناسبات",farm:"زراعة وحدائق"
   };
@@ -480,6 +487,7 @@ async function searchGeoapifyPlaces(params) {
 
   const result = {
     source: "Geoapify",
+    category,
     items,
     count: items.length,
     tilesQueried: totalTiles,
@@ -493,7 +501,8 @@ async function searchGeoapifyPlaces(params) {
     fetchedAt: new Date().toISOString(),
     note: "الأرقام والمواقع تظهر عند توفرها في بيانات OpenStreetMap. قد لا يكون لكل محل رقم هاتف مسجل."
   };
-  touchCache(geoapifyCache, cacheKey, result, 10 * 60 * 1000);
+  // Empty upstream results are never cached: a temporary zero must not hide fallback results or later updates.
+  if (items.length) touchCache(geoapifyCache, cacheKey, result, 10 * 60 * 1000);
   return result;
 }
 
@@ -519,7 +528,9 @@ function classifyCategory(tags) {
   if (shop === "building_materials") return "build";
   if (shop === "jewelry") return "gold";
   if (shop === "clothes" || shop === "shoes") return "clothes";
-  if (shop === "books" || shop === "stationery") return "books";
+  if (shop === "books" || shop === "stationery" || shop === "newsagent") return "books";
+  if (["car","motorcycle","vehicle","car_repair","car_parts"].includes(shop)) return "vehicles";
+  if (shop === "watches" || craft === "watchmaker") return "watches";
   if (shop === "furniture" || shop === "houseware" || shop === "appliance") return "home";
   if (shop === "beauty" || shop === "cosmetics" || shop === "perfumery") return "beauty";
   if (shop === "electronics" || shop === "electrical") return "solar";
@@ -888,7 +899,7 @@ const server = http.createServer(async (req, res) => {
         lon: url.searchParams.get("lon"),
         radius: url.searchParams.get("radius")
       });
-      console.info(JSON.stringify({ event: "geoapify.search.complete", count: result.count, cached: result.cached, durationMs: Date.now() - searchStartedAt }));
+      console.info(JSON.stringify({ event: "geoapify.search.complete", category: result.category || "all", count: result.count, cached: result.cached, durationMs: Date.now() - searchStartedAt }));
       json(res, 200, result);
     } catch (error) {
       const status = Number(error.statusCode) || 502;
