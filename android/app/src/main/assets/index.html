@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.7.0">
+<meta name="app-version" content="1.8.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1068,12 +1068,15 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     </div>
     <div class="two" id="productTypeFields" hidden>
       <label>نوع المعروض<select name="productType">
-        <option value="phone">جوال</option><option value="watch">ساعة</option><option value="computer">كمبيوتر / لابتوب</option><option value="tablet">جهاز لوحي</option>
+        <option value="phone">جوال</option><option value="phone_accessories">إكسسوارات جوال</option><option value="watch">ساعة</option><option value="computer">كمبيوتر / لابتوب</option><option value="computer_accessories">ملحقات كمبيوتر</option><option value="tablet">جهاز لوحي</option>
         <option value="camera">كاميرا</option><option value="car">سيارة</option><option value="motorcycle">دراجة نارية</option><option value="vehicle_parts">قطع غيار مركبات</option>
         <option value="land">أرض</option><option value="property">عقار / منزل</option><option value="electronics">إلكترونيات</option><option value="appliance">أجهزة منزلية</option>
         <option value="furniture">أثاث</option><option value="clothing">ملابس</option><option value="shoes">أحذية</option><option value="jewelry">ذهب ومجوهرات</option>
         <option value="honey">عسل</option><option value="coffee">بن وقهوة</option><option value="spices">بهارات</option><option value="food">مواد غذائية</option>
-        <option value="livestock">مواشٍ</option><option value="agriculture">منتجات زراعية</option><option value="building_materials">مواد بناء</option><option value="books">كتب وقرطاسية</option><option value="other">أخرى</option>
+        <option value="livestock">مواشٍ</option><option value="agriculture">منتجات زراعية</option><option value="building_materials">مواد بناء</option><option value="books">كتب</option><option value="stationery">قرطاسية وأدوات مدرسية</option>
+        <option value="perfume">عطور</option><option value="cosmetics">مستحضرات تجميل</option><option value="solar_equipment">معدات طاقة شمسية</option><option value="tools">أدوات ومعدات</option>
+        <option value="household_items">مستلزمات منزلية</option><option value="kitchenware">أدوات مطبخ</option><option value="baby_products">منتجات أطفال</option><option value="games">ألعاب</option>
+        <option value="sports_equipment">معدات رياضية</option><option value="animal_feed">أعلاف</option><option value="seeds">بذور ومحاصيل</option><option value="construction_equipment">معدات إنشاءات</option><option value="other">أخرى</option>
       </select></label>
       <label>نوع الإعلان<select name="listingType"><option value="sale">للبيع</option><option value="wanted">مطلوب</option><option value="barter">مقايضة</option><option value="free">مجاني</option></select></label>
       <label>حالة المعروض<select name="condition"><option value="unknown">غير محدد</option><option value="new">جديد</option><option value="used">مستعمل</option></select></label>
@@ -2382,7 +2385,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="1.7.0";
+const APP_VERSION="1.8.0";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -2640,7 +2643,7 @@ const PUBLIC_PRODUCTS=[
 }));
 const SEED_ITEMS=[...PUBLIC_BUSINESSES,...PUBLIC_PRODUCTS];
 const LEGACY_DEMO_IDS=new Set(["s1","s2","s3","s4","s5","s6","s7","s8","s9"]);
-const PRODUCT_TYPES_LOCAL=new Set(["phone","watch","computer","tablet","camera","car","motorcycle","vehicle_parts","land","property","electronics","appliance","furniture","clothing","shoes","jewelry","honey","coffee","spices","food","livestock","agriculture","building_materials","books","other"]);
+const PRODUCT_TYPES_LOCAL=new Set(["phone","phone_accessories","watch","computer","computer_accessories","tablet","camera","car","motorcycle","vehicle_parts","land","property","electronics","appliance","furniture","clothing","shoes","jewelry","honey","coffee","spices","food","livestock","agriculture","building_materials","books","stationery","perfume","cosmetics","solar_equipment","tools","household_items","kitchenware","baby_products","games","sports_equipment","animal_feed","seeds","construction_equipment","other"]);
 
 function loadState(){
   try{const raw=localStorage.getItem(STORE_KEY);if(raw)return JSON.parse(raw);}catch(e){}
@@ -3875,6 +3878,27 @@ function localDirectorySearch(q,limit=6){
 }
 function directoryMapSearchInfo(q){
   const text=normalizeQuery(q);
+  const productIntents=[
+    {category:"books",productType:"stationery",label:"مكتبات وقرطاسيات",test:/(قلم|اقلام|دفتر|دفاتر|كراس[ةه]|قرطاسي|ادوات مدرسيه|ممحاه|مبراة|مسطره)/},
+    {category:"books",productType:"books",label:"مكتبات وكتب",test:/(كتاب|كتب|روايه|روايات|مراجع)/},
+    {category:"telecom",productType:"phone_accessories",label:"محلات إكسسوارات الجوال",test:/(اكسسوارات الجوال|جراب|كفر جوال|شاحن جوال|سماعه جوال)/},
+    {category:"telecom",productType:"phone",label:"محلات الجوالات",test:/(جوال|جوالات|موبايل|موبايلات|هاتف|هواتف|ايفون|سامسونج)/},
+    {category:"watches",productType:"watch",label:"محلات الساعات",test:/(ساعه|ساعات|ساعات يد)/},
+    {category:"vehicles",productType:"car",label:"معارض السيارات",test:/(سياره|سيارات|معرض سيارات)/},
+    {category:"vehicles",productType:"motorcycle",label:"محلات الدراجات النارية",test:/(دراجه ناريه|دراجات ناريه|دباب)/},
+    {category:"vehicles",productType:"vehicle_parts",label:"محلات قطع غيار المركبات",test:/(قطع غيار|قطع سيارات|قطع مركبات)/},
+    {category:"elec",productType:"computer",label:"محلات الكمبيوتر واللابتوب",test:/(كمبيوتر|حاسوب|لابتوب|لاب توب)/},
+    {category:"elec",productType:"camera",label:"محلات الكاميرات",test:/(كاميرا|كاميرات)/},
+    {category:"beauty",productType:"perfume",label:"محلات العطور",test:/(عطر|عطور|بخور)/},
+    {category:"beauty",productType:"cosmetics",label:"محلات التجميل",test:/(تجميل|مكياج|كوزمتك|مستحضرات)/},
+    {category:"grocery",productType:"honey",label:"محلات العسل",test:/(عسل|عسل طبيعي)/},
+    {category:"grocery",productType:"coffee",label:"محلات البن والقهوة",test:/(بن|قهوه|قهوة|حبوب قهوه)/},
+    {category:"grocery",productType:"spices",label:"محلات البهارات",test:/(بهارات|توابل|هيل|فلفل اسود)/},
+    {category:"build",productType:"building_materials",label:"محلات مواد البناء",test:/(مواد بناء|اسمنت|حديد|دهانات|ادوات بناء)/},
+    {category:"home",productType:"furniture",label:"محلات الأثاث",test:/(اثاث|كنب|غرف نوم|طاولات)/},
+    {category:"home",productType:"appliance",label:"محلات الأجهزة المنزلية",test:/(اجهزه منزليه|ثلاجه|غساله|مكيف|فرن)/}
+  ];
+  const product=productIntents.find(item=>item.test.test(text));
   const services=[
     {category:"grocery",label:"بقالات ومحلات تموين",test:/بقال|تموين|سوبر\\s?ماركت|مواد غذائيه|جمعيه استهلاكيه/},
     {category:"health",label:"مستشفيات وعيادات ومراكز صحية",test:/مستشف|مستوصف|مركز صحي|مركز طبي|عياده|عيادات|مختبر|طبيب|دكتور|اسنان/},
@@ -3895,7 +3919,7 @@ function directoryMapSearchInfo(q){
     {category:"market",label:"أسواق ومحلات",test:/سوق مركزي|اسواق|مول|مركز تجاري/}
   ];
   const service=services.find(item=>item.test.test(text));
-  if(!service)return null;
+  if(!product&&!service)return null;
   const gov=GOVS.find(name=>text.includes(normalizePlace(name)));
   const districtEntry=Object.entries(YEMEN_DISTRICTS).find(([parent,districts])=>
     districts.some(name=>text.includes(normalizePlace(name)))
@@ -3904,8 +3928,9 @@ function directoryMapSearchInfo(q){
   const place=gov?("محافظة "+gov+"، اليمن")
     :districtEntry?("مديرية "+district+"، محافظة "+districtEntry[0]+"، اليمن")
     :scope?regionScopeLabel(regionCurrentContext()):"اليمن";
-  const mapQuery=service.label+" "+String(q||"").trim()+" "+place;
-  return {category:service.category,label:service.label,place,mapQuery,url:regionMapSearch(mapQuery)};
+  const category=product?product.category:service.category,label=product?product.label:service.label;
+  const mapQuery=label+" "+String(q||"").trim()+" "+place;
+  return {category,productType:product?product.productType:"",label,place,mapQuery,url:regionMapSearch(mapQuery),productSearch:!!product};
 }
 function liveDirectoryPanelHTML(){
  return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>محلات وخدمات داخل دليلنا</b><div class="live-directory-sub">تظهر النتائج هنا مباشرة. رقم الهاتف يظهر عند توفره، ولا تُفتح الخريطة إلا باختيارك.</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث النتائج</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تجهيز البحث حسب المنطقة المحددة…</div><div class="live-directory-list" id="liveDirectoryItems"></div><div class="live-directory-attribution" id="liveDirectoryAttribution">مصادر الأماكن المفتوحة: Geoapify وOpenStreetMap.</div><div class="live-directory-legal"><a href="./privacy.html">سياسة الخصوصية</a><a href="./terms.html">شروط الاستخدام</a></div></section>';
@@ -3914,7 +3939,7 @@ const LIVE_DIRECTORY_API="https://dalilna-live.onrender.com";
 const LIVE_LOCAL_KEY="dalilna_live_places_159";
 let liveGeoapifyEnabled=false;
 let liveDirectoryTimer=null,liveDirectorySeq=0,liveDirectoryCache=new Map(),liveDirectoryLast={query:"",category:"all"};
-let liveDirectoryLastData=null,liveDirectoryVisibleCount=8,liveDirectoryCoords=null;
+let liveDirectoryLastData=null,liveDirectoryVisibleCount=8,liveDirectoryCoords=null,liveSharedMatches=[],liveSharedCache=new Map();
 function liveLocalData(){
  try{const value=JSON.parse(localStorage.getItem(LIVE_LOCAL_KEY)||"{}");return value&&typeof value==="object"?value:{ratings:{},photos:{}};}
  catch(_){return {ratings:{},photos:{}};}
@@ -3964,29 +3989,72 @@ function geoapifyDirectoryCardHTML(item){
   '<div class="live-directory-actions">'+maps+(item.sourceUrl?'<a href="'+esc(item.sourceUrl)+'" target="_blank" rel="noopener noreferrer">مصدر بيانات المكان</a>':"")+'</div>'+
   '<small class="live-directory-local-note">الرقم يظهر فقط إذا كان مسجلاً في بيانات المصدر. اتصل للتحقق قبل الزيارة.</small></article>';
 }
+function liveApprovedListingCardHTML(item){
+ const place=[item.area,item.district,item.governorate].filter(Boolean).join(" · ");
+ const typeNames={phone:"جوال",phone_accessories:"إكسسوارات جوال",watch:"ساعة",computer:"كمبيوتر",computer_accessories:"ملحقات كمبيوتر",tablet:"جهاز لوحي",camera:"كاميرا",car:"سيارة",motorcycle:"دراجة نارية",vehicle_parts:"قطع غيار",land:"أرض",property:"عقار",electronics:"إلكترونيات",appliance:"أجهزة منزلية",furniture:"أثاث",clothing:"ملابس",shoes:"أحذية",jewelry:"مجوهرات",honey:"عسل",coffee:"بن وقهوة",spices:"بهارات",food:"مواد غذائية",livestock:"مواشٍ",agriculture:"منتجات زراعية",building_materials:"مواد بناء",books:"كتب",stationery:"قرطاسية",perfume:"عطور",cosmetics:"تجميل",solar_equipment:"طاقة شمسية",tools:"أدوات",household_items:"مستلزمات منزلية",kitchenware:"أدوات مطبخ",baby_products:"منتجات أطفال",games:"ألعاب",sports_equipment:"معدات رياضية",animal_feed:"أعلاف",seeds:"بذور",construction_equipment:"معدات إنشاءات"};
+ const image=/^data:image\/(?:jpeg|png|webp);base64,/.test(String(item.imageData||""))&&item.imageData.length<=400000
+  ?'<img class="shared-listing-image" src="'+esc(item.imageData)+'" alt="'+esc(item.title||"صورة الإعلان")+'" loading="lazy">':"";
+ const categoryLabels={souq:"السوق",land:"أراضٍ وعقارات",food:"مطاعم ومخابز",grocery:"بقالات",books:"مكتبات وقرطاسية",telecom:"جوالات واتصالات",jobs:"وظائف"};
+ const category=categoryLabels[item.category]||item.category||"إعلان";
+ const type=typeNames[item.productType]||"";
+ const price=item.price?'<p class="shared-listing-price">'+esc(item.price+" "+(item.currency||""))+'</p>':"";
+ const description=item.description?'<p class="shared-listing-description">'+esc(item.description)+'</p>':"";
+ const phone=String(item.phone||"").trim(),tel=phone.replace(/[^+\d]/g,""),wa=phone.replace(/\D/g,"");
+ const contact=phone?'<div class="shared-listing-actions"><a href="tel:'+esc(tel)+'">اتصال</a>'+(wa?'<a href="https://wa.me/'+esc(wa)+'" target="_blank" rel="noopener noreferrer">واتساب</a>':"")+'</div>':"";
+ const lat=Number(item.latitude),lon=Number(item.longitude);
+ const map=Number.isFinite(lat)&&Number.isFinite(lon)
+  ?'https://www.openstreetmap.org/?mlat='+encodeURIComponent(lat)+'&mlon='+encodeURIComponent(lon)+'#map=17/'+encodeURIComponent(lat)+'/'+encodeURIComponent(lon)
+  :(place?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([item.title,place,"اليمن"].join(" ")):"");
+ const mapLink=map?'<div class="shared-listing-actions"><a href="'+esc(map)+'" target="_blank" rel="noopener noreferrer">الموقع على الخريطة</a></div>':"";
+ return '<article class="shared-listing-card">'+image+'<div class="shared-listing-card-head"><h3>'+esc(item.title||"إعلان معتمد")+'</h3><span class="tag">اعتمدته الإدارة</span></div>'+
+  '<div class="shared-listing-tags"><span>'+esc(category)+'</span>'+(type?'<span>'+esc(type)+'</span>':"")+(item.condition==="new"?'<span>جديد</span>':item.condition==="used"?'<span>مستعمل</span>':"")+'</div>'+
+  (place?'<p class="shared-listing-place">'+esc(place)+'</p>':"")+price+description+contact+mapLink+
+  '<small class="live-directory-local-note">إعلان نشره مستخدم ووافقت عليه إدارة دليلنا.</small></article>';
+}
+function liveDirectorySharedMatchesHTML(){
+ if(!liveSharedMatches.length)return "";
+ return '<section class="live-directory-shared-results"><div class="shared-marketplace-head"><b>إعلانات معتمدة تطابق بحثك</b><span class="tag">'+Number(liveSharedMatches.length).toLocaleString("ar")+' نتيجة</span></div>'+
+  liveSharedMatches.map(liveApprovedListingCardHTML).join("")+'</section>';
+}
+async function loadLiveMarketplaceMatches(query,category,productType,signal,force){
+ const region=regionCurrentContext(),gov=region.gov||"",district=region.district||"";
+ const key=[query,category,productType,gov,district].join("|");
+ const cached=liveSharedCache.get(key);
+ if(!force&&cached&&Date.now()-cached.at<120000){liveSharedMatches=cached.items;return;}
+ liveSharedMatches=[];
+ const params=new URLSearchParams({limit:"12",includeImages:"1"});
+ if(productType)params.set("productType",productType);
+ else if(category&&category!=="all")params.set("category",category);
+ else if(query)params.set("q",query);
+ if(gov)params.set("governorate",gov);
+ if(district)params.set("district",district);
+ try{
+  const response=await fetch(LIVE_DIRECTORY_API+"/api/marketplace/listings?"+params.toString(),{headers:{Accept:"application/json"},signal,cache:"no-store"});
+  const result=await response.json().catch(()=>({}));
+  if(response.ok&&Array.isArray(result.items))liveSharedMatches=result.items;
+  liveSharedCache.set(key,{items:liveSharedMatches,at:Date.now()});
+ }catch(_){liveSharedMatches=[];}
+}
 function liveDirectoryLocationPrompt(){
  const box=$("#liveDirectoryItems");if(!box)return;
- $("#liveDirectoryStatus").textContent="حدد محافظة أو مديرية يمنية أولاً حتى نبحث في نطاقها.";
- box.innerHTML='<div class="live-directory-empty">اختر المنطقة من القائمة بالأعلى لعرض الأماكن المسجلة في الخريطة المفتوحة.</div><button type="button" class="add" id="liveDirectoryChooseRegion">اختيار المحافظة أو المديرية</button>';
+ $("#liveDirectoryStatus").textContent=liveSharedMatches.length?"الإعلانات المنشورة المعتمدة ظاهرة من جميع المحافظات. اختر محافظة لتصفح المحلات المسجلة على الخريطة.":"اختر محافظة أو مديرية لتصفح المحلات والخدمات المسجلة على الخريطة.";
+ box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">اختر المنطقة من القائمة بالأعلى لعرض المحلات والخدمات المسجلة فيها. الإعلانات المعتمدة من المستخدمين تظهر هنا من جميع المحافظات.</div><button type="button" class="add" id="liveDirectoryChooseRegion">اختيار المحافظة أو المديرية</button>';
 }
 async function runLiveDirectorySearch(force){
  const box=$("#liveDirectoryItems"),status=$("#liveDirectoryStatus");if(!box||!status)return;
  const context=liveDirectoryContext(),coords=liveDirectoryCoords||(!context&&flt.near&&userPos?userPos:null);
- if(!context&&!coords){liveDirectoryLocationPrompt();return;}
- const query=liveDirectoryLast.query,category=liveDirectoryLast.category||"all";
- if(!query&&category==="all"){
-  status.textContent="اكتب اسم الخدمة أو افتح فئة محددة لبدء البحث.";
-  box.innerHTML='<div class="live-directory-empty">اكتب مثلاً «بقالة» أو «صيدلية» أو اختر فئة محددة لعرض المحلات هنا.</div>';
-  return;
- }
- const key=[context?context.place:"",coords?Number(coords.lat).toFixed(3)+","+Number(coords.lon||coords.lng).toFixed(3):"",category,query].join("|");
+ const query=liveDirectoryLast.query||"",category=liveDirectoryLast.category||"all",productType=liveDirectoryLast.productType||"";
+ const key=[context?context.place:"",coords?Number(coords.lat).toFixed(3)+","+Number(coords.lon||coords.lng).toFixed(3):"",category,productType,query].join("|");
  liveDirectoryVisibleCount=8;liveDirectoryLastData=null;
- const seq=++liveDirectorySeq;status.textContent="نتحقق من مصادر البحث المجانية…";
- box.innerHTML='<div class="live-directory-empty">جارٍ البحث عن المحلات والخدمات في المنطقة المحددة.</div>';
+ const seq=++liveDirectorySeq;status.textContent="نبحث في الإعلانات المعتمدة والمحلات المسجلة…";
+ box.innerHTML='<div class="live-directory-empty">جارٍ تحميل الإعلانات والبحث في مصادر الأماكن.</div>';
  clearTimeout(liveDirectoryTimer);
  liveDirectoryTimer=setTimeout(async()=>{
   const controller=new AbortController(),requestTimer=setTimeout(()=>controller.abort(),45000);
   try{
+   await loadLiveMarketplaceMatches(query,category,productType,controller.signal,force);
+   if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
+   if(!context&&!coords){liveDirectoryLocationPrompt();return;}
    const health=await fetch(LIVE_DIRECTORY_API+"/health",{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
    if(!health.ok)throw new Error("خدمة البحث غير جاهزة (HTTP "+health.status+").");
    const geoStatusResponse=await fetch(LIVE_DIRECTORY_API+"/api/geoapify/status",{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
@@ -3994,23 +4062,32 @@ async function runLiveDirectorySearch(force){
    if(!geoStatusResponse.ok)throw new Error("تعذر التحقق من مصدر البحث المجاني.");
    liveGeoapifyEnabled=geoStatus.geoapifyEnabled===true;
    if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
+   const params=new URLSearchParams({q:query,category});
+   if(context){params.set("place",context.place);if(context.fallbackPlace)params.set("fallbackPlace",context.fallbackPlace);}
+   if(coords){params.set("lat",String(coords.lat));params.set("lon",String(coords.lon||coords.lng));params.set("radius","7000");}
    if(liveGeoapifyEnabled){
-    status.textContent="نبحث في قائمة المحلات المجانية…";
-    const params=new URLSearchParams({q:query,category});
-    if(context){params.set("place",context.place);if(context.fallbackPlace)params.set("fallbackPlace",context.fallbackPlace);}
-    if(coords){params.set("lat",String(coords.lat));params.set("lon",String(coords.lon||coords.lng));params.set("radius","7000");}
+    status.textContent="نبحث في المحلات المسجلة…";
     const response=await fetch(LIVE_DIRECTORY_API+"/api/geoapify/search?"+params.toString(),{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
     const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||"تعذر جلب نتائج الأماكن.");
     if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
+    if(!Array.isArray(data.items)||!data.items.length){
+     status.textContent="لم يُرجع Geoapify نتائج. نجرب OpenStreetMap كمصدر بديل…";
+     try{
+      const fallbackResponse=await fetch(LIVE_DIRECTORY_API+"/api/places/search?"+params.toString(),{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
+      const fallback=await fallbackResponse.json().catch(()=>({}));
+      if(fallbackResponse.ok&&Array.isArray(fallback.items)&&fallback.items.length){
+       fallback.fallbackFromGeoapify=true;
+       renderLiveDirectoryResponse(fallback);
+       return;
+      }
+     }catch(_){}
+    }
     renderLiveDirectoryResponse(data);
     return;
    }
    const cached=liveDirectoryCache.get(key);
    if(!force&&cached&&Date.now()-cached.at<10*60*1000){renderLiveDirectoryResponse(cached.data);return;}
-   status.textContent="مصدر Geoapify المجاني غير مفعّل بعد. نستخدم OpenStreetMap مؤقتاً…";
-   const params=new URLSearchParams({q:query,category});
-   if(context){params.set("place",context.place);if(context.fallbackPlace)params.set("fallbackPlace",context.fallbackPlace);}
-   if(coords){params.set("lat",String(coords.lat));params.set("lon",String(coords.lon||coords.lng));params.set("radius","7000");}
+   status.textContent="مصدر Geoapify غير مفعّل. نستخدم OpenStreetMap…";
    const response=await fetch(LIVE_DIRECTORY_API+"/api/places/search?"+params.toString(),{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
    const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||("تعذر تحميل الأماكن (HTTP "+response.status+")."));
    if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
@@ -4018,43 +4095,46 @@ async function runLiveDirectorySearch(force){
    renderLiveDirectoryResponse(data);
   }catch(error){
    if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
-   const timedOut=error&&error.name==="AbortError";
-   const rawMessage=String(error&&error.message||"");
+   const timedOut=error&&error.name==="AbortError",rawMessage=String(error&&error.message||"");
    const networkFailure=/failed to fetch|networkerror|load failed/i.test(rawMessage);
-   status.textContent=networkFailure
-    ?"تعذر الوصول إلى خادم البحث. تحقق من اتصال الإنترنت ثم أعد المحاولة."
-    :(timedOut?"تأخر البحث. أعد المحاولة بعد قليل.":(rawMessage||"تعذر الاتصال بخدمة البحث."));
-   box.innerHTML='<div class="live-directory-empty">'+(networkFailure?"لم يصل الطلب إلى خادم البحث. هذا لا يعني عدم وجود محلات أو خدمات في المنطقة.":"تعذر جلب النتائج الآن. أعد المحاولة.")+'</div><button type="button" class="live-directory-refresh" id="liveDirectoryRetry">إعادة المحاولة</button>';
+   status.textContent=networkFailure?"تعذر الوصول إلى خادم البحث. تحقق من اتصال الإنترنت ثم أعد المحاولة.":(timedOut?"تأخر البحث. أعد المحاولة بعد قليل.":(rawMessage||"تعذر الاتصال بخدمة البحث."));
+   box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">'+(networkFailure?"لم يصل الطلب إلى خادم البحث. هذا لا يعني عدم وجود محلات أو خدمات في المنطقة.":"تعذر جلب بيانات الأماكن الآن.")+'</div><button type="button" class="live-directory-refresh" id="liveDirectoryRetry">إعادة المحاولة</button>';
   }finally{clearTimeout(requestTimer);}
- },400);
+ },250);
 }
 function renderLiveDirectoryResponse(data){
  const status=$("#liveDirectoryStatus"),box=$("#liveDirectoryItems"),attribution=$("#liveDirectoryAttribution");if(!status||!box)return;
  const items=Array.isArray(data.items)?data.items:[];
  liveDirectoryLastData=data;
- if(data.source==="Geoapify"){ 
-  status.textContent="المصدر: Geoapify وOpenStreetMap · عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة";
+ const shared=liveDirectorySharedMatchesHTML();
+ if(data.source==="Geoapify"){
+  status.textContent=(data.fallbackFromGeoapify?"لم يعط Geoapify نتائج؛ عثر OpenStreetMap على ":"المصدر: Geoapify وOpenStreetMap · عُثر على ")+Number(items.length||0).toLocaleString("ar")+" نتيجة للمحلات"+(liveSharedMatches.length?" · وإعلانات معتمدة: "+liveSharedMatches.length:"");
   box.classList.add("live-google-results");
   if(attribution)attribution.innerHTML='<a href="https://www.geoapify.com/" target="_blank" rel="noopener noreferrer">Powered by Geoapify</a> · © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>';
-  if(!items.length){box.innerHTML='<div class="live-directory-empty">لم يعثر مصدر البيانات على أماكن مسجلة لهذه الفئة في المنطقة المحددة.</div>';return;}
+  if(!items.length){
+   const ctx=liveDirectoryContext(),term=liveDirectoryLast.query||(CN[liveDirectoryLast.category]||"محلات وخدمات"),place=ctx?ctx.place:"اليمن";
+   box.innerHTML=shared+'<div class="live-directory-empty">لم تسجل مصادر الخرائط محلات تطابق هذه الفئة في النطاق. هذا لا يعني عدم وجودها في الواقع. جرّب توسيع النطاق أو افتح البحث الخارجي.</div><div class="live-directory-actions"><a href="https://www.openstreetmap.org/search?query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في OpenStreetMap</a><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في خرائط Google</a></div>';
+   return;
+  }
   const visible=items.slice(0,liveDirectoryVisibleCount);
   let cards=visible.map(geoapifyDirectoryCardHTML).join("");
   if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">عرض المزيد ('+(items.length-visible.length)+')</button>';
-  box.innerHTML=cards;
+  box.innerHTML=shared+cards;
   return;
  }
- liveDirectoryLastData=data;
-
- status.textContent=(data.scopeFallback?"لم نجد حدود المديرية؛ هذه نتائج على مستوى المحافظة. ":"")+"المصدر: OpenStreetMap · عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة"+(data.cached?" · من التخزين المؤقت":"");
+ status.textContent=(data.scopeFallback?"لم نجد حدود المديرية؛ هذه نتائج على مستوى المحافظة. ":"")+
+  (data.fallbackFromGeoapify?"المصدر البديل: OpenStreetMap بعد عدم وجود نتائج في Geoapify. ":"المصدر: OpenStreetMap · ")+
+  "عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة للمحلات"+(liveSharedMatches.length?" · وإعلانات معتمدة: "+liveSharedMatches.length:"")+(data.cached?" · من التخزين المؤقت":"");
  box.classList.remove("live-google-results");
  if(attribution)attribution.innerHTML='المصدر: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · الصور من Wikimedia Commons.';
  if(!items.length){
   const ctx=liveDirectoryContext(),term=liveDirectoryLast.query||(CN[liveDirectoryLast.category]||"محلات وخدمات"),place=ctx?ctx.place:"اليمن";
-  box.innerHTML='<div class="live-directory-empty">لم يعثر مصدر البيانات على أماكن مسجلة لهذه الفئة في النطاق المحدد. هذا لا يؤكد عدم وجودها على أرض الواقع.</div><a class="ai-map-search-link" href="https://www.openstreetmap.org/search?query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في OpenStreetMap</a>';return;
+  box.innerHTML=shared+'<div class="live-directory-empty">لم يعثر مصدر البيانات على أماكن مسجلة في النطاق المحدد. هذا لا يؤكد عدم وجود محلات أو خدمات على أرض الواقع.</div><div class="live-directory-actions"><a href="https://www.openstreetmap.org/search?query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في OpenStreetMap</a><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في خرائط Google</a></div>';
+  return;
  }
  const visible=items.slice(0,liveDirectoryVisibleCount);let cards=visible.map(liveDirectoryCardHTML).join("");
  if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">عرض المزيد ('+(items.length-visible.length)+')</button>';
- box.innerHTML=cards;if(data.note)status.textContent+=" · "+data.note;
+ box.innerHTML=shared+cards;if(data.note)status.textContent+=" · "+data.note;
 }
 async function loadLiveCommonsPhotos(button){
  const panel=button.parentElement.querySelector(".live-directory-commons-panel");if(!panel)return;
@@ -4608,19 +4688,12 @@ function render(){
   renderFilterChips();
   renderRecent();
   const q=$("#q").value.trim().toLowerCase();
-  const liveWanted=(view==="home"&&(q.length>=2||!!scope))||view==="cat";
+  const liveWanted=view==="home"||view==="cat";
   const liveInfo=directoryMapSearchInfo(q);
-  liveDirectoryLast={query:q||(view==="cat"?(CN[curCat]||curCat):""),category:liveInfo?liveInfo.category:(view==="cat"?curCat:"all")};
+  liveDirectoryLast={query:q||(view==="cat"?(CN[curCat]||curCat):""),category:liveInfo?liveInfo.category:(view==="cat"?curCat:"all"),productType:liveInfo?liveInfo.productType:""};
   const liveTop=$("#liveDirectoryTop");
   if(liveTop)liveTop.innerHTML=liveWanted?liveDirectoryPanelHTML():"";
-  if(liveWanted){
-    if(view==="cat"||q.length>=2)runLiveDirectorySearch(false);
-    else {
-      const status=$("#liveDirectoryStatus"),items=$("#liveDirectoryItems");
-      if(status)status.textContent="اكتب اسم الخدمة مثل بقالة أو صيدلية لبدء البحث في المنطقة المحددة.";
-      if(items)items.innerHTML='<div class="live-directory-empty">اختر نوع الخدمة أو اكتب اسم المكان حتى لا نرسل بحثاً واسعاً عن كل الفئات دفعة واحدة.</div>';
-    }
-  }
+  if(liveWanted)runLiveDirectorySearch(false);
   const match=i=>{
     if(!q)return true;
     const hay=[i.name,i.desc,i.area,i.village,i.dist,i.gov,i.phone,i.country,CN[i.cat],CN_EN[i.cat],CAT_SYN[i.cat]||""].join(" ").toLowerCase();
