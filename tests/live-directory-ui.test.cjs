@@ -31,9 +31,10 @@ test("region counts no longer mislabel public seed listings as device-local",()=
  assert.doesNotMatch(html,/0 إدراج محلي على هذا الجهاز/);
 });
 test("curated Yemen seed data has sources, review timestamps and useful starter content",()=>{
- const match=html.match(/const SEED_ITEMS=(\\[[\\s\\S]*?\\]);\\nconst LEGACY_DEMO_IDS/);
- assert.ok(match,"SEED_ITEMS must remain a JSON-readable starter directory");
- const seeds=JSON.parse(match[1]);
+ const start=html.indexOf("const SEED_ITEMS=")+ "const SEED_ITEMS=".length;
+ const end=html.indexOf(";\\nconst LEGACY_DEMO_IDS",start);
+ assert.ok(start>0&&end>start,"SEED_ITEMS must remain a JSON-readable starter directory");
+ const seeds=JSON.parse(html.slice(start,end));
  assert.ok(seeds.length>=24);
  assert.ok(seeds.some(x=>x.name==="المتجر العالمي Global Store"));
  assert.ok(seeds.some(x=>x.name==="مطاعم الشيباني جولدن"));
@@ -44,19 +45,18 @@ test("curated Yemen seed data has sources, review timestamps and useful starter 
  assert.ok(seeds.every(x=>!x.verifiedAt));
 });
 test("seed records merge with saved user listings and admin seed removals persist",()=>{
- assert.match(html,/const items=\\[\\.\\.\\.activeSeeds,\\.\\.\\.storedItems\\.filter/);
- assert.match(html,/removedSeedIds:\\[\\.\\.\\.removedSeedIds\\]/);
- assert.match(html,/S\.removedSeedIds\.push\(it\.id\)/);
+ assert.ok(html.includes("const items=[...activeSeeds,...storedItems.filter"));
+ assert.ok(html.includes("removedSeedIds:[...removedSeedIds]"));
+ assert.ok(html.includes("S.removedSeedIds.push(it.id)"));
 });
 test("nationwide offers are not hidden when a governorate is selected",()=>{
- assert.match(html,/if\(item\.nationwide===true\)return true/);
- assert.match(html,/if\(scope\)r=r\.filter\(i=>scopeMatchesItem\(i\)\)/);
+ assert.ok(html.includes("if(item.nationwide===true)return true"));
+ assert.ok(html.includes("if(scope)r=r.filter(i=>scopeMatchesItem(i))"));
 });
 test("expired jobs and market offers are hidden automatically",()=>{
- assert.match(html,/i\.expiresAt>Date\.now\(\)/);
- assert.match(html,/i\.cat==="souq"&&\(!i\.expiresAt\|\|i\.expiresAt>Date\.now\(\)\)/);
+ assert.ok(html.includes('i.expiresAt>Date.now()'));
+ assert.ok(html.includes('i.cat==="souq"&&(!i.expiresAt||i.expiresAt>Date.now())&&match(i)'));
 });
-
 test("local ratings and photos are clearly device-local",()=>{
  assert.match(html,/data-live-rate-id/);assert.match(html,/data-live-photo-input/);
  assert.match(html,/dalilna_live_places_159/);assert.match(html,/محفوظة على هذا الجهاز فقط/);
