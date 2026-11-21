@@ -9,7 +9,7 @@ test('22 governorates have population profiles and landmarks',()=>{
 });
 test('population projections total 32.618 million',()=>assert.equal(Object.values(profiles).reduce((sum,row)=>sum+row.population2023,0),32618000));
 test('heritage inventory counts cover every governorate',()=>{assert.equal(Object.keys(counts).length,22);for(const name of Object.keys(profiles))assert.ok(Number.isInteger(counts[name]));});
-test('profile source references are valid',()=>{for(const key of ['administrative','population','populationBook','heritageInventory','unescoYemen','unescoTentative','geography','districtPopulation'])assert.ok(/^https:\\/\\//.test(sources[key]));});
+test('profile source references are secure HTTPS URLs',()=>{for(const key of ['administrative','population','populationBook','heritageInventory','unescoYemen','unescoTentative','geography','districtPopulation'])assert.ok(String(sources[key]).startsWith('https://'),key);});
 test('regional profiles open local categories, not Google Maps place searches',()=>{
  for(const token of ['regionProfileDetails','غير متاح','data-region-category=','المساجد والجوامع','المدارس والمعاهد','المستشفيات والمراكز الصحية','WorldPop 2024','تصفح المحلات والخدمات في هذه المنطقة'])assert.ok(html.includes(token),token);
  assert.ok(!html.includes('google.com/maps/search'));

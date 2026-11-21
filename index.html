@@ -3200,7 +3200,7 @@ function renderRichRegionProfile(){
   out+='<div class="region-profile-hero"><h3>'+esc(heading)+(ctx.gov?" — "+esc(ctx.gov):"")+'</h3><p>'+(ctx.type==="district"||ctx.type==="subdistrict"?"هذا الملف خاص بالمستوى الإداري المحدد، وليس بالمحافظة كاملة.":"منطقة محلية ضمن بيانات الدليل، وقد تكون قرية أو حيًا أو تجمعًا سكانيًا.")+' '+(parent?esc(parent.summary):"أضف وصفًا محليًا موثقًا لمساعدة الزوار على التعرف على المنطقة.")+'</p><div class="region-profile-metrics"><div class="region-profile-metric"><b>غير متاح</b><span>سكان هذه المديرية أو العزلة — لا يوجد رقم معتمد في ملف التطبيق</span></div>'+(parent?'<div class="region-profile-metric"><b>'+regionNumber(parent.population2023)+'</b><span>إسقاط سكان محافظة '+esc(ctx.gov)+' لعام 2023 — لا يمثل سكان المديرية</span></div>':"")+(ctx.type==="district"?'<div class="region-profile-metric"><b>'+regionNumber(dc)+'</b><span>مديريات المحافظة في المرجع الإداري</span></div>':"")+'</div><p class="region-profile-muted">منهجية Yemen PTI تستخدم بيانات WorldPop 2024 وإسقاطات الجهاز المركزي للإحصاء وتعديلات النزوح. هذه تقديرات وليست تعدادًا حديثًا مؤكد الدقة، لذلك لا نضع رقمًا محليًا غير متحقق منه.</p><div class="region-source-links"><a href="'+esc(sources.districtPopulation||"https://docs.yemen-pti.org/methodology/")+'" target="_blank" rel="noopener">منهجية تقدير سكان المديريات</a></div></div>';
   if(parent)out+='<div class="region-profile-section"><h3>معالم معروفة في المحافظة الأم</h3><div class="region-landmarks">'+parent.landmarks.map(x=>'<div class="region-landmark">'+esc(x)+'</div>').join("")+'</div><p class="region-profile-muted">هذه معالم على مستوى المحافظة، وليست تأكيدًا أن كل معلم يقع داخل حدود المديرية المختارة. أضف المعلم المحلي مع صورته وموقعه للمساعدة في توثيقه.</p></div>';
  }
- const categories=[["all","كل المحلات والخدمات",""],["grocery","بقالات وتموينات","بقالة"],["food","مطاعم ومخابز","مطعم"],["cafe","مقاهٍ وبوفيهات","قهوة"],["pharmacy","صيدليات","صيدلية"],["health","مستشفيات ومراكز صحية","مستشفى"],["edu","مدارس ومعاهد","مدرسة"],["mosque","مساجد وجوامع","مسجد"],["books","مكتبات وقرطاسيات","قرطاسية"],["vehicles","معارض وورش سيارات","معرض سيارات"],["transport","نقل ومواصلات","نقل"],["hotel","فنادق وسكن","فندق"],["money","بنوك وصرافة","صرافة"],["craft","حرف وصيانة","صيانة"],["market","أسواق","سوق"],["beauty","تجميل وعناية","عطور"]];
+ const categories=[["all","كل المحلات والخدمات",""],["grocery","بقالات وتموينات","بقالة"],["food","مطاعم ومخابز","مطعم"],["cafe","مقاهٍ وبوفيهات","قهوة"],["pharmacy","صيدليات","صيدلية"],["health","مستشفيات ومراكز صحية","مستشفى"],["edu","مدارس ومعاهد","مدرسة"],["mosque","مساجد وجوامع","مسجد"],["books","مكتبات وقرطاسيات","قرطاسية"],["vehicles","معارض وورش سيارات","معرض سيارات"],["real_estate","مكاتب عقارية","عقار"],["transport","نقل ومواصلات","نقل"],["hotel","فنادق وسكن","فندق"],["money","بنوك وصرافة","صرافة"],["watches","ساعات","ساعة"],["telecom","جوالات واتصالات","جوال"],["elec","إلكترونيات","إلكترونيات"],["build","مواد بناء","مواد بناء"],["gold","ذهب ومجوهرات","ذهب"],["clothes","ملابس وأحذية","ملابس"],["home","أدوات منزلية","أثاث"],["beauty","عطور وتجميل","عطور"],["salon","صالونات","صالون"],["laundry","مغاسل","مغسلة"],["solar","طاقة شمسية","طاقة شمسية"],["delivery","توصيل وبريد","توصيل"],["farm","زراعة ومواشٍ","زراعة"],["gov","جهات حكومية","مكتب حكومي"],["craft","حرف وصيانة","صيانة"]];
  out+='<div class="region-profile-section"><h3>تصفح المحلات والخدمات في هذه المنطقة</h3><p class="region-profile-muted">اختر قسماً لعرض السجلات المحلية المتوفرة. قد تكون بيانات بعض المديريات ناقصة، وغياب نتيجة لا يعني عدم وجود النشاط.</p><div class="region-map-links">'+categories.map(item=>'<button type="button" data-region-category="'+esc(item[0])+'" data-region-query="'+esc(item[2])+'">'+esc(item[1])+'</button>').join("")+'</div><p class="region-profile-muted">افتح خريطة المكان من بطاقته عند الحاجة فقط.</p></div>';
 out+='<div class="region-profile-section"><h3>مصادر البيانات</h3><div class="region-source-links"><a href="'+esc(sources.population||"https://cso-ye.org/en/population-statistics/")+'" target="_blank" rel="noopener">الجهاز المركزي للإحصاء — السكان</a><a href="'+esc(sources.heritageInventory||"https://whc.unesco.org/document/135204")+'" target="_blank" rel="noopener">جرد التراث 2013</a><a href="'+esc(sources.unescoYemen||"https://whc.unesco.org/en/statesparties/ye/")+'" target="_blank" rel="noopener">مواقع اليمن في اليونسكو</a><a href="'+esc(sources.geography||"https://visit-yemen.com/geography")+'" target="_blank" rel="noopener">الدليل الجغرافي</a><a href="'+esc(sources.administrative||"https://github.com/open-admin-data/yemen-administrative-divisions")+'" target="_blank" rel="noopener">التقسيم الإداري</a></div></div>';
  $("#regionProfileDetails").innerHTML=out;renderRegionCommunity(ctx);
@@ -4101,16 +4101,52 @@ async function loadRegionalCatalog(gov,force){
 }
 function regionalCatalogMatches(items,context,query,category,productType){
  if(productType||category==="jobs"||category==="souq"||category==="land"||category==="marketplace")return [];
- const wanted=String(category||"all"),tokens=normalizePlace(query).split(/\s+/).filter(Boolean);
+ const wanted=String(category||"all");
+ const categoryWords={
+  grocery:["بقالة","بقاله","بقالات","بقال","تموين","تموينات","سوبرماركت"],
+  food:["مطعم","مطاعم","مخبز","مخابز","مأكولات"],
+  cafe:["مقهى","مقاهي","كافيه","بوفيه","بوفيات"],
+  pharmacy:["صيدلية","صيدليات"],
+  health:["مستشفى","مستشفيات","عيادة","عيادات","مركز","مراكز","صحي","صحية"],
+  edu:["مدرسة","مدارس","معهد","معاهد","جامعة","جامعات","كلية","كليات"],
+  mosque:["مسجد","مساجد","جامع","جوامع"],
+  books:["مكتبة","مكتبات","قرطاسية","قرطاسيات"],
+  vehicles:["سيارة","سيارات","معرض","معارض","ورشة","ورش"],
+  transport:["نقل","مواصلات","باص","باصات","تاكسي"],
+  hotel:["فندق","فنادق","نزل","سكن"],
+  money:["بنك","بنوك","صراف","صرافة","صرافات"],
+  craft:["حرفي","حرفيون","صيانة","إصلاح","ورشة","ورش"],
+  real_estate:["عقار","عقارات","مكتب","مكاتب","عقاري","عقارية"],
+  watches:["ساعة","ساعات","ساعاتي"],
+  telecom:["جوال","جوالات","هواتف","اتصالات"],
+  elec:["إلكترونيات","الكترونيات","كهربائيات","كمبيوتر"],
+  build:["مواد","بناء","حديد","اسمنت","أسمنت","سباكة"],
+  gold:["ذهب","مجوهرات","صياغة"],
+  clothes:["ملابس","أحذية","خياط","خياطة"],
+  home:["أثاث","أدوات","منزلية","أجهزة"],
+  beauty:["عطور","تجميل","تجميلية","مكياج"],
+  salon:["صالون","صالونات","حلاقة","حلاق"],
+  laundry:["مغسلة","مغاسل","غسيل"],
+  solar:["طاقة","شمسية","ألواح"],
+  delivery:["توصيل","بريد","شحن"],
+  gov:["حكومية","حكومي","مكتب","مكاتب"],
+  farm:["زراعة","مزرعة","مزارع","مواشي","أعلاف"]
+ };
+ const filler=["ابحث","بحث","عن","في","من","اليمن","محل","محلات","خدمة","خدمات","مكان","اماكن"];
+ const ignored=new Set([...(categoryWords[wanted]||[]).map(normalizePlace),...filler.map(normalizePlace)].filter(Boolean));
+ const tokens=normalizePlace(query).split(/\s+/).filter(token=>token&&!ignored.has(token));
  return (items||[]).filter(item=>{
   if(wanted!=="all"&&item.category!==wanted)return false;
-  if(context&&context.district&&normalizePlace(item.district)!==normalizePlace(context.district))return false;
+  if(context&&context.type==="district"&&context.district&&normalizePlace(item.district)!==normalizePlace(context.district))return false;
   const hay=normalizePlace([item.name,item.address,item.description,item.governorate,item.district,item.category].filter(Boolean).join(" "));
   return tokens.every(token=>hay.includes(token));
  });
 }
 function regionalCatalogCardHTML(item){
- const card=liveDirectoryCardHTML(item);
+ const labels={vehicles:"معارض وورش سيارات",watches:"ساعات",real_estate:"مكاتب عقارية",telecom:"جوالات واتصالات",elec:"إلكترونيات",build:"مواد بناء",gold:"ذهب ومجوهرات",clothes:"ملابس وأحذية",home:"أدوات منزلية",beauty:"عطور وتجميل",salon:"صالونات",laundry:"مغاسل",solar:"طاقة شمسية",delivery:"توصيل وبريد",farm:"زراعة ومواشٍ",gov:"جهات حكومية"};
+ let card=liveDirectoryCardHTML(item);
+ const label=labels[item.category];
+ if(label)card=card.replace('<span class="tag">خدمة</span>','<span class="tag">'+esc(label)+'</span>');
  const note=item.assignmentQuality==="osm-boundary"
   ?"التصنيف الإداري مستند إلى مضلع حدود منشور في OpenStreetMap."
   :"المحافظة والمديرية تقدير تقريبي من أقرب مركز إداري؛ تحقق من الموقع قبل الاعتماد عليه.";
@@ -4211,6 +4247,8 @@ async function loadLiveCommonsPhotos(button){
  finally{button.disabled=false;}
 }
 document.addEventListener("click",event=>{
+ const directoryGov=event.target.closest("#liveDirectoryItems [data-region-gov]");
+ if(directoryGov){scope="gov:"+directoryGov.dataset.regionGov;liveDirectoryCoords=null;buildScopeSelector();render();const panel=$("#liveDirectoryPanel");if(panel)panel.scrollIntoView({behavior:"smooth",block:"start"});return;}
  const rate=event.target.closest("[data-live-rate-id]");
  if(rate){
   const data=liveLocalData(),id=rate.dataset.liveRateId,stars=Number(rate.dataset.stars);

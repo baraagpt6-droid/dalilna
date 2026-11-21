@@ -1,7 +1,7 @@
 "use strict";
 const fs=require("node:fs"),vm=require("node:vm"),assert=require("node:assert/strict"),test=require("node:test");
 const html=fs.readFileSync("index.html","utf8"),client=fs.readFileSync("marketplace-client.js","utf8");
-const inline=[...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)].filter(m=>!/\\bsrc\\s*=/.test(m[1])&&m[2].trim()).map(m=>m[2]);
+const inline=html.split("<script").slice(1).map(part=>{const start=part.indexOf(">");const end=part.indexOf("</script>");return start>=0&&end>start?part.slice(start+1,end):"";}).filter(code=>code.trim());
 test("all inline JavaScript in PWA parses",()=>{assert.ok(inline.length>=2);inline.forEach((code,i)=>new vm.Script(code,{filename:"index.html:inline-"+i}));});
 test("marketplace client parses",()=>new vm.Script(client,{filename:"marketplace-client.js"}));
 test("smart search reads static local catalogue and shared ads, not live map endpoints",()=>{
