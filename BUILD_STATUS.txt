@@ -13,4 +13,9 @@ Dalilna 1.8.2 — Build and deployment status
 - Legacy listings remain in local storage on each user's device until that device uses “نقل إضافاتي القديمة للمراجعة”. The API uses clientRef uniqueness to make retries idempotent. Admin approval is still required before publication.
 - Marketplace moderation requires DALILNA_ADMIN_TOKEN stored as a server environment secret. Do not expose it in GitHub, browser storage, URLs, or APK files.
 - Client, merchant and legacy admin accounts remain device-local and do not provide identity verification. Review SECURITY_LIMITATIONS.txt before public or commercial use.
+- The Render service dalilna-live currently runs application commit 3618090729988c2c98f3b80d2b99eaabee2dedb7 (version 1.8.2). The production Neon project shows an idle dalilna-marketplace database session; the older Neon project showed no matching session.
+- Legacy Render service dalilna-yemen is a static site whose last recorded deployment is the 1.6.2 commit 24e88812ecb16ae3d2dc5e78e43421977f59efd2. The repository's current GitHub Pages deployment workflow is the 1.8.2 web publishing path.
+- Legacy Render service dalilna-directory-api last deployed commit 025be1f68b373734b1dd2351bc0a368dc0829a31. No references to its hostname were found in the current repository. Keep it running until any external clients or old installed app versions are checked; do not treat it as the current API.
+- Vercel GitHub commit checks currently report build-rate-limit failures. The connected Vercel account/team lookup returned no Dalilna projects, and the known Vercel deployment lookup returned 404. The exact project and its current environment variables could not be inspected through the available Vercel connection. Do not retry deployments until the account/project access and build limit are resolved.
 - A production Android release requires a private signing keystore, controlled signing, and field testing.
+
