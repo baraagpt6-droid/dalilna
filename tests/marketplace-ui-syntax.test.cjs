@@ -2,10 +2,11 @@
 const fs=require("node:fs");
 const vm=require("node:vm");
 const assert=require("node:assert/strict");
+const test=require("node:test");
 const html=fs.readFileSync("index.html","utf8");
 const client=fs.readFileSync("marketplace-client.js","utf8");
-const inline=[...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)]
- .filter(match=>!/\\bsrc\\s*=/.test(match[1])&&match[2].trim())
+const inline=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+ .filter(match=>!/\bsrc\s*=/.test(match[1])&&match[2].trim())
  .map(match=>match[2]);
 test("all inline JavaScript in the PWA parses",()=>{
  assert.ok(inline.length>=2,"expected inline application scripts");
