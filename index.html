@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.8.0">
+<meta name="app-version" content="1.8.1">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2385,7 +2385,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="1.8.0";
+const APP_VERSION="1.8.1";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -4016,24 +4016,81 @@ function liveDirectorySharedMatchesHTML(){
  return '<section class="live-directory-shared-results"><div class="shared-marketplace-head"><b>إعلانات معتمدة تطابق بحثك</b><span class="tag">'+Number(liveSharedMatches.length).toLocaleString("ar")+' نتيجة</span></div>'+
   liveSharedMatches.map(liveApprovedListingCardHTML).join("")+'</section>';
 }
+async function liveFetchJson(path,params,signal,retries=1){
+ const url=LIVE_DIRECTORY_API+path+(params&&params.toString()?"?"+params.toString():"");
+ let lastError=null;
+ for(let attempt=0;attempt<=retries;attempt++){
+  try{
+   const response=await fetch(url,{headers:{Accept:"application/json"},signal,cache:"no-store"});
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok){
+    const error=new Error(data.error||("تعذر الاتصال بمصدر البحث (HTTP "+response.status+")."));
+    error.status=response.status;
+    if(attempt<retries&&(response.status>=500||response.status===429)){
+     lastError=error;
+     await new Promise(resolve=>setTimeout(resolve,650*(attempt+1)));
+     continue;
+    }
+    throw error;
+   }
+   return data;
+  }catch(error){
+   lastError=error;
+   if(signal&&signal.aborted)throw error;
+   const transient=!Number.isFinite(error&&error.status)||error.status>=500||error.status===429;
+   if(attempt>=retries||!transient)throw error;
+   await new Promise(resolve=>setTimeout(resolve,650*(attempt+1)));
+  }
+ }
+ throw lastError||new Error("تعذر الوصول إلى خدمة البحث.");
+}
+async function searchLivePlaces(query,intent,signal){
+ const context=liveDirectoryContext();
+ const params=new URLSearchParams({q:String(query||""),category:intent&&intent.category||"all"});
+ if(context){
+  params.set("place",context.place);
+  if(context.fallbackPlace)params.set("fallbackPlace",context.fallbackPlace);
+ }else if(userPos&&flt.near){
+  params.set("lat",String(userPos.lat));params.set("lon",String(userPos.lng));params.set("radius","7000");
+ }else{
+  throw new Error("اختر محافظة أو مديرية حتى نبحث في نطاق صحيح.");
+ }
+ let geoData=null,geoError=null;
+ try{
+  geoData=await liveFetchJson("/api/geoapify/search",params,signal,0);
+  if(Array.isArray(geoData.items)&&geoData.items.length)return geoData;
+ }catch(error){geoError=error;}
+ try{
+  const osmData=await liveFetchJson("/api/places/search",params,signal,1);
+  osmData.fallbackFromGeoapify=true;
+  if(geoError)osmData.providerNote="تعذر مصدر Geoapify؛ تم الانتقال إلى OpenStreetMap.";
+  return osmData;
+ }catch(osmError){
+  if(geoData&&Array.isArray(geoData.items))return {...geoData,fallbackError:osmError.message};
+  const message=geoError&&geoError.message
+   ?geoError.message+" ثم تعذر مصدر OpenStreetMap: "+osmError.message
+   :osmError.message;
+  throw new Error(message||"تعذر الوصول إلى مصادر البحث المفتوحة.");
+ }
+}
 async function loadLiveMarketplaceMatches(query,category,productType,signal,force){
  const region=regionCurrentContext(),gov=region.gov||"",district=region.district||"";
  const key=[query,category,productType,gov,district].join("|");
  const cached=liveSharedCache.get(key);
- if(!force&&cached&&Date.now()-cached.at<120000){liveSharedMatches=cached.items;return;}
+ if(!force&&cached&&Date.now()-cached.at<120000){liveSharedMatches=cached.items;return liveSharedMatches;}
  liveSharedMatches=[];
  const params=new URLSearchParams({limit:"12",includeImages:"1"});
+ if(category&&category!=="all")params.set("category",category);
  if(productType)params.set("productType",productType);
- else if(category&&category!=="all")params.set("category",category);
- else if(query)params.set("q",query);
+ if(query)params.set("q",query);
  if(gov)params.set("governorate",gov);
  if(district)params.set("district",district);
  try{
-  const response=await fetch(LIVE_DIRECTORY_API+"/api/marketplace/listings?"+params.toString(),{headers:{Accept:"application/json"},signal,cache:"no-store"});
-  const result=await response.json().catch(()=>({}));
-  if(response.ok&&Array.isArray(result.items))liveSharedMatches=result.items;
+  const result=await liveFetchJson("/api/marketplace/listings",params,signal,1);
+  if(Array.isArray(result.items))liveSharedMatches=result.items;
   liveSharedCache.set(key,{items:liveSharedMatches,at:Date.now()});
  }catch(_){liveSharedMatches=[];}
+ return liveSharedMatches;
 }
 function liveDirectoryLocationPrompt(){
  const box=$("#liveDirectoryItems");if(!box)return;
@@ -4046,61 +4103,38 @@ async function runLiveDirectorySearch(force){
  const query=liveDirectoryLast.query||"",category=liveDirectoryLast.category||"all",productType=liveDirectoryLast.productType||"";
  const key=[context?context.place:"",coords?Number(coords.lat).toFixed(3)+","+Number(coords.lon||coords.lng).toFixed(3):"",category,productType,query].join("|");
  liveDirectoryVisibleCount=8;liveDirectoryLastData=null;
- const seq=++liveDirectorySeq;status.textContent="نبحث في الإعلانات المعتمدة والمحلات المسجلة…";
- box.innerHTML='<div class="live-directory-empty">جارٍ تحميل الإعلانات والبحث في مصادر الأماكن.</div>';
+ const seq=++liveDirectorySeq;status.textContent="نبحث في الإعلانات المعتمدة ومصادر الخرائط…";
+ box.innerHTML='<div class="live-directory-empty">جارٍ تحميل الإعلانات والبحث في Geoapify وOpenStreetMap.</div>';
  clearTimeout(liveDirectoryTimer);
  liveDirectoryTimer=setTimeout(async()=>{
-  const controller=new AbortController(),requestTimer=setTimeout(()=>controller.abort(),45000);
+  const controller=new AbortController(),requestTimer=setTimeout(()=>controller.abort(),70000);
   try{
-   await loadLiveMarketplaceMatches(query,category,productType,controller.signal,force);
-   if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
-   if(!context&&!coords){liveDirectoryLocationPrompt();return;}
-   const health=await fetch(LIVE_DIRECTORY_API+"/health",{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
-   if(!health.ok)throw new Error("خدمة البحث غير جاهزة (HTTP "+health.status+").");
-   const geoStatusResponse=await fetch(LIVE_DIRECTORY_API+"/api/geoapify/status",{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
-   const geoStatus=await geoStatusResponse.json().catch(()=>({}));
-   if(!geoStatusResponse.ok)throw new Error("تعذر التحقق من مصدر البحث المجاني.");
-   liveGeoapifyEnabled=geoStatus.geoapifyEnabled===true;
-   if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
-   const params=new URLSearchParams({q:query,category});
-   if(context){params.set("place",context.place);if(context.fallbackPlace)params.set("fallbackPlace",context.fallbackPlace);}
-   if(coords){params.set("lat",String(coords.lat));params.set("lon",String(coords.lon||coords.lng));params.set("radius","7000");}
-   if(liveGeoapifyEnabled){
-    status.textContent="نبحث في المحلات المسجلة…";
-    const response=await fetch(LIVE_DIRECTORY_API+"/api/geoapify/search?"+params.toString(),{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
-    const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||"تعذر جلب نتائج الأماكن.");
+   const sharedPromise=loadLiveMarketplaceMatches(query,category,productType,controller.signal,force);
+   if(!context&&!coords){
+    await sharedPromise;
     if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
-    if(!Array.isArray(data.items)||!data.items.length){
-     status.textContent="لم يُرجع Geoapify نتائج. نجرب OpenStreetMap كمصدر بديل…";
-     try{
-      const fallbackResponse=await fetch(LIVE_DIRECTORY_API+"/api/places/search?"+params.toString(),{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
-      const fallback=await fallbackResponse.json().catch(()=>({}));
-      if(fallbackResponse.ok&&Array.isArray(fallback.items)&&fallback.items.length){
-       fallback.fallbackFromGeoapify=true;
-       renderLiveDirectoryResponse(fallback);
-       return;
-      }
-     }catch(_){}
-    }
-    renderLiveDirectoryResponse(data);
-    return;
+    liveDirectoryLocationPrompt();return;
    }
-   const cached=liveDirectoryCache.get(key);
-   if(!force&&cached&&Date.now()-cached.at<10*60*1000){renderLiveDirectoryResponse(cached.data);return;}
-   status.textContent="مصدر Geoapify غير مفعّل. نستخدم OpenStreetMap…";
-   const response=await fetch(LIVE_DIRECTORY_API+"/api/places/search?"+params.toString(),{headers:{Accept:"application/json"},signal:controller.signal,cache:"no-store"});
-   const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||("تعذر تحميل الأماكن (HTTP "+response.status+")."));
+   status.textContent="نبحث في بيانات المحلات والقرطاسيات…";
+   const data=await searchLivePlaces(query,{category,productType},controller.signal);
    if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
-   liveDirectoryCache.set(key,{data,at:Date.now()});
+   await sharedPromise;
+   if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
+   if(Array.isArray(data.items)&&data.items.length)liveDirectoryCache.set(key,{data:data,at:Date.now()});
    renderLiveDirectoryResponse(data);
+   if(data.providerNote)status.textContent+=" · "+data.providerNote;
   }catch(error){
    if(seq!==liveDirectorySeq||!$("#liveDirectoryItems"))return;
    const timedOut=error&&error.name==="AbortError",rawMessage=String(error&&error.message||"");
-   const networkFailure=/failed to fetch|networkerror|load failed/i.test(rawMessage);
-   status.textContent=networkFailure?"تعذر الوصول إلى خادم البحث. تحقق من اتصال الإنترنت ثم أعد المحاولة.":(timedOut?"تأخر البحث. أعد المحاولة بعد قليل.":(rawMessage||"تعذر الاتصال بخدمة البحث."));
-   box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">'+(networkFailure?"لم يصل الطلب إلى خادم البحث. هذا لا يعني عدم وجود محلات أو خدمات في المنطقة.":"تعذر جلب بيانات الأماكن الآن.")+'</div><button type="button" class="live-directory-refresh" id="liveDirectoryRetry">إعادة المحاولة</button>';
+   const networkFailure=/failed to fetch|networkerror|load failed|fetch failed/i.test(rawMessage);
+   status.textContent=timedOut?"تأخر البحث؛ جربنا مصادر بديلة ولم يكتمل الرد.":(networkFailure?"تعذر الوصول إلى خدمة البحث بعد محاولات الاتصال.":"تعذر إكمال البحث: "+rawMessage);
+   const hint=networkFailure
+    ?"قد تكون خدمة الاستضافة نائمة أو الاتصال محجوباً مؤقتاً. أعد المحاولة، أو افتح البحث الخارجي."
+    :"تعذر الوصول إلى بيانات الأماكن الآن. هذا لا يدل على عدم وجود محلات في المنطقة.";
+   const term=query||CN[category]||"محلات وخدمات",place=context?context.place:"اليمن";
+   box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">'+esc(hint)+'</div><div class="live-directory-actions"><a href="https://www.openstreetmap.org/search?query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في OpenStreetMap</a><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في خرائط Google</a></div><button type="button" class="live-directory-refresh" id="liveDirectoryRetry">إعادة المحاولة</button>';
   }finally{clearTimeout(requestTimer);}
- },250);
+ },200);
 }
 function renderLiveDirectoryResponse(data){
  const status=$("#liveDirectoryStatus"),box=$("#liveDirectoryItems"),attribution=$("#liveDirectoryAttribution");if(!status||!box)return;
@@ -4315,29 +4349,52 @@ function assistantApiUrl(){
   return "/api/assistant";
 }
 async function askAssistant(q){
-  const serviceIntent=directoryMapSearchInfo(q);
-  if(serviceIntent){
-    const hits=localDirectorySearch(q,12).filter(item=>item.cat===serviceIntent.category&&(!scope||scopeMatchesItem(item)));
-    const answer=hits.length
-      ? `وجدت ${hits.length} إدراجات من فئة ${serviceIntent.label} في بيانات هذا الجهاز:\n`+hits.slice(0,8).map((item,n)=>`${n+1}. ${item.name} — ${[item.area,item.dist,item.gov].filter(Boolean).join(" / ")}${item.phone?" — "+item.phone:""}${item.verifiedAt?" — موثّق":" — غير موثّق"}`).join("\n")
-      : `لا توجد ${serviceIntent.label} مسجلة في دليلنا حالياً ضمن البيانات المتاحة على هذا الجهاز. هذا لا يعني عدم وجودها في المنطقة. يمكنك البحث خارج الدليل في خرائط Google.`;
-    return {answer,mode:hits.length?"directory":"maps",mapUrl:serviceIntent.url,mapLabel:serviceIntent.label};
+ const serviceIntent=directoryMapSearchInfo(q);
+ if(serviceIntent){
+  const localHits=localDirectorySearch(q,12).filter(item=>item.cat===serviceIntent.category&&(!scope||scopeMatchesItem(item)));
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),70000);
+  let places=[],approved=[],placeError="";
+  try{
+   const results=await Promise.allSettled([
+    searchLivePlaces(q,serviceIntent,controller.signal),
+    loadLiveMarketplaceMatches(q,serviceIntent.category,serviceIntent.productType,controller.signal,true)
+   ]);
+   if(results[0].status==="fulfilled")places=Array.isArray(results[0].value.items)?results[0].value.items:[];
+   else placeError=String(results[0].reason&&results[0].reason.message||"تعذر الوصول إلى مصادر الخرائط.");
+   if(results[1].status==="fulfilled")approved=Array.isArray(results[1].value)?results[1].value.slice():liveSharedMatches.slice();
+  }finally{clearTimeout(timer);}
+  const parts=[];
+  if(localHits.length){
+   parts.push("إدراجات محفوظة داخل هذا الجهاز:\n"+localHits.slice(0,5).map((item,n)=>(n+1)+". "+item.name+" — "+[item.area,item.dist,item.gov].filter(Boolean).join(" / ")+(item.phone?" — "+item.phone:"")+(item.verifiedAt?" — موثّق":" — غير موثّق")).join("\n"));
   }
-  // Administrative reference facts with fixed local data are returned deterministically.
-  if(asksHubaishSubdistricts(q))return {answer:hubaishSubdistrictAnswer(),mode:"reference"};
-  if(S.aiCloudConsent===true&&navigator.onLine){
-    try{
-      const response=await fetch(assistantApiUrl(),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:String(q).slice(0,1200),context:buildAssistantContext(q)})});
-      if(response.ok){
-        const data=await response.json();
-        if(data&&typeof data.answer==="string"&&data.answer.trim()){
-          return {answer:data.answer.trim(),mode:data.mode==="gemini"?"gemini":"reference"};
-        }
-      }
-    }catch(err){/* show local fallback status below */}
-    return {answer:answerAI(q),mode:"local-fallback"};
+  if(places.length){
+   const mapSource=places[0]&&places[0].source==="OpenStreetMap"?"OpenStreetMap":"Geoapify";
+   parts.push("محلات ظهرت في مصدر الخرائط ("+mapSource+")، وليست إعلانات معتمدة من دليلنا:\n"+
+    places.slice(0,8).map((item,n)=>(n+1)+". "+(item.name||"اسم غير متوفر")+" — "+(item.address||"العنوان غير متوفر")+(item.phone?" — هاتف: "+item.phone:" — الهاتف غير متوفر في المصدر")).join("\n"));
   }
-  return {answer:answerAI(q),mode:navigator.onLine?"local":"offline"};
+  if(approved.length){
+   parts.push("إعلانات أضافها المستخدمون واعتمدتها إدارة دليلنا:\n"+
+    approved.slice(0,8).map((item,n)=>(n+1)+". "+item.title+" — "+([item.area,item.district,item.governorate].filter(Boolean).join(" / ")||"الموقع غير مكتمل")+(item.price?" — "+item.price+" "+(item.currency||""):"")+(item.phone?" — هاتف: "+item.phone:"")).join("\n"));
+  }
+  if(!places.length&&!approved.length&&!localHits.length){
+   parts.push("لم نعثر على سجلات تطابق بحثك في بيانات دليلنا أو في مصادر الخرائط المفتوحة لهذه المنطقة. هذا لا يثبت عدم وجود محلات على أرض الواقع. "+(placeError?"تعذر الاتصال بمصدر البحث حالياً. ":"")+"جرّب توسيع النطاق أو افتح البحث الخارجي.");
+  }else if(placeError&&!places.length){
+   parts.push("تعذر تحديث نتائج الخرائط الآن، لكن هذه النتائج من مصادر أخرى متاحة. أعد المحاولة لاحقاً لمراجعة الخريطة.");
+  }
+  return {answer:parts.join("\n\n"),mode:places.length||approved.length?"live-directory":localHits.length?"directory":"maps",mapUrl:serviceIntent.url,mapLabel:serviceIntent.label};
+ }
+ if(asksHubaishSubdistricts(q))return {answer:hubaishSubdistrictAnswer(),mode:"reference"};
+ if(S.aiCloudConsent===true&&navigator.onLine){
+  try{
+   const response=await fetch(assistantApiUrl(),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:String(q).slice(0,1200),context:buildAssistantContext(q)})});
+   if(response.ok){
+    const data=await response.json();
+    if(data&&typeof data.answer==="string"&&data.answer.trim())return {answer:data.answer.trim(),mode:data.mode==="gemini"?"gemini":"reference"};
+   }
+  }catch(err){/* Keep local and live-directory search available if cloud AI is unavailable. */}
+  return {answer:answerAI(q),mode:"local-fallback"};
+ }
+ return {answer:answerAI(q),mode:navigator.onLine?"local":"offline"};
 }
 function appendChatMessage(type,text){
   const el=document.createElement("div");el.className=type==="user"?"m u":"m a";el.textContent=String(text||"");$("#msgs").appendChild(el);$("#msgs").scrollTop=$("#msgs").scrollHeight;
@@ -4354,7 +4411,7 @@ $("#botf").addEventListener("submit",async e=>{
     source.className="where";
     source.style.display="block";
     source.style.marginTop="7px";
-    source.textContent=result.mode==="gemini"?"المصدر: Gemini":result.mode==="reference"?"المصدر: مرجع دليلنا الإداري":result.mode==="local-fallback"?"المصدر: المساعد المحلي — تعذر اتصال Gemini":result.mode==="offline"?"المصدر: المساعد المحلي دون إنترنت":result.mode==="directory"?"المصدر: إدراجات دليلنا على هذا الجهاز":result.mode==="maps"?"المصدر: بحث خارجي عبر خرائط Google":"المصدر: المساعد المحلي";
+    source.textContent=result.mode==="gemini"?"المصدر: Gemini":result.mode==="reference"?"المصدر: مرجع دليلنا الإداري":result.mode==="local-fallback"?"المصدر: المساعد المحلي — تعذر اتصال Gemini":result.mode==="offline"?"المصدر: المساعد المحلي دون إنترنت":result.mode==="directory"?"المصدر: إدراجات هذا الجهاز":result.mode==="live-directory"?"المصدر: بيانات خرائط مفتوحة وإعلانات معتمدة من دليلنا":result.mode==="maps"?"المصدر: بحث خارجي عبر خرائط Google":"المصدر: المساعد المحلي";
     pending.appendChild(source);
     if(result.mapUrl){
       const mapLink=document.createElement("a");
