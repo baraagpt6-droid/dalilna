@@ -3856,13 +3856,11 @@ function renderLiveDirectoryResponse(data){
   box.innerHTML=cards;
   return;
  }
- liveDirectoryLastData=data.source==="Google Maps"?null:data;
+ liveDirectoryLastData=data;
 
  status.textContent=(data.scopeFallback?"لم نجد حدود المديرية؛ هذه نتائج على مستوى المحافظة. ":"")+"المصدر: OpenStreetMap · عُثر على "+Number(items.length||0).toLocaleString("ar")+" نتيجة"+(data.cached?" · من التخزين المؤقت":"");
  box.classList.remove("live-google-results");
- if(attribution)attribution.textContent="© OpenStreetMap contributors · عند تفعيل Geoapify ستظهر نتائج الأماكن مع بيانات الاتصال المتاحة."; 
- box.classList.remove("live-google-results");
- if(attribution)attribution.textContent="المصدر: © OpenStreetMap contributors · الصور من Wikimedia Commons مع صفحة المصدر والترخيص.";
+ if(attribution)attribution.innerHTML='المصدر: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · الصور من Wikimedia Commons.';
  if(!items.length){
   const ctx=liveDirectoryContext(),term=liveDirectoryLast.query||(CN[liveDirectoryLast.category]||"محلات وخدمات"),place=ctx?ctx.place:"اليمن";
   box.innerHTML='<div class="live-directory-empty">لم يعثر مصدر البيانات على أماكن مسجلة لهذه الفئة في النطاق المحدد. هذا لا يؤكد عدم وجودها على أرض الواقع.</div><a class="ai-map-search-link" href="https://www.openstreetmap.org/search?query='+encodeURIComponent(term+" "+place)+'" target="_blank" rel="noopener noreferrer">البحث في OpenStreetMap</a>';return;
