@@ -31,3 +31,16 @@ test("live external data is not inserted into local merchant listings", () => {
   const block = html.slice(start, end);
   assert.doesNotMatch(block, /S\.items\.unshift|S\.items\.push|saveState\(/);
 });
+
+
+test("live discovery prompt is shown directly below the search bar", () => {
+  assert.match(html, /id="liveDirectoryTop"/);
+  assert.match(html, /liveTop\.innerHTML=liveWanted\?liveDirectoryPanelHTML\(\):""/);
+  assert.match(html, /id="liveDirectoryChooseRegion"/);
+  assert.match(html, /اختيار المحافظة أو المديرية/);
+});
+
+test("scope count is described as local entries", () => {
+  assert.match(html, /إدراج محلي/);
+  assert.doesNotMatch(html, /const prefix=cur\.count===0\?"لا توجد إدراجات"/);
+});

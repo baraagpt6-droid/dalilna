@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.5.0">
+<meta name="app-version" content="1.5.1">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -523,6 +523,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 .empty-search-help{display:grid;gap:8px;text-align:center;padding:14px}
 .empty-search-help p{margin:0;color:var(--mute);font-size:12px;line-height:1.8}
 .empty-search-help .ai-map-search-link{justify-self:center}
+.live-directory-top{max-width:1160px;margin:10px auto 0;padding:0 14px}
 .live-directory-panel{display:grid;gap:10px;margin:12px 0;padding:13px;border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:var(--shadow)}
 .live-directory-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .live-directory-head b{font-size:15px;color:var(--ink)}
@@ -606,6 +607,8 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <button type="button" class="tbtn" id="voiceStop" style="min-height:30px">إيقاف</button>
   </div>
 </header>
+
+<div id="liveDirectoryTop" class="live-directory-top"></div>
 
 <section class="promo-release" id="promoRelease">
   <div>
@@ -710,6 +713,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
         <h2 style="font-size:17px">الأقسام والخدمات الذكية</h2>
         <input class="cat-search" id="catFilterQ" type="search" placeholder="ابحث في الأقسام (مثلاً: دواء، سباك)…">
       </div>
+      <p class="live-directory-sub" style="margin:0 0 9px">الأعداد هنا تخص الإضافات المحلية في دليلنا فقط. نتائج الخريطة تظهر عند البحث أو اختيار المنطقة.</p>
       <div class="cat-tabs" id="catTabs">
         <button type="button" data-cg="all" aria-pressed="true">الكل</button>
         <button type="button" data-cg="top" aria-pressed="false">الأكثر طلباً</button>
@@ -2290,7 +2294,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="1.5.0";
+const APP_VERSION="1.5.1";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -2908,8 +2912,8 @@ function getScopeOptions(){
 function buildScopeSelector(){
   const opts=getScopeOptions();
   const cur=opts.find(o=>o.val===scope)||opts[0];
-  const prefix=cur.count===0?"لا توجد إدراجات":"";
-  $("#scopeLbl").textContent=`${cur.label} (${cur.count})${prefix?" · "+prefix:""}`;
+  const localCount=cur.count===0?"0 إدراج محلي":cur.count+" إدراج محلي";
+  $("#scopeLbl").textContent=cur.label+" · "+localCount;
 }
 function scopeMatchesItem(item, selected=scope){
   if(!selected)return true;
@@ -3739,8 +3743,8 @@ function liveDirectoryCardHTML(item){
 function liveDirectoryLocationPrompt(){
   const box=$("#liveDirectoryItems");
   if(!box)return;
-  $("#liveDirectoryStatus").textContent="اختر المحافظة أو المديرية من أعلى الصفحة، أو ابحث حول موقعك.";
-  box.innerHTML='<div class="live-directory-empty">لإظهار محلات منطقتك نحتاج تحديد النطاق الجغرافي.</div><button type="button" class="add" id="liveDirectoryUseLocation">ابحث حول موقعي</button>';
+  $("#liveDirectoryStatus").textContent="حدد محافظة أو مديرية يمنية أولاً حتى نبحث في نطاقها.";
+  box.innerHTML='<div class="live-directory-empty">أنت الآن على نطاق اليمن كله. اختر المنطقة من القائمة بالأعلى، وبعدها سنعرض الأماكن المسجلة على الخريطة المفتوحة.</div><button type="button" class="add" id="liveDirectoryChooseRegion">اختيار المحافظة أو المديرية</button>';
 }
 async function runLiveDirectorySearch(force){
   const box=$("#liveDirectoryItems"),status=$("#liveDirectoryStatus");
@@ -3786,12 +3790,13 @@ function renderLiveDirectoryResponse(data){
   if(!items.length){
     box.innerHTML='<div class="live-directory-empty">لا توجد أماكن مسجلة لهذه الفئة في مصدر الخريطة ضمن النطاق المحدد. هذا لا يؤكد عدم وجود محلات في الواقع.</div>';
   }else{
-    box.innerHTML=items.slice(0,40).map(liveDirectoryCardHTML).join("");
+    box.innerHTML=items.slice(0,8).map(liveDirectoryCardHTML).join("");
   }
   if(data.note)status.textContent+=" · "+data.note;
 }
 document.addEventListener("click",event=>{
   if(event.target.closest("#liveDirectoryRefresh")){runLiveDirectorySearch(true);return;}
+  if(event.target.closest("#liveDirectoryChooseRegion")){$("#scopeBtn").click();return;}
   if(event.target.closest("#liveDirectoryUseLocation")){
     if(!navigator.geolocation){toast("المتصفح لا يدعم تحديد الموقع.");return;}
     navigator.geolocation.getCurrentPosition(pos=>{
@@ -4309,6 +4314,12 @@ function render(){
   renderFilterChips();
   renderRecent();
   const q=$("#q").value.trim().toLowerCase();
+  const liveWanted=(view==="home"&&(q.length>=2||!!scope))||view==="cat";
+  const liveInfo=directoryMapSearchInfo(q);
+  liveDirectoryLast={query:q||(view==="cat"?(CN[curCat]||curCat):""),category:liveInfo?liveInfo.category:(view==="cat"?curCat:"all")};
+  const liveTop=$("#liveDirectoryTop");
+  if(liveTop)liveTop.innerHTML=liveWanted?liveDirectoryPanelHTML():"";
+  if(liveWanted)runLiveDirectorySearch(false);
   const match=i=>{
     if(!q)return true;
     const hay=[i.name,i.desc,i.area,i.village,i.dist,i.gov,i.phone,i.country,CN[i.cat],CN_EN[i.cat],CAT_SYN[i.cat]||""].join(" ").toLowerCase();
@@ -4319,8 +4330,7 @@ function render(){
     const base=S.items.filter(i=>i.cat!=="souq"&&i.cat!=="jobs");
     const res=applyFilters(base.filter(match));
     $("#latestT").innerHTML=`${q?T("searchRes"):T("latestTitle")} <span>${res.length}</span>`;
-    $("#list").innerHTML=(res.slice(0,homeLim).map(cardHTML).join("")||emptySearchFallbackHTML(q||"محلات وخدمات"))+((q.length>=2||scope)?liveDirectoryPanelHTML():"");
-    if(q.length>=2||scope){const liveInfo=directoryMapSearchInfo(q);liveDirectoryLast={query:q,category:liveInfo?liveInfo.category:"all"};runLiveDirectorySearch(false);}
+    $("#list").innerHTML=res.slice(0,homeLim).map(cardHTML).join("")||emptySearchFallbackHTML(q||"محلات وخدمات");
     $("#more").hidden=res.length<=homeLim;
   }else if(view==="cat"){
     const inCat=S.items.filter(i=>i.cat===curCat);
@@ -4331,8 +4341,7 @@ function render(){
     $("#areaLbl").textContent=ar||(curLang==="en"?`All Areas (${areas.length})`:`كل المناطق (${areas.length})`);
     const shown=applyFilters(inCat.filter(i=>(!ar||i.area===ar)&&match(i)));
     $("#count").textContent=`${shown.length} نتيجة`;
-    $("#clist").innerHTML=(shown.map(cardHTML).join("")||emptySearchFallbackHTML($("#q").value.trim()||CN[curCat]||curCat))+liveDirectoryPanelHTML();
-    const liveInfo=directoryMapSearchInfo($("#q").value.trim());liveDirectoryLast={query:$("#q").value.trim()||CN[curCat]||curCat,category:liveInfo?liveInfo.category:curCat};runLiveDirectorySearch(false);
+    $("#clist").innerHTML=shown.map(cardHTML).join("")||emptySearchFallbackHTML($("#q").value.trim()||CN[curCat]||curCat);
   }else if(view==="jobs"){
     const jobs=applyFilters(S.items.filter(i=>i.cat==="jobs"&&match(i)));
     $("#jobs").innerHTML=jobs.map(cardHTML).join("")||`<div class="empty">لا توجد وظائف متاحة حالياً.</div>`;
