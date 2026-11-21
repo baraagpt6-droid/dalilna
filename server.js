@@ -4,7 +4,7 @@ const http = require("node:http");
 const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.6.1";
+const VERSION = "1.6.2";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -373,22 +373,46 @@ async function searchGeoapifyPlaces(params) {
   }
 
   const categories = GEOAPIFY_CATEGORY_MAP[category] || GEOAPIFY_ALL_CATEGORIES;
-  const searchUrl = new URL("https://api.geoapify.com/v2/places");
-  const west = Math.min(area.bbox.west, area.bbox.east);
-  const east = Math.max(area.bbox.west, area.bbox.east);
-  const south = Math.min(area.bbox.south, area.bbox.north);
-  const north = Math.max(area.bbox.south, area.bbox.north);
-  const searchParams = {
-    categories: categories.join(","),
-    filter: "rect:" + [west, north, east, south].join(","),
-    limit: "8",
-    lang: "ar",
-    apiKey
+  const searchInArea = async searchArea => {
+    const west = Math.min(searchArea.bbox.west, searchArea.bbox.east);
+    const east = Math.max(searchArea.bbox.west, searchArea.bbox.east);
+    const south = Math.min(searchArea.bbox.south, searchArea.bbox.north);
+    const north = Math.max(searchArea.bbox.south, searchArea.bbox.north);
+    const searchUrl = new URL("https://api.geoapify.com/v2/places");
+    const searchParams = {
+      categories: categories.join(","),
+      // Geoapify rect order is longitude, latitude, longitude, latitude.
+      // Sending north before south creates an inverted rectangle and returns no places.
+      filter: "rect:" + [west, south, east, north].join(","),
+      limit: "8",
+      lang: "ar",
+      apiKey
+    };
+    if (query && category === "all") searchParams.name = query;
+    searchUrl.search = new URLSearchParams(searchParams).toString();
+    return await geoapifyRequest(searchUrl, 12000);
   };
-  if (query && category === "all") searchParams.name = query;
-  searchUrl.search = new URLSearchParams(searchParams).toString();
-  const payload = await geoapifyRequest(searchUrl, 12000);
-  const features = Array.isArray(payload.features) ? payload.features : [];
+
+  let payload = await searchInArea(area);
+  let features = Array.isArray(payload.features) ? payload.features : [];
+
+  // A small district may have no mapped places even when its governorate does.
+  // Retry the broader governorate only when the first search is genuinely empty.
+  if (!features.length && !hasCoordinates && fallbackPlace &&
+      normalizeText(fallbackPlace) !== normalizeText(place)) {
+    const broaderArea = await geocodePlace(fallbackPlace);
+    if (broaderArea && broaderArea.bbox) {
+      const broaderPayload = await searchInArea(broaderArea);
+      const broaderFeatures = Array.isArray(broaderPayload.features) ? broaderPayload.features : [];
+      if (broaderFeatures.length) {
+        payload = broaderPayload;
+        features = broaderFeatures;
+        area = broaderArea;
+        scopeFallback = true;
+        usedPlace = fallbackPlace;
+      }
+    }
+  }
   const baseItems = features.map(feature => {
     const props = feature && feature.properties ? feature.properties : {};
     const name = cleanText(props.name, 180);
