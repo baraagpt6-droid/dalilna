@@ -1,0 +1,31 @@
+name: Verify Google Places proxy and live search
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/places-proxy-integration.cjs'
+      - 'scripts/live-places-smoke.cjs'
+      - '.github/workflows/places-proxy-verification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Test real HTTP routes with controlled Google responses
+        run: node scripts/places-proxy-integration.cjs
+      - name: Test deployed Render search and provider state
+        env:
+          LIVE_API_BASE_URL: https://dalilna-live.onrender.com
+        run: node scripts/live-places-smoke.cjs
