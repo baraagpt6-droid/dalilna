@@ -55,7 +55,7 @@ test("first-run public starter catalog includes real sourced businesses and prod
  assert.match(html,/seedCatalogVersion/);
  assert.match(html,/بيانات عامة · غير موثّقة/);
  assert.match(html,/عرض من متجر خارجي/);
- assert.match(html,/sourceUrl:safeExternalUrl/);
+ assert.match(html,/function safeExternalUrl\\(value\\)/);\n assert.match(html,/sourceUrl:safeExternalUrl/);
  assert.match(html,/https:\/\/hubloh\.com\/en\/cell-phones/);
  assert.match(html,/https:\/\/www\.google\.com\/maps\/search/);
 });
