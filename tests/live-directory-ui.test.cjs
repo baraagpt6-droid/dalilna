@@ -15,8 +15,16 @@ test("external place data is not inserted into local merchant listings",()=>{
  const a=html.indexOf("async function runLiveDirectorySearch"),b=html.indexOf("function renderLiveDirectoryResponse",a);
  assert.doesNotMatch(html.slice(a,b),/S\.items\.unshift|S\.items\.push|saveState\(/);
 });
-test("live search offers retry and does not claim zero results mean no business exists",()=>{
+test("live search offers retry and explains network failures in Arabic",()=>{
  assert.match(html,/id="liveDirectoryRetry"/);assert.match(html,/هذا لا يؤكد عدم وجودها على أرض الواقع/);
+ assert.match(html,/تعذر الوصول إلى خادم البحث/);assert.doesNotMatch(html,/Failed to fetch/);
+});
+test("home search does not request every category when the query is empty",()=>{
+ assert.match(html,/لن نبحث في كل أنواع الأماكن تلقائياً/);
+ assert.match(html,/اكتب اسم الخدمة أو افتح فئة محددة لبدء البحث/);
+});
+test("region count is clearly labeled as device-local",()=>{
+ assert.match(html,/إدراج محلي على هذا الجهاز/);
 });
 test("local ratings and photos are clearly device-local",()=>{
  assert.match(html,/data-live-rate-id/);assert.match(html,/data-live-photo-input/);
