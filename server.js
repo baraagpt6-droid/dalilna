@@ -196,8 +196,8 @@ const GEOAPIFY_CATEGORY_MAP = {
   food: ["catering.restaurant", "catering.fast_food", "catering.food_court"],
   cafe: ["catering.cafe"],
   pharmacy: ["healthcare.pharmacy"],
-  health: ["healthcare.hospital", "healthcare.clinic_or_praxis", "healthcare.dentist", "healthcare.pharmacy"],
-  edu: ["education.school", "education.college", "education.university", "education.kindergarten"],
+  health: ["healthcare.hospital", "healthcare.clinic_or_praxis", "healthcare.dentist", "healthcare.pharmacy", "commercial.health_and_beauty.pharmacy"],
+  edu: ["education.school", "education.college", "education.university", "childcare.kindergarten"],
   gov: ["office.government"],
   money: ["service.financial.bank", "service.financial.atm", "service.financial.bureau_de_change", "service.financial.money_transfer"],
   craft: ["commercial", "service"],
@@ -205,11 +205,11 @@ const GEOAPIFY_CATEGORY_MAP = {
   mosque: ["religion.place_of_worship.islam"],
   hotel: ["accommodation.hotel", "accommodation.guest_house", "accommodation.hostel"],
   market: ["commercial.marketplace"],
-  solar: ["commercial.electronics", "commercial.hardware"],
+  solar: ["commercial.elektronics", "commercial.energy", "service.electrician"],
   parts: ["commercial.vehicle"],
-  build: ["commercial.hardware", "commercial.building_materials"],
-  clothes: ["commercial.clothing", "commercial.shoes"],
-  home: ["commercial.furniture", "commercial.houseware", "commercial.appliance"],
+  build: ["commercial.houseware_and_hardware.building_materials", "commercial.houseware_and_hardware.hardware_and_tools"],
+  clothes: ["commercial.clothing"],
+  home: ["commercial.furniture_and_interior", "commercial.houseware_and_hardware"],
   books: ["commercial.books", "commercial.stationery"],
   beauty: ["commercial.health_and_beauty", "service.beauty"],
   salon: ["service.beauty.hairdresser"],
@@ -217,8 +217,8 @@ const GEOAPIFY_CATEGORY_MAP = {
   delivery: ["service.post", "service.post.office", "service.post.parcel_locker"],
   utility: ["service.vehicle.fuel", "commercial.energy"],
   gold: ["commercial.jewelry"],
-  wedding: ["catering", "commercial.wedding"],
-  farm: ["commercial.agrarian", "commercial.garden_centre"]
+  wedding: ["commercial.wedding", "catering"],
+  farm: ["commercial.agrarian", "commercial.garden"]
 };
 const GEOAPIFY_ALL_CATEGORIES = [
   "commercial", "catering", "healthcare", "education", "accommodation",
