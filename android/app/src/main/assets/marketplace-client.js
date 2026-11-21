@@ -145,36 +145,31 @@
     const actions = document.createElement("div");
     actions.className = "shared-listing-actions";
     if (item.phone) {
+      const phone = window.DalilnaRegionalCatalog?.yemenPhone(item.phone) || {isMobile:false,whatsapp:""};
+      if (phone.isMobile) {
+        const wa = document.createElement("a");
+        wa.href = "https://wa.me/" + phone.whatsapp + "?text=" + encodeURIComponent("مرحباً، وجدت محلكم في تطبيق دليلنا وأريد الاستفسار عن الإعلان.");
+        wa.target = "_blank"; wa.rel = "noopener noreferrer"; wa.textContent = "واتساب"; actions.appendChild(wa);
+      }
       const tel = document.createElement("a");
       tel.href = "tel:" + String(item.phone).replace(/[^0-9+]/g, "");
-      tel.textContent = "اتصال";
-      actions.appendChild(tel);
-      const whatsapp = String(item.phone).replace(/\D/g, "");
-      if (whatsapp) {
-        const wa = document.createElement("a");
-        wa.href = "https://wa.me/" + whatsapp;
-        wa.target = "_blank";
-        wa.rel = "noopener noreferrer";
-        wa.textContent = "واتساب";
-        actions.appendChild(wa);
-      }
+      tel.textContent = "اتصال"; actions.appendChild(tel);
     }
+    let mapElement = null;
     if (Number.isFinite(Number(item.latitude)) && Number.isFinite(Number(item.longitude))) {
-      const map = document.createElement("a");
-      map.href = "https://www.openstreetmap.org/?mlat=" + encodeURIComponent(item.latitude) + "&mlon=" + encodeURIComponent(item.longitude) + "#map=17/" + encodeURIComponent(item.latitude) + "/" + encodeURIComponent(item.longitude);
-      map.target = "_blank";
-      map.rel = "noopener noreferrer";
-      map.textContent = "الموقع على الخريطة";
-      actions.appendChild(map);
+      const mapButton = document.createElement("button");
+      mapButton.type = "button"; mapButton.dataset.mapToggle = "1";
+      mapButton.dataset.lat = String(item.latitude); mapButton.dataset.lon = String(item.longitude);
+      mapButton.dataset.title = item.title || "موقع الإعلان"; mapButton.textContent = "عرض الخريطة";
+      actions.appendChild(mapButton);
+      mapElement = document.createElement("div"); mapElement.className = "dalilna-map"; mapElement.hidden = true;
     } else if (place) {
       const map = document.createElement("a");
-      map.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent([item.title,place,"اليمن"].join(" "));
-      map.target = "_blank";
-      map.rel = "noopener noreferrer";
-      map.textContent = "ابحث عن الموقع";
-      actions.appendChild(map);
+      map.href = "https://www.openstreetmap.org/search?query=" + encodeURIComponent([item.title,place,"اليمن"].join(" "));
+      map.target = "_blank"; map.rel = "noopener noreferrer"; map.textContent = "فتح الموقع في OpenStreetMap"; actions.appendChild(map);
     }
     card.appendChild(actions);
+    if (mapElement) card.appendChild(mapElement);
     return card;
   }
   async function loadList(filters, statusId, listId) {
@@ -357,6 +352,13 @@
     }
     flash("تم إرسال " + done + " إدخالاً للمراجعة" + (failed ? "، وتعذر إرسال " + failed : "") + ".");
   }
+  async function loadCategoryCounts() {
+    try {
+      const result = await api("/api/marketplace/counts");
+      if (result && result.counts) window.dispatchEvent(new CustomEvent("dalilna:marketplace-counts",{detail:result.counts}));
+      return result && result.counts || null;
+    } catch (_) { return null; }
+  }
   function bind() {
     fillSelect($("sharedDirectoryCategory"),CATS,"كل الأقسام");
     fillSelect($("sharedDirectoryGovernorate"),GOVS.map(x=>[x,x]),"كل المحافظات");
@@ -376,6 +378,7 @@
     loadHome();
     loadSouq();
     loadJobs();
+    loadCategoryCounts();
     api("/api/marketplace/status").then(result => {
       const el=$("sharedDirectoryStatus");
       if(el&&!result.ready)el.textContent="واجهة السوق المشترك جاهزة، وتنتظر تهيئة قاعدة PostgreSQL.";
@@ -385,7 +388,7 @@
     loadTimer=window.setInterval(()=>{if(document.hidden)return;loadHome();if($("vSouq")&&!$("vSouq").hidden)loadSouq();if($("vJobs")&&!$("vJobs").hidden)loadJobs();},120000);
     document.addEventListener("click",event=>{if(event.target.closest("[data-go='jobs']"))window.setTimeout(loadJobs,120);if(event.target.closest("[data-go='souq']"))window.setTimeout(loadSouq,120);});
   }
-  window.DalilnaShared = { submitListing, loadHome, loadSouq, loadJobs, loadAdminQueue };
+  window.DalilnaShared = { submitListing, loadHome, loadSouq, loadJobs, loadAdminQueue, loadCategoryCounts };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",bind);
   else bind();
 })();

@@ -2,11 +2,14 @@
 (function(root){
  function isRecord(value){return !!(value&&typeof value==="object"&&!Array.isArray(value)&&(value.name||value.category||value.tags||value.lat!==undefined||value.lon!==undefined||value.latitude!==undefined));}
  function normalizeItems(payload){
-  const records=[];
+  const records=[],usedIds=new Map();
   const append=(value,fallbackId)=>{
    if(!isRecord(value))return;
-   const id=value?.id??value?.osmId??value?.osm_id??value?.key??fallbackId??("catalog-"+records.length);
-   records.push({...value,id:String(id)});
+   const base=String(value?.id??value?.osmId??value?.osm_id??value?.key??fallbackId??("catalog-"+records.length));
+   const occurrence=usedIds.get(base)||0;
+   usedIds.set(base,occurrence+1);
+   const id=occurrence?base+"~"+occurrence:base;
+   records.push({...value,id});
   };
   const fromCollection=value=>{
    if(Array.isArray(value)){value.forEach((item,index)=>append(item,"catalog-"+index));return true;}
