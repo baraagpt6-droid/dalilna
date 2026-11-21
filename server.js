@@ -4,7 +4,7 @@ const http = require("node:http");
 const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "1.6.1";
+const VERSION = "1.6.2";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -174,23 +174,35 @@ function inferCategoryFromQuery(query) {
   const text = normalizeText(query);
   if (!text) return "";
   const rules = [
-    ["grocery", /(بقال|تموين|سوبر\s?ماركت|مواد\s?غذائي|ميني\s?ماركت)/u],
-    ["pharmacy", /(صيدل|دواء|ادويه|علاج|عياده|مستشف|مركز صحي|مختبر|طبيب)/u],
+    ["grocery", /(بقال|تموين|سوبر\s?ماركت|مواد\s?غذائي|ميني\s?ماركت|جمعيه استهلاكيه)/u],
+    ["pharmacy", /(صيدل|دواء|ادويه|علاج|حبوب|مستلزمات طبيه)/u],
+    ["health", /(مستشف|مستوصف|مركز صحي|عياده|عيادات|مختبر|طبيب|اطباء|اسنان)/u],
     ["food", /(مطعم|مطاعم|مخبز|مخابز|وجبات|فطور|غداء|عشاء)/u],
     ["cafe", /(بوفيه|كافيه|كوفي|قهوه|كافتيريا)/u],
-    ["edu", /(مدرس|مدارس|معهد|جامعه|كليه)/u],
+    ["edu", /(مدرس|مدارس|معهد|جامعه|كليه|روضه|حضان)/u],
     ["mosque", /(مسجد|مساجد|جامع|جوامع)/u],
-    ["money", /(بنك|صراف|صرافه|تحويل|صرف عمله)/u],
+    ["money", /(بنك|صراف|صرافه|تحويل|صرف عمله|حوالات)/u],
+    ["telecom", /(جوال|جوالات|موبايل|موبايلات|هاتف|هواتف|اتصالات|شرائح|اكسسوارات الجوال)/u],
+    ["elec", /(الكترونيات|اجهزه كهربائيه|كمبيوتر|حاسوب|لابتوب|طابعات|شاشات)/u],
+    ["craft", /(سباك|سباكه|كهربائي|نجار|حداد|ميكانيكي|تصليح|صيان[ةه]|فني)/u],
+    ["build", /(مواد بناء|اسمنت|حديد|دهانات|ادوات بناء)/u],
+    ["clothes", /(ملابس|احذيه|ثياب|فساتين|عبايات)/u],
+    ["home", /(اثاث|ادوات منزليه|اجهزه منزليه|مفروشات)/u],
+    ["books", /(مكتبه|قرطاسيه|كتب|ادوات مدرسيه)/u],
+    ["beauty", /(عطور|تجميل|مكياج|كوزمتك|مستحضرات)/u],
     ["transport", /(تاكسي|باص|مواصلات|نقل)/u],
     ["hotel", /(فندق|فنادق|نزل|شقق مفروشه)/u],
-    ["market", /(سوق|اسواق|سوق مركزي)/u],
+    ["market", /(سوق مركزي|اسواق|مول|مركز تجاري)/u],
+    ["gold", /(ذهب|مجوهرات|صياغه)/u],
     ["salon", /(حلاق|حلاقه|صالون)/u],
-    ["laundry", /(مغسله|مغاسل|غسيل ملابس|كوي)/u]
+    ["laundry", /(مغسله|مغاسل|غسيل ملابس|كوي)/u],
+    ["delivery", /(توصيل|مندوب|شحن|بريد)/u],
+    ["jobs", /(وظائف|وظيفه|توظيف|شاغر|فرص عمل)/u],
+    ["souq", /(للبيع|بيع وشراء|سوق البيع|منتجات للبيع|مستعمل للبيع)/u]
   ];
   const match = rules.find(([, pattern]) => pattern.test(text));
   return match ? match[0] : "";
 }
-
 const GEOAPIFY_CATEGORY_MAP = {
   grocery: ["commercial.supermarket", "commercial.convenience", "commercial.marketplace"],
   food: ["catering.restaurant", "catering.fast_food", "catering.food_court"],
@@ -231,6 +243,18 @@ const waitForGeoapifySlot = createIntervalGate(220);
 
 function geoapifyEnabled() {
   return Boolean(String(process.env.GEOAPIFY_API_KEY || "").trim());
+}
+
+function geoapifyRectFilter(bbox) {
+  const west = Math.min(Number(bbox.west), Number(bbox.east));
+  const east = Math.max(Number(bbox.west), Number(bbox.east));
+  const south = Math.min(Number(bbox.south), Number(bbox.north));
+  const north = Math.max(Number(bbox.south), Number(bbox.north));
+  if (![west, east, south, north].every(Number.isFinite) || west < -180 || east > 180 || south < -90 || north > 90 || west >= east || south >= north) {
+    throw new Error("Invalid geographic bounding box for Geoapify.");
+  }
+  // Geoapify rectangles require lon1,lat1,lon2,lat2 (west,south,east,north).
+  return "rect:" + [west, south, east, north].map(value => Number(value.toFixed(6))).join(",");
 }
 
 function geoapifyCategoryLabel(category, properties = {}) {
@@ -374,13 +398,9 @@ async function searchGeoapifyPlaces(params) {
 
   const categories = GEOAPIFY_CATEGORY_MAP[category] || GEOAPIFY_ALL_CATEGORIES;
   const searchUrl = new URL("https://api.geoapify.com/v2/places");
-  const west = Math.min(area.bbox.west, area.bbox.east);
-  const east = Math.max(area.bbox.west, area.bbox.east);
-  const south = Math.min(area.bbox.south, area.bbox.north);
-  const north = Math.max(area.bbox.south, area.bbox.north);
   const searchParams = {
     categories: categories.join(","),
-    filter: "rect:" + [west, north, east, south].join(","),
+    filter: geoapifyRectFilter(area.bbox),
     limit: "8",
     lang: "ar",
     apiKey
@@ -911,4 +931,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, inferCategoryFromQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyCategoryLabel, createIntervalGate, searchCommonsPhotos, server };
+module.exports = { buildOverpassQuery, inferCategoryFromQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyRectFilter, geoapifyCategoryLabel, createIntervalGate, searchCommonsPhotos, server };
