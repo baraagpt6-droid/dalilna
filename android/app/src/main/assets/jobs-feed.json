@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "fetchedAt": null,
+  "refreshedBy": "GitHub Actions daily job-feed refresh",
+  "sources": [
+    {
+      "name": "UN Careers RSS",
+      "url": "https://careers.un.org/jobfeed?isPage=true",
+      "status": "pending_first_refresh"
+    },
+    {
+      "name": "ReliefWeb Jobs API",
+      "url": "https://api.reliefweb.int/v2/jobs",
+      "status": "requires_RELIEFWEB_APPNAME"
+    },
+    {
+      "name": "Configured RSS feeds",
+      "url": null,
+      "status": "optional_DALILNA_JOB_RSS_FEEDS"
+    }
+  ],
+  "items": []
+}

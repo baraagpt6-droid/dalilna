@@ -1,0 +1,41 @@
+/* Dalilna 2.1.0 - search, jobs and marketplace UI */
+.search input{padding-inline-end:82px}
+.search-clear{position:absolute;inset-inline-end:42px;top:50%;transform:translateY(-50%);width:30px;min-width:30px;min-height:30px;padding:0;border-radius:50%;background:var(--chip);border:1px solid var(--line);color:var(--ink);font-size:22px;line-height:1;display:grid;place-items:center;z-index:2}
+.search-clear[hidden]{display:none}
+.search-results-top{max-width:1160px;margin:0 auto;padding:0 14px;scroll-margin-top:12px}
+.search-results-top[hidden]{display:none!important}
+.search-results-top #latestT{margin-top:8px}
+.search-results-top #list{margin-bottom:14px}
+#searchLiveMount .live-directory-panel{margin-top:8px}
+body.search-active #catHub,body.search-active #recentBox,body.search-active #regionInfoCard,body.search-active #sharedDirectoryPanel,body.search-active .slider,body.search-active #promoRelease,body.search-active #emBox{display:none!important}
+body.search-active #fltRow{margin-top:8px}
+.jobs-feature-panel,.job-seekers-panel{display:grid;gap:10px;margin:12px 0;padding:13px;border:1px solid var(--line);border-radius:15px;background:var(--card);box-shadow:var(--shadow)}
+.feature-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.feature-head h3{font-size:15px}
+.country-tabs,.transaction-tabs,.souq-category-tabs{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:2px 0 5px}
+.country-tabs::-webkit-scrollbar,.transaction-tabs::-webkit-scrollbar,.souq-category-tabs::-webkit-scrollbar{display:none}
+.country-tabs button,.transaction-tabs button,.souq-category-tabs button{flex:0 0 auto;min-height:35px;padding:0 12px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;font-size:12px;white-space:nowrap}
+.country-tabs button[aria-pressed=true],.transaction-tabs button[aria-pressed=true],.souq-category-tabs button[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:#111;font-weight:800}
+.job-source-links{display:flex;gap:7px;flex-wrap:wrap}
+.job-source-links a{display:inline-flex;min-height:35px;align-items:center;padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--chip);color:var(--acc);font-size:11px;text-decoration:none}
+.job-feed-list,.job-seeker-list{display:grid;gap:9px}
+.job-feed-card,.job-seeker-card{display:grid;gap:7px;padding:11px;border:1px solid var(--line);border-radius:12px;background:var(--bg);min-width:0}
+.job-feed-card h4,.job-seeker-card h4{margin:0;font-size:14px;line-height:1.55;overflow-wrap:anywhere}
+.job-feed-meta,.job-seeker-meta{display:flex;gap:6px;flex-wrap:wrap;color:var(--mute);font-size:11px}
+.job-feed-meta span,.job-seeker-meta span{border:1px solid var(--line);border-radius:999px;padding:3px 8px;background:var(--chip)}
+.job-feed-card p,.job-seeker-card p{margin:0;color:var(--mute);font-size:12px;line-height:1.7;overflow-wrap:anywhere}
+.job-feed-actions,.job-seeker-actions{display:flex;gap:7px;flex-wrap:wrap}
+.job-feed-actions a,.job-seeker-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:35px;padding:7px 11px;border-radius:9px;background:var(--acc);color:#111;text-decoration:none;font-size:11px;font-weight:800}
+.job-feed-status,.job-seeker-status{font-size:11px;line-height:1.7;color:var(--mute)}
+.job-seeker-panel-actions{display:flex;gap:8px;flex-wrap:wrap}
+#jobSeekerDlg{width:min(560px,94vw)}
+#jobSeekerForm{display:grid;gap:10px;padding:18px}
+.job-public-consent{display:flex;align-items:flex-start;gap:8px;padding:10px;border:1px solid var(--line);border-radius:11px;background:var(--bg);font-size:11px;line-height:1.7}
+.job-public-consent input{width:18px;min-width:18px;min-height:18px;margin-top:3px}
+.souq-feature-wrap{display:grid;gap:8px;margin:8px 0}
+.souq-feature-wrap .feature-label{font-size:11px;color:var(--mute);font-weight:700}
+.shared-listing-expiry{font-size:10px;color:var(--mute);margin:0}
+.shared-listing-actions button[data-share-id],.shared-listing-actions button[data-fav-id]{cursor:pointer}
+.shared-listing-actions button.is-favorite{color:var(--gold);border-color:var(--gold)}
+#souqCurrencyWrap[hidden]{display:none}
+@media(max-width:560px){.jobs-feature-panel,.job-seekers-panel{padding:11px}.job-feed-card,.job-seeker-card{padding:10px}}

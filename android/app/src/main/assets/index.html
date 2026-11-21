@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.0.0">
+<meta name="app-version" content="2.1.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -18,6 +18,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23181411'/%3E%3Cpath d='M18 54 A32 32 0 0 1 82 54 Z' fill='none' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M22 54 L36 54 A14 14 0 0 1 42 42 L29 33 A28 28 0 0 0 22 54 Z' fill='%233A7EC2'/%3E%3Cpath d='M29 33 L42 42 A14 14 0 0 1 50 40 L50 26 A28 28 0 0 0 29 33 Z' fill='%23E8A025'/%3E%3Cpath d='M50 26 L50 40 A14 14 0 0 1 58 42 L71 33 A28 28 0 0 0 50 26 Z' fill='%23D6455D'/%3E%3Cpath d='M71 33 L58 42 A14 14 0 0 1 64 54 L78 54 A28 28 0 0 0 71 33 Z' fill='%23E8A025'/%3E%3Ccircle cx='50' cy='54' r='11' fill='%23F2B949' stroke='%23F4EFE6' stroke-width='3'/%3E%3Crect x='18' y='54' width='64' height='24' rx='4' fill='%23181411' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M50 54 v24 M18 66 h64' stroke='%23F4EFE6' stroke-width='3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./features-2.1.css">
 <style>
 :root{
   color-scheme:dark;
@@ -631,6 +632,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <div class="search">
       <svg class="s-ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
       <input id="q" type="search" autocomplete="off" placeholder="ابحث عن محل، صيدلية، سباك، وظيفة…">
+      <button type="button" id="clearSearch" class="search-clear" aria-label="مسح البحث" title="مسح البحث" hidden>×</button>
       <button id="mic" type="button" aria-label="البحث بالصوت" title="تحدث للبحث بالصوت">
         <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3M8 22h8"/></svg>
       </button>
@@ -646,6 +648,11 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <button type="button" class="tbtn" id="voiceStop" style="min-height:30px">إيقاف</button>
   </div>
 </header>
+
+<section id="searchResultsTop" class="search-results-top" hidden aria-live="polite">
+  <div id="searchResultList"></div>
+  <div id="searchLiveMount"></div>
+</section>
 
 <section class="promo-release" id="promoRelease" hidden>
   <div>
@@ -733,10 +740,12 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <div class="recent-strip" id="recentList"></div>
     </div>
 
-    <h2 class="sec" id="latestT">أُضيف حديثاً</h2>
-    <div class="list" id="list"></div>
-    <div style="display:flex;justify-content:center;margin:12px 0">
-      <button class="ghost" id="more" hidden>عرض المزيد</button>
+    <div id="homeListSlot">
+      <h2 class="sec" id="latestT">أُضيف حديثاً</h2>
+      <div class="list" id="list"></div>
+      <div style="display:flex;justify-content:center;margin:12px 0">
+        <button class="ghost" id="more" hidden>عرض المزيد</button>
+      </div>
     </div>
 
     <section class="shared-marketplace-panel" id="sharedDirectoryPanel">
@@ -1090,7 +1099,8 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
         <option value="household_items">مستلزمات منزلية</option><option value="kitchenware">أدوات مطبخ</option><option value="baby_products">منتجات أطفال</option><option value="games">ألعاب</option>
         <option value="sports_equipment">معدات رياضية</option><option value="animal_feed">أعلاف</option><option value="seeds">بذور ومحاصيل</option><option value="construction_equipment">معدات إنشاءات</option><option value="other">أخرى</option>
       </select></label>
-      <label>نوع الإعلان<select name="listingType"><option value="sale">للبيع</option><option value="wanted">مطلوب</option><option value="barter">مقايضة</option><option value="free">مجاني</option><option value="rent">للإيجار</option></select></label>
+      <label>نوع الإعلان<select name="listingType"><option value="sale">للبيع</option><option value="wanted">مطلوب</option><option value="barter">مقايضة</option><option value="free">مجاناً</option><option value="rent">للإيجار</option></select></label>
+      <label id="souqCurrencyWrap">العملة<select name="currency"><option value="YER">ريال يمني</option><option value="SAR">ريال سعودي</option><option value="USD">دولار أمريكي</option></select></label>
       <label>حالة المعروض<select name="condition"><option value="unknown">غير محدد</option><option value="new">جديد</option><option value="used">مستعمل</option></select></label>
     </div>
     <div class="two" id="jobFields" hidden><label>آخر موعد للتقديم<input name="deadline" type="date"></label></div>
@@ -3631,6 +3641,7 @@ function syncFormFields(){
   $("#productTypeFields").hidden=!(c==="souq"||c==="land");
   $("#jobFields").hidden=c!=="jobs";
   $("#priceLbl").firstChild.textContent=c==="jobs"?"الراتب المتوقع":"السعر أو المساحة";
+  const currencyWrap=$("#souqCurrencyWrap");if(currencyWrap)currencyWrap.hidden=!(c==="souq"||c==="land");
 }
 $("#f").cat.addEventListener("change",()=>{updateFormPickerLabels();syncFormFields();});
 
@@ -3705,7 +3716,7 @@ function openEdit(id){
   if(!canManage(it)){toast("ليست لديك صلاحية تعديل هذا الإدراج.");return;}
   editingId=id;pendingImgData=it.img||"";
   $("#f").reset();
-  for(const k of ["name","cat","gov","dist","area","village","phone","hours","website","lat","lng","price","country","desc"]){
+  for(const k of ["name","cat","gov","dist","area","village","phone","hours","website","lat","lng","price","currency","country","desc"]){
     if($("#f")[k])$("#f")[k].value=it[k]||(k==="lat"?it.latitude:k==="lng"?it.longitude:"")||"";
   }
   const locationStatus=$("#listingLocationStatus");
@@ -3719,7 +3730,7 @@ function openEdit(id){
 $("#navAdd").addEventListener("click",()=>openAdd(view==="cat"?curCat:view==="jobs"?"jobs":view==="souq"?"souq":"grocery"));
 $("#addJob").addEventListener("click",()=>openAdd("jobs"));
 $("#sqSell").addEventListener("click",()=>openAdd("souq"));
-$("#sqBuy").addEventListener("click",()=>openAdd("souq"));
+$("#sqBuy").addEventListener("click",()=>{openAdd("souq");if($("#f").listingType)$("#f").listingType.value="wanted";});
 $("#cancel").addEventListener("click",()=>closeDlg("#dlg"));
 
 $("#f").addEventListener("submit",e=>{
@@ -3740,7 +3751,7 @@ $("#f").addEventListener("submit",e=>{
     area,village:String(fd.village||"").trim(),phone:String(fd.phone||"").trim(),
     hours:String(fd.hours||"").trim(),website:String(fd.website||"").trim(),
     lat:listingLat?Number(listingLat):undefined,lng:listingLng?Number(listingLng):undefined,
-    price:String(fd.price||"").trim(),
+    price:String(fd.price||"").trim(),currency:String(fd.currency||"YER").trim(),
     country:String(fd.country||"اليمن").trim(),desc:String(fd.desc||"").trim(),
     productType:(fd.cat==="souq"||fd.cat==="land")?String(fd.productType||"other").trim():"other",listingType:String(fd.listingType||"sale").trim(),
     condition:String(fd.condition||"unknown").trim(),deadline:String(fd.deadline||"").trim(),
@@ -4810,8 +4821,10 @@ function render(){
   const liveWanted=view==="home"||view==="cat";
   const liveInfo=directoryMapSearchInfo(q);
   liveDirectoryLast={query:q||(view==="cat"?(CN[curCat]||curCat):""),category:liveDirectoryCategoryOverride||(liveInfo?liveInfo.category:(view==="cat"?curCat:"all")),productType:liveDirectoryCategoryOverride?"":(liveInfo?liveInfo.productType:""),listingType:liveDirectoryListingTypeOverride};
-  const liveTop=$("#liveDirectoryTop"),liveAnchor=view==="cat"?$("#catFltRow"):$("#fltRow");
-  if(liveTop&&liveAnchor?.parentNode)liveAnchor.parentNode.insertBefore(liveTop,liveAnchor.nextSibling);
+  const searchActive=!!q||Object.values(flt).some(Boolean);
+  const liveTop=$("#liveDirectoryTop"),liveAnchor=view==="cat"?$("#catFltRow"):$("#fltRow"),searchLiveMount=$("#searchLiveMount");
+  if(liveTop&&view==="home"&&searchActive&&searchLiveMount)searchLiveMount.appendChild(liveTop);
+  else if(liveTop&&liveAnchor?.parentNode)liveAnchor.parentNode.insertBefore(liveTop,liveAnchor.nextSibling);
   if(liveTop)liveTop.innerHTML=liveWanted?liveDirectoryPanelHTML():"";
   if(liveWanted)runLiveDirectorySearch(false);
   const match=i=>{
@@ -4844,9 +4857,16 @@ function render(){
     const sq=applyFilters(S.items.filter(i=>i.cat==="souq"&&match(i)));
     $("#sqList").innerHTML=sq.map(cardHTML).join("")||`<div class="empty">لا توجد عروض في السوق حالياً.</div>`;
   }
+  const showTopSearch=view==="home"&&searchActive;
+  const topSection=$("#searchResultsTop"),topList=$("#searchResultList"),homeSlot=$("#homeListSlot");
+  if(topSection)topSection.hidden=!showTopSearch;
+  const nodes=[$("#latestT"),$("#list"),$("#more")].filter(Boolean);
+  if(showTopSearch&&topList)nodes.forEach(node=>topList.appendChild(node));
+  else if(homeSlot)nodes.forEach(node=>homeSlot.appendChild(node));
 }
 
 $("#q").addEventListener("input",()=>{liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";if(view==="fb")go("home");else render();});
+$("#clearSearch").addEventListener("click",()=>{$("#q").value="";liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";$("#q").dispatchEvent(new Event("input",{bubbles:true}));$("#q").focus();});
 
 $("#more").addEventListener("click",()=>{homeLim+=24;render();});
 
@@ -4944,5 +4964,6 @@ window.DalilnaMarketplaceBridge={
 })();
 </script>
 <script src="./marketplace-client.js"></script>
+<script src="./features-2.1.js" defer></script>
 </body>
 </html>
