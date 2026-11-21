@@ -4,7 +4,7 @@
 
 ## الإصدار
 
-- Version: 1.5.4
+- Version: 1.5.5
 - Web app: PWA (installable from supported browsers)
 - Android: WebView application source included in `android/`
 - Offline: cached application shell and local device storage
@@ -44,30 +44,15 @@
 
 Pending shop submissions are shown in a prominent dashboard shortcut. Open it to inspect the request details and choose approve/publish or reject. In this offline-first release, pending requests remain local to the device until a shared backend is connected.
 
-## البحث المباشر عن الأماكن
+## البحث المباشر عن الأماكن — الإصدار 1.5.5
 
-يعرض الإصدار 1.5.1 نتائج الأماكن من OpenStreetMap حسب المحافظة أو المديرية المحددة، أو حول موقع المستخدم بعد موافقته. تظهر نسبة المصدر وتاريخ جلب النتائج وروابط المصدر والخريطة. يمكن أن تكون البيانات غير مكتملة أو قديمة.
+يستخدم دليلنا خادم البحث على Render: `https://dalilna-live.onrender.com`.
 
-خدمة البحث API موجودة على Render بعنوان `https://dalilna-directory-api.onrender.com` وتعمل بالخطة المجانية للاختبار. خدمات Render المجانية قد تتوقف مؤقتاً عند عدم الاستخدام، وقد يتأخر أول اتصال بعد الاستيقاظ.
+- عند إعداد `GOOGLE_PLACES_API_KEY` كمتغير Sensitive في خدمة Render، يبحث التطبيق أولاً عبر Google Places API (New) ويعرض النتائج مباشرة مع إسناد Google Maps.
+- لا تُحفظ أسماء Google أو عناوينها أو تفاصيل الأماكن في قاعدة بيانات دليلنا أو التخزين المؤقت. تُعرض النتائج مباشرة وتُفتح تفاصيل المكان في Google Maps.
+- إذا لم يُفعّل Google Places أو لم يُرجع نتائج، يستخدم التطبيق OpenStreetMap وOverpass كمصدر بديل. قد تكون التغطية في اليمن غير مكتملة.
+- عند عدم العثور على نتائج يظهر رابط يفتح استعلام الفئة والمنطقة في Google Maps دون الحاجة إلى مفتاح API.
+- لا تضع مفتاح Google في `index.html` أو Android أو GitHub. خزّنه على Render فقط.
+- Google Places يتطلب تفعيل Places API (New) والفوترة في Google Cloud. راجع الأسعار وحدود الاستخدام قبل تفعيل المفتاح.
 
-لا ينسخ التطبيق بيانات Google Places إلى قاعدة بياناته. Google Places غير مفعّل حتى يتم إعداد مشروع Google Cloud ومفتاح مقيد وفوترة مناسبة.
-
-طلبات التجار والمراجعة ما زالت محلية على الجهاز في هذا الإصدار. ربطها بقاعدة بيانات مشتركة ودائمة مرحلة مستقلة قبل الاستخدام الإنتاجي.
-
-
-ملاحظة الإصدارات: نسخة التطبيق والواجهة هي 1.5.1. رقم `package.json` و`server.js` يخص خدمة API الخلفية المستقلة، ولا يمثل إصدار تطبيق Android أو PWA.
-
-
-## Faster live directory search
-
-The primary OpenStreetMap endpoint is a Vercel Node Function at `/api/places/search`, avoiding Render free-service idle spin-down. Browser requests abort after 35 seconds and show retry and Google Maps fallback actions. OpenStreetMap/Nominatim can still be rate-limited and coverage in Yemen may be incomplete.
-
-
-## Direct live place discovery
-
-The PWA now queries Nominatim and Overpass directly from the browser instead of depending on the free Render API service. Nominatim requests are throttled to at most one per 1.1 seconds per app page and successful geocodes are cached for 12 hours. Overpass queries use a 12-second QL timeout and try a second public instance if the first is unavailable. The UI stops after 30 seconds and provides retry plus a Google Maps fallback. OSM results are attributed and may be incomplete in Yemen.
-
-
-## Shared live search
-
-Live map requests pass through a shared Render API proxy. Nominatim and Overpass request starts are serialized at 1.1-second intervals on the server instance, and successful place results are cached. The client checks `/health` first, provides a warm-up status, and aborts after 100 seconds with retry and Google Maps fallback. Render's free service can sleep after inactivity; the first request after sleep may take longer.
+قبل الاستخدام العام، راجع قيود الأمان وانشر سياسة الخصوصية وشروط الاستخدام التي تتضمن متطلبات Google Maps Platform.
