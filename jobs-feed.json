@@ -1,79 +1,37 @@
 {
   "schemaVersion": 1,
-  "fetchedAt": "2026-11-21T22:34:21.580Z",
-  "refreshedBy": "Initial verified public source snapshot; daily refresh via GitHub Actions",
+  "fetchedAt": "2026-11-21T22:34:42.967Z",
+  "refreshedBy": "GitHub Actions daily job-feed refresh",
   "sources": [
-    {
-      "name": "YemenHR public channel",
-      "url": "https://t.me/s/hr_yemen",
-      "status": "seeded",
-      "count": 3
-    },
-    {
-      "name": "Careers.sa employer listings",
-      "url": "https://www.careers.sa/en",
-      "status": "seeded",
-      "count": 3
-    },
     {
       "name": "UN Careers RSS",
       "url": "https://careers.un.org/jobfeed?isPage=true",
-      "status": "pending_first_refresh"
+      "status": "ok",
+      "count": 0
+    },
+    {
+      "name": "YemenHR public channel",
+      "url": "https://t.me/s/hr_yemen",
+      "status": "unavailable",
+      "message": "fetchText is not defined",
+      "count": 0
+    },
+    {
+      "name": "Careers.sa Saudi listings",
+      "url": "https://www.careers.sa/en",
+      "status": "unavailable",
+      "message": "fetchText is not defined",
+      "count": 0
     },
     {
       "name": "ReliefWeb Jobs API",
       "url": "https://api.reliefweb.int/v2/jobs",
-      "status": "requires_approved_RELIEFWEB_APPNAME"
-    },
-    {
-      "name": "Configured RSS feeds",
-      "url": null,
-      "status": "optional_DALILNA_JOB_RSS_FEEDS"
+      "status": "skipped",
+      "message": "RELIEFWEB_APPNAME is not configured.",
+      "count": 0
     }
   ],
   "items": [
-    {
-      "id": "yemenhr-2051",
-      "title": "Communication Officer",
-      "organization": "Action Contre la Faim",
-      "location": "Aden, Yemen",
-      "city": "Aden",
-      "country": "Yemen",
-      "countryCode": "YE",
-      "publishedAt": "2026-11-18T00:00:00.000Z",
-      "deadline": "24 November 2026",
-      "source": "YemenHR public jobs channel",
-      "url": "https://telegra.ph/Communication-Officer-11-18",
-      "expiresAt": "2026-11-24T23:59:59.000Z"
-    },
-    {
-      "id": "yemenhr-2052",
-      "title": "Grants Manager",
-      "organization": "Action Contre la Faim",
-      "location": "Aden, Yemen",
-      "city": "Aden",
-      "country": "Yemen",
-      "countryCode": "YE",
-      "publishedAt": "2026-11-18T00:00:00.000Z",
-      "deadline": "24 November 2026",
-      "source": "YemenHR public jobs channel",
-      "url": "https://telegra.ph/Grants-Manager-11-18",
-      "expiresAt": "2026-11-24T23:59:59.000Z"
-    },
-    {
-      "id": "yemenhr-2053",
-      "title": "Partnership Manager",
-      "organization": "Action Contre la Faim",
-      "location": "Aden, Yemen",
-      "city": "Aden",
-      "country": "Yemen",
-      "countryCode": "YE",
-      "publishedAt": "2026-11-18T00:00:00.000Z",
-      "deadline": "24 November 2026",
-      "source": "YemenHR public jobs channel",
-      "url": "https://telegra.ph/Partnership-Manager-11-18",
-      "expiresAt": "2026-11-24T23:59:59.000Z"
-    },
     {
       "id": "careers-sa-2bed74ea",
       "title": "Low Current Engineer (Audio, Video & Lighting - Show Content)",
@@ -116,6 +74,48 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/its-engineer-parsons-corporation-544679bc",
       "expiresAt": "2026-12-21T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr-2051",
+      "title": "Communication Officer",
+      "organization": "Action Contre la Faim",
+      "location": "Aden, Yemen",
+      "city": "Aden",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-18T00:00:00.000Z",
+      "deadline": "24 November 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://telegra.ph/Communication-Officer-11-18",
+      "expiresAt": "2026-11-24T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr-2052",
+      "title": "Grants Manager",
+      "organization": "Action Contre la Faim",
+      "location": "Aden, Yemen",
+      "city": "Aden",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-18T00:00:00.000Z",
+      "deadline": "24 November 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://telegra.ph/Grants-Manager-11-18",
+      "expiresAt": "2026-11-24T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr-2053",
+      "title": "Partnership Manager",
+      "organization": "Action Contre la Faim",
+      "location": "Aden, Yemen",
+      "city": "Aden",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-18T00:00:00.000Z",
+      "deadline": "24 November 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://telegra.ph/Partnership-Manager-11-18",
+      "expiresAt": "2026-11-24T23:59:59.000Z"
     }
   ]
 }
