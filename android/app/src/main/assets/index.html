@@ -524,6 +524,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 .empty-search-help p{margin:0;color:var(--mute);font-size:12px;line-height:1.8}
 .empty-search-help .ai-map-search-link{justify-self:center}
 .live-directory-top{max-width:1160px;margin:10px auto 0;padding:0 14px}
+.directory-source-strip{margin:14px 0;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--card);display:grid;gap:8px}.directory-source-strip b{font-size:15px}.directory-source-strip p{margin:0;color:var(--muted);line-height:1.7;font-size:13px}.directory-source-strip .acts{display:flex;gap:8px;flex-wrap:wrap}.directory-source-strip a{font-size:13px}
 .live-directory-panel{display:grid;gap:10px;margin:12px 0;padding:13px;border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:var(--shadow)}
 .live-directory-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .live-directory-head b{font-size:15px;color:var(--ink)}
@@ -985,6 +986,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <h2 id="dlgTitle" style="font-size:20px">إضافة إلى الدليل</h2>
       <button type="button" class="x" id="cancel">✕</button>
     </div>
+    <p class="where" style="padding:10px 12px;border:1px solid var(--line);border-radius:12px;line-height:1.7">معلومة مهمة: الإضافة الحالية تُحفظ على هذا الجهاز فقط ولا تظهر بعدُ لبقية المستخدمين. لا تضع معلومات خاصة. سنعرض البيانات العامة المنشورة من مصادرها بشكل منفصل.</p>
     <div class="two">
       <label>الاسم<input name="name" required maxlength="80" placeholder="مثلاً: صيدلية الشفاء"></label>
       <label>القسم<input type="hidden" name="cat" id="fcat" value="grocery"><button type="button" class="picker-btn" id="fcatBtn"><span id="fcatLbl">بقالات</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button></label>
@@ -2304,7 +2306,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="1.6.1";
+const APP_VERSION="1.6.2";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -2490,7 +2492,455 @@ const waLink=p=>{let d=digits(p);if(d.startsWith("00"))d=d.slice(2);if(d.startsW
 const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove("on"),3200);};
 async function sha256(str){if(!window.crypto||!window.crypto.subtle)throw new Error("secure-context-required");const buf=await window.crypto.subtle.digest("SHA-256",new TextEncoder().encode(str));return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");}
 
-const SEED_ITEMS=[];
+const SEED_ITEMS=[
+  {
+    "id": "seed_global_store_sanaa",
+    "name": "المتجر العالمي Global Store",
+    "cat": "telecom",
+    "gov": "أمانة العاصمة",
+    "area": "صنعاء – شارع الجزائر",
+    "village": "جوار محطة المختار",
+    "phone": "775002009",
+    "phone2": "735002007",
+    "hours": "يومياً 9:30 ص–11 م، الجمعة 3 م–10 م",
+    "country": "اليمن",
+    "desc": "متجر يعرّف نفسه موزعاً لأجهزة Redmi وXiaomi وPOCO في اليمن. يذكر ضماناً مكتوباً وخدمة ما بعد البيع وشحناً إلى المحافظات. تحقق من التوفر والسعر قبل الشراء.",
+    "sourceType": "official_merchant",
+    "sourceName": "المتجر العالمي – الموقع الرسمي",
+    "sourceUrl": "https://globalstorellc.com/",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "العنوان والهاتف وساعات العمل من موقع المتجر الرسمي. لم يتحقق دليلنا ميدانياً من حالة الفرع."
+  },
+  {
+    "id": "seed_shaibani_golden_sanaa",
+    "name": "مطاعم الشيباني جولدن",
+    "cat": "food",
+    "gov": "أمانة العاصمة",
+    "area": "صنعاء – سعوان، شارع الأربعين",
+    "village": "جوار بريد الأربعين",
+    "phone": "782388888",
+    "phone2": "771180001",
+    "hours": "يومياً 4 ص–1 بعد منتصف الليل",
+    "country": "اليمن",
+    "desc": "مطعم ينشر قائمة طعام تشمل المندي والمشاوي والأسماك والمخبوزات والحلويات، ويذكر خدمة التوصيل من 10 ص إلى 11:30 م.",
+    "sourceType": "official_merchant",
+    "sourceName": "الموقع الرسمي لمطاعم الشيباني جولدن",
+    "sourceUrl": "https://alshaibanigolden.com/",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "العنوان والأرقام وساعات العمل من موقع المطعم. اتصل للتأكد قبل الزيارة."
+  },
+  {
+    "id": "seed_oukitel_hq_sanaa",
+    "name": "أوكتيل يمن – المركز الرئيسي",
+    "cat": "telecom",
+    "gov": "أمانة العاصمة",
+    "area": "صنعاء – شارع القيادة",
+    "village": "مقابل شركة الحجري للصرافة، جوار مؤسسة شماخ",
+    "phone": "777779564",
+    "phone2": "773110555",
+    "hours": "9 ص–12 ظ و3 م–10 م، مغلق الجمعة",
+    "country": "اليمن",
+    "desc": "المركز الرئيسي والوكيل المعتمد لأجهزة Oukitel. الرقم الثاني مخصص لخدمات الصيانة بحسب صفحة الوكيل.",
+    "sourceType": "brand_dealer",
+    "sourceName": "قائمة وكلاء Oukitel Yemen",
+    "sourceUrl": "https://ye.oukitel.com/pages/contact",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "مدرج في صفحة الوكيل المعتمد على موقع Oukitel Yemen. تحقق هاتفياً من استمرار الفرع وتوفر الجهاز."
+  },
+  {
+    "id": "seed_oukitel_aden_asad",
+    "name": "الأسد موبايل – وكيل أوكيتل عدن",
+    "cat": "telecom",
+    "gov": "عدن",
+    "area": "خور مكسر",
+    "village": "بجانب معهد أمين ناشر، وله فرع في الشيخ عثمان مقابل شمسان مول",
+    "phone": "776600370",
+    "country": "اليمن",
+    "desc": "نقطة بيع وموزع معتمد لأجهزة Oukitel بحسب صفحة الوكلاء.",
+    "sourceType": "brand_dealer",
+    "sourceName": "قائمة وكلاء Oukitel Yemen",
+    "sourceUrl": "https://ye.oukitel.com/pages/contact",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "العنوان ورقم الاتصال منشوران في صفحة الوكيل المعتمد. اتصل قبل الزيارة."
+  },
+  {
+    "id": "seed_oukitel_ib_kayyal",
+    "name": "محلات الكيال – وكيل أوكيتل",
+    "cat": "telecom",
+    "gov": "إب",
+    "area": "مدينة إب – شارع العدين",
+    "village": "طلعة إب إسكان",
+    "phone": "774290014",
+    "phone2": "712145653",
+    "country": "اليمن",
+    "desc": "موزع معتمد للهواتف الذكية وخدمات ما بعد البيع والصيانة بحسب صفحة Oukitel Yemen.",
+    "sourceType": "brand_dealer",
+    "sourceName": "قائمة وكلاء Oukitel Yemen",
+    "sourceUrl": "https://ye.oukitel.com/pages/contact",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "بيانات الفرع منشورة على موقع الوكيل. اتصل لتأكيد ساعات العمل والتوفر."
+  },
+  {
+    "id": "seed_oukitel_ib_golden",
+    "name": "الوكالة الذهبية – وكيل أوكيتل",
+    "cat": "telecom",
+    "gov": "إب",
+    "area": "مدينة إب – جولة العدين",
+    "village": "أمام شبكة ابن الهيثم للعيون",
+    "phone": "780232222",
+    "phone2": "776367053",
+    "country": "اليمن",
+    "desc": "نقطة بيع معتمدة لأجهزة Oukitel بحسب صفحة الوكلاء.",
+    "sourceType": "brand_dealer",
+    "sourceName": "قائمة وكلاء Oukitel Yemen",
+    "sourceUrl": "https://ye.oukitel.com/pages/contact",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "بيانات الاسم والعنوان والهاتف من موقع الوكيل. اتصل قبل الزيارة."
+  },
+  {
+    "id": "seed_oukitel_yarim_modern",
+    "name": "المركز الحديث لتجارة الهواتف الذكية",
+    "cat": "telecom",
+    "gov": "إب",
+    "dist": "يريم",
+    "area": "يريم – الشارع العام",
+    "village": "سوق السلاح، جوار مكتبة الخنساء",
+    "phone": "771553079",
+    "country": "اليمن",
+    "desc": "موزع وخدمات دعم فني معتمد لأجهزة Oukitel بحسب صفحة الوكلاء.",
+    "sourceType": "brand_dealer",
+    "sourceName": "قائمة وكلاء Oukitel Yemen",
+    "sourceUrl": "https://ye.oukitel.com/pages/contact",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "بيانات الفرع من موقع الوكيل. اتصل لتأكيد استمرار النشاط."
+  },
+  {
+    "id": "seed_oukitel_taiz_burj",
+    "name": "مجموعة برج الجوال – وكيل أوكيتل",
+    "cat": "telecom",
+    "gov": "تعز",
+    "area": "تعز المدينة – شارع التحرير الأسفل",
+    "village": "مقابل الجوال تيليكوم",
+    "phone": "777315559",
+    "phone2": "773636777",
+    "country": "اليمن",
+    "desc": "موزع معتمد وخدمات دعم فني وصيانة بحسب صفحة Oukitel Yemen.",
+    "sourceType": "brand_dealer",
+    "sourceName": "قائمة وكلاء Oukitel Yemen",
+    "sourceUrl": "https://ye.oukitel.com/pages/contact",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "بيانات الفرع من موقع الوكيل. اتصل قبل الزيارة."
+  },
+  {
+    "id": "seed_oukitel_taiz_rahida",
+    "name": "وكالة الوفاء AWF – وكيل أوكيتل",
+    "cat": "telecom",
+    "gov": "تعز",
+    "dist": "الراهدة",
+    "area": "الراهدة – الشارع العام",
+    "village": "أمام مجوهرات الجيل الجديد",
+    "phone": "775595050",
+    "phone2": "734204402",
+    "country": "اليمن",
+    "desc": "تجارة هواتف ذكية وإكسسوارات بالجملة والتجزئة بحسب صفحة الوكلاء.",
+    "sourceType": "brand_dealer",
+    "sourceName": "قائمة وكلاء Oukitel Yemen",
+    "sourceUrl": "https://ye.oukitel.com/pages/contact",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "بيانات الفرع من موقع الوكيل. اتصل لتأكيد التوفر."
+  },
+  {
+    "id": "seed_oukitel_hodeidah_taj",
+    "name": "تاج العروس – وكيل أوكيتل",
+    "cat": "telecom",
+    "gov": "الحديدة",
+    "area": "مدينة الحديدة – شارع صنعاء",
+    "village": "جوار النجم للصرافة",
+    "phone": "775253053",
+    "phone2": "03253053",
+    "country": "اليمن",
+    "desc": "نقطة بيع ووكيل معتمد للهواتف الذكية بحسب صفحة Oukitel Yemen.",
+    "sourceType": "brand_dealer",
+    "sourceName": "قائمة وكلاء Oukitel Yemen",
+    "sourceUrl": "https://ye.oukitel.com/pages/contact",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "بيانات الفرع من موقع الوكيل. اتصل قبل الزيارة."
+  },
+  {
+    "id": "seed_oukitel_dhamar_arshi",
+    "name": "العرشي موبايل للهواتف",
+    "cat": "telecom",
+    "gov": "ذمار",
+    "area": "ذمار – شارع صنعاء تعز",
+    "village": "أمام المؤسسة العامة للاتصالات",
+    "phone": "770777776",
+    "phone2": "774422246",
+    "country": "اليمن",
+    "desc": "نقطة بيع وخدمات دعم فني لأجهزة Oukitel بحسب موقع الوكيل.",
+    "sourceType": "brand_dealer",
+    "sourceName": "قائمة وكلاء Oukitel Yemen",
+    "sourceUrl": "https://ye.oukitel.com/pages/contact",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "بيانات الفرع من موقع الوكيل. اتصل لتأكيد العنوان قبل الزيارة."
+  },
+  {
+    "id": "seed_oukitel_sadaa_binazzan",
+    "name": "بن عزان للتجارة والهواتف الذكية",
+    "cat": "telecom",
+    "gov": "صعدة",
+    "area": "صعدة – مفرق الطلح",
+    "village": "الشارع العام، عمارة صالح عزان",
+    "phone": "774145459",
+    "phone2": "715505034",
+    "country": "اليمن",
+    "desc": "وكالة وتوزيع هواتف ذكية معتمدة بحسب موقع Oukitel Yemen.",
+    "sourceType": "brand_dealer",
+    "sourceName": "قائمة وكلاء Oukitel Yemen",
+    "sourceUrl": "https://ye.oukitel.com/pages/contact",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "بيانات الفرع من موقع الوكيل. اتصل قبل الزيارة."
+  },
+  {
+    "id": "seed_oukitel_hodeidah_baytfaqih",
+    "name": "فتح للإلكترونيات – بيت الفقيه",
+    "cat": "telecom",
+    "gov": "الحديدة",
+    "dist": "بيت الفقيه",
+    "area": "بيت الفقيه – السوق المركزي",
+    "phone": "773993737",
+    "country": "اليمن",
+    "desc": "نقطة بيع أجهزة Oukitel بحسب قائمة الوكلاء المعتمدة.",
+    "sourceType": "brand_dealer",
+    "sourceName": "قائمة وكلاء Oukitel Yemen",
+    "sourceUrl": "https://ye.oukitel.com/pages/contact",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "بيانات الفرع من موقع الوكيل؛ اتصل لتأكيد التوفر."
+  },
+  {
+    "id": "seed_oukitel_taiz_mawiyah",
+    "name": "وكالة النجم للهواتف الذكية",
+    "cat": "telecom",
+    "gov": "تعز",
+    "dist": "ماوية",
+    "area": "مفرق ماوية – الشارع الرئيسي",
+    "village": "جوار سهيل للصرافة",
+    "phone": "772494214",
+    "country": "اليمن",
+    "desc": "وكالة معتمدة لأجهزة Oukitel بحسب قائمة الوكلاء.",
+    "sourceType": "brand_dealer",
+    "sourceName": "قائمة وكلاء Oukitel Yemen",
+    "sourceUrl": "https://ye.oukitel.com/pages/contact",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "بيانات الفرع من موقع الوكيل. اتصل قبل الزيارة."
+  },
+  {
+    "id": "seed_product_poco_x8_pro",
+    "name": "POCO X8 Pro",
+    "cat": "souq",
+    "gov": "",
+    "area": "توصيل إلى محافظات اليمن",
+    "phone": "775002009",
+    "price": "$430",
+    "country": "اليمن",
+    "desc": "سعر منشور على صفحة Global Store. تحقق من الذاكرة واللون والتوفر والسعر قبل الدفع.",
+    "type": "sell",
+    "status": "available",
+    "nationwide": true,
+    "sourceType": "official_product",
+    "sourceName": "Global Store – صفحة المنتج",
+    "sourceUrl": "https://globalstorellc.com/product/poco-x8-pro/",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "السعر المنشور بالدولار على صفحة المتجر بتاريخ 21 نوفمبر 2026. التوفر يتغير؛ افتح المصدر للتأكد."
+  },
+  {
+    "id": "seed_product_redmi_k80",
+    "name": "Redmi K80",
+    "cat": "souq",
+    "gov": "",
+    "area": "توصيل إلى محافظات اليمن",
+    "phone": "775002009",
+    "price": "$475",
+    "country": "اليمن",
+    "desc": "سعر منشور على صفحة Global Store. تحقق من الذاكرة واللون والتوفر والسعر قبل الدفع.",
+    "type": "sell",
+    "status": "available",
+    "nationwide": true,
+    "sourceType": "official_product",
+    "sourceName": "Global Store – صفحة المنتج",
+    "sourceUrl": "https://globalstorellc.com/product/redmi-k80/",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "السعر المنشور على المتجر بتاريخ 21 نوفمبر 2026؛ السعر النهائي حسب النسخة المتاحة."
+  },
+  {
+    "id": "seed_product_redmi_a5",
+    "name": "Redmi A5",
+    "cat": "souq",
+    "gov": "",
+    "area": "توصيل إلى محافظات اليمن",
+    "phone": "775002009",
+    "price": "$113–132",
+    "country": "اليمن",
+    "desc": "شاشة 6.88 بوصة 120Hz، بطارية 5200mAh. نطاق السعر يختلف بحسب الذاكرة والاختيار.",
+    "type": "sell",
+    "status": "available",
+    "nationwide": true,
+    "sourceType": "official_product",
+    "sourceName": "Global Store – صفحة المنتج",
+    "sourceUrl": "https://globalstorellc.com/product/redmi-a5/",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "نطاق السعر المنشور على المتجر بتاريخ 21 نوفمبر 2026. تحقق من الذاكرة واللون والتوفر."
+  },
+  {
+    "id": "seed_product_redmi_14c",
+    "name": "Redmi 14C",
+    "cat": "souq",
+    "gov": "",
+    "area": "توصيل إلى محافظات اليمن",
+    "phone": "775002009",
+    "price": "$132–150",
+    "country": "اليمن",
+    "desc": "شاشة 6.88 بوصة 120Hz، معالج Helio G81 Ultra وبطارية 5160mAh. السعر يختلف بحسب النسخة.",
+    "type": "sell",
+    "status": "available",
+    "nationwide": true,
+    "sourceType": "official_product",
+    "sourceName": "Global Store – صفحة المنتج",
+    "sourceUrl": "https://globalstorellc.com/product/redmi-14c/",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "نطاق السعر المنشور على المتجر بتاريخ 21 نوفمبر 2026. تحقق من الذاكرة واللون والتوفر."
+  },
+  {
+    "id": "seed_job_icrc_medical_qa",
+    "name": "مسؤول ضمان جودة المستودع الطبي – ICRC",
+    "cat": "jobs",
+    "gov": "أمانة العاصمة",
+    "area": "صنعاء",
+    "price": "آخر موعد: 3 ديسمبر 2026",
+    "country": "اليمن",
+    "desc": "دعم إجراءات ضمان الجودة في المستودع الطبي والالتزام بممارسات التخزين والتوزيع الجيدة. يشترط الإعلان خبرة ذات صلة بالمستودعات الطبية.",
+    "expiresAt": 1796331599000,
+    "sourceType": "public_job_portal",
+    "sourceName": "Yemen HR · ICRC",
+    "sourceUrl": "https://yemenhr.com/jobs/medical-warehouse-quality-assurance-officer-icrc-sanaa-4f0567eb",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "نُشر 19 نوفمبر 2026. راجع الإعلان الأصلي للشروط والتقديم."
+  },
+  {
+    "id": "seed_job_sun_local_facilitators",
+    "name": "ميسرون ميدانيون محليون – Sun-Yemen",
+    "cat": "jobs",
+    "gov": "",
+    "area": "عدن، مأرب، لحج، أبين",
+    "price": "آخر موعد: 24 نوفمبر 2026",
+    "country": "اليمن",
+    "desc": "وظائف تيسير ميداني ضمن مبادرة التغذية التابعة لسكرتارية SUN بالتنسيق مع وزارة التخطيط ووزارة الصحة واليونيسف.",
+    "expiresAt": 1795553999000,
+    "nationwide": true,
+    "sourceType": "public_job_portal",
+    "sourceName": "Yemen HR · Sun-Yemen",
+    "sourceUrl": "https://yemenhr.com/jobs/mysron-mydanyon-mhlyon-sun-yemen-multiple-cities-830f5f92",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "نُشر 19 نوفمبر 2026. التقديم عبر البريد المحدد في الإعلان الأصلي."
+  },
+  {
+    "id": "seed_job_nahr_pharmacist",
+    "name": "مساعد صيدلي ميداني – NAHR",
+    "cat": "jobs",
+    "gov": "",
+    "area": "حجة والبيضاء",
+    "price": "آخر موعد: 23 نوفمبر 2026",
+    "country": "اليمن",
+    "desc": "وظيفتان في مديريتي الجميمة والمغربة بحجة، وردمان وولد ربيع بالبيضاء. العمل يشمل إدارة مخزون الأدوية والصرف وضبط الجودة.",
+    "expiresAt": 1795467599000,
+    "nationwide": true,
+    "sourceType": "public_job_portal",
+    "sourceName": "Yemen HR · NAHR",
+    "sourceUrl": "https://yemenhr.com/jobs/field-pharmacist-assistant-nahr-hajjah-47abbe9d",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "نُشر 19 نوفمبر 2026. الإعلان يعطي أولوية للمرشحين الداخليين؛ راجع الشروط قبل التقديم."
+  },
+  {
+    "id": "seed_job_nahr_data_entry",
+    "name": "مساعد إدخال بيانات – NAHR",
+    "cat": "jobs",
+    "gov": "",
+    "area": "حجة والبيضاء",
+    "price": "آخر موعد: 23 نوفمبر 2026",
+    "country": "اليمن",
+    "desc": "وظيفتان في مديريتي الجميمة والمغربة بحجة، وردمان وولد ربيع بالبيضاء. يشترط الإعلان مؤهلاً في تقنية المعلومات أو مجال مرتبط وخبرة في قواعد البيانات.",
+    "expiresAt": 1795467599000,
+    "nationwide": true,
+    "sourceType": "public_job_portal",
+    "sourceName": "Yemen HR · NAHR",
+    "sourceUrl": "https://yemenhr.com/jobs/data-entry-assistant-nahr-hajjah-ba196e6f",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "نُشر 19 نوفمبر 2026. تحقق من متطلبات التقديم في المصدر."
+  },
+  {
+    "id": "seed_job_intersos_meal",
+    "name": "مسؤول MEAL – INTERSOS",
+    "cat": "jobs",
+    "gov": "عدن",
+    "area": "عدن",
+    "price": "آخر موعد: 28 نوفمبر 2026",
+    "country": "اليمن",
+    "desc": "وظيفة كاملة في المتابعة والتقييم والمساءلة والتعلم. يشترط الإعلان مؤهلاً مناسباً وخبرة سنتين في القطاع الإنساني.",
+    "expiresAt": 1795899599000,
+    "sourceType": "public_job_portal",
+    "sourceName": "Yemen HR · INTERSOS",
+    "sourceUrl": "https://yemenhr.com/jobs/meal-officer-intersos-aden-60ff6790",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "نُشر 19 نوفمبر 2026. راجع الإعلان الأصلي للتقديم."
+  },
+  {
+    "id": "seed_job_mercycorps_field",
+    "name": "مساعد ميداني – Mercy Corps",
+    "cat": "jobs",
+    "gov": "حضرموت",
+    "area": "المكلا – حضرموت",
+    "price": "آخر موعد: 22 نوفمبر 2026",
+    "country": "اليمن",
+    "desc": "وظيفة ميدانية بدوام كامل لمدة أربعة أشهر في المكلا، ضمن أنشطة دعم الأسر المتأثرة بالأزمة.",
+    "expiresAt": 1795381199000,
+    "sourceType": "public_job_portal",
+    "sourceName": "Yemen HR · Mercy Corps",
+    "sourceUrl": "https://yemenhr.com/jobs/field-assistant-mercycorps-hadramout-6bb0affd",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "نُشر 18 نوفمبر 2026 وينتهي 22 نوفمبر 2026. راجع المصدر فوراً لأن الموعد قريب."
+  },
+  {
+    "id": "seed_job_ygusswp_doctor",
+    "name": "طبيب صحة وتغذية – YGUSSWP",
+    "cat": "jobs",
+    "gov": "أمانة العاصمة",
+    "area": "صنعاء والعمل الميداني في حجة",
+    "price": "آخر موعد: 27 نوفمبر 2026",
+    "country": "اليمن",
+    "desc": "تنسيق فني وإشراف على تدخلات الصحة والتغذية ومتابعة جودة الخدمات في المرافق الصحية بمحافظة حجة.",
+    "expiresAt": 1795813199000,
+    "sourceType": "public_job_portal",
+    "sourceName": "Yemen HR · YGUSSWP",
+    "sourceUrl": "https://yemenhr.com/jobs/health-and-nutrition-doctor-ygusswp-sanaa-0102d4a9",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "نُشر 16 نوفمبر 2026. راجع شروط الخبرة والمؤهل في الإعلان الأصلي."
+  },
+  {
+    "id": "seed_job_nahr_wash_coordinator",
+    "name": "منسق مشروع WASH ميداني – NAHR",
+    "cat": "jobs",
+    "gov": "البيضاء",
+    "area": "ردمان وولد ربيع – البيضاء",
+    "price": "آخر موعد: 3 ديسمبر 2026",
+    "country": "اليمن",
+    "desc": "تنسيق تنفيذ أنشطة المياه والصرف الصحي والنظافة والإشراف على الفرق الفنية في الميدان. يشترط الإعلان مؤهلاً هندسياً وخبرة أربع سنوات.",
+    "expiresAt": 1796331599000,
+    "sourceType": "public_job_portal",
+    "sourceName": "Yemen HR · NAHR",
+    "sourceUrl": "https://yemenhr.com/jobs/field-wash-project-coordinator-nahr-al-bayda-60a92953",
+    "sourceCheckedAt": 1795262400000,
+    "sourceNote": "نُشر 19 نوفمبر 2026. تحقق من الشروط وطريقة التقديم في الإعلان الأصلي."
+  }
+];
 const LEGACY_DEMO_IDS=new Set(["s1","s2","s3","s4","s5","s6","s7","s8","s9"]);
 
 function loadState(){
@@ -2546,15 +2996,35 @@ function cleanNumber(v,fallback=0,min=-1e9,max=1e9){
   const n=Number(v);
   return Number.isFinite(n)&&n>=min&&n<=max?n:fallback;
 }
+function safeExternalUrl(v){
+  try{const u=new URL(String(v||""));if(u.protocol==="https:"&&!u.username&&!u.password)return u.href;}catch(e){}
+  return "";
+}
+function formatListingDate(v){
+  const n=Number(v),d=new Date(n);if(!Number.isFinite(n)||!Number.isFinite(d.getTime()))return "";
+  return new Intl.DateTimeFormat("ar-YE",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Aden"}).format(d);
+}
 function safeImageData(v){
   return typeof v==="string"&&v.length<=850000&&/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(v)?v:"";
 }
 function normalizeState(raw){
   const base=JSON.parse(JSON.stringify(DEFAULT_STATE));
   raw=raw&&typeof raw==="object"&&!Array.isArray(raw)?raw:{};
-  const items=Array.isArray(raw.items)?raw.items.filter(x=>!LEGACY_DEMO_IDS.has(String(x?.id||""))):base.items;
+  const seedIds=new Set(SEED_ITEMS.map(x=>String(x.id)));
+  const removedSeedIds=new Set(Array.isArray(raw.removedSeedIds)?raw.removedSeedIds.filter(x=>typeof x==="string"):[]);
+  const activeSeeds=SEED_ITEMS.filter(x=>!removedSeedIds.has(String(x.id)));
+  const storedItems=Array.isArray(raw.items)?raw.items.filter(x=>!LEGACY_DEMO_IDS.has(String(x?.id||""))):base.items;
+  const items=[...activeSeeds,...storedItems.filter(x=>!seedIds.has(String(x?.id||"")))];
   const safeItems=items.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)).map((x,idx)=>({
     id:cleanText(x.id,80)||("imp_"+idx+"_"+Date.now().toString(36)),
+    phone2:cleanText(x.phone2,40),
+    sourceUrl:safeExternalUrl(x.sourceUrl),
+    sourceName:cleanText(x.sourceName,120),
+    sourceType:["official_merchant","brand_dealer","official_product","public_job_portal","public_directory"].includes(x.sourceType)?x.sourceType:"",
+    sourceCheckedAt:cleanNumber(x.sourceCheckedAt,0,0,Number.MAX_SAFE_INTEGER),
+    sourceNote:cleanText(x.sourceNote,360),
+    expiresAt:cleanNumber(x.expiresAt,0,0,Number.MAX_SAFE_INTEGER),
+    nationwide:x.nationwide===true,
     name:cleanText(x.name,80),cat:CAT_KEYS.has(x.cat)?x.cat:"other",
     gov:cleanText(x.gov,80),dist:cleanText(x.dist,80),area:cleanText(x.area,100),village:cleanText(x.village,120),
     phone:cleanText(x.phone,40),hours:cleanText(x.hours,80),price:cleanText(x.price,80),country:cleanText(x.country,80),
@@ -2598,6 +3068,7 @@ function normalizeState(raw){
   return {
     ...base,...raw,
     items:safeItems,
+    removedSeedIds:[...removedSeedIds].slice(0,500),
     pending:arrayOfObjects(raw.pending).map((x,i)=>({
       id:cleanText(x.id,80)||"pending_"+i,name:cleanText(x.name,80),cat:CAT_KEYS.has(x.cat)?x.cat:"other",
       gov:cleanText(x.gov,80),dist:cleanText(x.dist,80),area:cleanText(x.area,100),village:cleanText(x.village,120),
@@ -2922,12 +3393,13 @@ function getScopeOptions(){
 function buildScopeSelector(){
   const opts=getScopeOptions();
   const cur=opts.find(o=>o.val===scope)||opts[0];
-  const localCount=cur.count===0?"0 إدراج محلي على هذا الجهاز":cur.count+" إدراج محلي على هذا الجهاز";
+  const localCount=cur.count===0?"لا توجد إدراجات مسجلة بعد":cur.count+" إدراجات مسجلة";
   $("#scopeLbl").textContent=cur.label+" · "+localCount;
 }
 function scopeMatchesItem(item, selected=scope){
   if(!selected)return true;
-  if(selected.startsWith("gov:"))return normalizePlace(item.gov)===normalizePlace(selected.slice(4));
+  if(item.nationwide===true)return true;
+   if(selected.startsWith("gov:"))return normalizePlace(item.gov)===normalizePlace(selected.slice(4));
   if(selected.startsWith("district:")){
     const [gov,dist]=selected.slice(9).split("|");
     return itemMatchesDistrict(item,gov,dist);
@@ -3256,6 +3728,10 @@ document.addEventListener("click",e=>{
     if(!target||!canDelete(target)){toast("ليست لديك صلاحية حذف هذا الإدراج.");return;}
     if(b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="تأكيد؟";setTimeout(()=>{b.dataset.sure="";b.textContent="حذف";},3500);return;}
     const it=S.items.find(x=>x.id===b.dataset.del);
+    if(it&&SEED_ITEMS.some(seed=>seed.id===it.id)){
+      S.removedSeedIds=Array.isArray(S.removedSeedIds)?S.removedSeedIds:[];
+      if(!S.removedSeedIds.includes(it.id))S.removedSeedIds.push(it.id);
+    }
     S.items=S.items.filter(x=>x.id!==b.dataset.del);
     logAction("حذف: "+(it?.name||b.dataset.del));
     saveState();buildScopeSelector();render();toast("تم الحذف");
@@ -3292,6 +3768,8 @@ function cardHTML(i){
   const imgSrc=safeImageData(i.img);
   const rObj=S.rates[i.id];
   const avg=rObj&&rObj.n?(rObj.sum/rObj.n).toFixed(1):null;
+  const sourceBadge=i.sourceName?`<span class="tag">المصدر: ${esc(i.sourceName)}</span>`:i.verifiedAt?`<span class="ok">${T("verified")}</span>`:`<span class="where">${T("community")}</span>`;
+  const sourceLink=i.sourceUrl?`<a class="lnk" href="${esc(i.sourceUrl)}" target="_blank" rel="noopener noreferrer">${i.sourceType==="official_product"?"شاهد المنتج لدى المتجر":i.sourceType==="public_job_portal"?"تفاصيل الوظيفة والتقديم":"صفحة المصدر والتواصل"}</a>`:"";
   return `<article class="card" data-open="${esc(i.id)}">
     ${imgSrc?`<img class="cover" src="${esc(imgSrc)}" alt="${esc(i.name)}" loading="lazy">`:""}
     <div class="top">
@@ -3305,15 +3783,19 @@ function cardHTML(i){
       ${km!==null?` · <span class="dist-badge">${km<1?Math.round(km*1000)+" m":km.toFixed(1)+" km"}</span>`:""}
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      ${i.verifiedAt?`<span class="ok">${T("verified")}</span>`:`<span class="where">${T("community")}</span>`}
+      ${sourceBadge}
+      ${i.sourceCheckedAt?`<span class="where">مراجعة المصدر: ${esc(formatListingDate(i.sourceCheckedAt))}</span>`:""}
+      ${i.expiresAt?`<span class="dist-badge">آخر موعد: ${esc(formatListingDate(i.expiresAt))}</span>`:""}
       ${i.aiChecked?`<span class="tag">فحص آلي أولي</span>`:""}
       ${avg?`<span class="dist-badge">★ ${avg} (${rObj.n})</span>`:""}
       ${i.price?`<span class="price">${esc(i.price)}</span>`:""}
     </div>
     ${i.desc?`<p class="desc">${esc(i.desc)}</p>`:""}
+    ${i.sourceNote?`<p class="where" style="line-height:1.6">${esc(i.sourceNote)}</p>`:""}
     <div class="acts">
-      ${i.phone?`<a class="wa" href="${waLink(i.phone)}" target="_blank" rel="noopener">${T("wa")}</a>
-      <a class="tel" href="tel:${digits(i.phone)}">${esc(i.phone)}</a>`:""}
+      ${i.phone?`<a class="wa" href="${waLink(i.phone)}" target="_blank" rel="noopener noreferrer">${T("wa")}</a><a class="tel" href="tel:${digits(i.phone)}">${esc(i.phone)}</a>`:""}
+      ${i.phone2?`<a class="tel" href="tel:${digits(i.phone2)}">${esc(i.phone2)}</a>`:""}
+      ${sourceLink}
       <button type="button" class="ibtn ${isFav?"on":""}" data-fav="${esc(i.id)}" title="${T("fltFav")}">${isFav?"♥":"♡"}</button>
       <button type="button" class="ibtn" data-shr="${esc(i.id)}" title="${T("share")}">${T("share")}</button>
       ${canManage(i)?`<button type="button" class="del" data-edit="${esc(i.id)}">${T("edit")}</button>`:""}
@@ -3324,11 +3806,7 @@ function cardHTML(i){
 
 function applyFilters(arr){
   let r=arr.filter(i=>!isItemBlocked(i));
-  if(scope){
-    if(scope.startsWith("gov:"))r=r.filter(i=>i.gov===scope.slice(4));
-    else if(scope.startsWith("dist:"))r=r.filter(i=>i.dist===scope.slice(5));
-    else r=r.filter(i=>i.area===scope||i.gov===scope||i.dist===scope);
-  }
+  if(scope)r=r.filter(i=>scopeMatchesItem(i));
   if(flt.open)r=r.filter(i=>isOpenNow(i.hours)===true);
   if(flt.ver)r=r.filter(i=>i.verifiedAt);
   if(flt.fav)r=r.filter(i=>S.favs.includes(i.id));
@@ -3377,9 +3855,13 @@ function openDetail(i){
     <div class="where">${esc([i.village,i.area,i.dist,i.gov].filter(Boolean).join(" · "))}${i.hours?" · "+esc(i.hours):""}</div>
     ${i.price?`<div class="price">${esc(i.price)}</div>`:""}
     ${i.desc?`<p class="desc">${esc(i.desc)}</p>`:""}
+    ${i.sourceName?`<p class="where">المصدر: ${esc(i.sourceName)} · مراجعة ${esc(formatListingDate(i.sourceCheckedAt))}</p>`:""}
+    ${i.sourceNote?`<p class="where">${esc(i.sourceNote)}</p>`:""}
+    ${i.expiresAt?`<p class="where">آخر موعد: ${esc(formatListingDate(i.expiresAt))}</p>`:""}
     <div class="fbtn">
-      ${i.phone?`<a class="wa" href="${waLink(i.phone)}" target="_blank" rel="noopener noreferrer">تواصل واتساب</a>
-      <a class="lnk" href="tel:${digits(i.phone)}">اتصال: ${esc(i.phone)}</a>`:""}
+      ${i.phone?`<a class="wa" href="${waLink(i.phone)}" target="_blank" rel="noopener noreferrer">تواصل واتساب</a><a class="lnk" href="tel:${digits(i.phone)}">اتصال: ${esc(i.phone)}</a>`:""}
+      ${i.phone2?`<a class="lnk" href="tel:${digits(i.phone2)}">اتصال إضافي: ${esc(i.phone2)}</a>`:""}
+      ${i.sourceUrl?`<a class="lnk" href="${esc(i.sourceUrl)}" target="_blank" rel="noopener noreferrer">${i.sourceType==="official_product"?"صفحة المنتج لدى المتجر":i.sourceType==="public_job_portal"?"التقديم في صفحة الإعلان":"موقع المصدر والتفاصيل"}</a>`:""}
     </div>
     <div style="display:flex;align-items:center;gap:12px;background:var(--bg);padding:12px;border-radius:14px;border:1px solid var(--line)">
       ${generateQRSVG((location.protocol==="http:"||location.protocol==="https:")?new URL("?item="+encodeURIComponent(i.id),location.href).href:"DALILNA:ITEM:"+i.id)}
@@ -4455,13 +4937,17 @@ function render(){
     $("#areaLbl").textContent=ar||(curLang==="en"?`All Areas (${areas.length})`:`كل المناطق (${areas.length})`);
     const shown=applyFilters(inCat.filter(i=>(!ar||i.area===ar)&&match(i)));
     $("#count").textContent=`${shown.length} نتيجة`;
-    $("#clist").innerHTML=shown.map(cardHTML).join("")||emptySearchFallbackHTML($("#q").value.trim()||CN[curCat]||curCat);
+    const healthSources=curCat==="health"?'<section class="directory-source-strip"><b>السجل الصحي الرسمي – وزارة الصحة العامة والسكان</b><p>القائمة الأساسية المنشورة من الوزارة تسرد أسماء المرافق ورموزها وأنواعها. نسخة ديسمبر 2023 اقتصرت على المرافق التي جرى التحقق منها في المناطق المحررة؛ لا تعتبر قائمة كاملة أو دليلاً على أن كل مرفق يعمل حالياً.</p><div class="acts"><a class="lnk" href="https://www.moh-ye.org/?page_id=7297" target="_blank" rel="noopener noreferrer">فتح القائمة الأساسية للمرافق</a><a class="lnk" href="https://www.moh-ye.org/?p=13868" target="_blank" rel="noopener noreferrer">تقرير HeRAMS 2026 الأولي</a></div></section>':"";
+    const educationSources=curCat==="edu"?'<section class="directory-source-strip"><b>المدارس والجامعات</b><p>تظهر هنا الأماكن المسجلة في البحث الجغرافي. لا نضيف أسماء مدارس من دون سجل أو مصدر منشور يمكن مراجعته.</p></section>':"";
+    $("#clist").innerHTML=(shown.map(cardHTML).join("")||emptySearchFallbackHTML($("#q").value.trim()||CN[curCat]||curCat))+healthSources+educationSources;
   }else if(view==="jobs"){
-    const jobs=applyFilters(S.items.filter(i=>i.cat==="jobs"&&match(i)));
-    $("#jobs").innerHTML=jobs.map(cardHTML).join("")||`<div class="empty">لا توجد وظائف متاحة حالياً.</div>`;
+    const jobs=applyFilters(S.items.filter(i=>i.cat==="jobs"&&(!i.expiresAt||i.expiresAt>Date.now())&&match(i)));
+    const portals='<section class="directory-source-strip"><b>مصادر وظائف إضافية</b><p>تصفح الإعلانات الأحدث وتأكد من شروط كل وظيفة وموعدها في صفحة المصدر.</p><div class="acts"><a class="lnk" href="https://yemenhr.com/" target="_blank" rel="noopener noreferrer">Yemen HR</a><a class="lnk" href="https://www.yemenboard.com/" target="_blank" rel="noopener noreferrer">Yemen Board</a></div></section>';
+    $("#jobs").innerHTML=(jobs.map(cardHTML).join("")||'<div class="empty">لا توجد وظائف نشطة ضمن المنطقة المحددة. راجع مصادر الوظائف أدناه.</div>')+portals;
   }else if(view==="souq"){
-    const sq=applyFilters(S.items.filter(i=>i.cat==="souq"&&match(i)));
-    $("#sqList").innerHTML=sq.map(cardHTML).join("")||`<div class="empty">لا توجد عروض في السوق حالياً.</div>`;
+    const sq=applyFilters(S.items.filter(i=>i.cat==="souq"&&(!i.expiresAt||i.expiresAt>Date.now())&&match(i)));
+    const marketplaces='<section class="directory-source-strip"><b>إعلانات ومنتجات إضافية</b><p>يمكنك تصفح المواقع الخارجية مباشرة. لا ننسخ إعلاناتهم أو أرقام البائعين؛ افتح المصدر للتواصل مع المعلن.</p><div class="acts"><a class="lnk" href="https://ye.opensooq.com/" target="_blank" rel="noopener noreferrer">السوق المفتوح اليمن</a><a class="lnk" href="https://sooqyemen.com/" target="_blank" rel="noopener noreferrer">سوق اليمن</a></div></section>';
+    $("#sqList").innerHTML=(sq.map(cardHTML).join("")||'<div class="empty">لا توجد عروض محلية أخرى مسجلة. أضف إعلانك أو تصفح المتاجر المعروضة.</div>')+marketplaces;
   }
 }
 
