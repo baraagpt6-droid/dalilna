@@ -48,3 +48,22 @@ test("Geoapify results render in-app business cards with phone and optional map 
  assert.doesNotMatch(html,/GEOAPIFY_API_KEY|GOOGLE_MAPS_API_KEY|places\.googleapis\.com/);
 });
 test("live directory links to privacy and terms pages",()=>{assert.match(html,/\.\/privacy\.html/);assert.match(html,/\.\/terms\.html/);});
+
+test("first-run public starter catalog includes sourced businesses and products",()=>{
+ assert.ok(html.includes("const PUBLIC_BUSINESSES=["));
+ assert.ok(html.includes("const PUBLIC_PRODUCTS=["));
+ assert.ok(html.includes("seedCatalogVersion"));
+ assert.ok(html.includes("بيانات عامة · غير موثّقة"));
+ assert.ok(html.includes("عرض من متجر خارجي"));
+ assert.ok(html.includes("function safeExternalUrl(value)"));
+ assert.ok(html.includes("sourceUrl:safeExternalUrl"));
+ assert.ok(html.includes("https://hubloh.com/en/cell-phones"));
+ assert.ok(html.includes("https://www.google.com/maps/search/"));
+});
+test("Arabic search routes pharmacies, hospitals, schools and mobile shops to separate categories",()=>{
+ assert.match(html,/category:"health".*مستشف.*عياده/);
+ assert.match(html,/category:"pharmacy".*صيدل.*دواء/);
+ assert.match(html,/category:"edu".*مدرس.*جامعه/);
+ assert.match(html,/category:"telecom".*جوال.*موبايل/);
+ assert.match(html,/category:"elec".*الكترونيات.*لابتوب/);
+});

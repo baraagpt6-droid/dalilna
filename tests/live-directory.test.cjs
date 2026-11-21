@@ -2,7 +2,7 @@
 const test=require("node:test");
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {buildOverpassQuery,inferCategoryFromQuery,classifyCategory,normalizeElement,normalizeText,createIntervalGate,searchCommonsPhotos,searchGeoapifyPlaces,geoapifyEnabled,server}=require("../server");
+const {buildOverpassQuery,inferCategoryFromQuery,classifyCategory,normalizeElement,normalizeText,createIntervalGate,searchCommonsPhotos,searchGeoapifyPlaces,geoapifyEnabled,geoapifyRectFilter,server}=require("../server");
 
 test("builds a narrow grocery query for a supplied bounding box",()=>{
  const query=buildOverpassQuery({south:13.1,west:43.2,north:13.4,east:43.5},"grocery");
@@ -45,6 +45,19 @@ test("Vercel Places route exports a Node handler and bounded duration",()=>{
 test("central request gate serializes concurrent callers",async()=>{
  const wait=createIntervalGate(35),started=[];await Promise.all(Array.from({length:3},async()=>{await wait();started.push(Date.now());}));
  started.sort((a,b)=>a-b);assert.ok(started[1]-started[0]>=25);assert.ok(started[2]-started[1]>=25);
+});
+test("Geoapify rectangle order follows longitude, latitude, longitude, latitude",()=>{
+ assert.equal(geoapifyRectFilter({west:43,north:15.5,east:43.5,south:15}),"rect:43,15,43.5,15.5");
+ assert.equal(geoapifyRectFilter({west:43.5,north:15,east:43,south:15.5}),"rect:43,15,43.5,15.5");
+ assert.throws(()=>geoapifyRectFilter({west:43,east:43,north:15.5,south:15}),/Invalid geographic bounding box/);
+});
+test("Arabic search terms map to the intended category",()=>{
+ assert.equal(inferCategoryFromQuery("مدرسه"),"edu");
+ assert.equal(inferCategoryFromQuery("مستشفى"),"health");
+ assert.equal(inferCategoryFromQuery("صيدلية"),"pharmacy");
+ assert.equal(inferCategoryFromQuery("جوالات"),"telecom");
+ assert.equal(inferCategoryFromQuery("لابتوب"),"elec");
+ assert.equal(inferCategoryFromQuery("مطعم"),"food");
 });
 test("Geoapify free integration stays disabled without a server-side key",async()=>{
  const originalKey=process.env.GEOAPIFY_API_KEY;
@@ -101,7 +114,7 @@ test("Wikimedia Commons search returns author and license metadata",async()=>{
  const original=global.fetch;
  global.fetch=async(input,options={})=>{
   const url=new URL(String(input));assert.equal(url.hostname,"commons.wikimedia.org");
-  assert.match(options.headers["User-Agent"],/DalilnaDirectory\/1\.6\.1/);
+  assert.match(options.headers["User-Agent"],/DalilnaDirectory\/1\.6\.2/);
   return new Response(JSON.stringify({query:{pages:[{title:"File:Dalilna place.jpg",imageinfo:[{thumburl:"https://upload.wikimedia.org/wikipedia/commons/thumb/dalilna.jpg",descriptionurl:"https://commons.wikimedia.org/wiki/File:Dalilna_place.jpg",extmetadata:{LicenseShortName:{value:"CC BY-SA 4.0"},Artist:{value:"Photographer One"}}}]}]}}),{status:200,headers:{"content-type":"application/json"}});
  };
  try{const result=await searchCommonsPhotos("Dalilna Commons unique test","Yemen");assert.equal(result.source,"Wikimedia Commons");assert.equal(result.count,1);assert.equal(result.items[0].license,"CC BY-SA 4.0");assert.equal(result.items[0].author,"Photographer One");assert.match(result.items[0].sourceUrl,/commons\.wikimedia\.org/);}

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="1.6.1">
+<meta name="app-version" content="1.6.2">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2304,7 +2304,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="1.6.1";
+const APP_VERSION="1.6.2";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -2384,20 +2384,20 @@ const CAT_GROUPS={
   shop:["clothes","home","gold","beauty","books","wedding","hotel","souq"]
 };
 const CAT_SYN={
-  pharmacy:"دواء علاج صيدلي طبيب عيادة حبوب ادوية مستوصف",
+  pharmacy:"صيدلية صيدليات دواء ادوية عقاقير علاج حبوب مستلزمات طبية",
   grocery:"تموين بقالة مواد غذائية سكر ارز دقيق مياه زيوت",
   food:"غداء عشاء فطور بروست مندي خبز مطعم مطاعم وجبات",
   craft:"سباك صحي كهربائي نجار حداد ميكانيكي تصليح صيانة فني",
   solar:"بطارية لوح الواح انفرتر محول شمس طاقة منظومة شمسيه",
   money:"حوالة تحويل صرافة صراف صرف دولار سعودي حوالات",
-  telecom:"شريحة رصيد نت انترنت جوال هاتف موبايل اتصالات",
-  health:"مستشفى دكتور طبيب فحص مختبر اسعاف مركز صحي",
+  telecom:"شريحة شرائح رصيد نت انترنت جوال جوالات هاتف هواتف موبايل موبايلات اتصالات اكسسوارات الجوال",
+  health:"مستشفى مستشفيات مستوصف عيادة عيادات دكتور طبيب اطباء مختبر اسعاف مركز صحي مركز طبي اسنان",
   jobs:"وظيفة عمل وظائف توظيف مطلوب موظف عامل راتب",
   land:"ارض اراضي عقار عقارات شقة ايجار بيع ارض",
   build:"اسمنت حديد بلوك مواد بناء سباكة دهان",
   parts:"قطع غيار سيارات مكينة اطارات كفرات بطارية",
   transport:"باص نقل مواصلات تاكسي سيارة توصيل",
-  edu:"مدرسة مدارس جامعة معهد تعليم دروس مدرس",
+  edu:"مدرسة مدرسه مدارس تعليم معهد جامعة جامعات كلية روضة حضانة دروس",
   gov:"حكومة حكومي مكتب حكومي جوازات احوال مدنية",
   souq:"حراج سوق للبيع مطلوب مقايضة مجانا مباع",
   clothes:"ملابس ثياب احذية جزم عبايات",
@@ -2408,7 +2408,7 @@ const CAT_SYN={
   laundry:"مغسلة غسيل كوي ملابس",
   gold:"ذهب مجوهرات فضة صياغة",
   farm:"مزارع زراعة مواشي اغنام ابقار دواجن",
-  elec:"الكترونيات تلفزيون شاشة ثلاجة غسالة اجهزة",
+  elec:"الكترونيات تلفزيون شاشة ثلاجة غسالة اجهزة كمبيوتر حاسوب لابتوب طابعة",
   home:"اثاث منزلي مفروشات مطبخ",
   books:"قرطاسية مكتبة كتب طباعة تصوير",
   wedding:"اعراس صالة زواج قاعة مناسبات",
@@ -2490,7 +2490,77 @@ const waLink=p=>{let d=digits(p);if(d.startsWith("00"))d=d.slice(2);if(d.startsW
 const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove("on"),3200);};
 async function sha256(str){if(!window.crypto||!window.crypto.subtle)throw new Error("secure-context-required");const buf=await window.crypto.subtle.digest("SHA-256",new TextEncoder().encode(str));return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");}
 
-const SEED_ITEMS=[];
+const SEED_CATALOG_VERSION=1;
+const mapsSearch=(name,area,gov)=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent([name,area,gov,"اليمن"].filter(Boolean).join(" "));
+const PUBLIC_BUSINESSES=[
+ {id:"pub-ibb-dhamran",name:"مركز ظمران — إب",cat:"grocery",gov:"إب",area:"مدينة إب، الطريق N1",phone:"+967 4 456 747",desc:"مركز تسوق وسوبرماركت. بيانات عامة من دليل أعمال؛ يرجى التأكد من ساعات العمل والتوفر قبل الزيارة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-makkah-grocery",name:"بقالة مكة",cat:"grocery",gov:"إب",area:"X5FH+F4P، مدينة إب",phone:"+967 772 348 425",desc:"بقالة وسوبرماركت محلي. بيانات عامة من دليل أعمال؛ يرجى التأكد من الرقم والموقع قبل الزيارة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-ubayan-grocery",name:"بقالة عبيان",cat:"grocery",gov:"إب",area:"X59H+857، مدينة إب",phone:"+967 770 778 309",desc:"بقالة للمواد الغذائية والاحتياجات اليومية. بيانات عامة تحتاج تأكيد صاحب النشاط.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-mulham-pharmacy",name:"صيدلية الملهم",cat:"pharmacy",gov:"إب",area:"شارع مستشفى الثورة، إب",phone:"+967 4 404 183",desc:"صيدلية مدرجة في دليل أعمال عام. اتصل للتأكد من الرقم وتوفر الدواء قبل الزيارة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-zahraa-pharmacy",name:"صيدلية الزهراء 3",cat:"pharmacy",gov:"إب",area:"الطريق الدائري الغربي، إب",phone:"+967 4 415 200",desc:"صيدلية مدرجة في دليل أعمال عام. اتصل للتأكد من الرقم وساعات العمل.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-abu-ayman",name:"أبو أيمن للأجهزة الذكية",cat:"telecom",gov:"إب",area:"شارع العدين، جوار بنك اليمن الدولي، إب",phone:"+967 774 884 884",desc:"متجر هواتف وإكسسوارات وصيانة. بيانات عامة تحتاج تأكيد المتجر.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-brothers-pharmacy",name:"صيدلية الإخوة",cat:"pharmacy",gov:"إب",area:"شارع تعز، إب",phone:"+967 770 773 114",desc:"صيدلية مدرجة في دليل أعمال عام. يرجى التأكد من ساعات العمل وتوفر الأدوية.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-dar-restaurants",name:"مطاعم الدار",cat:"food",gov:"إب",area:"مدينة إب، المشنة",phone:"+967 774 488 851",desc:"مطعم مدرج في دليل أعمال عام. يرجى تأكيد ساعات العمل والخدمات مباشرة مع المطعم.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-high-class",name:"سوبر ماركت هاي كلاس",cat:"grocery",gov:"إب",area:"X58G+9VV، مدينة إب",phone:"+967 784 374 605",desc:"سوبرماركت للمواد الغذائية والاحتياجات المنزلية. بيانات عامة تحتاج تأكيد المتجر.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-hari",name:"سوبر ماركت إب هاري — سلة التوفير سابقاً",cat:"grocery",gov:"إب",area:"شارع الجامعة، إب",phone:"+967 4 423 369",desc:"متجر مواد غذائية وسوبرماركت مدرج في دليل أعمال عام. تأكد من الاسم والرقم قبل الزيارة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-university",name:"جامعة إب",cat:"edu",gov:"إب",area:"X57C+2H8، مدينة إب",phone:"+967 4 408 069",desc:"جامعة حكومية في محافظة إب. بيانات الاتصال والموقع من قائمة أعمال عامة؛ راجع الجامعة لتفاصيل القبول والخدمات.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-nasser-hospital",name:"مستشفى ناصر",cat:"health",gov:"إب",area:"X5HP+WC9، الطريق القديم N1، إب",desc:"مستشفى مدرج في دليل أعمال عام. لا يتوفر رقم هاتف موثوق في المصدر المستخدم.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-burj-hospital",name:"مستشفى البرج التخصصي — إب",cat:"health",gov:"إب",area:"X5GC+83G، أمام مستشفى الثورة، إب",phone:"+967 4 400 050",desc:"مستشفى تخصصي مدرج في دليل أعمال عام. يرجى التأكد من الأقسام والمواعيد عبر الاتصال.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-victory-hospital",name:"مستشفى النصر العام النموذجي",cat:"health",gov:"إب",area:"شارع تعز، إب",phone:"+967 4 405 235",desc:"مستشفى عام مدرج في دليل أعمال عام. يرجى التأكد من الخدمات وأرقام الطوارئ مباشرة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-alhamd-hospital",name:"مستشفى الحمد",cat:"health",gov:"إب",area:"شارع السبل، إب",phone:"+967 4 451 666",desc:"مستشفى تخصصي مدرج في دليل أعمال عام. تحقق من الأقسام وساعات الاستقبال قبل الزيارة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-thawra-hospital",name:"هيئة مستشفى الثورة العام — إب",cat:"health",gov:"إب",area:"X5GC+G3F، مدينة إب",phone:"+967 774 801 232",desc:"مستشفى عام مدرج في دليل أعمال عام. المعلومات قابلة للتغيير وتحتاج تأكيداً من المستشفى.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-aljazeera-university",name:"جامعة الجزيرة — إب",cat:"edu",gov:"إب",area:"خلف مثلث المواصلات، إب",phone:"+967 779 404 030",desc:"جامعة أهلية في إب وفق قوائم الأعمال العامة. راجع الجامعة لتأكيد التخصصات والقبول.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-national-university",name:"الجامعة الوطنية — فرع إب",cat:"edu",gov:"إب",area:"شارع الجامعة، أمام بوابة جامعة إب",phone:"+967 4 401 620",desc:"فرع جامعي مدرج في دليل أعمال عام. تحقق من مواعيد القبول والبرامج لدى الجامعة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-taiba-tech",name:"طيبة تك — Taiba Tech",cat:"telecom",gov:"إب",area:"مدينة إب",desc:"متجر هواتف وخدمات صيانة وفق تصنيف دليل الأعمال. لم يتوفر رقم اتصال في السجل العام.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-ibn-saif",name:"بن سيف لخدمات الجوال",cat:"telecom",gov:"إب",area:"شارع تعز، جوار مطعم مثنى، إب",phone:"+967 777 788 837",desc:"خدمات جوالات وإلكترونيات. بيانات عامة تحتاج تأكيد صاحب النشاط.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-ibb-board-doctors",name:"مركز أطباء البورد",cat:"health",gov:"إب",area:"جوار محطة الجبري، طريق R125، إب",phone:"+967 770 414 888",desc:"مركز طبي مدرج في دليل أعمال عام. اتصل قبل الزيارة لتأكيد التخصصات والمواعيد.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-taiz-saddam-pharmacy",name:"صيدلية صدام",cat:"pharmacy",gov:"تعز",area:"جولة الإخوة، حوض الأشراف، تعز",phone:"+967 777 713 142",desc:"صيدلية مدرجة في دليل أعمال عام في مدينة تعز. تأكد من توفر الدواء قبل الذهاب.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-taiz-university",name:"جامعة تعز",cat:"edu",gov:"تعز",area:"حبيل سلمان، مدينة تعز",phone:"+967 735 569 680",desc:"جامعة حكومية في تعز. بيانات عامة؛ راجع الجامعة لتفاصيل القبول والكليات.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-taiz-thawra-hospital",name:"هيئة مستشفى الثورة العام — تعز",cat:"health",gov:"تعز",area:"حي الشماسي، شارع الثورة، تعز",desc:"مستشفى عام مدرج في دليل أعمال عام. لا يتوفر رقم هاتف في السجل المستخدم.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-sanaa-city-mart",name:"City Mart — سيتي مارت",cat:"grocery",gov:"أمانة العاصمة",area:"الدائري الغربي، جولة القادسية، صنعاء",phone:"+967 1 465 377",desc:"سوبرماركت مدرج في دليل أعمال عام. تأكد من ساعات العمل وتوفر السلع مباشرة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-sanaa-tawfeer",name:"التوفير هايبر ماركت — حدة",cat:"grocery",gov:"أمانة العاصمة",area:"حدة، أمام المجمع الحكومي، صنعاء",phone:"+967 774 090 145",desc:"هايبر ماركت مدرج في دليل أعمال عام. بيانات الفروع وساعات العمل قد تتغير.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-sanaa-ibn-hayan",name:"صيدلية ابن حيان 1",cat:"pharmacy",gov:"أمانة العاصمة",area:"شارع الزبيري، أمام المستشفى الجمهوري، صنعاء",phone:"+967 735 344 414",desc:"صيدلية مدرجة في دليل أعمال عام. اتصل للتحقق من رقم الفرع وتوفر الدواء.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-sanaa-shaibany",name:"مطاعم الشيباني",cat:"food",gov:"أمانة العاصمة",area:"شارع حدة، صنعاء",phone:"+967 1 420 000",desc:"مطعم مدرج في دليل أعمال عام. يرجى التحقق من الفرع وساعات العمل مباشرة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-sanaa-alkindi",name:"مطعم الكندي للكباب",cat:"food",gov:"أمانة العاصمة",area:"الصافية، أمام بوابة الضرائب، صنعاء",phone:"+967 774 055 540",desc:"مطعم مدرج في دليل أعمال عام. تحقق من ساعات العمل قبل الزيارة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-sanaa-taibah",name:"طيبة هايبر ماركت",cat:"grocery",gov:"أمانة العاصمة",area:"شارع الستين، صنعاء",phone:"+967 771 373 333",desc:"هايبر ماركت مدرج في دليل أعمال عام. تأكد من بيانات الفرع والتوفر قبل الشراء.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-sanaa-royal",name:"المطعم الملكي",cat:"food",gov:"أمانة العاصمة",area:"شارع خولان، مقابل مستشفى الثورة، صنعاء",desc:"مطعم يمني مدرج في دليل أعمال عام. لا يتوفر رقم هاتف في السجل المستخدم.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-sanaa-carefor",name:"Carefor Supermarket — كيرفور",cat:"grocery",gov:"أمانة العاصمة",area:"الأصبحي القديم، شارع الحربي، مقابل سوق المقالح، صنعاء",phone:"+967 771 088 885",desc:"سوبرماركت مدرج في دليل أعمال عام. تأكد من ساعات العمل وتوفر السلع.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-sanaa-dhamran",name:"ظمران سنتر",cat:"grocery",gov:"أمانة العاصمة",area:"شارع الأربعين، صعوان، صنعاء",phone:"+967 1 594 444",desc:"مركز تسوق وسوبرماركت مدرج في دليل أعمال عام. تحقق من بيانات الفرع قبل الزيارة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-sanaa-khatib",name:"مطعم الخطيب",cat:"food",gov:"أمانة العاصمة",area:"شارع الستين، صنعاء",phone:"+967 1 215 692",desc:"مطعم مدرج في دليل أعمال عام. تأكد من الفرع والخدمات مباشرة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-sanaa-global-store",name:"المتجر العالمي — Global Store",cat:"telecom",gov:"أمانة العاصمة",area:"شارع الجزائر، صنعاء",phone:"+967 774 933 343",desc:"متجر هواتف وإلكترونيات مدرج في دليل أعمال عام. تحقق من توفر الأجهزة والضمان لدى المتجر.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-sanaa-university",name:"جامعة صنعاء",cat:"edu",gov:"أمانة العاصمة",area:"مدينة صنعاء",phone:"+967 1 469 242",desc:"جامعة حكومية مدرجة في دليل أعمال عام. راجع موقع الجامعة لتفاصيل القبول والخدمات.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-aden-dhamaran",name:"ظمران سوبر ماركت — عدن",cat:"grocery",gov:"عدن",area:"الشيخ عثمان، عدن",desc:"سوبرماركت مدرج في دليل أعمال عام. لم يتوفر هاتف في السجل العام المستخدم.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-aden-marasim",name:"مطاعم المراسيم السياحية",cat:"food",gov:"عدن",area:"مدينة عدن",phone:"+967 2 348 943",desc:"مطعم يمني مدرج في دليل أعمال عام. تأكد من الفرع وساعات العمل مباشرة.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-aden-shawati",name:"مطاعم شواطئ عدن السياحية",cat:"food",gov:"عدن",area:"الشيخ عثمان، عدن",phone:"+967 2 326 808",desc:"مطعم مدرج في دليل أعمال عام. يرجى تأكيد ساعات العمل والخدمات.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"},
+ {id:"pub-aden-whites",name:"صيدلية وايتس — Whites Pharmacy",cat:"pharmacy",gov:"عدن",area:"الشارع الرئيسي، المعلا، عدن",phone:"+967 2 242 180",desc:"صيدلية مدرجة في دليل أعمال عام. اتصل للتحقق من توفر الدواء والدوام.",sourceName:"قائمة أعمال عامة",sourceLabel:"فتح الموقع على الخريطة"}
+].map(item=>({
+ ...item,
+ sourceUrl:mapsSearch(item.name,item.area,item.gov),
+ isPublicSeed:true,
+ seedKind:"business",
+ verifiedAt:null,
+ aiChecked:false,
+ createdAt:Date.parse("2026-11-21T00:00:00Z"),
+ status:"available"
+}));
+const PUBLIC_PRODUCTS=[
+ {id:"pub-product-redmi-a5",name:"Redmi A5 4G — 3GB / 64GB",cat:"souq",gov:"اليمن",area:"متجر Hubloh الإلكتروني",price:"US $73",desc:"هاتف جديد كما هو معروض في صفحة المتجر. السعر والمخزون قابلان للتغيير؛ افتح المصدر وتأكد قبل الشراء.",sourceName:"Hubloh",sourceLabel:"زيارة المتجر والمنتج",sourceUrl:"https://hubloh.com/en/cell-phones"},
+ {id:"pub-product-redmi-note14-pro-plus",name:"Redmi Note 14 Pro+ — 16GB / 512GB",cat:"souq",gov:"اليمن",area:"متجر Hubloh الإلكتروني",price:"US $400",desc:"هاتف جديد كما هو معروض في صفحة المتجر. السعر والمخزون قابلان للتغيير؛ افتح المصدر وتأكد قبل الشراء.",sourceName:"Hubloh",sourceLabel:"زيارة المتجر والمنتج",sourceUrl:"https://hubloh.com/en/cell-phones"},
+ {id:"pub-product-redmi-note14-pro",name:"Redmi Note 14 Pro — 12GB / 256GB",cat:"souq",gov:"اليمن",area:"متجر Hubloh الإلكتروني",price:"US $315",desc:"هاتف جديد كما هو معروض في صفحة المتجر. السعر والمخزون قابلان للتغيير؛ افتح المصدر وتأكد قبل الشراء.",sourceName:"Hubloh",sourceLabel:"زيارة المتجر والمنتج",sourceUrl:"https://hubloh.com/en/cell-phones"},
+ {id:"pub-product-zte-blade-a75",name:"ZTE Blade A75 5G",cat:"souq",gov:"اليمن",area:"متجر SMSM Market الإلكتروني",price:"50,000 ريال يمني",desc:"منتج معروض في قسم الجوالات في المتجر. السعر والمخزون قابلان للتغيير؛ راجع المتجر قبل الشراء.",sourceName:"SMSM Market",sourceLabel:"زيارة المتجر والمنتج",sourceUrl:"https://smsm.market/"},
+ {id:"pub-product-thinkpad-p15v",name:"Lenovo ThinkPad P15v G1 — i7 / 16GB / 512GB SSD",cat:"souq",gov:"اليمن",area:"متجر الجيل العربي الرقمي، صنعاء",price:"US $490.60 — مستعمل",desc:"حاسوب محمول مستعمل كما هو معروض في كتالوج المتجر. افحص الحالة والضمان والسعر الحالي قبل الشراء.",sourceName:"Al-Jeel Al-Arabi Digital",sourceLabel:"زيارة كتالوج المتجر",sourceUrl:"https://www.alarabiye.com/en"},
+ {id:"pub-product-samsung-s25-ultra",name:"Samsung Galaxy S25 Ultra",cat:"souq",gov:"اليمن",area:"صدام ستور، الأصبحي، صنعاء",price:"السعر لدى المتجر",desc:"الهاتف ظاهر ضمن المنتجات المميزة في متجر صدام ستور. راجع السعر والتوفر والضمان مباشرة قبل الطلب.",sourceName:"Saddam Store",sourceLabel:"زيارة المتجر",sourceUrl:"https://www.saddamstores.com/"}
+].map(item=>({
+ ...item,
+ isPublicSeed:true,
+ seedKind:"product",
+ verifiedAt:null,
+ aiChecked:false,
+ createdAt:Date.parse("2026-11-21T00:00:00Z"),
+ status:"available",
+ type:"sell"
+}));
+const SEED_ITEMS=[...PUBLIC_BUSINESSES,...PUBLIC_PRODUCTS];
 const LEGACY_DEMO_IDS=new Set(["s1","s2","s3","s4","s5","s6","s7","s8","s9"]);
 
 function loadState(){
@@ -2503,6 +2573,7 @@ const ADMIN_DEFAULT_HASH="6db22418f2f59943a783c05fd88fef28ce942a20e3656c4d1b4ef5
 
 const DEFAULT_STATE={
   items:[],
+  seedCatalogVersion:0,
   pending:[],
   ads:[
     {id:"ad1",title:"أعلن عن محلك أو مشروعك مجاناً",text:"وصل خدماتك لكل أبناء مديرية حبيش والمغتربين",phone:"967777000000"}
@@ -2549,6 +2620,12 @@ function cleanNumber(v,fallback=0,min=-1e9,max=1e9){
 function safeImageData(v){
   return typeof v==="string"&&v.length<=850000&&/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(v)?v:"";
 }
+function safeExternalUrl(value){
+  try{
+    const url=new URL(String(value||""));
+    return url.protocol==="https:"||url.protocol==="http:"?url.href:"";
+  }catch(_){return "";}
+}
 function normalizeState(raw){
   const base=JSON.parse(JSON.stringify(DEFAULT_STATE));
   raw=raw&&typeof raw==="object"&&!Array.isArray(raw)?raw:{};
@@ -2559,6 +2636,8 @@ function normalizeState(raw){
     gov:cleanText(x.gov,80),dist:cleanText(x.dist,80),area:cleanText(x.area,100),village:cleanText(x.village,120),
     phone:cleanText(x.phone,40),hours:cleanText(x.hours,80),price:cleanText(x.price,80),country:cleanText(x.country,80),
     desc:cleanText(x.desc,300),img:safeImageData(x.img),ownerPhone:cleanText(x.ownerPhone,40),aiChecked:x.aiChecked===true,
+    isPublicSeed:x.isPublicSeed===true,seedKind:["business","product"].includes(x.seedKind)?x.seedKind:"",
+    sourceName:cleanText(x.sourceName,100),sourceLabel:cleanText(x.sourceLabel,100),sourceUrl:safeExternalUrl(x.sourceUrl),
     hidden:x.hidden===true,hiddenReason:cleanText(x.hiddenReason,240),
     verifiedAt:x.verifiedAt?cleanNumber(x.verifiedAt,0,1,Number.MAX_SAFE_INTEGER):null,
     createdAt:cleanNumber(x.createdAt,Date.now(),0,Number.MAX_SAFE_INTEGER),
@@ -2598,6 +2677,7 @@ function normalizeState(raw){
   return {
     ...base,...raw,
     items:safeItems,
+    seedCatalogVersion:cleanNumber(raw.seedCatalogVersion,0,0,100),
     pending:arrayOfObjects(raw.pending).map((x,i)=>({
       id:cleanText(x.id,80)||"pending_"+i,name:cleanText(x.name,80),cat:CAT_KEYS.has(x.cat)?x.cat:"other",
       gov:cleanText(x.gov,80),dist:cleanText(x.dist,80),area:cleanText(x.area,100),village:cleanText(x.village,120),
@@ -2651,6 +2731,13 @@ const storedInitialState=loadState();
 const adminCredentialMigrationRequired=!storedInitialState||storedInitialState.adminCredentialVersion!==ADMIN_CREDENTIAL_VERSION;
 let S=normalizeState(storedInitialState);
 let storageWarned=false;
+// Merge the public starter catalogue once per device. User-created records remain separate.
+if(S.seedCatalogVersion<SEED_CATALOG_VERSION){
+  const existingIds=new Set(S.items.map(item=>item.id));
+  for(const item of SEED_ITEMS)if(!existingIds.has(item.id))S.items.push(item);
+  S.seedCatalogVersion=SEED_CATALOG_VERSION;
+  saveState();
+}
 function portableState(){
   return {...S,session:{role:"client",adminEmail:"",merchant:null}};
 }
@@ -3305,15 +3392,17 @@ function cardHTML(i){
       ${km!==null?` · <span class="dist-badge">${km<1?Math.round(km*1000)+" m":km.toFixed(1)+" km"}</span>`:""}
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      ${i.verifiedAt?`<span class="ok">${T("verified")}</span>`:`<span class="where">${T("community")}</span>`}
+      ${i.isPublicSeed?(i.seedKind==="product"?'<span class="tag">عرض من متجر خارجي</span>':'<span class="tag">بيانات عامة · غير موثّقة</span>'):(i.verifiedAt?`<span class="ok">${T("verified")}</span>`:`<span class="where">${T("community")}</span>`)}
       ${i.aiChecked?`<span class="tag">فحص آلي أولي</span>`:""}
       ${avg?`<span class="dist-badge">★ ${avg} (${rObj.n})</span>`:""}
       ${i.price?`<span class="price">${esc(i.price)}</span>`:""}
     </div>
     ${i.desc?`<p class="desc">${esc(i.desc)}</p>`:""}
+    ${i.sourceName?`<small class="where">المصدر: ${esc(i.sourceName)} · بيانات عامة قد تتغير. تحقق من النشاط قبل الشراء أو الزيارة.</small>`:""}
     <div class="acts">
       ${i.phone?`<a class="wa" href="${waLink(i.phone)}" target="_blank" rel="noopener">${T("wa")}</a>
       <a class="tel" href="tel:${digits(i.phone)}">${esc(i.phone)}</a>`:""}
+      ${i.sourceUrl?`<a class="tel public-source-link" href="${esc(i.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(i.sourceLabel||"عرض المصدر")}</a>`:""}
       <button type="button" class="ibtn ${isFav?"on":""}" data-fav="${esc(i.id)}" title="${T("fltFav")}">${isFav?"♥":"♡"}</button>
       <button type="button" class="ibtn" data-shr="${esc(i.id)}" title="${T("share")}">${T("share")}</button>
       ${canManage(i)?`<button type="button" class="del" data-edit="${esc(i.id)}">${T("edit")}</button>`:""}
@@ -3693,19 +3782,23 @@ function localDirectorySearch(q,limit=6){
 function directoryMapSearchInfo(q){
   const text=normalizeQuery(q);
   const services=[
-    {category:"grocery",label:"بقالات ومحلات تموين",test:/بقال|تموين|سوبر\s?ماركت|مواد غذائيه/},
-    {category:"pharmacy",label:"صيدليات وعيادات",test:/صيدل|دواء|ادويه|علاج|عياده/},
+    {category:"grocery",label:"بقالات ومحلات تموين",test:/بقال|تموين|سوبر\\s?ماركت|مواد غذائيه|جمعيه استهلاكيه/},
+    {category:"health",label:"مستشفيات وعيادات ومراكز صحية",test:/مستشف|مستوصف|مركز صحي|مركز طبي|عياده|عيادات|مختبر|طبيب|دكتور|اسنان/},
+    {category:"pharmacy",label:"صيدليات",test:/صيدل|دواء|ادويه|علاج|حبوب|مستلزمات طبيه/},
     {category:"food",label:"مطاعم ومخابز",test:/مطعم|مطاعم|مخبز|مخابز|وجبات/},
     {category:"cafe",label:"بوفيات وكافيهات",test:/بوفيه|كافيه|كوفي|قهوه|كافتيريا/},
-    {category:"health",label:"مستشفيات ومراكز صحية",test:/مستشف|مركز صحي|مختبر|طبيب|دكتور/},
-    {category:"edu",label:"مدارس ومعاهد",test:/مدرس|مدارس|معهد|جامعه/},
+    {category:"edu",label:"مدارس ومعاهد وجامعات",test:/مدرس|مدرسه|مدارس|معهد|جامعه|كليه|روضه|حضان/},
     {category:"mosque",label:"مساجد وجوامع",test:/مسجد|مساجد|جامع|جوامع/},
+    {category:"telecom",label:"محلات الجوالات والاتصالات",test:/جوال|جوالات|موبايل|موبايلات|هاتف|هواتف|اتصالات|شرائح/},
+    {category:"elec",label:"الإلكترونيات والكمبيوتر",test:/الكترونيات|اجهزه كهربائيه|كمبيوتر|حاسوب|لابتوب|طابعات|شاشات/},
     {category:"craft",label:"فنيون وورش صيانة",test:/سباك|كهربائي|نجار|حداد|ورشه|صيانه|تصليح|فني/},
+    {category:"build",label:"مواد بناء",test:/مواد بناء|اسمنت|حديد|دهانات|ادوات بناء/},
+    {category:"money",label:"بنوك وصرافة وتحويلات",test:/بنك|صراف|صرافه|تحويل|حوالات|صرف عمله/},
     {category:"transport",label:"نقل ومواصلات",test:/مواصلات|تاكسي|باص|نقل/},
     {category:"hotel",label:"فنادق وشقق",test:/فندق|فنادق|شقق مفروشه|سكن/},
     {category:"salon",label:"حلاقون وصالونات",test:/حلاق|حلاقه|صالون/},
     {category:"laundry",label:"مغاسل ملابس",test:/مغسله|مغاسل|غسيل ملابس|كوي/},
-    {category:"market",label:"أسواق ومحلات",test:/سوق|اسواق|محل|محلات|متجر/}
+    {category:"market",label:"أسواق ومحلات",test:/سوق مركزي|اسواق|مول|مركز تجاري/}
   ];
   const service=services.find(item=>item.test.test(text));
   if(!service)return null;
