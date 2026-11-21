@@ -86,7 +86,7 @@
     const category = CATS.find(x => x[0] === item.category);
     const product = PRODUCTS.find(x => x[0] === item.productType);
     const labels = [category ? category[1] : item.category];
-    if (item.category === "souq") labels.push(product ? product[1] : "منتج آخر");
+    if (item.category === "souq" || item.category === "land") labels.push(product ? product[1] : "منتج آخر");
     if (item.condition === "new") labels.push("جديد");
     if (item.condition === "used") labels.push("مستعمل");
     if (item.listingType === "wanted") labels.push("مطلوب");
