@@ -1,14 +1,16 @@
-Dalilna 1.7.0 — Build and deployment status
+Dalilna 1.8.2 — Build and deployment status
 ===========================================
 
-- PWA + Android WebView. Android build is debug-signed for testing, not Google Play production.
-- Live business search uses Geoapify Places and OpenStreetMap data. Coverage can be incomplete or out of date.
-- Larger governorate areas are divided into bounded Geoapify search rectangles with a fixed tile limit.
-- Community listings use PostgreSQL. All submissions remain pending until admin review.
-- Approved listings are visible across devices; public lists refresh every two minutes while the app is visible.
-- Product subtypes include phones, watches, cars, motorcycles, land, real estate, electronics, appliances, furniture, clothes, jewelry, honey, coffee, spices, livestock and other goods.
-- Jobs with expired deadlines are hidden. External job boards are linked at source when no documented API exists.
-- Marketplace API requires DATABASE_URL and db/schema.sql. Server moderation requires DALILNA_ADMIN_TOKEN.
-- Render free Postgres expires after 30 days and has no backups. Use persistent storage for real listings.
-- Client, merchant and local admin accounts remain device-local and are not identity verification.
-- A production Android release requires a private signing keystore and field testing.
+- Main branch commit: 3618090729988c2c98f3b80d2b99eaabee2dedb7.
+- PWA + Android WebView. Android versionCode 167; APK is debug-signed for testing, not Google Play production.
+- GitHub verification workflow, Android APK workflow, and GitHub Pages deployment completed successfully for the 1.8.2 release.
+- Live Render service dalilna-live deployed the 1.8.2 main commit successfully.
+- Live business search uses Geoapify Places and OpenStreetMap-based providers. Coverage can be incomplete; upstream map providers may time out or return partial results.
+- Shared marketplace API stores user submissions in PostgreSQL with status pending. Only approved, non-expired listings appear in public results.
+- Schema version 2 includes opening_hours and website, plus listing coordinates. The migration is idempotent.
+- The Neon project named dalilna-production-frankfurt has schema migration versions 1 and 2 applied. At the time of the 2026-11-22 review, its marketplace listing table contained zero rows.
+- A second Neon project named Dalilna remains on schema version 1 and does not contain the version 2 opening_hours and website columns. Verify the Render DATABASE_URL points to dalilna-production-frankfurt before bulk migration or production use.
+- Legacy listings remain in local storage on each user's device until that device uses “نقل إضافاتي القديمة للمراجعة”. The API uses clientRef uniqueness to make retries idempotent. Admin approval is still required before publication.
+- Marketplace moderation requires DALILNA_ADMIN_TOKEN stored as a server environment secret. Do not expose it in GitHub, browser storage, URLs, or APK files.
+- Client, merchant and legacy admin accounts remain device-local and do not provide identity verification. Review SECURITY_LIMITATIONS.txt before public or commercial use.
+- A production Android release requires a private signing keystore, controlled signing, and field testing.
