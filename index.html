@@ -524,6 +524,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 .empty-search-help p{margin:0;color:var(--mute);font-size:12px;line-height:1.8}
 .empty-search-help .ai-map-search-link{justify-self:center}
 .live-directory-top{max-width:1160px;margin:10px auto 0;padding:0 14px}
+.directory-source-strip{margin:14px 0;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--card);display:grid;gap:8px}.directory-source-strip b{font-size:15px}.directory-source-strip p{margin:0;color:var(--muted);line-height:1.7;font-size:13px}.directory-source-strip .acts{display:flex;gap:8px;flex-wrap:wrap}.directory-source-strip a{font-size:13px}
 .live-directory-panel{display:grid;gap:10px;margin:12px 0;padding:13px;border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:var(--shadow)}
 .live-directory-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .live-directory-head b{font-size:15px;color:var(--ink)}
@@ -3798,11 +3799,7 @@ function cardHTML(i){
 
 function applyFilters(arr){
   let r=arr.filter(i=>!isItemBlocked(i));
-  if(scope){
-    if(scope.startsWith("gov:"))r=r.filter(i=>i.nationwide===true||i.gov===scope.slice(4));
-    else if(scope.startsWith("dist:"))r=r.filter(i=>i.nationwide===true||i.dist===scope.slice(5));
-    else r=r.filter(i=>i.nationwide===true||i.area===scope||i.gov===scope||i.dist===scope);
-  }
+  if(scope)r=r.filter(i=>scopeMatchesItem(i));
   if(flt.open)r=r.filter(i=>isOpenNow(i.hours)===true);
   if(flt.ver)r=r.filter(i=>i.verifiedAt);
   if(flt.fav)r=r.filter(i=>S.favs.includes(i.id));
