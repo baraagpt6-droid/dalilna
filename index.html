@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.0.0">
+<meta name="app-version" content="2.1.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -631,6 +631,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <div class="search">
       <svg class="s-ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
       <input id="q" type="search" autocomplete="off" placeholder="ابحث عن محل، صيدلية، سباك، وظيفة…">
+      <button type="button" id="clearSearch" class="search-clear" aria-label="مسح البحث" title="مسح البحث" hidden>×</button>
       <button id="mic" type="button" aria-label="البحث بالصوت" title="تحدث للبحث بالصوت">
         <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3M8 22h8"/></svg>
       </button>
@@ -646,6 +647,11 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <button type="button" class="tbtn" id="voiceStop" style="min-height:30px">إيقاف</button>
   </div>
 </header>
+
+<section id="searchResultsTop" class="search-results-top" hidden aria-live="polite">
+  <div id="searchResultList"></div>
+  <div id="searchLiveMount"></div>
+</section>
 
 <section class="promo-release" id="promoRelease" hidden>
   <div>
@@ -733,11 +739,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <div class="recent-strip" id="recentList"></div>
     </div>
 
-    <h2 class="sec" id="latestT">أُضيف حديثاً</h2>
-    <div class="list" id="list"></div>
-    <div style="display:flex;justify-content:center;margin:12px 0">
-      <button class="ghost" id="more" hidden>عرض المزيد</button>
-    </div>
+    <div id="homeListSlot"></div>
 
     <section class="shared-marketplace-panel" id="sharedDirectoryPanel">
       <div class="shared-marketplace-head"><h2>الإعلانات المعتمدة في دليلنا</h2><span class="tag">تظهر للجميع</span></div>
@@ -4810,8 +4812,10 @@ function render(){
   const liveWanted=view==="home"||view==="cat";
   const liveInfo=directoryMapSearchInfo(q);
   liveDirectoryLast={query:q||(view==="cat"?(CN[curCat]||curCat):""),category:liveDirectoryCategoryOverride||(liveInfo?liveInfo.category:(view==="cat"?curCat:"all")),productType:liveDirectoryCategoryOverride?"":(liveInfo?liveInfo.productType:""),listingType:liveDirectoryListingTypeOverride};
-  const liveTop=$("#liveDirectoryTop"),liveAnchor=view==="cat"?$("#catFltRow"):$("#fltRow");
-  if(liveTop&&liveAnchor?.parentNode)liveAnchor.parentNode.insertBefore(liveTop,liveAnchor.nextSibling);
+  const searchActive=!!q||Object.values(flt).some(Boolean);
+  const liveTop=$("#liveDirectoryTop"),liveAnchor=view==="cat"?$("#catFltRow"):$("#fltRow"),searchLiveMount=$("#searchLiveMount");
+  if(liveTop&&view==="home"&&searchActive&&searchLiveMount)searchLiveMount.appendChild(liveTop);
+  else if(liveTop&&liveAnchor?.parentNode)liveAnchor.parentNode.insertBefore(liveTop,liveAnchor.nextSibling);
   if(liveTop)liveTop.innerHTML=liveWanted?liveDirectoryPanelHTML():"";
   if(liveWanted)runLiveDirectorySearch(false);
   const match=i=>{
@@ -4844,9 +4848,16 @@ function render(){
     const sq=applyFilters(S.items.filter(i=>i.cat==="souq"&&match(i)));
     $("#sqList").innerHTML=sq.map(cardHTML).join("")||`<div class="empty">لا توجد عروض في السوق حالياً.</div>`;
   }
+  const showTopSearch=view==="home"&&searchActive;
+  const topSection=$("#searchResultsTop"),topList=$("#searchResultList"),homeSlot=$("#homeListSlot");
+  if(topSection)topSection.hidden=!showTopSearch;
+  const nodes=[$("#latestT"),$("#list"),$("#more")].filter(Boolean);
+  if(showTopSearch&&topList)nodes.forEach(node=>topList.appendChild(node));
+  else if(homeSlot)nodes.forEach(node=>homeSlot.appendChild(node));
 }
 
 $("#q").addEventListener("input",()=>{liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";if(view==="fb")go("home");else render();});
+$("#clearSearch").addEventListener("click",()=>{$("#q").value="";liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";$("#q").dispatchEvent(new Event("input",{bubbles:true}));$("#q").focus();});
 
 $("#more").addEventListener("click",()=>{homeLim+=24;render();});
 
