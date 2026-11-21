@@ -19,12 +19,15 @@ test("external place data is not inserted into local merchant listings",()=>{
  assert.doesNotMatch(html.slice(a,b),/S\.items\.unshift|S\.items\.push|saveState\(/);
 });
 test("live search offers retry and explains network failures in Arabic",()=>{
- assert.match(html,/id="liveDirectoryRetry"/);assert.match(html,/هذا لا يؤكد عدم وجودها على أرض الواقع/);
+ assert.match(html,/id="liveDirectoryRetry"/);assert.match(html,/هذا لا يؤكد عدم وجود محلات أو خدمات على أرض الواقع/);
  assert.match(html,/تعذر الوصول إلى خادم البحث/);assert.doesNotMatch(html,/Failed to fetch/);
 });
-test("home search does not request every category when the query is empty",()=>{
- assert.match(html,/اكتب مثلاً «بقالة» أو «صيدلية» أو اختر فئة محددة لعرض المحلات هنا/);
- assert.match(html,/اكتب اسم الخدمة أو افتح فئة محددة لبدء البحث/);
+test("home opens in browse mode and shows shared approved listings without a search term",()=>{
+ assert.match(html,/const liveWanted=view==="home"\|\|view==="cat"/);
+ assert.match(html,/if\(liveWanted\)runLiveDirectorySearch\(false\)/);
+ assert.match(html,/loadLiveMarketplaceMatches/);
+ assert.match(html,/الإعلانات المنشورة المعتمدة ظاهرة من جميع المحافظات/);
+ assert.match(html,/اختيار المحافظة أو المديرية/);
 });
 test("region count is clearly labeled as device-local",()=>{
  assert.match(html,/إدراج محلي على هذا الجهاز/);
