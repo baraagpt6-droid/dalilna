@@ -9,7 +9,7 @@ Dalilna 1.8.2 — Build and deployment status
 - Shared marketplace API stores user submissions in PostgreSQL with status pending. Only approved, non-expired listings appear in public results.
 - Schema version 2 includes opening_hours and website, plus listing coordinates. The migration is idempotent.
 - The Neon project named dalilna-production-frankfurt has schema migration versions 1 and 2 applied. At the time of the 2026-11-22 review, its marketplace listing table contained zero rows.
-- A second Neon project named Dalilna remains on schema version 1 and does not contain the version 2 opening_hours and website columns. Verify the Render DATABASE_URL points to dalilna-production-frankfurt before bulk migration or production use.
+- A second Neon project named Dalilna remains on schema version 1 and does not contain the version 2 opening_hours and website columns. The live Render service's pg_stat_activity connection was observed on dalilna-production-frankfurt, not the older project. Recheck this after any future DATABASE_URL change.
 - Legacy listings remain in local storage on each user's device until that device uses “نقل إضافاتي القديمة للمراجعة”. The API uses clientRef uniqueness to make retries idempotent. Admin approval is still required before publication.
 - Marketplace moderation requires DALILNA_ADMIN_TOKEN stored as a server environment secret. Do not expose it in GitHub, browser storage, URLs, or APK files.
 - Client, merchant and legacy admin accounts remain device-local and do not provide identity verification. Review SECURITY_LIMITATIONS.txt before public or commercial use.
