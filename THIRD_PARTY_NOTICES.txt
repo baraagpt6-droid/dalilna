@@ -4,3 +4,8 @@
 - Hubaish sub-district names: تم الاستناد إلى قائمة محلية منشورة لعزل مديرية حبيش؛ عدد العزل (22) يتوافق مع صفحة التقسيم الإداري لمحافظة إب بالمركز الوطني للمعلومات. تهجئة الأسماء قد تختلف بين المصادر والقرى.
 - QR generator: مكتبة QR مضمنة داخل ملف index.html؛ راجع رأس المكتبة/إشعار الترخيص المضمن في المصدر.
 - Cairo / Reem Kufi / Readex Pro fonts: تحميل اختياري من Google Fonts عند توفر الإنترنت؛ يعود التطبيق إلى خطوط النظام عند انقطاعه.
+
+
+- OpenStreetMap data: © OpenStreetMap contributors, available under the Open Database License (ODbL). Attribution and license: https://www.openstreetmap.org/copyright.
+- Wikimedia Commons images: each file has its own license and attribution requirements. Dalilna shows the file page, author, and license label when those fields are provided. Check the original page before reuse: https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia.
+- Dalilna 1.5.9 does not use Google Places API for live place search, details, or photos.

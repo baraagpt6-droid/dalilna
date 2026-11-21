@@ -1,39 +1,13 @@
-Dalilna 1.5.8
+Dalilna 1.5.9
 Application release: PWA + Android WebView
-Backend directory API service version: 1.5.0 (separate service package version)
-Gemini cloud assistant (optional, server-side)
-Assistant replies disclose source: Gemini, fixed administrative reference, local, or cloud fallback
-Ibb has 20 districts; Hubaish has 22 sub-districts
-Offline local assistant remains available.
-Admin login is directly visible in the account menu; the logo long-press shortcut was removed.
-Admin root credential reset applied once through adminCredentialVersion=2.
-
-Regional profiles, population projections, map searches, local photos and likes. Local directory searches now offer a Google Maps fallback when no listing is stored on the device.
-
-Admin review requests are surfaced in a full-width dashboard shortcut; pending rows show shop details and explicit approve/reject actions.
-
-Live place discovery is sourced from OpenStreetMap on selected governorate/district or user-approved GPS location. Results show attribution and are not copied into local user listings.
-Google Places is not enabled until a restricted billing-enabled API key is configured.
-
-Live place search uses the Vercel Node Function as primary, with a 35-second client timeout, retry action, and Google Maps fallback.
-
-Live place discovery now queries Nominatim and Overpass directly from the browser. Geocoding is throttled to one request per 1.1 seconds and cached. Overpass has two public endpoints. The interface has a 30-second timeout and retry plus Google Maps fallback.
-
-Live search uses the shared Render API proxy. Nominatim and Overpass requests are globally serialized per API process at 1.1-second intervals, with caching. The browser checks /health before searching and allows up to 100 seconds for free-service wake-up, then offers retry and Google Maps fallback.
-
-Live directory search v1.5.8
-- Google Places search returns rating, rating count, phone, website, opening hours, price level and business status when present in Google's data.
-- Place details load on demand and include photos and visitor reviews with author attribution.
-- Google Places content is not persisted or cached by Dalilna.
-- OpenStreetMap remains the fallback. The Google API key and activation flag remain server-only.
-- Privacy and Terms pages are included in the PWA and Android app.
-
-OpenStreetMap fallback reliability:
-- Overpass endpoints: FOSSGIS, Private.coffee (current replacement for the old Kumi address), and VK Maps.
-- Each provider has its own timeout and retry diagnostics.
-- A failed provider does not stop attempts against the remaining providers.
-
-
-Overpass empty-response fix in 1.5.8:
-- HTTP 200 responses with an Overpass `remark` (for example query timeout or memory error) are treated as incomplete and trigger the next mirror.
-- Malformed successful responses also trigger failover rather than being shown as a legitimate zero-result search.
+Backend directory service release: 1.5.9
+Gemini cloud assistant remains optional and server-side.
+OpenStreetMap is the sole live place-search provider.
+Nominatim resolves selected Yemen regions; Overpass searches FOSSGIS, Private.coffee, and VK Maps with failover on errors, timeouts, remarks, and malformed responses.
+Place cards show only fields present in OSM, including contact details, website, opening hours, description, cuisine, operator, and brand when recorded.
+Wikimedia Commons photos are requested on demand and show file page, author, and license metadata when provided.
+Local place ratings and user-uploaded photos remain on the current device; they are not public or synchronized in this release.
+Google Places API runtime calls and the paid detail/photo routes have been removed.
+No Google API key, billing account, or bank card is needed for live directory search.
+Public OSM and Wikimedia services have fair-use limits and may be temporarily unavailable. Search responses are cached and public Overpass mirrors are throttled.
+PWA and Android WebView HTML, policies, and service-worker cache versions are kept in sync.

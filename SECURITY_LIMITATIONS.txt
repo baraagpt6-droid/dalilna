@@ -18,13 +18,10 @@
 
 قبل الإطلاق العام، انقل المستخدمين والمشرفين والتجار والقوائم والحظر والتقييمات والإعلانات إلى خادم وقاعدة بيانات مركزية، وطبّق RBAC والتحقق من الصلاحيات ومحدد المعدل وسجل التدقيق على الخادم.
 
-15. Google Places API (New) is optional and disabled by default. It requires GOOGLE_PLACES_API_KEY plus GOOGLE_PLACES_ENABLED=true on Render service dalilna-live, a billing-enabled Google Cloud project, and Places API (New). Do not place the key in HTML, Android assets, or GitHub.
-16. Google Places names and addresses are displayed live and must not be copied to local merchant listings or cached. Show Google Maps attribution and follow Google Maps Platform storage, display, terms, and privacy requirements.
-17. The current IP rate limit and provider request gates are process-local. They are not shared across multiple service instances. Configure Google Cloud daily quotas, budget alerts, and API restrictions before enabling the key.
-18. Keep GOOGLE_PLACES_ENABLED unset or false until the app publishes a Privacy Policy and Terms of Use covering Google Maps Platform requirements.
 
-19. Google Place Details and Photos are requested only after the user opens place details. Reviews and photos are shown with the author attributions supplied by Google. The responses are not stored or cached.
-
-19. OpenStreetMap Overpass is a best-effort public fallback. The service retries FOSSGIS, Private.coffee and VK Maps, but public mirrors can be overloaded and Yemen data may be incomplete. A zero result does not prove the business does not exist.
-
-20. Overpass responses that include a `remark` are treated as incomplete. If every configured public mirror fails or times out, the endpoint returns HTTP 503 and the interface offers Google Maps as an external fallback; a live Google Places key is not currently configured.
+15. البحث المباشر عن الأماكن يستخدم OpenStreetMap Nominatim وOverpass فقط. لا يحتوي إصدار 1.5.9 على طلبات Google Places أو مسارات تفاصيل وصور مدفوعة.
+16. Nominatim وOverpass خدمات عامة تخضع لسياسات الاستخدام العادل وحدود الطلبات. يطبق الخادم فاصلاً زمنياً وتخزيناً مؤقتاً، وينتقل بين مرايا Overpass عند التعطل، لكن لا يوجد ضمان تشغيل أو توفر دائم.
+17. Wikimedia Commons مصدر صور اختياري. قد لا تتعلق الصورة بالمكان نفسه. اعرض صفحة الملف واسم المؤلف والترخيص، وتحقق من الترخيص الفردي قبل إعادة الاستخدام.
+18. نتائج OSM قد تكون ناقصة أو قديمة، ووجود صفر نتائج لا يثبت عدم وجود المحل أو الخدمة. تحقق من معلومات المكان ميدانياً قبل الاعتماد عليها.
+19. التقييمات والصور التي يضيفها المستخدم في الإصدار 1.5.9 تحفظ محلياً على الجهاز فقط، ولا تُشارك مع المستخدمين الآخرين أو تُزامن. قد يؤدي حذف بيانات التطبيق إلى فقدها.
+20. محددات الطلبات والتخزين المؤقت تعمل داخل عملية الخادم الواحدة. إذا زاد عدد النسخ أو الحركة، يلزم تخزين مؤقت وحدود مشتركة خارج العملية ومراجعة سياسات مزودي البيانات.
