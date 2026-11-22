@@ -1,4 +1,4 @@
-# Dalilna 2.6.0 — merchant product feed integration
+# Dalilna 2.6.1 — merchant product feed integration
 
 The shared marketplace imports real merchant inventory only through the authenticated server endpoint:
 
