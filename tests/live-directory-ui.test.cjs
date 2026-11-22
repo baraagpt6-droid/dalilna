@@ -129,3 +129,18 @@ test("background sync does not clear lists or show loading labels",()=>{
  assert.ok(marketplace.includes("if (!hadLoadedData) status.textContent"));
  assert.ok(marketplace.includes("6*60*60*1000"));
 });
+
+test("offline AI assistant uses English answers when English is selected",()=>{
+ assert.ok(html.includes("function answerAIArabic(q)"));
+ assert.ok(html.includes("function answerAIEnglish(q)"));
+ assert.ok(html.includes('return curLang==="en"?answerAIEnglish(q):answerAIArabic(q)'));
+ assert.ok(html.includes("No jobs are currently recorded on this device."));
+ assert.ok(html.includes("Nearest matching records with saved coordinates"));
+ assert.ok(html.includes("Please answer in English."));
+});
+
+test("English live-assistant cards and result summaries use English category names",()=>{
+ assert.ok(html.includes('const assistantServiceLabel=curLang==="en"?(serviceNames[serviceIntent.category]'));
+ assert.ok(html.includes('category:curLang==="en"?assistantServiceLabel'));
+ assert.ok(html.includes('"I found "+count+" matching "+assistantServiceLabel'));
+});

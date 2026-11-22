@@ -4920,7 +4920,7 @@ function asksHubaishSubdistricts(q){
   const t=normalizeQuery(q);
   return /حبيش/.test(t)&&/(عزل|عزلات|عزلة|عزله)/.test(t);
 }
-function answerAI(q){
+function answerAIArabic(q){
   const raw=String(q||"").trim(),t=normalizeQuery(raw);
   if(!raw)return "اكتب سؤالك وسأبحث في بيانات الدليل الموجودة على هذا الجهاز.";
   if(asksHubaishSubdistricts(raw))return hubaishSubdistrictAnswer();
@@ -4981,6 +4981,109 @@ if(/طوارئ|اسعاف|شرطه|نجده|دفاع|اطفاء/.test(t))return 
   }
   return `أستطيع البحث في المحلات والخدمات والوظائف والسوق وأسعار الصرف وأرقام الطوارئ المسجلة.\nاكتب اسم الخدمة أو المنطقة.\nتنبيه: أجيب من البيانات المخزنة في هذا الجهاز؛ إذا لم توجد نتيجة فسأقول ذلك بدلاً من اختراع محل أو رقم.`;
 }
+function answerAIEnglish(q){
+ const raw=String(q||"").trim(),t=normalizeQuery(raw);
+ const categoryNames={
+  health:"hospitals and clinics",pharmacy:"pharmacies",vehicles:"car and motorcycle businesses",parts:"vehicle-parts shops",
+  books:"bookshops and stationery shops",elec:"electronics shops",telecom:"mobile-phone shops",money:"banks and exchange offices",
+  grocery:"grocery stores",food:"restaurants and bakeries",cafe:"cafes",real_estate:"real-estate offices",
+  delivery:"delivery and courier services",edu:"schools and universities",hotel:"hotels",beauty:"beauty shops",
+  build:"building-materials shops",craft:"craft and repair services",transport:"transport services",utility:"water and gas services"
+ };
+ const category=id=>categoryNames[id]||CN_EN[id]||CN[id]||String(id||"businesses");
+ const list=(items,render)=>items.map((item,index)=>(index+1)+". "+render(item)).join("\n");
+ const noPhone="Contact details and addresses in these public records have not been field-verified.";
+ if(!raw)return "Ask me about a shop, service, job, marketplace advert or area in Yemen.";
+ if(asksHubaishSubdistricts(raw)){
+  const districts=YEMEN_DISTRICTS["إب"]||[];
+  return "Hubaish is one of Ibb Governorate's 20 districts. The administrative reference used by Dalilna lists 22 sub-districts in Hubaish.\n\nIbb districts:\n"
+   +list(districts,name=>name)
+   +"\n\nHubaish sub-district names are preserved in their local Arabic spelling:\n"
+   +list(HUBAISH_UZ,name=>name)
+   +"\n\nThe figures refer to different administrative levels: 20 districts in Ibb and 22 sub-districts in Hubaish.";
+ }
+ const intent=directoryMapSearchInfo(raw);
+ if(intent&&!intent.rateIntent){
+  const matches=localDirectorySearch(raw,12).filter(item=>item.cat===intent.category&&(!scope||scopeMatchesItem(item)));
+  const wanted=category(intent.category);
+  if(matches.length){
+   return "I found "+matches.length+" "+wanted+" in the directory data saved on this device:\n"
+    +list(matches.slice(0,8),item=>[item.name,item.area,item.dist,item.gov,item.phone].filter(Boolean).join(" — "))
+    +"\n"+noPhone;
+  }
+  return "No "+wanted+" are currently recorded in the local directory data for this search. This does not mean none exist in the area. Try the live map search or broaden the selected governorate or district.";
+ }
+ if(/exchange rate|currency|usd|sar|gold|صرف|دولار|سعودي|عمله|ذهب|ريال/.test(t)){
+  if(!liveFxData?.fresh)return "The exchange-rate source has not confirmed a fresh reading. I will not show an old or estimated price.";
+  const get=(market,key)=>liveFxData.data?.[market]?.items?.[key]||{};
+  const fmt=value=>Number.isFinite(Number(value))?Number(value).toLocaleString("en-US",{maximumFractionDigits:2}):"unavailable";
+  const rows=[["sanaa","Sana'a"],["aden","Aden"]].map(([key,name])=>{
+   const usd=get(key,"usd"),sar=get(key,"sar"),gold=get(key,"gold_gram_21");
+   return name+": USD "+fmt(usd.buy)+" buy / "+fmt(usd.sell)+" sell; SAR "+fmt(sar.buy)+" buy / "+fmt(sar.sell)+" sell; 21K gold per gram "+fmt(gold.buy)+" buy / "+fmt(gold.sell)+" sell.";
+  });
+  return "Indicative market readings, not an official quotation.\n"+rows.join("\n")
+   +"\nLast verified: "+(liveFxData.last_verified_at||liveFxData.last_sync||"unavailable")+"\nSource: https://ye-rial.com/";
+ }
+ if(/emergency|ambulance|police|fire|طوارئ|اسعاف|شرطه|نجده|دفاع|اطفاء/.test(t))
+  return "Emergency numbers saved in this directory copy:\n"+S.emerg+"\nConfirm local numbers before relying on them in an emergency.";
+ if(/complaint|suggestion|report an issue|شكوى|بلاغ|اقتراح|تحسين|تحديث بيانات|تعديل بيانات/.test(t))
+  return "Use the 'Message the administration' action in the Assistant section to send a complaint or suggestion. In this version, the message is saved on this device until a central server workflow is connected.";
+ if(/block|ban|suspend|حظر|احظر|ايقاف|منع حساب/.test(t))
+  return S.session.role==="admin"&&hasPerm("block")
+   ?"Open the administrator panel and choose 'Block and suspend'. You can hide a listing or block a phone number. Blocking in this version applies only on this device."
+   :"Blocking is available to administrators from the control panel.";
+ if(/job|work|employment|salary|وظيف|عمل|توظيف|راتب/.test(t)){
+  const jobs=publicItems().filter(item=>item.cat==="jobs");
+  return jobs.length
+   ?"I found "+jobs.length+" job listings in the local directory:\n"+list(jobs.slice(0,6),item=>[item.name,item.area,item.price,item.phone].filter(Boolean).join(" — "))
+   :"No jobs are currently recorded on this device. This does not mean there are no jobs in the area. Open the Jobs tab to check the latest synced feed.";
+ }
+ if(/marketplace|for sale|wanted|barter|سوق|حراج|للبيع|مطلوب|مقايض|مجانا/.test(t)){
+  const items=publicItems().filter(item=>item.cat==="souq");
+  return items.length
+   ?"I found "+items.length+" marketplace adverts saved on this device:\n"+list(items.slice(0,6),item=>[item.name,item.area,item.price,item.status==="sold"?"Sold":""].filter(Boolean).join(" — "))
+   :"No marketplace adverts are saved on this device. Open the Marketplace tab to view approved shared listings.";
+ }
+ if(/nearest|closest|nearby|اقرب|قريب/.test(t)){
+  if(!userPos)return "To find the nearest business, enable the 'Near my location' filter and grant GPS permission. I will not guess your location.";
+  const near=localDirectorySearch(raw,20).map(item=>({item,km:calcKm(userPos.lat,userPos.lng,item.lat,item.lng)})).filter(x=>x.km!==null).sort((a,b)=>a.km-b.km).slice(0,5);
+  return near.length
+   ?"Nearest matching records with saved coordinates:\n"+list(near,x=>x.item.name+" — "+(x.km<1?Math.round(x.km*1000)+" m":x.km.toFixed(2)+" km")+" — "+(x.item.area||"Location not specified"))
+    +"\nDistances are straight-line distances, not travel times."
+   :"Your location was received, but no matching records have coordinates saved in the directory.";
+ }
+ if(/location|where am i|الموقع|موقعي/.test(t))
+  return userPos?"Your location was shared with your permission. Distances are shown only for records with saved coordinates.":"Your location has not been shared. Use the 'Near my location' filter and grant GPS permission.";
+ if(/open now|opening hours|مفتوح|فاتح|دوام/.test(t)){
+  const open=publicItems().filter(item=>isOpenNow(item.hours)===true);
+  return open.length
+   ?"These listings are marked as open now according to their saved opening hours and Yemen local time:\n"+list(open.slice(0,6),item=>[item.name,item.area].filter(Boolean).join(" — "))
+   :"No saved listings have opening hours that confirm they are open now.";
+ }
+ if(/verified|verification|موثق|توثيق|معتمد/.test(t)){
+  const verified=publicItems().filter(item=>item.verifiedAt);
+  return verified.length
+   ?"I found "+verified.length+" records marked as verified in this local directory:\n"+list(verified.slice(0,6),item=>[item.name,item.area].filter(Boolean).join(" — "))
+   :"No listings are marked as verified in the local directory.";
+ }
+ const hits=localDirectorySearch(raw,6);
+ if(hits.length)
+  return "I found "+hits.length+" possible matches in the local directory:\n"+list(hits,item=>[item.name,category(item.cat),item.village,item.area,item.dist,item.gov,item.phone].filter(Boolean).join(" — "))+"\n"+noPhone;
+ if(/governorate|district|region|كم مديريه|عدد مديريات|مديريات|تقسيم|المحافظه/.test(t)){
+  const gov=GOVS.find(name=>t.includes(normalizeQuery(name)));
+  if(gov){
+   const districts=YEMEN_DISTRICTS[gov]||[];
+   return "Governorate: "+(CN_EN[gov]||gov)+". Districts in Dalilna's administrative reference: "+districts.length+".\n"+districts.join(", ")+"\nThese are administrative divisions, not a list of all villages or businesses.";
+  }
+  const info=selectedRegionInfo();
+  return "Selected area: "+info.title+".\n"+info.meta+"\nListings saved for this area: "+info.items.length+". Dalilna does not have additional official population or business statistics for this area in the current local data.";
+ }
+ return "I can search shops, services, jobs, marketplace adverts, exchange-rate readings and emergency numbers saved in Dalilna. Tell me the service or area. I will say when the local data has no match rather than invent a business or phone number.";
+}
+function answerAI(q){
+ return curLang==="en"?answerAIEnglish(q):answerAIArabic(q);
+}
+
 function buildAssistantContext(question=""){
   const query=normalizeQuery(question);
   const tokens=query.split(/\s+/).filter(w=>w.length>1);
@@ -5037,7 +5140,8 @@ function assistantFallbackApiUrl(){
   return "https://dalilna-oavk.vercel.app/api/assistant";
 }
 async function requestCloudAssistant(q,context){
- const payload=JSON.stringify({question:String(q||"").slice(0,1200),context:context||{}});
+ const question=curLang==="en"?"Please answer in English. Keep business names, place names, addresses and phone numbers exactly as supplied in the directory context. User question: "+String(q||""):String(q||"");
+ const payload=JSON.stringify({question:question.slice(0,1200),context:context||{}});
  const endpoints=[assistantApiUrl(),assistantFallbackApiUrl()];
  for(const endpoint of endpoints){
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),28000);
@@ -5105,6 +5209,14 @@ async function askAssistant(q){
   };
  }
  if(serviceIntent){
+  const serviceNames={
+   health:"hospitals and clinics",pharmacy:"pharmacies",vehicles:"car and motorcycle businesses",parts:"vehicle-parts shops",
+   books:"bookshops and stationery shops",elec:"electronics shops",telecom:"mobile-phone shops",money:"banks and exchange offices",
+   grocery:"grocery stores",food:"restaurants and bakeries",cafe:"cafes",real_estate:"real-estate offices",
+   delivery:"delivery and courier services",edu:"schools and universities",hotel:"hotels",beauty:"beauty shops",
+   build:"building-materials shops",craft:"craft and repair services",transport:"transport services",utility:"water and gas services"
+  };
+  const assistantServiceLabel=curLang==="en"?(serviceNames[serviceIntent.category]||CN_EN[serviceIntent.category]||"businesses"):serviceIntent.label;
   const context=regionCurrentContext(),query=String(q||"");
   const selectedContext={
    ...context,
@@ -5151,7 +5263,7 @@ async function askAssistant(q){
    seen.add(signature);
    cards.push({
     name,
-    category:String(item.category||CN[item.cat]||serviceIntent.label||""),
+    category:curLang==="en"?assistantServiceLabel:String(item.category||CN[item.cat]||serviceIntent.label||""),
     location:[item.address||item.area||item.village,item.district||item.dist,item.governorate||item.gov||selectedContext.gov].filter(Boolean).join("، "),
     phone:String(item.phone||"").trim(),
     mapUrl:mapFor(item),
@@ -5196,7 +5308,7 @@ async function askAssistant(q){
   }
   const count=cards.length;
   const answer=count
-   ?(curLang==="en"?"I found "+count+" matching places for "+serviceIntent.label+" in "+selectedContext.place+". Use the contact and map links where available. Details can change, so confirm before visiting.":"وجدت لك "+count+" نتائج تطابق "+serviceIntent.label+" في "+selectedContext.place+". استخدم رابط الاتصال والخريطة عند توفرهما. قد تتغير البيانات، فتحقق قبل الزيارة.")
+   ?(curLang==="en"?"I found "+count+" matching "+assistantServiceLabel+" in "+selectedContext.place+". Use the contact and map links where available. Details can change, so confirm before visiting.":"وجدت لك "+count+" نتائج تطابق "+serviceIntent.label+" في "+selectedContext.place+". استخدم رابط الاتصال والخريطة عند توفرهما. قد تتغير البيانات، فتحقق قبل الزيارة.")
    :(serviceIntent.productSearch||["jobs","souq","land"].includes(serviceIntent.category)
      ?(curLang==="en"?"There are no approved listings matching this search right now.":"لا توجد إعلانات معتمدة تطابق هذا البحث حالياً.")
      :(curLang==="en"?"I couldn't find matching records in the local catalogue or the live map sources checked. This does not mean the place does not exist.":"لم أعثر على سجل مطابق في الفهرس المحلي أو مصادر الخرائط الحية التي فُحصت. هذا لا يعني أن المكان غير موجود."));
