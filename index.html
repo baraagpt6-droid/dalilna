@@ -2793,13 +2793,6 @@ function normalizeState(raw){
     deadline:cleanText(x.deadline,10),
     ...((typeof x.type==="string"&&["sell","wanted","barter","free"].includes(x.type))?{type:x.type}:{})
   })).filter(x=>x.name);
-  const fxRaw=raw.fx&&typeof raw.fx==="object"?raw.fx:{};
-  const rateGroup=(key)=>{
-    const def=base.fx[key],got=fxRaw[key]&&typeof fxRaw[key]==="object"?fxRaw[key]:{};
-    const out={};
-    for(const k of Object.keys(def))out[k]=cleanNumber(got[k],def[k],0,1e12);
-    return out;
-  };
   const adminsRaw=Array.isArray(raw.admins)?raw.admins:base.admins;
   const admins=adminsRaw.filter(a=>a&&typeof a==="object"&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanText(a.email,160))).map(a=>({
     email:cleanText(a.email,160).toLowerCase(),name:cleanText(a.name,80)||"مشرف",
@@ -2844,7 +2837,7 @@ function normalizeState(raw){
       submittedAt:cleanNumber(x.submittedAt,Date.now(),0,Number.MAX_SAFE_INTEGER)
     })).filter(x=>x.name),
     ads:arrayOfObjects(raw.ads).map((a,i)=>({id:cleanText(a.id,80)||"ad_"+i,title:cleanText(a.title,120),text:cleanText(a.text,400),phone:cleanText(a.phone,40),expiresAt:cleanNumber(a.expiresAt,0,0,Number.MAX_SAFE_INTEGER)})).filter(a=>a.title),
-    fx:{s:rateGroup("s"),a:rateGroup("a"),date:cleanText(fxRaw.date,40)||base.fx.date},
+    fx:{s:{},a:{},date:""},
     rates,favs:Array.isArray(raw.favs)?[...new Set(raw.favs.filter(x=>typeof x==="string").map(x=>x.slice(0,80)))]:[],
     recent:Array.isArray(raw.recent)?raw.recent.filter(x=>typeof x==="string").slice(0,8):[],
     regionPosts:arrayOfObjects(raw.regionPosts).slice(0,120).map((p,i)=>({
@@ -4494,9 +4487,6 @@ $("#souqStoresMore")?.addEventListener("click",()=>{souqStoresVisibleCount+=12;r
 document.addEventListener("change",event=>{
  if(event.target.closest("#sharedSouqGovernorate,#souqStoreCategory")){souqStoresVisibleCount=12;runSouqStores(false);}
 });
-document.addEventListener("click",event=>{
- if(event.target.closest("[data-go='souq']"))window.setTimeout(()=>{souqStoresVisibleCount=12;runSouqStores(false);},350);
-});
 async function loadLiveCommonsPhotos(button){
  const panel=button.parentElement.querySelector(".live-directory-commons-panel");if(!panel)return;
  if(!panel.hidden){panel.hidden=true;button.textContent="البحث عن صور مرخصة";return;}
@@ -5078,7 +5068,7 @@ function render(){
   }else if(view==="cat"){
     $("#clist").hidden=true;
     $("#areaBtn").hidden=true;
-    $("#count").textContent="جارٍ تحميل نتائج "+(CN[curCat]||curCat)+" من فهرس المحافظات…
+    $("#count").textContent="جارٍ تحميل نتائج "+(CN[curCat]||curCat)+" من فهرس المحافظات…";
   }else if(view==="jobs"){
     const jobs=applyFilters(S.items.filter(i=>i.cat==="jobs"&&match(i)));
     $("#jobs").innerHTML=jobs.map(cardHTML).join("")||`<div class="empty">لا توجد وظائف متاحة حالياً.</div>`;
