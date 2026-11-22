@@ -5,28 +5,38 @@ const fs=require("node:fs");
 const {inferCategoryFromQuery,buildOverpassQuery,classifyCategory,searchPlaces}=require("../server");
 
 
-test("global fallback searches Nominatim by query with countrycodes=ye",async()=>{
+test("global fallback searches Nominatim then the Yemen-bounded Overpass mirror",async()=>{
  const originalFetch=global.fetch;
  const unique="dalilna-test-pharmacy-"+Date.now();
- let requestedUrl;
- global.fetch=async input=>{
-  requestedUrl=new URL(String(input));
-  return new Response(JSON.stringify([{
-   place_id:99,osm_type:"node",osm_id:123,lat:"15.36",lon:"44.19",
-   category:"amenity",type:"pharmacy",name:"صيدلية الاختبار",
-   display_name:"صيدلية الاختبار، حبيش، إب، اليمن",
-   address:{country_code:"ye",state:"إب",county:"حبيش"},
-   extratags:{phone:"+967777123456",opening_hours:"08:00-22:00"},
-   namedetails:{"name:en":"Test Pharmacy"}
-  }]),{status:200,headers:{"content-type":"application/json"}});
+ const requested=[];
+ global.fetch=async(input,options={})=>{
+  const url=new URL(String(input));
+  requested.push({url,options});
+  if(url.hostname==="nominatim.openstreetmap.org"){
+   return new Response(JSON.stringify([{
+    place_id:99,osm_type:"node",osm_id:123,lat:"15.36",lon:"44.19",
+    category:"amenity",type:"pharmacy",name:"صيدلية الاختبار",
+    display_name:"صيدلية الاختبار، حبيش، إب، اليمن",
+    address:{country_code:"ye",state:"إب",county:"حبيش"},
+    extratags:{phone:"+967777123456",opening_hours:"08:00-22:00"},
+    namedetails:{"name:en":"Test Pharmacy"}
+   }]),{status:200,headers:{"content-type":"application/json"}});
+  }
+  assert.ok(["overpass-api.de","overpass.private.coffee","maps.mail.ru"].includes(url.hostname),url.hostname);
+  assert.equal(options.method,"POST");
+  const ql=new URLSearchParams(options.body).get("data");
+  assert.ok(ql.includes('area["ISO3166-1"="YE"][admin_level=2]->.yemen'));
+  assert.ok(ql.includes("(area.yemen)"));
+  return new Response(JSON.stringify({elements:[]}),{status:200,headers:{"content-type":"application/json"}});
  };
  try{
   const result=await searchPlaces({q:unique,place:"اليمن",lat:0,lon:0,category:"pharmacy"});
-  assert.ok(requestedUrl);
-  assert.equal(requestedUrl.hostname,"nominatim.openstreetmap.org");
-  assert.equal(requestedUrl.searchParams.get("countrycodes"),"ye");
-  assert.equal(requestedUrl.searchParams.get("q"),unique);
-  assert.equal(requestedUrl.searchParams.has("lat"),false);
+  const nom=requested.find(item=>item.url.hostname==="nominatim.openstreetmap.org");
+  assert.ok(nom);
+  assert.equal(nom.url.searchParams.get("countrycodes"),"ye");
+  assert.equal(nom.url.searchParams.get("q"),unique);
+  assert.equal(nom.url.searchParams.has("lat"),false);
+  assert.ok(requested.some(item=>item.url.hostname==="overpass-api.de"||item.url.hostname==="overpass.private.coffee"||item.url.hostname==="maps.mail.ru"));
   assert.equal(result.count,1);
   assert.equal(result.items[0].category,"pharmacy");
   assert.equal(result.items[0].phone,"+967777123456");
@@ -63,5 +73,5 @@ test("OpenStreetMap stationery search includes real bookstore and stationery tag
 test("classifies named stationery and vehicle places",()=>{
  assert.equal(classifyCategory({shop:"stationery"}),"books");
  assert.equal(classifyCategory({shop:"car"}),"vehicles");
- assert.equal(classifyCategory({shop:"watches"}),"watches");
+ assert.equal(classifyCategory({shop:"watches"}),"gold");
 });
