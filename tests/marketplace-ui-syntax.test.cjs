@@ -28,8 +28,8 @@ test("marketplace client displays rental labels",()=>{
  assert.ok(client.includes('item.listingType === "rent") labels.push("للإيجار")'));
 });
 
-test("PWA version metadata is 2.1.4",()=>{
- assert.ok(html.includes('content="2.1.4"'));
+test("PWA version metadata is 2.1.5",()=>{
+ assert.ok(html.includes('content="2.1.5"'));
 });
 
 test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});

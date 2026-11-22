@@ -28,13 +28,15 @@ test.after(async () => {
   else process.env.GEMINI_MODEL = originalModel;
 });
 
-test("PWA and Android route cloud assistant requests to the Render API", () => {
+test("PWA and Android route cloud assistant requests to Render with a Vercel fallback", () => {
   const root = path.resolve(__dirname, "..");
   const web = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const android = fs.readFileSync(path.join(root, "android/app/src/main/assets/index.html"), "utf8");
   assert.equal(web, android, "Android WebView assets must match the PWA");
   assert.match(web, /https:\/\/dalilna-live\.onrender\.com\/api\/assistant/);
-  assert.doesNotMatch(web, /dalilna-oavk\.vercel\.app\/api\/assistant/);
+  assert.match(web, /https:\/\/dalilna-oavk\.vercel\.app\/api\/assistant/);
+  assert.match(web, /function assistantFallbackApiUrl\(\)/);
+  assert.match(web, /cloud_ai_not_configured/);
 });
 
 test("assistant status reveals only whether the Gemini key is configured", async () => {
@@ -46,6 +48,25 @@ test("assistant status reveals only whether the Gemini key is configured", async
   assert.equal(payload.configured, false);
   assert.equal(payload.model, "gemini-3.8-flash");
   assert.equal(JSON.stringify(payload).includes("GEMINI_API_KEY"), false);
+});
+
+test("Vercel-compatible GET assistant endpoint exposes only key presence", async () => {
+  const previous = process.env.GEMINI_API_KEY;
+  process.env.GEMINI_API_KEY = "test-only-not-a-real-key";
+  try {
+    const response = await nativeFetch(baseUrl + "/api/assistant", {
+      headers: { Origin: "https://dalilna-oavk.vercel.app" }
+    });
+    assert.equal(response.status, 200);
+    const payload = await response.json();
+    assert.equal(payload.provider, "Gemini");
+    assert.equal(payload.configured, true);
+    assert.equal(payload.model, "gemini-3.8-flash");
+    assert.equal(JSON.stringify(payload).includes("test-only-not-a-real-key"), false);
+  } finally {
+    if (previous === undefined) delete process.env.GEMINI_API_KEY;
+    else process.env.GEMINI_API_KEY = previous;
+  }
 });
 
 test("assistant route returns a clear 503 when the server key is not configured", async () => {
@@ -126,4 +147,5 @@ test("assistant preflight advertises POST for the Render-backed endpoint", async
   });
   assert.equal(response.status, 204);
   assert.match(response.headers.get("access-control-allow-methods") || "", /POST/);
+  assert.match(response.headers.get("access-control-allow-methods") || "", /GET/);
 });
