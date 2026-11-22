@@ -83,11 +83,18 @@ jobs:
           if (jobs.items.some(item => item.country !== "Yemen")) throw new Error("The Yemen jobs filter returned another country.");
           const seekers = await get("/api/jobs/candidates?country=Yemen&limit=10");
           if (!Array.isArray(seekers.items)) throw new Error("Job-seeker endpoint did not return an items array.");
+          const assistant = await get("/api/assistant/status");
+          if (assistant.provider !== "Gemini" || typeof assistant.configured !== "boolean") {
+            throw new Error("Gemini assistant status endpoint returned an invalid response.");
+          }
           console.log(JSON.stringify({
             apiVersion: health.version,
             marketplaceDatabaseReady: market.ready,
             jobsReturned: jobs.items.length,
             jobSeekersReturned: seekers.items.length,
+            geminiProvider: assistant.provider,
+            geminiKeyConfigured: assistant.configured,
+            geminiModel: assistant.model,
             jobsFeedUpdatedAt: jobs.fetchedAt
           }, null, 2));
           NODE
