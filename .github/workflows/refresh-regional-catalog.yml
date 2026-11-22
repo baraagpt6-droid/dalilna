@@ -20,7 +20,7 @@ permissions:
 
 concurrency:
   group: dalilna-regional-catalog
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build-catalog:
