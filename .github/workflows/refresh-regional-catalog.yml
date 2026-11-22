@@ -38,11 +38,28 @@ jobs:
       - name: Download current open datasets
         run: |
           curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen-latest.osm.pbf -o yemen-latest.osm.pbf
-          curl -fL --retry 4 --retry-delay 3 https://raw.githubusercontent.com/open-admin-data/yemen-administrative-divisions/master/data/all-governorate.json -o all-governorate.json
-          curl -fL --retry 4 --retry-delay 3 https://raw.githubusercontent.com/open-admin-data/yemen-administrative-divisions/master/data/all-district.json -o all-district.json
-          test -s yemen-latest.osm.pbf
-          test -s all-governorate.json
-          test -s all-district.json
+          # Use the GitHub Contents API for administrative files. It avoids the
+          # intermittent raw.githubusercontent.com 404 responses observed in CI.
+          curl -fL --retry 4 --retry-delay 3 \
+            -H "Accept: application/vnd.github.raw" \
+            "https://api.github.com/repos/open-admin-data/yemen-administrative-divisions/contents/data/all-governorate.json?ref=master" \
+            -o all-governorate.json
+          curl -fL --retry 4 --retry-delay 3 \
+            -H "Accept: application/vnd.github.raw" \
+            "https://api.github.com/repos/open-admin-data/yemen-administrative-divisions/contents/data/all-district.json?ref=master" \
+            -o all-district.json
+          test "$(stat -c%s yemen-latest.osm.pbf)" -gt 1000000
+          test "$(stat -c%s all-governorate.json)" -gt 1000
+          test "$(stat -c%s all-district.json)" -gt 100000
+          python3 - <<'PY'
+          import json
+          for filename, expected in [("all-governorate.json", 22), ("all-district.json", 335)]:
+              with open(filename, encoding="utf-8") as stream:
+                  records = json.load(stream)
+              if not isinstance(records, list) or len(records) != expected:
+                  raise SystemExit(f"{filename}: expected {expected} records, got {len(records) if isinstance(records, list) else type(records).__name__}")
+              print(filename, len(records))
+          PY
       - name: Extract named public places
         run: |
           osmium tags-filter yemen-latest.osm.pbf \
