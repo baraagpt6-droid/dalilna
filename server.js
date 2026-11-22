@@ -858,7 +858,7 @@ async function searchPlaces(params) {
   const lat = hasLat ? Number(params.lat) : NaN;
   const lon = hasLon ? Number(params.lon) : NaN;
   const hasCoordinates = hasLat && hasLon && Number.isFinite(lat) && Number.isFinite(lon)
-    && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
+    && lat >= 11 && lat <= 20.5 && lon >= 41 && lon <= 55.5;
   const radius = Math.min(15000, Math.max(1000, Number(params.radius) || 7000));
   const countrywideSearch = !hasCoordinates && (!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen");
   if (countrywideSearch && query) return searchYemenNominatim(query, category);
