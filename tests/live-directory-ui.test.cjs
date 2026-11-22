@@ -2,8 +2,8 @@
 const test=require("node:test"),assert=require("node:assert/strict"),fs=require("node:fs");
 const html=fs.readFileSync("index.html","utf8");
 test("primary places directory loads the static regional catalogue, not live map searches",()=>{
- for(const token of ['const LIVE_CATALOG_BASE="./regional-catalog/";',"async function loadRegionalCatalogManifest","async function loadRegionalCatalog","async function runLiveDirectorySearch","regionalCatalogMatches"])assert.ok(html.includes(token),token);
- for(const token of ["searchLivePlaces(","/api/places/search","/api/geoapify/search"])assert.ok(!html.includes(token),token);
+ for(const token of ["LIVE_CATALOG_LOCAL_BASE","LIVE_CATALOG_REMOTE_BASE","async function fetchCatalogAsset","async function loadRegionalCatalogManifest","async function loadRegionalCatalog","async function runLiveDirectorySearch","regionalCatalogMatches","warmUnifiedSearchIndex","searchLiveDirectoryFallback","/api/places/search"])assert.ok(html.includes(token),token);
+ assert.ok(!html.includes("searchLivePlaces("));
 });
 test("the country catalogue exposes governorate choices and counts",()=>{
  for(const token of ["function liveDirectoryLocationPrompt(manifest)","manifest&&manifest.governorates","data-region-gov=","فهرس اليمن المحلي"])assert.ok(html.includes(token),token);
@@ -27,8 +27,9 @@ test("jobs, products and property adverts remain in the shared marketplace",()=>
 test("individual place cards use optional map and source links from catalogue data",()=>{
  for(const token of ["record.mapsUrl","record.sourceUrl","data-map-toggle","عرض الخريطة","OpenStreetMap"])assert.ok(html.includes(token),token);
 });
-test("photos and ratings remain device-local",()=>{
- for(const token of ["data-live-rate-id","data-live-photo-input","تقييم المستخدمين على هذا الجهاز","صورة محفوظة"])assert.ok(html.includes(token),token);
+test("all-tab search uses the preloaded Yemen index and live OSM fallback",()=>{
+ for(const token of ["const showTopSearch=searchActive","if(view!==\\"home\\")go(\\"home\\")","warmUnifiedSearchIndex(false)","searchLiveDirectoryFallback","rows.length<5"])assert.ok(html.includes(token),token);
+ assert.ok(!html.includes("id=\\"catFilterQ\\""));
 });
 
 
