@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.1.8">
+<meta name="app-version" content="2.3.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -18,7 +18,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23181411'/%3E%3Cpath d='M18 54 A32 32 0 0 1 82 54 Z' fill='none' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M22 54 L36 54 A14 14 0 0 1 42 42 L29 33 A28 28 0 0 0 22 54 Z' fill='%233A7EC2'/%3E%3Cpath d='M29 33 L42 42 A14 14 0 0 1 50 40 L50 26 A28 28 0 0 0 29 33 Z' fill='%23E8A025'/%3E%3Cpath d='M50 26 L50 40 A14 14 0 0 1 58 42 L71 33 A28 28 0 0 0 50 26 Z' fill='%23D6455D'/%3E%3Cpath d='M71 33 L58 42 A14 14 0 0 1 64 54 L78 54 A28 28 0 0 0 71 33 Z' fill='%23E8A025'/%3E%3Ccircle cx='50' cy='54' r='11' fill='%23F2B949' stroke='%23F4EFE6' stroke-width='3'/%3E%3Crect x='18' y='54' width='64' height='24' rx='4' fill='%23181411' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M50 54 v24 M18 66 h64' stroke='%23F4EFE6' stroke-width='3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./features-2.1.css?v=2.1.8">
+<link rel="stylesheet" href="./features-2.1.css?v=2.3.0">
 <style>
 :root{
   color-scheme:dark;
@@ -584,7 +584,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 @media(max-width:420px){.shared-marketplace-controls{grid-template-columns:1fr}.shared-marketplace-controls .wide{grid-column:auto}}
 .add-lifetime-intro{display:grid;gap:7px;margin:0 0 12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card2);font-size:13px;line-height:1.7}.add-lifetime-intro ol{margin:0;padding-inline-start:22px;display:grid;gap:3px}.dalilna-map{height:230px;min-height:230px;margin:8px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card2)}[data-map-toggle]{min-height:34px;padding:7px 12px;border:1px solid var(--line);border-radius:9px;background:var(--card2);color:var(--ink);font:inherit;cursor:pointer}.region-sources summary{cursor:pointer;font-weight:700}
 
-/* 2.1.8 critical quick-access fallback. */
+/* 2.3.0 critical quick-access fallback. */
 .quick-jump-bar{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:7px;padding:9px 14px 7px;max-width:1160px;margin:0 auto}
 .quick-jump-btn{display:flex;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:6px;padding:6px 5px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--ink);font:600 11.5px 'Readex Pro',Tahoma,sans-serif;text-decoration:none;white-space:normal;text-align:center;overflow:hidden}
 .quick-jump-icon{display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:8px;background:var(--chip);color:var(--acc)}
@@ -835,7 +835,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <section class="panel" id="fxBox">
       <h2>
         <span class="fx-title-group"><svg class="fx-heading-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M15.2 8.3c-.7-.8-1.7-1.2-3.1-1.2-1.5 0-2.5.8-2.5 1.9 0 3.1 5.1 1.1 5.1 4.2 0 1.1-1 2-2.8 2-1.2 0-2.3-.4-3-1.2M12 5.5v13"/></svg><span>أسعار الصرف والذهب اليوم</span></span>
-        <span class="tag" id="fxBadge">محدّث</span>
+        <span class="tag" id="fxBadge">في انتظار المصدر</span><button type="button" class="ghost" id="fxRefresh" style="min-height:30px">تحديث الأسعار</button>
       </h2>
       <div class="fxg" id="fxGrid"></div>
       <div class="fx-calc" id="fxCalcBox">
@@ -907,6 +907,24 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <button class="add" id="sqSell">+ اعرض غرضاً للبيع</button>
       <button class="ghost" id="sqBuy">+ اطلب غرضاً</button>
     </div>
+    <section class="shared-marketplace-panel" id="souqStoresPanel">
+      <div class="shared-marketplace-head"><h3>دليل المتاجر والمحلات المرتبطة بالسوق</h3><button type="button" class="ghost" id="souqStoresRefresh">تحديث المتاجر</button></div>
+      <p class="shared-marketplace-status">أسماء ومواقع متاجر من فهرس OpenStreetMap. وجود المتجر لا يؤكد توفر سلعة أو مخزون أو سعر.</p>
+      <div class="shared-marketplace-controls">
+        <select id="souqStoreCategory">
+          <option value="all">جميع المتاجر المسجلة</option>
+          <option value="telecom">جوالات واتصالات</option><option value="elec">إلكترونيات وكمبيوتر</option>
+          <option value="vehicles">سيارات ومركبات</option><option value="home">أثاث وأجهزة منزلية</option>
+          <option value="solar">طاقة شمسية</option><option value="gold">ذهب ومجوهرات</option>
+          <option value="grocery">بقالات ومواد غذائية</option><option value="food">مطاعم ومخابز</option>
+          <option value="books">مكتبات وقرطاسية</option><option value="build">مواد بناء</option>
+          <option value="real_estate">مكاتب عقارية</option>
+        </select>
+      </div>
+      <div class="shared-marketplace-status" id="souqStoresStatus">جارٍ تحميل دليل المتاجر من فهرس الأماكن.</div>
+      <div class="shared-marketplace-list" id="souqStoresItems"></div>
+      <div id="souqStoresMoreRow" hidden><button type="button" class="ghost" id="souqStoresMore">عرض المزيد</button></div>
+    </section>
     <section class="shared-marketplace-panel" id="sharedSouqPanel">
       <div class="shared-marketplace-head"><h3>المعروضات المعتمدة في كل اليمن</h3><button type="button" class="ghost" id="sharedSouqRefresh">تحديث السوق</button></div>
       <div class="shared-marketplace-controls">
@@ -2707,11 +2725,7 @@ const DEFAULT_STATE={
   ads:[
     {id:"ad1",title:"أعلن عن محلك أو مشروعك مجاناً",text:"وصل خدماتك لكل أبناء مديرية حبيش والمغتربين",phone:"967777000000"}
   ],
-  fx:{
-    s:{usdB:535,usdS:538,sarB:140,sarS:141,aedB:144,aedS:146,omrB:1380,omrS:1395,g24B:44000,g24S:46000,g21B:38500,g21S:40500,g18B:33000,g18S:34800},
-    a:{usdB:2040,usdS:2055,sarB:535,sarS:540,aedB:550,aedS:556,omrB:5250,omrS:5310,g24B:165000,g24S:173000,g21B:145000,g21S:152000,g18B:124000,g18S:130000},
-    date:"اليوم"
-  },
+  fx:{s:{},a:{},date:""},
   rates:{},
   favs:[],
   recent:[],
@@ -2779,13 +2793,6 @@ function normalizeState(raw){
     deadline:cleanText(x.deadline,10),
     ...((typeof x.type==="string"&&["sell","wanted","barter","free"].includes(x.type))?{type:x.type}:{})
   })).filter(x=>x.name);
-  const fxRaw=raw.fx&&typeof raw.fx==="object"?raw.fx:{};
-  const rateGroup=(key)=>{
-    const def=base.fx[key],got=fxRaw[key]&&typeof fxRaw[key]==="object"?fxRaw[key]:{};
-    const out={};
-    for(const k of Object.keys(def))out[k]=cleanNumber(got[k],def[k],0,1e12);
-    return out;
-  };
   const adminsRaw=Array.isArray(raw.admins)?raw.admins:base.admins;
   const admins=adminsRaw.filter(a=>a&&typeof a==="object"&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanText(a.email,160))).map(a=>({
     email:cleanText(a.email,160).toLowerCase(),name:cleanText(a.name,80)||"مشرف",
@@ -2809,6 +2816,7 @@ function normalizeState(raw){
   const arrayOfObjects=(v)=>Array.isArray(v)?v.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)):[];
   return {
     ...base,...raw,
+    fx:{s:{},a:{},date:""},
     items:safeItems,
     seedCatalogVersion:cleanNumber(raw.seedCatalogVersion,0,0,100),
     pending:arrayOfObjects(raw.pending).map((x,i)=>({
@@ -2829,7 +2837,7 @@ function normalizeState(raw){
       submittedAt:cleanNumber(x.submittedAt,Date.now(),0,Number.MAX_SAFE_INTEGER)
     })).filter(x=>x.name),
     ads:arrayOfObjects(raw.ads).map((a,i)=>({id:cleanText(a.id,80)||"ad_"+i,title:cleanText(a.title,120),text:cleanText(a.text,400),phone:cleanText(a.phone,40),expiresAt:cleanNumber(a.expiresAt,0,0,Number.MAX_SAFE_INTEGER)})).filter(a=>a.title),
-    fx:{s:rateGroup("s"),a:rateGroup("a"),date:cleanText(fxRaw.date,40)||base.fx.date},
+    fx:{s:{},a:{},date:""},
     rates,favs:Array.isArray(raw.favs)?[...new Set(raw.favs.filter(x=>typeof x==="string").map(x=>x.slice(0,80)))]:[],
     recent:Array.isArray(raw.recent)?raw.recent.filter(x=>typeof x==="string").slice(0,8):[],
     regionPosts:arrayOfObjects(raw.regionPosts).slice(0,120).map((p,i)=>({
@@ -2906,6 +2914,7 @@ function applyTheme(){
   document.body.classList.toggle("light",S.theme==="light");
 }
 applyTheme();
+let liveFxData=null,liveFxError="",liveFxFetchedAt=0,liveFxPending=null,liveFxController=null;
 function applyLang(){
   curLang=S.lang||"ar";
   $("#langLbl").textContent=curLang==="en"?"EN":"عربي";
@@ -3078,6 +3087,7 @@ function go(v,c){
   if(v==="cat"){$("#catT").textContent=catLabel(c);$("#area").value="";$("#areaLbl").textContent=curLang==="en"?"All Areas":"كل المناطق";}
   window.scrollTo(0,0);
   render();
+  if(v==="souq")runSouqStores(false);
 }
 $("#logoHome").addEventListener("click",e=>{
   e.preventDefault();
@@ -3098,6 +3108,11 @@ function normalizePlace(s){
     .replace(/[أإآٱ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي")
     .replace(/[ًٌٍَُِّْـ]/g,"").replace(/[^\u0600-\u06FF0-9a-z\s]/gi," ")
     .replace(/\s+/g," ").trim().toLowerCase();
+}
+function normalizeSearchPlace(s){
+ const runtime=window.DalilnaRegionalCatalog;
+ if(runtime&&typeof runtime.normalizeSearchText==="function")return runtime.normalizeSearchText(s);
+ return normalizePlace(s).split(/\s+/).map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
 }
 const HUBAISH_ALIASES={
   "بني الضاحتين":"بني الضاحيتين","جبل عميقة":"جبل عنقه","وادي المعقاب":"وادي العقاب",
@@ -3148,10 +3163,7 @@ function getScopeOptions(){
 }
 function buildScopeSelector(){
   const opts=getScopeOptions();const cur=opts.find(o=>o.val===scope)||opts[0];const stats=catalogStatsForScope();
-  let place="اليمن";
-  if(scope&&scope.startsWith("gov:"))place="محافظة "+scope.slice(4);
-  else if(scope&&scope.startsWith("district:")){const pair=scope.slice(9).split("|");place="مديرية "+(pair[1]||"")+" — "+(pair[0]||"");}
-  const countLabel=stats?place+" • "+regionNumber(stats.count)+" مكان وخدمة":(!liveCatalogManifest?(liveCatalogLoadError?"تعذر تحميل فهرس الأماكن":"جارٍ تحميل فهرس اليمن…"):(cur.count?Number(cur.count).toLocaleString("ar")+" سجل محلي":""));
+  const countLabel=stats?regionNumber(stats.count)+" مكان وخدمة":(!liveCatalogManifest?(liveCatalogLoadError?"تعذر تحميل فهرس الأماكن":"جارٍ تحميل فهرس اليمن…"):(cur.count?Number(cur.count).toLocaleString("ar")+" سجل محلي":""));
   const approximate=Number(stats?.approximateCount||cur.approximateCount||0);
   const qualityLabel=approximate>0?" · "+regionNumber(approximate)+" تقديري":"";
   $("#scopeLbl").textContent=cur.label+(countLabel?" · "+countLabel:"")+qualityLabel;
@@ -3865,73 +3877,147 @@ function renderAds(){
   $("#dots").innerHTML=sl.map((_,i)=>`<i class="${i===0?"on":""}"></i>`).join("");
 }
 
-/* Exchange Rates & Calculator */
-function renderFx(){
-  const n=v=>Number(v||0).toLocaleString("en-US");
-  const isEn=curLang==="en";
-  const currencyIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M15.1 8.2c-.7-.7-1.7-1.1-3-1.1-1.5 0-2.4.7-2.4 1.8 0 3 5 1.1 5 4 0 1.1-1 2-2.8 2-1.2 0-2.2-.4-2.9-1.1M12 5.5v13"/></svg>';
-  const goldIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-2.1 10H6.1L4 9Z"/><path d="m7 9 2-4h6l2 4M8 13h8"/></svg>';
-  const asset=(kind,label)=>'<span class="fx-asset"><span class="fx-asset-icon '+kind+'">'+(kind==="gold"?goldIcon:currencyIcon)+'</span><span>'+label+'</span></span>';
-  const card=(t,o)=>`<div class="fxc"><h3><span>${t}</span><span style="font-size:11px;color:var(--mute)">${T("inYer")}</span></h3>
-    <table class="fx-tbl">
-      <tr><th>${T("currCol")}</th><th>${T("buyCol")}</th><th>${T("sellCol")}</th></tr>
-      <tr><td>${asset("currency",isEn?"US Dollar ($)":"دولار أمريكي ($)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.usdB)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.usdS)}</span></td></tr>
-      <tr><td>${asset("currency",isEn?"Saudi Riyal (SAR)":"ريال سعودي (SAR)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.sarB)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.sarS)}</span></td></tr>
-      <tr><td>${asset("currency",isEn?"UAE Dirham (AED)":"درهم إماراتي (AED)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.aedB||Math.round(o.usdB/3.67))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.aedS||Math.round(o.usdS/3.67))}</span></td></tr>
-      <tr><td>${asset("currency",isEn?"Omani Rial (OMR)":"ريال عماني (OMR)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.omrB||Math.round(o.usdB*2.58))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.omrS||Math.round(o.usdS*2.6))}</span></td></tr>
-      <tr><td>${asset("gold",isEn?"Gold 24K (g)":"ذهب عيار 24 (جرام)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g24B||Math.round(o.g21B*1.14))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g24S||Math.round(o.g21S*1.14))}</span></td></tr>
-      <tr><td>${asset("gold",isEn?"Gold 21K (g)":"ذهب عيار 21 (جرام)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g21B)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g21S)}</span></td></tr>
-      <tr><td>${asset("gold",isEn?"Gold 18K (g)":"ذهب عيار 18 (جرام)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g18B||Math.round(o.g21B*0.857))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g18S||Math.round(o.g21S*0.857))}</span></td></tr>
-    </table></div>`;
-  $("#fxGrid").innerHTML=card(T("sanaaRates"),S.fx.s)+card(T("adenRates"),S.fx.a);
-  $("#fxMeta").textContent=(isEn?"Last updated: ":"آخر تحديث: ")+(S.fx.date||(isEn?"Today":"اليوم"));
-  calcFx();
+/* Live Exchange Rates & Gold — public Yemen market API */
+const LIVE_FX_URL="https://ye-rial.com/api/v1/current/";
+function parseYemenMarketTimestamp(value){
+ const raw=String(value||"").trim();
+ if(!raw)return NaN;
+ const normalized=raw.includes("T")?raw:raw.replace(" ","T");
+ const zoned=/Z$|[+-]\d\d:\d\d$/.test(normalized)?normalized:normalized+"+03:00";
+ return Date.parse(zoned);
 }
+function cleanMarketNumber(value){
+ const parsed=Number(value);
+ return Number.isFinite(parsed)&&parsed>0?parsed:null;
+}
+function isFreshYemenMarketData(payload){
+ if(!payload||payload.status!=="success")return false;
+ const verifiedAt=parseYemenMarketTimestamp(payload.last_verified_at||payload.last_sync);
+ if(!Number.isFinite(verifiedAt))return false;
+ const age=Date.now()-verifiedAt;
+ if(age< -5*60*1000||age>24*60*60*1000)return false;
+ for(const market of ["sanaa","aden"]){
+  const items=payload.data?.[market]?.items;
+  if(!items)return false;
+  for(const instrument of ["usd","sar","gold_gram_21"]){
+   const row=items[instrument];
+   if(!row||cleanMarketNumber(row.buy)===null||cleanMarketNumber(row.sell)===null)return false;
+  }
+ }
+ return true;
+}
+async function loadLiveFx(force){
+ if(!force&&liveFxPending)return liveFxPending;
+ if(!force&&liveFxData?.fresh&&Date.now()-liveFxFetchedAt<60000)return liveFxData;
+ if(liveFxController)liveFxController.abort();
+ const controller=new AbortController();liveFxController=controller;
+ const timeout=setTimeout(()=>controller.abort(),12000);
+ liveFxPending=(async()=>{
+  try{
+   const response=await fetch(LIVE_FX_URL,{headers:{Accept:"application/json"},cache:"no-store",signal:controller.signal});
+   if(!response.ok)throw new Error("HTTP "+response.status);
+   const payload=await response.json();
+   if(payload?.status!=="success"||!payload?.data?.sanaa?.items||!payload?.data?.aden?.items)throw new Error("صيغة بيانات الأسعار غير صالحة");
+   const fresh=isFreshYemenMarketData(payload);
+   liveFxData={...payload,fresh};
+   liveFxFetchedAt=Date.now();
+   liveFxError=fresh?"":"المصدر لم يؤكد قراءة حديثة خلال آخر 24 ساعة. أخفينا الأسعار حتى تصل قراءة حديثة.";
+   return liveFxData;
+  }catch(error){
+   liveFxData=null;liveFxFetchedAt=0;
+   liveFxError=controller.signal.aborted?"انتهت مهلة الاتصال بمصدر الأسعار.":"تعذر جلب الأسعار الحية: "+String(error?.message||"خطأ اتصال");
+   return null;
+  }finally{
+   clearTimeout(timeout);
+   if(liveFxController===controller)liveFxController=null;
+   liveFxPending=null;
+   renderFx();
+  }
+ })();
+ return liveFxPending;
+}
+function renderFx(){
+ const isEn=curLang==="en";
+ const n=value=>cleanMarketNumber(value)===null?"—":Number(value).toLocaleString("en-US",{maximumFractionDigits:2});
+ const currencyIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M15.1 8.2c-.7-.7-1.7-1.1-3-1.1-1.5 0-2.4.7-2.4 1.8 0 1.1-1 2-2.8 2-1.2 0-2.2-.4-2.9-1.1M12 5.5v13"/></svg>';
+ const goldIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-2.1 10H6.1L4 9Z"/><path d="m7 9 2-4h6l2 4M8 13h8"/></svg>';
+ const asset=(kind,label)=>'<span class="fx-asset"><span class="fx-asset-icon '+kind+'">'+(kind==="gold"?goldIcon:currencyIcon)+'</span><span>'+label+'</span></span>';
+ const row=(kind,label,quote)=>{
+  const buy=quote?n(quote.buy):"—",sell=quote?n(quote.sell):"—";
+  return '<tr><td>'+asset(kind,label)+'</td><td class="num"><span class="rate-pill rate-buy">'+buy+'</span></td><td class="num"><span class="rate-pill rate-sell">'+sell+'</span></td></tr>';
+ };
+ const marketCard=(key,title)=>{
+  const market=liveFxData?.data?.[key],items=market?.items||{};
+  return '<div class="fxc"><h3><span>'+title+'</span><span style="font-size:11px;color:var(--mute)">'+(market?.edition||"")+'</span></h3><table class="fx-tbl"><tr><th>'+T("currCol")+'</th><th>'+T("buyCol")+'</th><th>'+T("sellCol")+'</th></tr>'+
+   row("currency",isEn?"US Dollar (USD)":"الدولار الأمريكي (USD)",items.usd)+
+   row("currency",isEn?"Saudi Riyal (SAR)":"الريال السعودي (SAR)",items.sar)+
+   row("gold",isEn?"21K gold / gram":"جرام ذهب عيار 21",items.gold_gram_21)+
+   row("gold",isEn?"21K gold coin (8g)":"جنيه ذهب عيار 21 (8 جرام)",items.gold_coin_21_8g)+
+   '</table></div>';
+ };
+ if(liveFxData?.fresh){
+  $("#fxGrid").innerHTML=marketCard("sanaa",isEn?"Sana'a":"صنعاء")+marketCard("aden",isEn?"Aden":"عدن");
+  $("#fxBadge").textContent=isEn?"Live source":"مصدر مباشر";
+  const verified=liveFxData.last_verified_at||liveFxData.last_sync||"";
+  $("#fxMeta").innerHTML=(isEn?"Verified: ":"آخر تحقق: ")+esc(verified)+' · '+(isEn?"Indicative market rates, not official. ":"أسعار استرشادية للسوق وليست نشرة رسمية. ")+'<a href="https://ye-rial.com/" target="_blank" rel="noopener noreferrer">الريال اليمني اليوم</a>';
+ }else{
+  $("#fxGrid").innerHTML='<div class="fxc"><p class="where">'+esc(liveFxError||(isEn?"Loading live market data…":"جارٍ تحميل أسعار السوق…"))+'</p></div>';
+  $("#fxBadge").textContent=isEn?"Awaiting source":"في انتظار المصدر";
+  $("#fxMeta").innerHTML='المصدر: <a href="https://ye-rial.com/api/docs/" target="_blank" rel="noopener noreferrer">توثيق الأسعار</a> · لن نعرض قيماً محفوظة من نسخة قديمة.';
+ }
+ calcFx();
+}
+$("#fxRefresh")?.addEventListener("click",()=>loadLiveFx(true));
+setInterval(()=>{if(!document.hidden)loadLiveFx(false);},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadLiveFx(false);});
 let calcFromVal="USD",calcToVal="YER_S";
 const CURR_OPTS=[
-  {val:"USD",label:"دولار أمريكي (USD)",toLabel:"إلى دولار أمريكي (USD)",badge:"$"},
-  {val:"SAR",label:"ريال سعودي (SAR)",toLabel:"إلى ريال سعودي (SAR)",badge:"SAR"},
-  {val:"AED",label:"درهم إماراتي (AED)",toLabel:"إلى درهم إماراتي (AED)",badge:"AED"},
-  {val:"OMR",label:"ريال عماني (OMR)",toLabel:"إلى ريال عماني (OMR)",badge:"OMR"},
-  {val:"YER_S",label:"ريال يمني (صنعاء)",toLabel:"إلى ريال يمني (صنعاء)",badge:"صنعاء"},
-  {val:"YER_A",label:"ريال يمني (عدن)",toLabel:"إلى ريال يمني (عدن)",badge:"عدن"}
+ {val:"USD",label:"دولار أمريكي (USD)",toLabel:"إلى دولار أمريكي (USD)",badge:"USD"},
+ {val:"SAR",label:"ريال سعودي (SAR)",toLabel:"إلى ريال سعودي (SAR)",badge:"SAR"},
+ {val:"YER_S",label:"ريال يمني — صنعاء (الطبعة القديمة)",toLabel:"إلى ريال يمني — صنعاء",badge:"صنعاء"},
+ {val:"YER_A",label:"ريال يمني — عدن (الطبعة الجديدة)",toLabel:"إلى ريال يمني — عدن",badge:"عدن"}
 ];
-$("#calcFromBtn").addEventListener("click",()=>{
-  openCustomPicker({
-    title:"اختر العملة المحوّل منها",
-    searchable:false,
-    options:CURR_OPTS.map(c=>({val:c.val,label:c.label,count:c.badge})),
-    selected:calcFromVal,
-    onSelect:val=>{
-      calcFromVal=val;
-      $("#calcFromLbl").textContent=CURR_OPTS.find(c=>c.val===val).label;
-      calcFx();
-    }
-  });
-});
-$("#calcToBtn").addEventListener("click",()=>{
-  openCustomPicker({
-    title:"اختر العملة المحوّل إليها",
-    searchable:false,
-    options:CURR_OPTS.map(c=>({val:c.val,label:c.toLabel,count:c.badge})),
-    selected:calcToVal,
-    onSelect:val=>{
-      calcToVal=val;
-      $("#calcToLbl").textContent=CURR_OPTS.find(c=>c.val===val).toLabel;
-      calcFx();
-    }
-  });
-});
+$("#calcFromBtn").addEventListener("click",()=>openCustomPicker({
+ title:"اختر العملة المحوّل منها",searchable:false,
+ options:CURR_OPTS.map(item=>({val:item.val,label:item.label,count:item.badge})),
+ selected:calcFromVal,onSelect:value=>{calcFromVal=value;$("#calcFromLbl").textContent=CURR_OPTS.find(item=>item.val===value).label;calcFx();}
+}));
+$("#calcToBtn").addEventListener("click",()=>openCustomPicker({
+ title:"اختر العملة المحوّل إليها",searchable:false,
+ options:CURR_OPTS.map(item=>({val:item.val,label:item.toLabel,count:item.badge})),
+ selected:calcToVal,onSelect:value=>{calcToVal=value;$("#calcToLbl").textContent=CURR_OPTS.find(item=>item.val===value).toLabel;calcFx();}
+}));
 function calcFx(){
-  const amt=parseFloat($("#calcAmt").value)||0;
-  const from=calcFromVal,to=calcToVal;
-  const aedRate=S.fx.s.aedB||Math.round(S.fx.s.usdB/3.67);
-  const omrRate=S.fx.s.omrB||Math.round(S.fx.s.usdB*2.58);
-  const rates={USD:S.fx.s.usdB,SAR:S.fx.s.sarB,AED:aedRate,OMR:omrRate,YER_S:1,YER_A:S.fx.s.usdB/S.fx.a.usdB};
-  const inYerS=amt*(rates[from]||1);
-  const res=inYerS/(rates[to]||1);
-  const labels={USD:"دولار أمريكي",SAR:"ريال سعودي",AED:"درهم إماراتي",OMR:"ريال عماني",YER_S:"ريال يمني (صنعاء)",YER_A:"ريال يمني (عدن)"};
-  $("#calcRes").textContent=res.toLocaleString("en-US",{maximumFractionDigits:2})+" "+labels[to];
+ const amount=Number.parseFloat($("#calcAmt").value)||0,from=calcFromVal,to=calcToVal,output=$("#calcRes");
+ if(!liveFxData?.fresh){output.textContent="تظهر نتيجة التحويل بعد وصول أسعار مؤكدة حديثاً من المصدر.";return;}
+ if(from===to){output.textContent=amount.toLocaleString("en-US",{maximumFractionDigits:2})+" "+CURR_OPTS.find(item=>item.val===to).badge;return;}
+ const oldMarket=liveFxData.data.sanaa.items,newMarket=liveFxData.data.aden.items;
+ const val=(market,currency,side)=>cleanMarketNumber(market?.[currency]?.[side]);
+ let result=null;
+ if(from==="YER_S"&&to==="YER_A"){
+  const oldBuy=val(oldMarket,"usd","buy"),newSell=val(newMarket,"usd","sell");
+  if(oldBuy&&newSell)result=amount/oldBuy*newSell;
+ }else if(from==="YER_A"&&to==="YER_S"){
+  const newBuy=val(newMarket,"usd","buy"),oldSell=val(oldMarket,"usd","sell");
+  if(newBuy&&oldSell)result=amount/newBuy*oldSell;
+ }else if(from==="USD"&&to==="SAR"){
+  const market=to==="SAR"?oldMarket:newMarket,usdBuy=val(market,"usd","buy"),sarSell=val(market,"sar","sell");
+  if(usdBuy&&sarSell)result=amount*usdBuy/sarSell;
+ }else if(from==="SAR"&&to==="USD"){
+  const market=from==="SAR"?oldMarket:newMarket,sarBuy=val(market,"sar","buy"),usdSell=val(market,"usd","sell");
+  if(sarBuy&&usdSell)result=amount*sarBuy/usdSell;
+ }else{
+  const market=(to==="YER_A"||from==="YER_A")?newMarket:oldMarket;
+  if(from==="USD"||from==="SAR"){
+   const source=val(market,from==="USD"?"usd":"sar","buy");
+   if(source!==null)result=amount*source;
+  }else if(to==="USD"||to==="SAR"){
+   const target=val(market,to==="USD"?"usd":"sar","sell");
+   if(target)result=amount/target;
+  }
+ }
+ if(!Number.isFinite(result))output.textContent="تعذر حساب التحويل من الأسعار المتاحة.";
+ else output.textContent=result.toLocaleString("en-US",{maximumFractionDigits:2})+" "+CURR_OPTS.find(item=>item.val===to).badge;
 }
 $("#calcAmt").addEventListener("input",calcFx);
 
@@ -3993,7 +4079,7 @@ function directoryMapSearchInfo(q){
   ];
   const product=productIntents.find(item=>item.test.test(text));
   const services=[
-    {category:"grocery",label:"بقالات ومحلات تموين",test:/بقال|تموين|سوبر\\s?ماركت|مواد غذائيه|جمعيه استهلاكيه/},
+    {category:"grocery",label:"بقالات ومحلات تموين",test:/بقال|تموين|سوبر\s?ماركت|مواد غذائيه|جمعيه استهلاكيه/},
     {category:"health",label:"مستشفيات وعيادات ومراكز صحية",test:/مستشف|مستوصف|مركز صحي|مركز طبي|عياده|عيادات|مختبر|طبيب|دكتور|اسنان/},
     {category:"pharmacy",label:"صيدليات",test:/صيدل|دواء|ادويه|علاج|حبوب|مستلزمات طبيه/},
     {category:"food",label:"مطاعم ومخابز",test:/مطعم|مطاعم|مخبز|مخابز|وجبات/},
@@ -4028,7 +4114,7 @@ function directoryMapSearchInfo(q){
   return {category,productType:product?product.productType:"",label,place,mapQuery,productSearch:!!product};
 }
 function liveDirectoryPanelHTML(){
- return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>دليل المحلات والخدمات حسب المحافظة</b><div class="live-directory-sub">يعرض سجلاً محلياً من بيانات مفتوحة. افتح خريطة المكان من بطاقته عند الحاجة إلى الاتجاهات.</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث السجل</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تحميل سجل المحافظة…</div><div class="live-directory-list" id="liveDirectoryItems"></div><div class="live-directory-attribution" id="liveDirectoryAttribution">© OpenStreetMap contributors · التقسيم الإداري: Open Admin Data (CC BY 4.0).</div><div class="live-directory-legal"><a href="./privacy.html">سياسة الخصوصية</a><a href="./terms.html">شروط الاستخدام</a></div></section>';
+ return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>البحث في دليل المحلات والخدمات اليمني</b><div class="live-directory-sub">يبحث في المحافظات الـ22 عند كتابة اسم أو اختيار قسم. اختيار المحافظة اختياري لتضييق النتائج.</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث السجل</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تحميل سجل الأماكن…</div><div class="live-directory-list" id="liveDirectoryItems"></div><div class="live-directory-attribution" id="liveDirectoryAttribution">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · التقسيم الإداري: <a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.</div><div class="live-directory-legal"><a href="./privacy.html">سياسة الخصوصية</a><a href="./terms.html">شروط الاستخدام</a></div></section>';
 }
 const LIVE_DIRECTORY_API="https://dalilna-live.onrender.com";
 const LIVE_CATALOG_BASE="./regional-catalog/";
@@ -4076,7 +4162,7 @@ function liveDirectoryCardHTML(item){
  '<div class="live-directory-actions"><button type="button" data-fav="'+esc(itemId)+'" aria-label="إضافة إلى المفضلة">'+(S.favs.includes(itemId)?"♥":"♡")+'</button></div></article>';
 }
 function geoapifyDirectoryCardHTML(item){
- const phone=String(item.phone||"").trim(),phoneHref=phone.replace(/[^+\\d]/g,"");
+ const phone=String(item.phone||"").trim(),phoneHref=phone.replace(/[^+\d]/g,"");
  const phoneHtml=phone
   ?'<p class="google-place-phone">الهاتف: <a href="tel:'+esc(phoneHref)+'">'+esc(phone)+'</a></p>'
   :'<p class="google-place-phone muted">رقم الهاتف غير متوفر في بيانات هذا المكان.</p>';
@@ -4167,7 +4253,7 @@ function getMarketplaceCount(category){const ctx=regionCurrentContext(),counts=c
 function getDirectoryCategoryCount(category){const stats=catalogStatsForScope(),categories=stats?.categories||{};const aliases=category==="land"?["real_estate"]:category==="parts"?["vehicles"]:[];return Number(categories?.[category]||0)+aliases.reduce((sum,key)=>sum+Number(categories?.[key]||0),0)+getMarketplaceCount(category);}
 async function loadRegionalCatalogManifest(force){
  if(!force&&liveCatalogManifestPromise)return liveCatalogManifestPromise;
- const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=2.1.8";
+ const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=2.3.0";
  liveCatalogManifestPromise=fetch(manifestUrl,{headers:{Accept:"application/json"},cache:"no-store"}).then(async response=>{
   if(!response.ok)throw new Error("ملف فهرس المحافظات غير متاح حالياً (HTTP "+response.status+").");
   const data=await response.json();if(!data||!Array.isArray(data.governorates))throw new Error("صيغة فهرس المحافظات غير صالحة.");
@@ -4180,13 +4266,33 @@ async function loadRegionalCatalog(gov,force){
  const manifest=await loadRegionalCatalogManifest(force),key=normalizePlace(gov),region=(manifest.governorates||[]).find(item=>normalizePlace(item?.name)===key);
  if(!region||!region.file)throw new Error("لا توجد قائمة بيانات لهذه المحافظة في ملف الفهرس.");
  const cached=liveCatalogFiles.get(region.file);if(!force&&cached)return {region,manifest,data:cached};
- const response=await fetch(LIVE_CATALOG_BASE+encodeURIComponent(region.file)+"?v=2.1.8",{headers:{Accept:"application/json"},cache:"no-store"});
+ const response=await fetch(LIVE_CATALOG_BASE+encodeURIComponent(region.file)+"?v=2.3.0",{headers:{Accept:"application/json"},cache:"no-store"});
  if(!response.ok)throw new Error("تعذر تحميل سجل المحافظة.");
  const payload=await response.json(),items=normalizeRegionalCatalogItems(payload);
  if(!items.length&&Number(region.count||0)>0)throw new Error("ملف المحافظة لا يحتوي سجلات قابلة للقراءة.");
  const data=payload&&typeof payload==="object"&&!Array.isArray(payload)?{...payload,items}:{governorate:region.name,items,snapshotDate:manifest.snapshotDate};
- data.items=items;liveCatalogFiles.set(region.file,data);buildScopeSelector();renderCategories();renderRegionInfo();
+ data.items=items.map(item=>({...item,governorate:item.governorate||region.name}));
+ liveCatalogFiles.set(region.file,data);buildScopeSelector();renderCategories();renderRegionInfo();
  return {region,manifest,data};
+}
+let liveAllCatalogPromise=null;
+async function loadAllRegionalCatalog(force){
+ if(!force&&liveAllCatalogPromise)return liveAllCatalogPromise;
+ const loading=(async()=>{
+  const manifest=await loadRegionalCatalogManifest(force),regions=manifest.governorates||[],items=[];
+  for(let offset=0;offset<regions.length;offset+=4){
+   const group=await Promise.all(regions.slice(offset,offset+4).map(async region=>{
+    const loaded=await loadRegionalCatalog(region.name,force);
+    return loaded.data.items.map(item=>({...item,governorate:item.governorate||region.name}));
+   }));
+   for(const rows of group)items.push(...rows);
+  }
+  if(items.length!==Number(manifest.totalCount))throw new Error("عدد سجلات المحافظات ("+items.length+") لا يطابق إجمالي الفهرس ("+manifest.totalCount+").");
+  return {manifest,items};
+ })();
+ if(!force)liveAllCatalogPromise=loading;
+ try{return await loading;}
+ finally{if(liveAllCatalogPromise===loading)liveAllCatalogPromise=null;}
 }
 function regionalCatalogMatches(items,context,query,category,productType){
  if(category==="jobs"||category==="souq"||category==="land"||category==="marketplace")return [];
@@ -4223,13 +4329,13 @@ function regionalCatalogMatches(items,context,query,category,productType){
   gov:["حكومية","حكومي","مكتب","مكاتب"],
   farm:["زراعة","مزرعة","مزارع","مواشي","أعلاف"]
  };
- const filler=["ابحث","بحث","عن","في","من","اليمن","محل","محلات","خدمة","خدمات","مكان","اماكن"];
- const ignored=new Set([...(categoryWords[wanted]||[]).map(normalizePlace),...filler.map(normalizePlace)].filter(Boolean));
- const tokens=normalizePlace(query).split(/\s+/).filter(token=>token&&!ignored.has(token));
+ const filler=["ابحث","بحث","عن","في","من","و","اليمن","محل","محلات","خدمة","خدمات","مكان","اماكن"];
+ const ignored=new Set([...(categoryWords[wanted]||[]).map(normalizeSearchPlace),...filler.map(normalizeSearchPlace)].filter(Boolean));
+ const tokens=normalizeSearchPlace(query).split(/\s+/).filter(token=>token&&!ignored.has(token));
  return (items||[]).filter(item=>{
   if(wanted!=="all"&&item.category!==wanted)return false;
   if(context&&(context.type==="district"||context.type==="subdistrict")&&context.district&&normalizePlace(item.district)!==normalizePlace(context.district))return false;
-  const hay=normalizePlace([item.name,item.address,item.description,item.governorate,item.district,item.category].filter(Boolean).join(" "));
+  const hay=normalizeSearchPlace([item.name,item.address,item.description,item.governorate,item.district,item.category].filter(Boolean).join(" "));
   return tokens.every(token=>hay.includes(token));
  });
 }
@@ -4256,7 +4362,9 @@ function renderLiveDirectoryResponse(data){
  box.classList.remove("live-google-results");
  if(attribution)attribution.innerHTML='المصدر: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · التقسيم الإداري: <a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.';
  const date=data.snapshotDate||data.manifest&&data.manifest.snapshotDate||"غير محدد";
- status.textContent=(data.regionName?"محافظة "+data.regionName+" · ":"")+Number(items.length).toLocaleString("ar")+" نتيجة من الفهرس المحلي · آخر تحديث: "+date+(liveSharedMatches.length?" · إعلانات معتمدة: "+liveSharedMatches.length:"")+(liveSharedLoadError?" · تعذر تحديث الإعلانات المشتركة":"");
+ const regionLabel=data.context?.type==="country"?"جميع المحافظات · ":(data.regionName?"محافظة "+data.regionName+" · ":"");
+ status.textContent=regionLabel+Number(items.length).toLocaleString("ar")+" نتيجة من فهرس الأماكن · آخر تحديث: "+date+(liveSharedMatches.length?" · إعلانات معتمدة: "+liveSharedMatches.length:"")+(liveSharedLoadError?" · تعذر تحديث الإعلانات المشتركة":"");
+ if(view==="cat"&&$("#count"))$("#count").textContent=Number(items.length).toLocaleString("ar")+" نتيجة في "+(CN[curCat]||curCat);
  if(!items.length){
   const msg=data.classifiedOnly
    ?"هذا القسم يعتمد على إعلانات المستخدمين والتجار التي تعتمدها الإدارة. لم توجد إعلانات معتمدة تطابق البحث حالياً."
@@ -4273,7 +4381,7 @@ function liveDirectoryLocationPrompt(manifest){
  const box=$("#liveDirectoryItems");if(!box)return;
  const rows=manifest&&manifest.governorates||[];
  const total=rows.reduce((sum,row)=>sum+Number(row.count||0),0);
- $("#liveDirectoryStatus").textContent="فهرس اليمن المحلي: "+Number(total).toLocaleString("ar")+" مكاناً مسجلاً موزعة على "+rows.length+" محافظة. اختر المحافظة لعرض القائمة.";
+ $("#liveDirectoryStatus").textContent="فهرس اليمن المحلي: "+Number(total).toLocaleString("ar")+" مكاناً مسجلاً موزعة على "+rows.length+" محافظة. اكتب اسم المكان للبحث في اليمن كله، أو اختر محافظة لتصفية النتائج.";
  const buttons=rows.map(row=>'<button type="button" class="region-governorate-pill" data-region-gov="'+esc(row.name)+'">'+esc(row.name)+' <small>'+Number(row.count||0).toLocaleString("ar")+'</small></button>').join("");
  box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">اختر المحافظة لعرض المحلات والخدمات والمدارس والمرافق المسجلة فيها. السجل لا يحصر كل نشاط موجود في الواقع.</div><div class="region-governorate-pills">'+buttons+'</div>';
 }
@@ -4317,18 +4425,29 @@ async function runLiveDirectorySearch(force){
   const requestTimer=setTimeout(()=>controller.abort(),18000);
   try{
    const sharedPromise=loadLiveMarketplaceMatches(query,category,productType,controller.signal,force,listingType);
-   if(!context.gov){
+   const classifiedOnly=["jobs","souq","land","marketplace"].includes(category);
+   if(!context.gov&&!query&&category==="all"&&!Object.values(flt).some(Boolean)){
     const manifest=await loadRegionalCatalogManifest(force);
     if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
     liveDirectoryLocationPrompt(manifest);
     sharedPromise.then(()=>{if(seq===liveDirectorySeq&&!controller.signal.aborted)liveDirectoryLocationPrompt(manifest);});
     return;
    }
-   const classifiedOnly=["jobs","souq","land","marketplace"].includes(category);
-   const loaded=classifiedOnly?null:await loadRegionalCatalog(context.gov,force);
+   let manifest=null,rows=[];
+   if(!classifiedOnly){
+    if(context.gov){
+     const loaded=await loadRegionalCatalog(context.gov,force);
+     manifest=loaded.manifest;
+     rows=regionalCatalogMatches(loaded.data.items,context,query,category,productType);
+    }else{
+     status.textContent="جارٍ البحث في سجلات المحافظات الـ22…";
+     const loaded=await loadAllRegionalCatalog(force);
+     manifest=loaded.manifest;
+     rows=regionalCatalogMatches(loaded.items,context,query,category,productType);
+    }
+   }
    if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
-   const rows=loaded?regionalCatalogMatches(loaded.data.items,context,query,category,productType):[];
-   const responseData={items:rows,manifest:loaded?.manifest,snapshotDate:loaded?.data?.snapshotDate,regionName:context.gov,context,classifiedOnly};
+   const responseData={items:rows,manifest,snapshotDate:manifest?.snapshotDate,regionName:context.gov||"اليمن",context,classifiedOnly};
    renderLiveDirectoryResponse(responseData);
    sharedPromise.then(()=>{if(seq===liveDirectorySeq&&!controller.signal.aborted)renderLiveDirectoryResponse(responseData);});
   }catch(error){
@@ -4341,6 +4460,40 @@ async function runLiveDirectorySearch(force){
   }
  },260);
 }
+let souqStoresSeq=0,souqStoresVisibleCount=12;
+async function runSouqStores(force){
+ const box=$("#souqStoresItems"),status=$("#souqStoresStatus");
+ if(!box||!status)return;
+ const seq=++souqStoresSeq,gov=$("#sharedSouqGovernorate")?.value||"all",category=$("#souqStoreCategory")?.value||"all";
+ status.textContent="جارٍ تحميل دليل المتاجر من فهرس الأماكن المفتوح…";
+ box.innerHTML='<p class="where">جارٍ تحميل المتاجر المسجلة…</p>';
+ try{
+  let items=[],manifest;
+  if(gov!=="all"){
+   const loaded=await loadRegionalCatalog(gov,force);manifest=loaded.manifest;items=loaded.data.items;
+  }else{
+   const loaded=await loadAllRegionalCatalog(force);manifest=loaded.manifest;items=loaded.items;
+  }
+  if(seq!==souqStoresSeq)return;
+  const storeCategories=new Set(["grocery","food","cafe","telecom","elec","vehicles","real_estate","build","craft","parts","transport","money","utility","market","solar","wedding","hotel","clothes","home","books","beauty","salon","laundry","delivery","gold","watches","farm"]);
+  if(category==="all")items=items.filter(item=>storeCategories.has(item.category));
+  else items=items.filter(item=>item.category===category);
+  const visible=items.slice(0,souqStoresVisibleCount);
+  status.textContent=Number(items.length).toLocaleString("ar")+" متجراً/موقعاً تجارياً مسجلاً · "+(gov==="all"?"كل المحافظات":gov)+" · فهرس "+(manifest.snapshotDate||"");
+  box.innerHTML=visible.map(regionalCatalogCardHTML).join("")||'<div class="live-directory-empty">لا توجد أماكن مسجلة في هذه الفئة ضمن بيانات المصدر لهذه المنطقة. هذا لا يؤكد عدم وجود متاجر على أرض الواقع.</div>';
+  if($("#souqStoresMoreRow"))$("#souqStoresMoreRow").hidden=items.length<=visible.length;
+  if($("#souqStoresMore"))$("#souqStoresMore").textContent="عرض المزيد ("+(items.length-visible.length)+")";
+ }catch(error){
+  if(seq!==souqStoresSeq)return;
+  status.textContent="تعذر تحميل دليل المتاجر: "+String(error?.message||"خطأ غير معروف");
+  box.innerHTML='<div class="live-directory-empty">تعذر تحميل بيانات المتاجر. حاول التحديث مرة أخرى.</div>';
+ }
+}
+$("#souqStoresRefresh")?.addEventListener("click",()=>{souqStoresVisibleCount=12;runSouqStores(true);});
+$("#souqStoresMore")?.addEventListener("click",()=>{souqStoresVisibleCount+=12;runSouqStores(false);});
+document.addEventListener("change",event=>{
+ if(event.target.closest("#sharedSouqGovernorate,#souqStoreCategory")){souqStoresVisibleCount=12;runSouqStores(false);}
+});
 async function loadLiveCommonsPhotos(button){
  const panel=button.parentElement.querySelector(".live-directory-commons-panel");if(!panel)return;
  if(!panel.hidden){panel.hidden=true;button.textContent="البحث عن صور مرخصة";return;}
@@ -4417,9 +4570,12 @@ function answerAI(q){
     return `لا توجد ${serviceIntent.label} مسجلة في دليلنا حالياً ضمن البيانات المتاحة على هذا الجهاز. هذا لا يعني عدم وجودها في المنطقة. استخدم زر خرائط Google أسفل الإجابة للبحث خارج الدليل.`;
   }
   if(/صرف|دولار|سعودي|عمله|ذهب|ريال/.test(t)){
-    return `أسعار الصرف المدخلة في هذا الجهاز (قد تحتاج إلى تحديث من الإدارة):\nصنعاء: الدولار شراء ${S.fx.s.usdB} / بيع ${S.fx.s.usdS}، السعودي شراء ${S.fx.s.sarB} / بيع ${S.fx.s.sarS}.\nعدن: الدولار شراء ${S.fx.a.usdB} / بيع ${S.fx.a.usdS}، السعودي شراء ${S.fx.a.sarB} / بيع ${S.fx.a.sarS}.\nلا أستطيع تأكيد أنها أسعار السوق اللحظية.`;
+    if(!liveFxData?.fresh)return "لم يصل تأكيد حديث للأسعار من المصدر. استخدم زر تحديث الأسعار، ولن نعرض أرقاماً قديمة.";
+    const item=(market,key)=>liveFxData.data?.[market]?.items?.[key]||{};
+    const fmt=value=>Number.isFinite(Number(value))?Number(value).toLocaleString("ar-YE",{maximumFractionDigits:2}):"غير متاح";
+    return "مؤشرات سوق استرشادية وليست نشرة رسمية.\\nصنعاء: الدولار "+fmt(item("sanaa","usd").buy)+" شراء / "+fmt(item("sanaa","usd").sell)+" بيع، السعودي "+fmt(item("sanaa","sar").buy)+" شراء / "+fmt(item("sanaa","sar").sell)+" بيع، جرام الذهب 21 "+fmt(item("sanaa","gold_gram_21").buy)+" شراء / "+fmt(item("sanaa","gold_gram_21").sell)+" بيع.\\nعدن: الدولار "+fmt(item("aden","usd").buy)+" شراء / "+fmt(item("aden","usd").sell)+" بيع، السعودي "+fmt(item("aden","sar").buy)+" شراء / "+fmt(item("aden","sar").sell)+" بيع، جرام الذهب 21 "+fmt(item("aden","gold_gram_21").buy)+" شراء / "+fmt(item("aden","gold_gram_21").sell)+" بيع.\\nآخر تحقق: "+(liveFxData.last_verified_at||liveFxData.last_sync||"غير متاح")+"\\nالمصدر: https://ye-rial.com/";
   }
-  if(/طوارئ|اسعاف|شرطه|نجده|دفاع|اطفاء/.test(t))return "أرقام الطوارئ المسجلة في نسخة الدليل هذه:\n"+S.emerg+"\nتحقق من الرقم المحلي قبل الاعتماد عليه في الحالات الطارئة.";
+if(/طوارئ|اسعاف|شرطه|نجده|دفاع|اطفاء/.test(t))return "أرقام الطوارئ المسجلة في نسخة الدليل هذه:\n"+S.emerg+"\nتحقق من الرقم المحلي قبل الاعتماد عليه في الحالات الطارئة.";
   if(/شكوى|بلاغ|اقتراح|تحسين|تحديث بيانات|تعديل بيانات/.test(t))return "يمكنك إرسال شكوى أو اقتراح من زر «إرسال رسالة إلى الإدارة» داخل قسم المساعد. ستُحفظ الرسالة في صندوق المشرف على هذا الجهاز فقط حتى ربط التطبيق بخادم مركزي.";
   if(/حظر|احظر|ايقاف|ايقاف متجر|منع حساب/.test(t))return S.session.role==="admin"&&hasPerm("block")?"يمكنك فتح لوحة المشرف ثم تبويب «الحظر والإيقاف». تستطيع إيقاف إدراج منفرد أو حظر رقم صاحب محل أو وظيفة أو إعلان. الحظر في هذه النسخة محلي على هذا الجهاز فقط.":"إدارة الحظر متاحة للمشرف من لوحة التحكم.";
   if(/وظيف|عمل|توظيف|راتب/.test(t)){
@@ -4497,7 +4653,7 @@ function buildAssistantContext(question=""){
     directory:rows.filter(i=>i.categoryId!=="jobs"&&i.categoryId!=="souq"),
     jobs:rows.filter(i=>i.categoryId==="jobs"),
     marketplace:rows.filter(i=>i.categoryId==="souq"),
-    rates:S.fx,
+    rates:liveFxData?.fresh?liveFxData:null,
     emergencyNumbers:S.emerg,
     notice:"All records are locally stored user-generated content and may be unverified. Verified status is provided per record. This context excludes private account and admin data."
   };
@@ -4817,32 +4973,19 @@ function renderAdminPanel(){
     });
   }else if(admTab==="fx"){
     body.innerHTML=`
-      <div class="two">
-        <label>دولار صنعاء (شراء)<input id="fx_su_b" type="number" value="${S.fx.s.usdB}"></label>
-        <label>دولار صنعاء (بيع)<input id="fx_su_s" type="number" value="${S.fx.s.usdS}"></label>
-        <label>سعودي صنعاء (شراء)<input id="fx_ss_b" type="number" value="${S.fx.s.sarB}"></label>
-        <label>سعودي صنعاء (بيع)<input id="fx_ss_s" type="number" value="${S.fx.s.sarS}"></label>
-        <label>دولار عدن (شراء)<input id="fx_au_b" type="number" value="${S.fx.a.usdB}"></label>
-        <label>دولار عدن (بيع)<input id="fx_au_s" type="number" value="${S.fx.a.usdS}"></label>
-        <label>سعودي عدن (شراء)<input id="fx_as_b" type="number" value="${S.fx.a.sarB}"></label>
-        <label>سعودي عدن (بيع)<input id="fx_as_s" type="number" value="${S.fx.a.sarS}"></label>
-      </div>
+      <p class="where">أسعار الصرف والذهب تأتي تلقائياً من مصدر الريال اليمني اليوم. لا تحفظ هذه الشاشة أسعاراً يدوية حتى لا تظهر أرقام قديمة.</p>
+      <p class="where"><a href="https://ye-rial.com/api/docs/" target="_blank" rel="noopener noreferrer">توثيق مصدر الأسعار</a></p>
       <label style="margin-top:8px">رقم واتساب الإدارة مع مفتاح الدولة<input id="admAdminWa" dir="ltr" inputmode="tel" value="${esc(S.adminWhatsApp)}"></label>
       <label style="margin-top:8px">أرقام الطوارئ والخدمات<textarea id="admEm" rows="3">${esc(S.emerg)}</textarea></label>
-      <button type="button" class="add" id="fxSaveBtn" style="margin-top:8px">حفظ الأسعار والأرقام</button>`;
+      <button type="button" class="add" id="fxSaveBtn" style="margin-top:8px">حفظ أرقام الإدارة والخدمات</button>`;
     $("#fxSaveBtn").onclick=()=>{
-      if(!hasPerm("fx")){toast("ليست لديك صلاحية تعديل أسعار الصرف.");return;}
-      S.fx.s.usdB=+$("#fx_su_b").value;S.fx.s.usdS=+$("#fx_su_s").value;
-      S.fx.s.sarB=+$("#fx_ss_b").value;S.fx.s.sarS=+$("#fx_ss_s").value;
-      S.fx.a.usdB=+$("#fx_au_b").value;S.fx.a.usdS=+$("#fx_au_s").value;
-      S.fx.a.sarB=+$("#fx_as_b").value;S.fx.a.sarS=+$("#fx_as_s").value;
-      S.fx.date=new Date().toLocaleDateString("ar");
+      if(!hasPerm("fx")){toast("ليست لديك صلاحية تعديل الإعدادات.");return;}
       S.emerg=$("#admEm").value;
       const adminWa=digits($("#admAdminWa").value);
       if(adminWa.length<10||adminWa.length>15){toast("أدخل رقم واتساب الإدارة بمفتاح الدولة بشكل صحيح.");return;}
       S.adminWhatsApp=adminWa;
-      logAction("تحديث أسعار الصرف وأرقام الطوارئ وواتساب الإدارة");
-      saveState();renderFx();renderEmerg();toast("تم حفظ الأسعار والأرقام");
+      logAction("تحديث أرقام الطوارئ وواتساب الإدارة");
+      saveState();renderEmerg();toast("تم حفظ أرقام الإدارة والخدمات");
     };
   }else if(admTab==="logs"){
     const ticketHtml=S.tickets.filter(t=>t.status!=="closed").map(t=>`<div class="ticket-row"><div class="top"><b>${esc(t.type)} · ${esc(t.name||"زائر")}</b><span class="tag">${new Date(t.at).toLocaleDateString("ar")}</span></div><div class="where">${esc(t.phone||"بدون رقم")}</div><p>${esc(t.text)}</p><div class="fbtn">${t.phone?`<a class="wa" target="_blank" rel="noopener noreferrer" href="${waLink(t.phone)}">رد واتساب</a>`:""}<button type="button" class="ghost" data-ticket-close="${esc(t.id)}">إغلاق البلاغ</button></div></div>`).join("");
@@ -4899,6 +5042,7 @@ function renderAdminPanel(){
 
 /* Main Render Loop */
 function render(){
+  if(view!=="cat"){$("#clist").hidden=false;$("#areaBtn").hidden=false;}
   renderRegionInfo();
   renderRichRegionProfile();
   renderCategories();
@@ -4929,15 +5073,9 @@ function render(){
     $("#list").innerHTML=res.slice(0,homeLim).map(cardHTML).join("")||emptySearchFallbackHTML(q||"محلات وخدمات");
     $("#more").hidden=res.length<=homeLim;
   }else if(view==="cat"){
-    const inCat=S.items.filter(i=>i.cat===curCat);
-    const areas=[...new Set(inCat.map(i=>i.area).filter(Boolean))];
-    const curA=$("#area").value;
-    if(curA&&!areas.includes(curA))$("#area").value="";
-    const ar=$("#area").value;
-    $("#areaLbl").textContent=ar||(curLang==="en"?`All Areas (${areas.length})`:`كل المناطق (${areas.length})`);
-    const shown=applyFilters(inCat.filter(i=>(!ar||i.area===ar)&&match(i)));
-    $("#count").textContent=`${shown.length} نتيجة`;
-    $("#clist").innerHTML=shown.map(cardHTML).join("")||emptySearchFallbackHTML($("#q").value.trim()||CN[curCat]||curCat);
+    $("#clist").hidden=true;
+    $("#areaBtn").hidden=true;
+    $("#count").textContent="جارٍ تحميل نتائج "+(CN[curCat]||curCat)+" من فهرس المحافظات…";
   }else if(view==="jobs"){
     const jobs=applyFilters(S.items.filter(i=>i.cat==="jobs"&&match(i)));
     $("#jobs").innerHTML=jobs.map(cardHTML).join("")||`<div class="empty">لا توجد وظائف متاحة حالياً.</div>`;
@@ -4999,6 +5137,7 @@ if($("#aiCloudConsent")){
   $("#aiModeHint").textContent=S.aiCloudConsent?"المساعد السحابي مفعّل بموافقتك. قد يُرسل سؤالك وبيانات الإدراجات العامة ذات الصلة، ومنها أرقام التواصل، إلى خادم التطبيق ومزود الذكاء الاصطناعي. يمكنك إيقافه في أي وقت.":"المساعد المحلي يبحث في بيانات هذا الجهاز دون إنترنت. المساعد السحابي متوقف ولن تُرسل بيانات الدليل لخدمة خارجية.";
 }
 renderEmerg();
+loadLiveFx(false);
 const sharedItemId=new URLSearchParams(location.search).get("item");
 if(sharedItemId){const sharedItem=S.items.find(item=>item.id===sharedItemId);if(sharedItem)openDetail(sharedItem);}
 
@@ -5077,6 +5216,6 @@ window.DalilnaMarketplaceBridge={
 })();
 </script>
 <script src="./marketplace-client.js"></script>
-<script src="./features-2.1.js?v=2.1.8" defer></script>
+<script src="./features-2.1.js?v=2.3.0" defer></script>
 </body>
 </html>

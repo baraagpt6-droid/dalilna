@@ -31,6 +31,10 @@
    .replace(/ؤ/g,"و").replace(/ئ/g,"ي").replace(/[^\u0600-\u06FF0-9a-z\s]/gi," ")
    .replace(/\s+/g," ").trim().toLowerCase();
  }
+ function normalizeSearchText(value){
+  return normalizeArabic(value).split(/\s+/).filter(Boolean)
+   .map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
+ }
  function yemenPhone(phone){
   let value=String(phone||"").replace(/\D/g,"");
   if(value.startsWith("00"))value=value.slice(2);
@@ -39,7 +43,7 @@
   const mobile=/^7[01378]\d{7}$/.test(value);
   return {local:value,isMobile:mobile,whatsapp:mobile?"967"+value:""};
  }
- const api={isRecord,normalizeItems,normalizeArabic,yemenPhone};
+ const api={isRecord,normalizeItems,normalizeArabic,normalizeSearchText,yemenPhone};
  root.DalilnaRegionalCatalog=api;
  if(typeof module!=="undefined"&&module.exports)module.exports=api;
 })(typeof window!=="undefined"?window:globalThis);

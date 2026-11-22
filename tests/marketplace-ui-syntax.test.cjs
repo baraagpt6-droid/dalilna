@@ -51,10 +51,42 @@ test("job cards only render apply buttons from approved official provider hosts"
  assert.ok(jobs.includes('function isOfficialApplicationUrl'));
 });
 
-test("PWA version metadata is 2.1.8",()=>{
- assert.ok(html.includes('content="2.1.8"'));
- assert.ok(html.includes('features-2.1.css?v=2.1.8'));
- assert.ok(html.includes('features-2.1.js?v=2.1.8'));
+test("PWA version metadata and asset cache tags are 2.3.0",()=>{
+ assert.ok(html.includes('content="2.3.0"'));
+ assert.ok(html.includes('features-2.1.css?v=2.3.0'));
+ assert.ok(html.includes('features-2.1.js?v=2.3.0'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.3.0"'));
+});
+test("main directory search loads all 22 governorate files without requiring a selected governorate",()=>{
+ assert.ok(html.includes("async function loadAllRegionalCatalog(force)"));
+ assert.ok(html.includes("regionalCatalogMatches(loaded.items,context,query,category,productType)"));
+ assert.ok(html.includes("جارٍ البحث في سجلات المحافظات الـ22"));
+ assert.ok(html.includes("normalizeSearchPlace"));
+});
+test("Souq store directory is loaded on demand and kept separate from approved sale listings",()=>{
+ assert.ok(html.includes('id="souqStoresPanel"'));
+ assert.ok(html.includes('id="souqStoreCategory"'));
+ assert.ok(html.includes("async function runSouqStores(force)"));
+ assert.ok(html.includes("OpenStreetMap"));
+ assert.ok(html.includes("لا يؤكد توفر سلعة"));
+ assert.ok(html.includes('id="sharedSouqPanel"'));
+});
+test("exchange rates use fresh public quotes and do not display saved device prices",()=>{
+ assert.ok(html.includes('https://ye-rial.com/api/v1/current/'));
+ assert.ok(html.includes("last_verified_at"));
+ assert.ok(html.includes("24*60*60*1000"));
+ assert.ok(html.includes("liveFxData?.fresh"));
+ assert.ok(!html.includes("S.fx.s.usdB"));
+ assert.ok(!html.includes("S.fx.a.usdB"));
+});
+test("Android 2.3.0 updates app version and clears only the WebView HTTP cache",()=>{
+ const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
+ const activity=fs.readFileSync("android/app/src/main/java/ye/dalilna/app/MainActivity.java","utf8");
+ assert.ok(gradle.includes("versionCode = 230"));
+ assert.ok(gradle.includes('versionName = "2.3.0"'));
+ assert.ok(activity.includes("webView.clearCache(true)"));
+ assert.ok(activity.includes("installed_version_code"));
+ assert.ok(activity.includes("Keep DOM storage/localStorage intact"));
 });
 
 test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black shapes",()=>{

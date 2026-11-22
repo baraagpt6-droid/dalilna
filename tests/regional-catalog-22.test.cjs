@@ -59,6 +59,11 @@ test("Arabic letters normalize consistently for instant search",()=>{
  assert.equal(runtime.normalizeArabic("إب"),runtime.normalizeArabic("اب"));
  assert.equal(runtime.normalizeArabic("على"),runtime.normalizeArabic("علي"));
 });
+test("global Arabic search strips the definite article and folds hamza and taa marbuta",()=>{
+ assert.equal(runtime.normalizeSearchText("الزوقري"),runtime.normalizeSearchText("زوقري"));
+ assert.equal(runtime.normalizeSearchText("أحمد"),runtime.normalizeSearchText("احمد"));
+ assert.equal(runtime.normalizeSearchText("صيدلية"),runtime.normalizeSearchText("صيدليه"));
+});
 test("WhatsApp detection only returns Yemen mobile numbers",()=>{
  for(const prefix of ["70","71","73","77","78"])assert.equal(runtime.yemenPhone("+967"+prefix+"1234567").isMobile,true,prefix);
  for(const phone of ["+967 1 234 567","+967 2 234 567","+967 4 234 567","01 234567"])assert.equal(runtime.yemenPhone(phone).isMobile,false,phone);

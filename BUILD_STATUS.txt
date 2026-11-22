@@ -1,16 +1,34 @@
-Dalilna 1.9.1 — Build and deployment status
-===========================================
+Dalilna 2.3.0 — Build and deployment status
+=============================================
 
-- Release target: 1.9.1 (Android versionCode 181).
-- Primary place discovery uses a static per-governorate OpenStreetMap catalogue. The app's regional directory does not depend on live Geoapify, Nominatim, Photon, or Overpass requests.
-- The current catalogue snapshot contains 14,837 named places across 22 governorates. It is refreshed weekly by GitHub Actions from a Geofabrik Yemen extract.
-- Catalogue categories include health, grocery, mosques, food, education, hotels, transport, pharmacies, banks, vehicles, clothing, telecoms, government, electronics, weddings, household goods, books, building supplies, delivery, cafes, beauty, crafts, salons, estate agents, farms and watches. The 1.9.1 refresh adds dedicated categories for markets and jewellery shops.
-- OpenStreetMap-derived records use ODbL-1.0 attribution. Administrative reference data comes from Open Admin Data Yemen under CC BY 4.0.
-- Administrative polygon assignments are preferred when a matching polygon exists. Nearest-centroid fallbacks are explicitly labelled approximate.
-- OpenStreetMap coverage is incomplete. A missing result does not prove that a business or facility does not exist.
-- Individual place cards keep optional OpenStreetMap links. Maps are not queried to populate the regional directory.
-- Marketplace listings include jobs, products, cars, motorcycles, land, houses, apartments and rentals. The public API supports exact listing-type filtering; public results contain approved, non-expired listings only.
-- New submissions remain pending until server-side admin approval. The production Neon database uses marketplace schema version 2.
-- Legacy listings must still be migrated from each device using the in-app migration action.
-- Render dalilna-live remains the shared marketplace API. Legacy Render services remain untouched until old clients are checked.
-- Android APK is debug-signed for testing. Play Store production signing remains separate.
+Release target: 2.3.0
+Android versionCode: 230
+Web version: 2.3.0
+
+Changes prepared in branch feat/dalilna-global-search-market-fx-v2.3.0:
+- Global search across all 22 Yemen governorate catalogue files without a required governorate selection.
+- Arabic search normalization for Alif variants, taa marbuta/ha, alif maqsura/ya, diacritics and the definite article.
+- Category selection displays matching regional-catalogue locations without requiring a governorate filter.
+- Souq has a distinct commercial-place directory sourced from OpenStreetMap. It is filtered by governorate/category and loads only when the Souq screen opens.
+- Approved user-submitted marketplace adverts remain separate from map directory records. Map records do not claim product stock, a current selling price or a verified seller.
+- Exchange rates and gold are read from the public ye-rial.com current API. Readings older than 24 hours or missing required USD/SAR/21K gold values are hidden; no hard-coded device values are displayed.
+- The governorate/district scope label no longer repeats the same governorate name.
+- PWA cache namespace and asset versions are updated to 2.3.0.
+- Android versionCode/versionName are 230/2.3.0. WebView HTTP cache is cleared once on app-version upgrades while local user data is preserved.
+- Android CI synchronizes current PWA and regional-catalogue assets before building the debug APK.
+
+Current source catalogue snapshot:
+- 14,886 OpenStreetMap place records.
+- 22 governorates.
+- 335 districts.
+- Snapshot date: 2026-11-22.
+
+Validation and release status:
+- CI, PWA deployment and Android APK build have not yet run for this branch.
+- Product-stock feeds are not connected. Live inventory and merchant prices must be supplied by a verified merchant integration or approved listings.
+- Android APK remains a debug testing package, not a Play Store production-signed release.
+
+Sources and attribution:
+- OpenStreetMap contributors, ODbL-1.0.
+- Open Admin Data Yemen, CC BY 4.0.
+- Exchange indicators: https://ye-rial.com/ (API documentation: https://ye-rial.com/api/docs/).
