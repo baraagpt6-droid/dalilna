@@ -21,10 +21,12 @@ function validHttps(value){
  try{const url=new URL(String(value||""));return url.protocol==="https:"&&!url.username&&!url.password?url.href:"";}catch(_){return "";}
 }
 function sourceId(url){return crypto.createHash("sha256").update(url).digest("hex").slice(0,16);}
+function isInactiveFeedItem(raw){
+ const status=String(raw?.status||raw?.availability||"available").toLowerCase();
+ return raw?.active===false||["sold","deleted","expired","inactive","unavailable","out_of_stock"].includes(status);
+}
 function mapFeedItem(raw){
- if(!raw||typeof raw!=="object"||Array.isArray(raw))return null;
- const status=String(raw.status||raw.availability||"available").toLowerCase();
- if(raw.active===false||["sold","deleted","expired","inactive","unavailable","out_of_stock"].includes(status))return null;
+ if(!raw||typeof raw!=="object"||Array.isArray(raw)||isInactiveFeedItem(raw))return null;
  const title=clean(raw.title||raw.name||raw.product_name,120);
  const id=clean(raw.id||raw.sku||raw.product_id||raw.url,100);
  const productType=clean(raw.productType||raw.product_type||raw.type,32);
@@ -32,23 +34,29 @@ function mapFeedItem(raw){
  const phone=phoneNumber(raw.phone||raw.whatsapp||raw.whatsappNumber||raw.whatsapp_number);
  const governorate=clean(raw.governorate||raw.city_governorate,80);
  const district=clean(raw.district||raw.directorate,100);
- const currency=clean(raw.currency||"YER",8).toUpperCase();
+ const currencyInput=clean(raw.currency||"YER",8).toUpperCase();
+ const currency=currencyInput==="OTHER"?"other":currencyInput;
  const listingType=clean(raw.listingType||raw.listing_type||"sale",16);
  const condition=clean(raw.condition||"unknown",16);
- if(!title||!id||!sellerName||!phone||!governorate||!GOVERNORATES.has(governorate)||!district||raw.price==null||clean(raw.price,80)==="")return null;
+ const priceText=clean(raw.price??"",80).replace(/,/g,"");
+ const priceValue=Number(priceText);
+ if(!title||!id||!sellerName||!phone||!GOVERNORATES.has(governorate)||!district||!priceText||
+    !Number.isFinite(priceValue)||priceValue<0||(priceValue===0&&listingType!=="free"))return null;
  if(!PRODUCT_TYPES.has(productType)||!CURRENCIES.has(currency)||!LISTING_TYPES.has(listingType)||!CONDITIONS.has(condition))return null;
  if(listingType==="rent"&&!["land","property","apartment","house","car","motorcycle"].includes(productType))return null;
+ const productGroup=Object.entries(PRODUCT_GROUPS).find(([,types])=>types.includes(productType))?.[0]||"";
+ if(!PRODUCT_GROUPS_ALLOWED.has(productGroup))return null;
  const productUrl=validHttps(raw.productUrl||raw.product_url||raw.url||raw.website);
- const productGroup=Object.entries(PRODUCT_GROUPS).find(([,types])=>types.includes(productType))?.[0]||"other";
  return {
   id,title,productType,productGroup,listingType,condition,sellerName,phone,governorate,district,
   area:clean(raw.neighbourhood||raw.area||"",120),
   description:clean(raw.description||raw.summary||"",1800),
-  price:clean(raw.price??"",80),currency,
+  price:priceValue.toString(),currency,
   website:productUrl,
   sourceName:clean(raw.sourceName||raw.source_name||sellerName,100)
  };
 }
+
 async function getJson(url){
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
  try{
@@ -70,15 +78,18 @@ async function syncConfiguredFeeds(){
  }
  const token=String(process.env.DALILNA_PRODUCT_SYNC_TOKEN||"");
  if(token.length<32)throw new Error("DALILNA_PRODUCT_SYNC_TOKEN must contain at least 32 characters");
- const collected=[],sourceStats=[],failures=[];
+ const collected=[],sourceStats=[],failures=[];let rejected=0,oversized=false;
  for(const feedUrl of configured){
   let url;
   try{url=new URL(feedUrl);}catch(_){failures.push("invalid feed URL");continue;}
   if(url.protocol!=="https:"||url.username||url.password){failures.push("feed URL must use HTTPS");continue;}
   try{
    const rawItems=await getJson(url.href),idPrefix=sourceId(url.href),normalized=[];
-   for(const raw of rawItems.slice(0,100)){
-    const item=mapFeedItem(raw);if(!item)continue;
+   if(rawItems.length>MAX_ITEMS)oversized=true;
+   for(const raw of rawItems.slice(0,MAX_ITEMS)){
+    if(isInactiveFeedItem(raw))continue;
+    const item=mapFeedItem(raw);
+    if(!item){rejected++;continue;}
     normalized.push({...item,clientRef:"feed:"+idPrefix+":"+item.id});
    }
    collected.push(...normalized);
@@ -99,11 +110,13 @@ async function syncConfiguredFeeds(){
  }));
  const response=await fetch(BASE+"/api/marketplace/feed-sync",{
   method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,Accept:"application/json"},
-  body:JSON.stringify({sourceKey:"verified-merchant-feeds",sourceName:"Verified merchant product feeds",completeSnapshot:failures.length===0,items})
+  body:JSON.stringify({sourceKey:"verified-merchant-feeds",sourceName:"Verified merchant product feeds",completeSnapshot:failures.length===0&&rejected===0&&!oversized&&collected.length<=MAX_ITEMS,items})
  });
  const result=await response.json().catch(()=>({}));
  if(!response.ok)throw new Error("Marketplace API "+response.status+": "+clean(result.error||"feed sync failed",220));
  const summary={configured:configured.length,received:sourceStats.reduce((n,x)=>n+x.received,0),accepted:items.length,skipped:collected.length-items.length,sources:sourceStats,api:result};
+ summary.rejected=rejected;
+ if(oversized)summary.snapshotWarning="At least one feed exceeded the supported maximum; stale listings were not archived.";
  if(failures.length)summary.sourceWarnings=failures;
  console.log(JSON.stringify({event:"marketplace.feed_sync.completed",...summary}));
  return summary;
