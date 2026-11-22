@@ -624,6 +624,11 @@ def write_catalog(items, governors, districts, output):
             license_name = clean(source.get("license") or "Unknown", 80)
             if source_name:
                 source_counts[source_name] += 1
+            dataset = clean(source.get("dataset") or "", 80).lower()
+            if source_name == "Overture Maps" and dataset == "foursquare":
+                source_counts["Foursquare Open Places (via Overture)"] += 1
+            if source_name == "Foursquare Open Places":
+                source_counts["Foursquare Open Places (standalone)"] += 1
             if license_name:
                 license_counts[license_name] += 1
     manifest = {"schemaVersion": 2, "snapshotDate": snapshot, "generatedAt": generated_at, "totalCount": len(items),
