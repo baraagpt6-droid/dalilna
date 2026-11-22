@@ -223,14 +223,29 @@ jobs:
           print("Polygon district assignments:", sum(item["boundaryCount"] for item in data["districtCounts"]))
           print("Approximate district assignments:", sum(item["approximateCount"] for item in data["districtCounts"]))
           PY
+      - name: Update silent version metadata with the published catalogue snapshot
+        run: |
+          python3 - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+          manifest=json.loads(Path("regional-catalog/manifest.json").read_text(encoding="utf-8"))
+          version=json.loads(Path("version.json").read_text(encoding="utf-8"))
+          version["catalogSnapshotDate"]=manifest["snapshotDate"]
+          version["catalogGeneratedAt"]=manifest["generatedAt"]
+          version["catalogTotalCount"]=manifest["totalCount"]
+          version["sourceCounts"]=manifest.get("sourceCounts",{})
+          version["updatedAt"]=datetime.now(timezone.utc).isoformat()
+          Path("version.json").write_text(json.dumps(version,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+          PY
       - name: Publish catalogue and trigger web and Android builds
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [[ -n "$(git status --porcelain -- regional-catalog)" ]]; then
+          if [[ -n "$(git status --porcelain -- regional-catalog version.json)" ]]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add regional-catalog
+            git add regional-catalog version.json
             git commit -m "data: refresh Yemen regional places catalogue"
             git push origin main
             gh workflow run deploy-pages.yml --ref main
