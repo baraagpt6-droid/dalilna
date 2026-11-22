@@ -102,6 +102,22 @@ test("daily merchant feed endpoint is authenticated, idempotent and retires miss
  assert.ok(source.includes("client_ref=ANY($1::text[])"));
  assert.ok(source.includes("status='archived'"));
 });
+test("merchant product feed is processed in batches and only the last batch may retire stale products",()=>{
+ const feed=fs.readFileSync("scripts/refresh-marketplace-products.cjs","utf8");
+ const api=fs.readFileSync("marketplace-api.js","utf8");
+ assert.ok(feed.includes("MAX_ITEMS=5000,MAX_BATCH=200"));
+ assert.ok(feed.includes("for(let offset=0;offset<items.length;offset+=MAX_BATCH)"));
+ assert.ok(feed.includes("activeClientRefs:completeSnapshotForBatch?activeClientRefs:[]"));
+ assert.ok(api.includes("activeRefs.every(ref=>activeClientRefs.includes(ref))"));
+ assert.ok(api.includes("NOT (client_ref=ANY($1::text[]))"));
+});
+test("merchant product feed rejects unsafe URLs and never prunes on an empty snapshot",()=>{
+ const feed=fs.readFileSync("scripts/refresh-marketplace-products.cjs","utf8");
+ assert.ok(feed.includes("validatePublicFeedUrl"));
+ assert.ok(feed.includes('url.protocol!=="https:"'));
+ assert.ok(feed.includes('redirect:"error"'));
+ assert.ok(feed.includes("Empty feed snapshot is not allowed"));
+});
 test("solar, screen, battery and inverter products are valid marketplace items",()=>{
  for(const productType of ["solar_equipment","solar_panel","battery","inverter","power_system","screen","monitor","charger","audio_accessories"]) {
   assert.ok(PRODUCT_TYPES.has(productType),productType);
