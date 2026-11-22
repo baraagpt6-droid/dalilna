@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "source": "OpenStreetMap tagging taxonomy",
   "categories": {
     "grocery": {
@@ -488,24 +488,7 @@
         "vehicle parts",
         "tyres"
       ],
-      "osmTags": [
-        {
-          "key": "shop",
-          "value": "car_parts"
-        },
-        {
-          "key": "shop",
-          "value": "tyres"
-        },
-        {
-          "key": "shop",
-          "value": "vehicle_parts"
-        },
-        {
-          "key": "shop",
-          "value": "motorcycle_parts"
-        }
-      ]
+      "osmTags": []
     },
     "craft": {
       "labelAr": "حرفيون وصيانة",
@@ -1435,10 +1418,6 @@
         },
         {
           "key": "shop",
-          "value": "car_repair"
-        },
-        {
-          "key": "shop",
           "value": "motorcycle_repair"
         },
         {
@@ -1653,7 +1632,10 @@
       "motorcycle dealers",
       "car rental",
       "tyre shop",
-      "tire shop"
+      "tire shop",
+      "spare parts",
+      "tyres",
+      "ورشة سيارات"
     ],
     "telecom": [
       "mobile phone",
@@ -1769,14 +1751,7 @@
       "أسمنت",
       "أدوات بناء"
     ],
-    "parts": [
-      "auto parts",
-      "car parts",
-      "spare parts",
-      "vehicle parts",
-      "قطع غيار",
-      "مستلزمات سيارات"
-    ],
+    "parts": [],
     "transport": [
       "bus station",
       "taxi stand",
@@ -1972,14 +1947,84 @@
       "category": "vehicles"
     },
     {
-      "key": "building",
-      "value": "commercial",
-      "category": "other"
+      "key": "amenity",
+      "value": "hospital",
+      "category": "health"
     },
     {
-      "key": "building",
-      "value": "retail",
-      "category": "other"
+      "key": "amenity",
+      "value": "clinic",
+      "category": "health"
+    },
+    {
+      "key": "amenity",
+      "value": "doctors",
+      "category": "health"
+    },
+    {
+      "key": "amenity",
+      "value": "dentist",
+      "category": "health"
+    },
+    {
+      "key": "amenity",
+      "value": "doctors_surgery",
+      "category": "health"
+    },
+    {
+      "key": "amenity",
+      "value": "health_centre",
+      "category": "health"
+    },
+    {
+      "key": "amenity",
+      "value": "medical_centre",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "hospital",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "clinic",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "doctor",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "doctors",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "dentist",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "health_centre",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "medical_centre",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "veterinary",
+      "category": "farm"
+    },
+    {
+      "key": "emergency",
+      "value": "ambulance_station",
+      "category": "health"
     }
   ],
   "externalPrimaryOrder": [
@@ -2016,5 +2061,6 @@
     "utility",
     "tourism",
     "other"
-  ]
+  ],
+  "classifierVersion": "strict-primary-v2"
 }
