@@ -356,7 +356,7 @@ def country_contains(feature, geometries):
     point = builder.geometry_point(feature.get("geometry"))
     if not point:
         return False
-    return any(builder.point_in_geometry(point[0], point[1], geometry) for geometry in geometries)
+    return any(builder.point_in_geometry(point[1], point[0], geometry) for geometry in geometries)
 
 
 def read_geojson(path):
