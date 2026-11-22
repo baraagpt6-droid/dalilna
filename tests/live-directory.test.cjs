@@ -110,11 +110,16 @@ test("Geoapify returns in-app place cards and obtains phone from Place Details",
   if(originalKey===undefined)delete process.env.GEOAPIFY_API_KEY;else process.env.GEOAPIFY_API_KEY=originalKey;
  }
 });
+test("provider User-Agent versions follow package metadata",()=>{
+ const source=fs.readFileSync("server.js","utf8");
+ assert.ok(source.includes('const VERSION = require("./package.json").version;'));
+ assert.equal(source.includes("DalilnaDirectory/1.8.2"),false);
+});
 test("Wikimedia Commons search returns author and license metadata",async()=>{
  const original=global.fetch;
  global.fetch=async(input,options={})=>{
   const url=new URL(String(input));assert.equal(url.hostname,"commons.wikimedia.org");
-  assert.ok(String(options.headers["User-Agent"]).includes("DalilnaDirectory/1.8.2"));
+  assert.ok(String(options.headers["User-Agent"]).includes("DalilnaDirectory/"+require("../package.json").version));
   return new Response(JSON.stringify({query:{pages:[{title:"File:Dalilna place.jpg",imageinfo:[{thumburl:"https://upload.wikimedia.org/wikipedia/commons/thumb/dalilna.jpg",descriptionurl:"https://commons.wikimedia.org/wiki/File:Dalilna_place.jpg",extmetadata:{LicenseShortName:{value:"CC BY-SA 4.0"},Artist:{value:"Photographer One"}}}]}]}}),{status:200,headers:{"content-type":"application/json"}});
  };
  try{const result=await searchCommonsPhotos("Dalilna Commons unique test","Yemen");assert.equal(result.source,"Wikimedia Commons");assert.equal(result.count,1);assert.equal(result.items[0].license,"CC BY-SA 4.0");assert.equal(result.items[0].author,"Photographer One");assert.match(result.items[0].sourceUrl,/commons\.wikimedia\.org/);}
@@ -135,6 +140,10 @@ test("Geoapify status endpoint is public and confirms free provider setup",async
   assert.equal(geoStatus.geoapifyEnabled,false);
   assert.equal(geoStatus.creditCardRequired,false);
   assert.equal(JSON.stringify(geoStatus).includes("GEOAPIFY_API_KEY"),false);
+  const healthResponse=await fetch(base+"/health");
+  assert.equal(healthResponse.status,200);
+  const health=await healthResponse.json();
+  assert.equal(health.version,require("../package.json").version);
   const preflight=await fetch(base+"/api/places/search",{method:"OPTIONS",headers:{Origin:"https://preview.example","Access-Control-Request-Method":"GET"}});
   assert.equal(preflight.status,204);assert.equal(preflight.headers.get("access-control-allow-origin"),"*");
   const details=await fetch(base+"/api/places/details?placeId=ChIJOldGooglePlaceId123");
