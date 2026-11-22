@@ -920,27 +920,14 @@
         "بطارية",
         "بطاريات",
         "انفرتر",
-        "solar",
-        "solar panels",
-        "battery",
-        "inverter"
+        "solar energy equipment",
+        "solar panel shop",
+        "solar batteries"
       ],
       "osmTags": [
         {
           "key": "shop",
           "value": "solar"
-        },
-        {
-          "key": "shop",
-          "value": "electronics"
-        },
-        {
-          "key": "shop",
-          "value": "electrical"
-        },
-        {
-          "key": "shop",
-          "value": "hardware"
         },
         {
           "key": "shop",
