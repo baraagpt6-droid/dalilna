@@ -4290,7 +4290,7 @@ function regionalCatalogMatches(items,context,query,category,productType){
   ...(Array.isArray(item.categories)?item.categories:[]),
   ...Object.entries(item.osmTags||{}).flatMap(([key,value])=>[key,value])
  ].filter(Boolean).join(" "));
- const tokens=normalizeSearchPlace(query).split(/\\s+/).filter(Boolean);
+ const tokens=normalizeSearchPlace(query).split(/\s+/).filter(Boolean);
  return (items||[]).filter(item=>{
   if(!hasCategory(item,wanted))return false;
   if(context&&context.gov&&normalizePlace(item.governorate)!==normalizePlace(context.gov))return false;
@@ -4321,57 +4321,7 @@ function regionalCatalogCardHTML(item,requestedCategory){
  return card.replace("</article>",'<small class="live-directory-local-note">'+esc(note)+'</small></article>');
 }
 
-  grocery:["بقالة","بقاله","بقالات","بقال","تموين","تموينات","سوبرماركت"],
-  food:["مطعم","مطاعم","مخبز","مخابز","مأكولات"],
-  cafe:["مقهى","مقاهي","كافيه","بوفيه","بوفيات"],
-  pharmacy:["صيدلية","صيدليات"],
-  health:["مستشفى","مستشفيات","عيادة","عيادات","مركز","مراكز","صحي","صحية"],
-  edu:["مدرسة","مدارس","معهد","معاهد","جامعة","جامعات","كلية","كليات"],
-  mosque:["مسجد","مساجد","جامع","جوامع"],
-  books:["مكتبة","مكتبات","قرطاسية","قرطاسيات"],
-  vehicles:["سيارة","سيارات","معرض","معارض","ورشة","ورش"],
-  transport:["نقل","مواصلات","باص","باصات","تاكسي"],
-  hotel:["فندق","فنادق","نزل","سكن"],
-  money:["بنك","بنوك","صراف","صرافة","صرافات"],
-  craft:["حرفي","حرفيون","صيانة","إصلاح","ورشة","ورش"],
-  real_estate:["عقار","عقارات","مكتب","مكاتب","عقاري","عقارية"],
-  gold:["ذهب","مجوهرات","صياغة"],
-  market:["سوق","أسواق","سوق مركزي","سوق محلي"],
-  watches:["ساعة","ساعات","ساعاتي"],
-  telecom:["جوال","جوالات","هواتف","اتصالات"],
-  elec:["إلكترونيات","الكترونيات","كهربائيات","كمبيوتر"],
-  build:["مواد","بناء","حديد","اسمنت","أسمنت","سباكة"],
-  gold:["ذهب","مجوهرات","صياغة"],
-  clothes:["ملابس","أحذية","خياط","خياطة"],
-  home:["أثاث","أدوات","منزلية","أجهزة"],
-  beauty:["عطور","تجميل","تجميلية","مكياج"],
-  salon:["صالون","صالونات","حلاقة","حلاق"],
-  laundry:["مغسلة","مغاسل","غسيل"],
-  solar:["طاقة","شمسية","ألواح"],
-  delivery:["توصيل","بريد","شحن"],
-  gov:["حكومية","حكومي","مكتب","مكاتب"],
-  farm:["زراعة","مزرعة","مزارع","مواشي","أعلاف"]
- };
- const filler=["ابحث","بحث","عن","في","من","و","اليمن","محل","محلات","خدمة","خدمات","مكان","اماكن"];
- const ignored=new Set([...(categoryWords[wanted]||[]).map(normalizeSearchPlace),...filler.map(normalizeSearchPlace)].filter(Boolean));
- const tokens=normalizeSearchPlace(query).split(/\s+/).filter(token=>token&&!ignored.has(token));
- return (items||[]).filter(item=>{
-  if(wanted!=="all"&&item.category!==wanted)return false;
-  if(context&&(context.type==="district"||context.type==="subdistrict")&&context.district&&normalizePlace(item.district)!==normalizePlace(context.district))return false;
-  const hay=normalizeSearchPlace([item.name,item.address,item.description,item.governorate,item.district,item.category].filter(Boolean).join(" "));
-  return tokens.every(token=>hay.includes(token));
- });
-}
-function regionalCatalogCardHTML(item){
- const labels={market:"أسواق",vehicles:"معارض وورش سيارات",watches:"ساعات",real_estate:"مكاتب عقارية",telecom:"جوالات واتصالات",elec:"إلكترونيات",build:"مواد بناء",gold:"ذهب ومجوهرات",clothes:"ملابس وأحذية",home:"أدوات منزلية",beauty:"عطور وتجميل",salon:"صالونات",laundry:"مغاسل",solar:"طاقة شمسية",delivery:"توصيل وبريد",farm:"زراعة ومواشٍ",gov:"جهات حكومية"};
- let card=liveDirectoryCardHTML(item);
- const label=labels[item.category];
- if(label)card=card.replace('<span class="tag">خدمة</span>','<span class="tag">'+esc(label)+'</span>');
- const note=["osm-boundary","geoboundaries-polygon"].includes(item.assignmentQuality)
-  ?"التصنيف الإداري مستند إلى مضلع حدود منشور في OpenStreetMap."
-  :"المحافظة والمديرية تقدير تقريبي من أقرب مركز إداري؛ تحقق من الموقع قبل الاعتماد عليه.";
- return card.replace("</article>",'<small class="live-directory-local-note">'+esc(note)+'</small></article>');
-}
+
 function renderLiveDirectoryResponse(data){
  const status=$("#liveDirectoryStatus"),box=$("#liveDirectoryItems"),attribution=$("#liveDirectoryAttribution");
  if(!status||!box)return;
