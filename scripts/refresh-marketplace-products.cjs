@@ -177,7 +177,7 @@ async function syncConfiguredFeeds(){
  const unique=new Map();
  for(const item of collected)unique.set(item.clientRef,item);
  const items=[...unique.values()].slice(0,MAX_ITEMS);
- const snapshotComplete=failures.length===0&&rejected===0&&!oversized&&items.length>0&&items.length===unique.size;
+ const snapshotComplete=failures.length===0&&rejected===0&&!oversized&&items.length>0&&items.length<=MAX_BATCH&&items.length===unique.size;
  if(!items.length){
   if(failures.length)throw new Error("No usable products were returned. "+failures.join("; "));
   return {configured:configured.length,received:totalReceived,accepted:0,skipped:rejected,sources:sourceStats,snapshotComplete:false,snapshotWarning:"Empty feed snapshot is not allowed to archive existing products."};
@@ -212,6 +212,7 @@ async function syncConfiguredFeeds(){
  }
  const summary={configured:configured.length,received:totalReceived,accepted:items.length,inserted,updated,skipped,archived,sources:sourceStats,snapshotComplete};
  if(oversized)summary.snapshotWarning="Feed size exceeded the maximum supported snapshot; existing listings were not archived.";
+ else if(items.length>MAX_BATCH)summary.snapshotWarning="Feed exceeds the single-request snapshot limit; products are upserted in batches and existing listings are not archived.";
  if(failures.length)summary.sourceWarnings=failures;
  console.log(JSON.stringify({event:"marketplace.feed_sync.completed",...summary}));
  return summary;
