@@ -114,7 +114,8 @@ jobs:
             nwr/shop nwr/amenity nwr/healthcare nwr/tourism nwr/office \
             nwr/craft nwr/leisure nwr/public_transport nwr/emergency \
             nwr/delivery nwr/courier nwr/service nwr/government nwr/product \
-            nwr/building=mosque nwr/railway=station nwr/landuse=farmyard \
+            nwr/building=mosque nwr/building=commercial nwr/building=retail \
+            nwr/railway=station nwr/landuse=farmyard \
             -o places.osm.pbf
           osmium export places.osm.pbf -o places.geojson
           test -s places.geojson
