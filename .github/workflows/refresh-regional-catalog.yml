@@ -3,12 +3,13 @@ name: Refresh Yemen regional places catalogue
 on:
   workflow_dispatch:
   schedule:
-    - cron: "20 2 * * 1"
+    - cron: "20 2 * * *"
   push:
     branches: [main]
     paths:
       - "scripts/build_regional_catalog.py"
       - "scripts/test_regional_catalog.py"
+      - "category-mapping.json"
       - "regions-yemen.js"
       - ".github/workflows/refresh-regional-catalog.yml"
 
@@ -80,7 +81,8 @@ jobs:
           osmium tags-filter yemen-latest.osm.pbf \
             nwr/shop nwr/amenity nwr/healthcare nwr/tourism nwr/office \
             nwr/craft nwr/leisure nwr/public_transport nwr/emergency \
-            nwr/building=mosque nwr/railway=station nwr/landuse=farmyard \
+            nwr/delivery nwr/courier nwr/building=mosque \
+            nwr/railway=station nwr/landuse=farmyard \
             -o places.osm.pbf
           osmium export places.osm.pbf -o places.geojson
           test -s places.geojson
@@ -94,12 +96,56 @@ jobs:
             echo '{"type":"FeatureCollection","features":[]}' > boundaries.geojson
             echo "No administrative polygons; nearest-centroid assignments will be marked approximate."
           fi
+      - name: Download geoBoundaries Yemen ADM2 polygons
+        shell: bash
+        run: |
+          META_URL="https://www.geoboundaries.org/api/current/gbOpen/YEM/ADM2/"
+          curl -fL --retry 4 --retry-delay 3 "$META_URL" -o geoboundaries-metadata.json
+          GEOJSON_URL="$(python3 - <<'PY'
+          import json
+          with open("geoboundaries-metadata.json", encoding="utf-8") as stream:
+              data = json.load(stream)
+          url = data.get("gjDownloadURL")
+          if not url or not url.startswith("https://"):
+              raise SystemExit("geoBoundaries did not return a secure GeoJSON download URL")
+          if data.get("boundaryType") != "ADM2" or data.get("boundaryISO") != "YEM":
+              raise SystemExit("Unexpected administrative boundary metadata")
+          if int(data.get("admUnitCount", 0)) != 335:
+              raise SystemExit("Expected 335 Yemen ADM2 units")
+          print(url)
+          PY
+          )"
+          curl -fL --retry 4 --retry-delay 3 "$GEOJSON_URL" -o geoboundaries-yem-adm2.geojson
+          python3 - <<'PY'
+          import json
+          with open("geoboundaries-yem-adm2.geojson", encoding="utf-8") as stream:
+              payload = json.load(stream)
+          features = payload.get("features", [])
+          if len(features) != 335:
+              raise SystemExit(f"Expected 335 Yemen ADM2 polygons, got {len(features)}")
+          if not all((feature.get("geometry") or {}).get("type") in {"Polygon", "MultiPolygon"} for feature in features):
+              raise SystemExit("ADM2 source contains invalid polygon geometry")
+          print("geoBoundaries Yemen ADM2 polygons:", len(features))
+          PY
+      - name: Merge OSM and geoBoundaries administrative polygons
+        run: |
+          python3 - <<'PY'
+          import json
+          with open("boundaries.geojson", encoding="utf-8") as stream:
+              osm = json.load(stream)
+          with open("geoboundaries-yem-adm2.geojson", encoding="utf-8") as stream:
+              admin = json.load(stream)
+          features = list(osm.get("features", [])) + list(admin.get("features", []))
+          with open("all-boundaries.geojson", "w", encoding="utf-8") as stream:
+              json.dump({"type": "FeatureCollection", "features": features}, stream, ensure_ascii=False)
+          print("Merged boundary features:", len(features))
+          PY
       - name: Test and build the regional catalogue
         run: |
           python3 scripts/test_regional_catalog.py
           python3 scripts/build_regional_catalog.py \
             --places places.geojson \
-            --boundaries boundaries.geojson \
+            --boundaries all-boundaries.geojson \
             --governorates all-governorate.json \
             --districts all-district.json \
             --regions regions-yemen.js \
@@ -111,8 +157,13 @@ jobs:
           assert data["totalCount"] > 0, "Refusing to publish an empty catalogue."
           assert len(data["governorates"]) == 22, "Expected all 22 governorates."
           assert data["license"] == "ODbL-1.0"
+          assert len(data.get("districtCounts", [])) == 335, "Expected district counts for all 335 districts."
+          assert data["districtCountTotal"] + data["unassignedCount"] == data["totalCount"]
           print("Catalogue records:", data["totalCount"])
           print("Governorates with places:", sum(1 for item in data["governorates"] if item["count"]))
+          print("Districts with mapped records:", sum(1 for item in data["districtCounts"] if item["count"]))
+          print("Polygon district assignments:", sum(item["boundaryCount"] for item in data["districtCounts"]))
+          print("Approximate district assignments:", sum(item["approximateCount"] for item in data["districtCounts"]))
           PY
       - name: Publish catalogue and trigger web and Android builds
         env:
