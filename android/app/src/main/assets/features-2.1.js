@@ -1,6 +1,48 @@
 "use strict";
 (function(){
  const API=window.DALILNA_API_BASE||"https://dalilna-live.onrender.com";
+ const isEnglish=()=>String(window.DALILNA_LANGUAGE||document.documentElement.lang||"ar")==="en";
+ const FEATURE_EN={
+  "اليمن":"Yemen","السعودية":"Saudi Arabia","الإمارات":"United Arab Emirates","عُمان":"Oman","قطر":"Qatar","البحرين":"Bahrain","العراق":"Iraq","الأردن":"Jordan","كل الدول":"All countries","بيت.كوم اليمن":"Bayt.com Yemen","بيت.كوم":"Bayt.com","وظائف الأمم المتحدة":"UN Careers",
+  "الكل":"All","للبيع":"For sale","مطلوب":"Wanted","مقايضة":"Barter","مجاناً":"Free","للإيجار":"For rent","كل الأصناف":"All categories","جوالات وإلكترونيات":"Phones and electronics","سيارات ودراجات وقطع غيار":"Cars, motorcycles and parts","عقارات وأراضٍ":"Property and land","طاقة شمسية وبطاريات":"Solar and batteries","أثاث وأجهزة منزلية":"Furniture and home appliances","مواشي وزراعة ومعدات":"Livestock, agriculture and equipment","ملابس وعطور ومستلزمات":"Clothing, perfumes and essentials",
+  "فرص عمل من مصادرها":"Jobs from source providers","تحديث يومي":"Daily updates","باحثون عن عمل":"Job seekers","بموافقة أصحاب الملفات":"Published with profile-owner consent","سجّل كباحث عن عمل":"Register as a job seeker","التسجيل كباحث عن عمل":"Job seeker registration","الاسم الكامل":"Full name","التخصص أو المهنة":"Specialty or occupation","سنوات الخبرة":"Years of experience","الدولة":"Country","المحافظة أو المدينة":"Governorate or city","نبذة مختصرة":"Short bio","رقم واتساب مع مفتاح الدولة":"WhatsApp number with country code",
+  "أوافق على نشر اسمي وتخصصي وخبرتي وموقعي ونبذتي ورقم واتسابي للعامة ليتمكن أصحاب العمل من التواصل معي مباشرة.":"I agree to publish my name, specialty, experience, location, bio and WhatsApp number so employers can contact me.",
+  "الملف مجاني ويظل منشوراً 60 يوماً. لا تسجل إن لم توافق على إظهار بيانات التواصل.":"The profile is free and remains published for 60 days. Do not register unless you agree to show your contact details.",
+  "حفظ ونشر الملف":"Save and publish profile","نوع العرض":"Listing type","الأصناف":"Categories","دون خبرة":"No experience","سنة خبرة":"years of experience","التقديم من المصدر":"Apply at provider","لا يتوفر رابط تقديم رسمي مباشر لهذا الإعلان":"No official direct application link is available","صفحة المصدر":"Source page","☆ حفظ":"☆ Save","★ محفوظة":"★ Saved","مشاركة":"Share","تواصل واتساب":"Contact on WhatsApp",
+  "جارٍ تحميل أحدث الوظائف…":"Loading the latest jobs…","جارٍ تحميل ملفات الباحثين عن عمل…":"Loading job seeker profiles…","جارٍ تحميل ملفات الباحثين…":"Loading job seeker profiles…",
+  "لا توجد وظائف مطابقة في آخر مزامنة. استخدم روابط المنصات أعلاه للبحث المباشر.":"No matching jobs in the latest sync. Use provider links above to search directly.",
+  "لا توجد ملفات منشورة لهذه الدولة حالياً.":"No job seeker profiles are published for this country yet.","تم نشر ملفك. سيبقى متاحاً لمدة 60 يوماً.":"Your profile is published and will remain available for 60 days.","يجب الموافقة على عرض معلوماتك قبل النشر.":"You must consent to publishing your information before submitting.","جارٍ إرسال ملفك إلى دليلنا…":"Submitting your profile to Dalilna…","وظيفة":"Job","باحث عن عمل":"Job seeker",
+  "مثلاً: محاسب، مبرمج، فني كهرباء":"e.g. accountant, programmer, electrician","اكتب مهاراتك ونوع العمل الذي تبحث عنه":"Describe your skills and the work you are seeking",
+  "المؤهلات / الشروط: ":"Eligibility / requirements: ","آخر موعد للتقديم: ":"Application deadline: ","عدد الوظائف: ":"Jobs: ","ملفات منشورة بموافقة أصحابها: ":"Profiles published with consent: ","آخر مزامنة: ":"Last sync: ","غير متاح":"unavailable",
+  "تعذر تحميل الوظائف من الخادم. ":"Could not load jobs from server. ","تعذر تحميل الباحثين عن عمل. ":"Could not load job seeker profiles. ","تعذر نشر الملف. ":"Could not publish profile. "
+ };
+ function translateFeatureTree(root=document.body){
+  if(!root||typeof document.createTreeWalker!=="function")return;
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node;
+  while((node=walker.nextNode())){
+   const parent=node.parentElement;if(!parent||parent.closest("script,style,textarea,pre,code,[data-no-translate]"))continue;
+   if(!Object.prototype.hasOwnProperty.call(node,"__dalilnaFeatureOriginal"))node.__dalilnaFeatureOriginal=node.nodeValue;
+   const original=String(node.__dalilnaFeatureOriginal||"");let translated=original;
+   if(isEnglish()){
+    const trimmed=original.trim();
+    if(FEATURE_EN[trimmed])translated=original.replace(trimmed,FEATURE_EN[trimmed]);
+    else for(const [ar,en] of Object.entries(FEATURE_EN))if(ar.endsWith(": ")&&translated.includes(ar))translated=translated.replace(ar,en);
+   }
+   node.nodeValue=translated;
+  }
+  const attrMap={"مثلاً: محاسب، مبرمج، فني كهرباء":"e.g. accountant, programmer, electrician","اكتب مهاراتك ونوع العمل الذي تبحث عنه":"Describe your skills and the work you are seeking"};
+  for(const item of root.querySelectorAll?.("[placeholder],[aria-label],[title]")||[]){
+   for(const attr of ["placeholder","aria-label","title"]){
+    if(!item.hasAttribute(attr))continue;
+    const marker="data-dalilna-feature-original-"+attr;
+    if(!item.hasAttribute(marker))item.setAttribute(marker,item.getAttribute(attr)||"");
+    const original=item.getAttribute(marker)||"";
+    if(isEnglish()&&attrMap[original])item.setAttribute(attr,attrMap[original]);
+    else if(!isEnglish())item.setAttribute(attr,original);
+   }
+  }
+ }
+
  const COUNTRIES=[["YE","اليمن"],["SA","السعودية"],["AE","الإمارات"],["OM","عُمان"],["QA","قطر"],["BH","البحرين"],["IQ","العراق"],["JO","الأردن"],["all","كل الدول"]];
  const COUNTRY_NAMES={YE:"Yemen",SA:"Saudi Arabia",AE:"United Arab Emirates",OM:"Oman",QA:"Qatar",BH:"Bahrain",IQ:"Iraq",JO:"Jordan"};
  const SOURCES={
@@ -14,8 +56,17 @@
   JO:[["بيت.كوم","https://www.bayt.com/en/jordan/jobs/"],["Indeed","https://jo.indeed.com/jobs"],["LinkedIn","https://www.linkedin.com/jobs/search/?location=Jordan"]],
   all:[["Bayt","https://www.bayt.com/"],["GulfTalent","https://www.gulftalent.com/jobs"],["LinkedIn","https://www.linkedin.com/jobs/"],["ReliefWeb","https://reliefweb.int/jobs"]]
  };
- const TYPES=[["all","الكل"],["sale","للبيع"],["wanted","مطلوب"],["barter","مقايضة"],["free","مجاناً"]];
- const GROUPS=[["all","كل الأصناف"],["electronics","جوالات وإلكترونيات"],["vehicles","سيارات ودراجات"],["solar","منظومات طاقة شمسية"],["property","عقارات وأراضٍ"],["home","أثاث ومنزل"],["agriculture","مواشي وزراعة"],["tools","معدات وأدوات"],["clothing","ملابس وعطور"],["other","أشياء أخرى"]];
+ const TYPES=[["all","الكل"],["sale","للبيع"],["wanted","مطلوب"],["barter","مقايضة"],["free","مجاناً"],["rent","للإيجار"]];
+ const GROUPS=[
+  ["all","كل الأصناف"],
+  ["electronics","جوالات وإلكترونيات"],
+  ["vehicles","سيارات ودراجات وقطع غيار"],
+  ["property","عقارات وأراضٍ"],
+  ["solar","طاقة شمسية وبطاريات"],
+  ["home","أثاث وأجهزة منزلية"],
+  ["agriculture","مواشي وزراعة ومعدات"],
+  ["clothing","ملابس وعطور ومستلزمات"]
+ ];
  let country="YE",transaction="all",group="all";
  const $=id=>document.getElementById(id);
  function el(tag,attrs,text){
@@ -40,10 +91,10 @@
   const jobs=$("vJobs"),shared=$("sharedJobsPanel");
   if(jobs&&shared&&!$("jobsFeaturePanel")){
    const panel=el("section",{id:"jobsFeaturePanel",class:"jobs-feature-panel"});
-   panel.innerHTML='<div class="feature-head"><h3>فرص عمل من مصادرها</h3><span class="tag">تحديث يومي</span></div><div class="country-tabs" id="jobsCountryTabs" aria-label="اختيار الدولة"></div><div class="job-source-links" id="jobSourceLinks"></div><div class="job-feed-status" id="jobsFeedStatus">جارٍ تحميل الوظائف من المصادر الخارجية…</div><div class="job-feed-list" id="jobsFeedCards"></div>';
+   panel.innerHTML='<div class="feature-head"><h3>فرص عمل من مصادرها</h3><span class="tag">تحديث يومي</span></div><div class="country-tabs" id="jobsCountryTabs" aria-label="اختيار الدولة"></div><div class="job-source-links" id="jobSourceLinks"></div><div class="job-feed-status" id="jobsFeedStatus"></div><div class="job-feed-list" id="jobsFeedCards"></div>';
    shared.parentNode.insertBefore(panel,shared);
    const seekers=el("section",{id:"jobSeekersPanel",class:"job-seekers-panel"});
-   seekers.innerHTML='<div class="feature-head"><h3>باحثون عن عمل</h3><span class="tag">بموافقة أصحاب الملفات</span></div><div class="job-seeker-panel-actions"><button type="button" class="add" id="addJobSeeker">سجّل كباحث عن عمل</button><button type="button" class="ghost" id="refreshJobSeekers">تحديث القائمة</button></div><div class="job-seeker-status" id="jobSeekersStatus">جارٍ تحميل ملفات الباحثين عن عمل…</div><div class="job-seeker-list" id="jobSeekersList"></div>';
+   seekers.innerHTML='<div class="feature-head"><h3>باحثون عن عمل</h3><span class="tag">بموافقة أصحاب الملفات</span></div><div class="job-seeker-panel-actions"><button type="button" class="add" id="addJobSeeker">سجّل كباحث عن عمل</button></div><div class="job-seeker-status" id="jobSeekersStatus"></div><div class="job-seeker-list" id="jobSeekersList"></div>';
    $("jobs").parentNode.insertBefore(seekers,$("jobs"));
   }
   if(!$("jobSeekerDlg")){
@@ -66,7 +117,7 @@
   if(tabs){
    tabs.replaceChildren();
    COUNTRIES.forEach(pair=>{
-    const button=el("button",{type:"button","aria-pressed":pair[0]===country?"true":"false"},pair[1]);
+    const button=el("button",{type:"button","aria-pressed":pair[0]===country?"true":"false"},isEnglish()?(FEATURE_EN[pair[1]]||pair[1]):pair[1]);
     button.dataset.country=pair[0];tabs.appendChild(button);
    });
   }
@@ -79,7 +130,7 @@
   if(typeTabs){
    typeTabs.replaceChildren();
    TYPES.forEach(pair=>{
-    const button=el("button",{type:"button","aria-pressed":pair[0]===transaction?"true":"false"},pair[1]);
+    const button=el("button",{type:"button","aria-pressed":pair[0]===transaction?"true":"false"},isEnglish()?(FEATURE_EN[pair[1]]||pair[1]):pair[1]);
     button.dataset.transaction=pair[0];typeTabs.appendChild(button);
    });
   }
@@ -87,14 +138,14 @@
   if(groupTabs){
    groupTabs.replaceChildren();
    GROUPS.forEach(pair=>{
-    const button=el("button",{type:"button","aria-pressed":pair[0]===group?"true":"false"},pair[1]);
+    const button=el("button",{type:"button","aria-pressed":pair[0]===group?"true":"false"},isEnglish()?(FEATURE_EN[pair[1]]||pair[1]):pair[1]);
     button.dataset.group=pair[0];groupTabs.appendChild(button);
    });
   }
  }
  function formatDate(value){
   const date=new Date(value);
-  return Number.isNaN(date.getTime())?"":new Intl.DateTimeFormat("ar",{year:"numeric",month:"short",day:"numeric"}).format(date);
+  return Number.isNaN(date.getTime())?"":new Intl.DateTimeFormat(isEnglish()?"en":"ar",{year:"numeric",month:"short",day:"numeric"}).format(date);
  }
  function safeJobUrl(value){
   try{const url=new URL(String(value||""));return url.protocol==="https:"?url.href:"";}catch(_){return "";}
@@ -111,16 +162,19 @@
  async function loadJobs(){
   const status=$("jobsFeedStatus"),box=$("jobsFeedCards");
   if(!status||!box)return;
-  status.textContent="جارٍ تحميل أحدث الوظائف…";box.replaceChildren();
+  status.textContent="";
   try{
    const response=await fetch(API+"/api/jobs?country="+encodeURIComponent(country)+"&limit=60",{cache:"no-store",headers:{Accept:"application/json"}});
    const data=await response.json().catch(()=>({}));
    if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
    if(!Array.isArray(data.items)||!data.items.length){
+    box.replaceChildren();
     status.textContent="لا توجد وظائف مطابقة في آخر مزامنة. استخدم روابط المنصات أعلاه للبحث المباشر.";
+    translateFeatureTree(status);
     return;
    }
    status.textContent="عدد الوظائف: "+data.items.length+" · آخر مزامنة: "+(formatDate(data.fetchedAt)||"غير متاح");
+   const fragment=document.createDocumentFragment();
    data.items.forEach(job=>{
     const card=el("article",{class:"job-feed-card"});
     card.appendChild(el("h4",{},job.title||"وظيفة"));
@@ -155,9 +209,12 @@
      catch(error){if(error.name!=="AbortError")toast("تعذرت المشاركة من هذا الجهاز.");}
     });
     actions.appendChild(share);
-    card.appendChild(actions);box.appendChild(card);
+    card.appendChild(actions);fragment.appendChild(card);
    });
-  }catch(error){status.textContent="تعذر تحميل الوظائف من الخادم. "+error.message;}
+   box.replaceChildren(fragment);
+   translateFeatureTree(box);
+   translateFeatureTree(status.parentElement||status);
+  }catch(error){if(!box.childElementCount){status.textContent="تعذر تحميل الوظائف من الخادم. "+error.message;translateFeatureTree(status);}}
  }
  function waUrl(phone){
   const digits=String(phone||"").replace(/[^0-9]/g,"");
@@ -166,14 +223,15 @@
  async function loadCandidates(){
   const status=$("jobSeekersStatus"),box=$("jobSeekersList");
   if(!status||!box)return;
-  status.textContent="جارٍ تحميل ملفات الباحثين…";box.replaceChildren();
+  status.textContent="";
   try{
    const countryName=COUNTRY_NAMES[country]||"all";
    const response=await fetch(API+"/api/jobs/candidates?country="+encodeURIComponent(countryName),{cache:"no-store",headers:{Accept:"application/json"}});
    const data=await response.json().catch(()=>({}));
    if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
-   if(!Array.isArray(data.items)||!data.items.length){status.textContent="لا توجد ملفات منشورة لهذه الدولة حالياً.";return;}
+   if(!Array.isArray(data.items)||!data.items.length){box.replaceChildren();status.textContent="لا توجد ملفات منشورة لهذه الدولة حالياً.";translateFeatureTree(status);return;}
    status.textContent="ملفات منشورة بموافقة أصحابها: "+data.items.length;
+   const fragment=document.createDocumentFragment();
    data.items.forEach(person=>{
     const card=el("article",{class:"job-seeker-card"});
     card.appendChild(el("h4",{},person.fullName||"باحث عن عمل"));
@@ -187,9 +245,12 @@
      actions.appendChild(el("a",{href:href,target:"_blank",rel:"noopener noreferrer"},"تواصل واتساب"));
      card.appendChild(actions);
     }
-    box.appendChild(card);
+    fragment.appendChild(card);
    });
-  }catch(error){status.textContent="تعذر تحميل الباحثين عن عمل. "+error.message;}
+   box.replaceChildren(fragment);
+   translateFeatureTree(box);
+   translateFeatureTree(status.parentElement||status);
+  }catch(error){if(!box.childElementCount){status.textContent="تعذر تحميل الباحثين عن عمل. "+error.message;translateFeatureTree(status);}}
  }
  async function submitCandidate(event){
   event.preventDefault();
@@ -253,7 +314,7 @@
   window.setTimeout(()=>target.classList.remove("quick-jump-highlight"),1100);
  }
  function bind(){
-  buildJobs();buildSouq();renderTabs();
+  buildJobs();buildSouq();renderTabs();translateFeatureTree();
   $("jobsCountryTabs")?.addEventListener("click",event=>{
    const button=event.target.closest("[data-country]");if(!button)return;
    country=button.dataset.country;renderTabs();loadJobs();loadCandidates();
@@ -271,7 +332,7 @@
   $("addJobSeeker")?.addEventListener("click",()=>openDialog($("jobSeekerDlg")));
   $("closeJobSeeker")?.addEventListener("click",()=>closeDialog($("jobSeekerDlg")));
   $("jobSeekerForm")?.addEventListener("submit",submitCandidate);
-  $("refreshJobSeekers")?.addEventListener("click",loadCandidates);
+  
   document.addEventListener("error",event=>{
    const image=event.target;
    if(!(image instanceof HTMLImageElement)||!image.classList.contains("shared-listing-image"))return;
@@ -319,6 +380,7 @@
   observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:["aria-pressed"]});
   loadJobs();loadCandidates();syncSearch();
  }
+ window.addEventListener("dalilna:languagechange",()=>{renderTabs();translateFeatureTree();loadJobs();loadCandidates();});
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bind);else bind();
  window.DalilnaFeatures21={loadJobs:loadJobs,loadCandidates:loadCandidates};
 })();
