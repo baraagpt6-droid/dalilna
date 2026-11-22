@@ -1,6 +1,6 @@
 const CACHE_PREFIX = "dalilna-pwa-";
-const CACHE_NAME = CACHE_PREFIX + "v2.1.8";
-const APP_SHELL = ["./", "./index.html", "./manifest.json", "./regions-yemen.js", "./regions-profiles.js", "./regional-catalog-runtime.js", "./marketplace-client.js", "./features-2.1.js?v=2.1.8", "./features-2.1.css?v=2.1.8", "./jobs-feed.json", "./regional-catalog/manifest.json?v=2.1.8", "./privacy.html", "./terms.html", "./icons/icon.svg"];
+const CACHE_NAME = CACHE_PREFIX + "v2.6.1";
+const APP_SHELL = ["./", "./index.html", "./manifest.json", "./regions-yemen.js", "./regions-profiles.js", "./regional-catalog-runtime.js", "./marketplace-client.js", "./features-2.1.js?v=2.6.1", "./features-2.1.css?v=2.6.1", "./jobs-feed.json", "./version.json", "./regional-catalog/manifest.json?v=2.6.1", "./privacy.html", "./terms.html", "./icons/icon.svg"];
 
 self.addEventListener("install", event => {
   event.waitUntil((async () => {

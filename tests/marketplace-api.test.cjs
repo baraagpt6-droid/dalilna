@@ -92,6 +92,15 @@ test("marketplace public records return their expiry timestamp",()=>{
  assert.match(source,/expiresAt:row\.expires_at/);
 });
 
+test("shared listing expiry starts when admin approves it, not while it is pending",()=>{
+ const source=fs.readFileSync("marketplace-api.js","utf8");
+ assert.ok(source.includes("'pending',NULL"));
+ assert.ok(source.includes("expires_at=CASE WHEN $2<>'approved' THEN NULL"));
+ assert.ok(source.includes("WHEN category IN ('souq','land') THEN NOW()+INTERVAL '60 days'"));
+ assert.ok(source.includes("WHEN category='jobs' AND deadline IS NOT NULL THEN LEAST(NOW()+INTERVAL '60 days',deadline+INTERVAL '1 day')"));
+ assert.ok(source.includes("RETURNING id,title,category,status,approved_at,expires_at"));
+});
+
 test("daily merchant feed endpoint is authenticated, idempotent and retires missing feed products only on a complete snapshot",()=>{
  const source=fs.readFileSync("marketplace-api.js","utf8");
  assert.ok(source.includes('r==="feed-sync"&&req.method==="POST"'));
