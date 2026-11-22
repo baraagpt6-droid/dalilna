@@ -4465,11 +4465,7 @@ $("#aiCloudConsent").addEventListener("change",e=>{
   toast(S.aiCloudConsent?"تم تفعيل المساعد السحابي بموافقتك.":"تم إيقاف المساعد السحابي.");
 });
 function assistantApiUrl(){
-  const host=location.hostname;
-  if(host==="appassets.androidplatform.net"||host.endsWith(".github.io")||host==="dalilna-yemen.onrender.com"){
-    return "https://dalilna-oavk.vercel.app/api/assistant";
-  }
-  return "/api/assistant";
+  return "https://dalilna-live.onrender.com/api/assistant";
 }
 async function askAssistant(q){
  const serviceIntent=directoryMapSearchInfo(q);

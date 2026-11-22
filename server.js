@@ -4,6 +4,7 @@ const http = require("node:http");
 const { URL } = require("node:url");
 const { handleMarketplaceRequest } = require("./marketplace-api");
 const { handleJobsRequest } = require("./jobs-api");
+const geminiAssistantHandler = require("./api/assistant");
 
 const PORT = Number(process.env.PORT || 10000);
 const VERSION = "2.1.0";
@@ -78,6 +79,17 @@ function json(res, status, payload, extraHeaders = {}) {
 
 function setCors(req, res) {
   const pathname = String(req.url || "").split("?")[0];
+  if (pathname === "/api/assistant") {
+    const origin = req.headers.origin;
+    if (origin && ALLOWED_ORIGINS.has(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Vary", "Origin");
+      res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+      res.setHeader("Access-Control-Max-Age", "600");
+    }
+    return;
+  }
   // These endpoints return public map data only. Wildcard CORS avoids brittle
   // hostname allowlists for Render previews, PWA hosts and Android WebView.
   if (pathname === "/health" || pathname.startsWith("/api/places/") || pathname.startsWith("/api/geoapify/") || pathname.startsWith("/api/marketplace/") || pathname === "/api/jobs" || pathname.startsWith("/api/jobs/")) {
@@ -94,6 +106,28 @@ function setCors(req, res) {
     res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Accept, Content-Type");
     res.setHeader("Access-Control-Max-Age", "600");
+  }
+}
+
+async function readAssistantRequestBody(req, maxBytes = 16 * 1024) {
+  const chunks = [];
+  let totalBytes = 0;
+  for await (const chunk of req) {
+    totalBytes += chunk.length;
+    if (totalBytes > maxBytes) {
+      const error = new Error("request_too_large");
+      error.statusCode = 413;
+      throw error;
+    }
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+  const raw = Buffer.concat(chunks).toString("utf8");
+  if (!raw) return {};
+  try {
+    const value = JSON.parse(raw);
+    return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  } catch {
+    return {};
   }
 }
 
@@ -906,6 +940,29 @@ const server = http.createServer(async (req, res) => {
   } catch (_) {
     json(res, 400, { error: "Invalid URL" });
     return;
+  }
+  if (url.pathname === "/api/assistant/status") {
+    if (req.method !== "GET") {
+      json(res, 405, { error: "method_not_allowed" }, { Allow: "GET, OPTIONS" });
+      return;
+    }
+    json(res, 200, {
+      provider: "Gemini",
+      configured: Boolean(process.env.GEMINI_API_KEY),
+      model: cleanText(process.env.GEMINI_MODEL || "gemini-3.8-flash", 80)
+    });
+    return;
+  }
+  if (url.pathname === "/api/assistant") {
+    if (req.method === "POST") {
+      try {
+        req.body = await readAssistantRequestBody(req);
+      } catch (error) {
+        json(res, Number(error.statusCode) || 400, { error: Number(error.statusCode) === 413 ? "request_too_large" : "invalid_request" });
+        return;
+      }
+    }
+    return geminiAssistantHandler(req, res);
   }
   if (await handleMarketplaceRequest(req, res, url)) return;
   if (await handleJobsRequest(req, res, url)) return;

@@ -21,6 +21,7 @@ const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.vercel.app",
   "https://baraagpt6-droid.github.io",
   "https://dalilna-yemen.onrender.com",
+  "https://dalilna-live.onrender.com",
   "https://appassets.androidplatform.net"
 ]);
 
