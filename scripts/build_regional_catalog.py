@@ -218,7 +218,8 @@ def load_admin(governorate_file, district_file, regions_file):
 
 
 def prepare_boundaries(features, governors, districts):
-    gov_names, district_names = {}, {}
+    gov_names = {}
+    district_names = defaultdict(list)
     for gov in governors:
         for value in (gov["name"], gov["nameLocal"], gov["nameEn"]):
             if value:
@@ -226,28 +227,72 @@ def prepare_boundaries(features, governors, districts):
     for district in districts:
         for value in (district["name"], district["nameLocal"], district["nameEn"]):
             if value:
-                district_names[normalize(value)] = (district["governorate"], district["name"])
+                key = normalize(value)
+                candidate = (district["governorate"], district["name"])
+                if candidate not in district_names[key]:
+                    district_names[key].append(candidate)
+
     output = []
     for feature in features:
         tags = tags_of(feature)
-        if tags.get("boundary") != "administrative":
+        props = feature.get("properties") or {}
+        geometry = feature.get("geometry") or {}
+        if geometry.get("type") not in {"Polygon", "MultiPolygon"}:
             continue
-        level = str(tags.get("admin_level") or "")
-        candidates = (tags.get("name:ar"), tags.get("name"), tags.get("name:en"), tags.get("official_name"))
-        target, kind = None, None
+
+        # Native OSM relations use boundary=administrative/admin_level.
+        # geoBoundaries GeoJSON uses shapeName/shapeType and carries explicit
+        # source/license metadata. Support both so we no longer depend on
+        # Yemen's incomplete OSM district boundary coverage.
+        is_osm = tags.get("boundary") == "administrative"
+        level = str(tags.get("admin_level") or props.get("shapeType") or "").upper()
+        candidates = (
+            tags.get("name:ar"), tags.get("name:en"), tags.get("name"),
+            tags.get("official_name"), props.get("shapeName"),
+            props.get("shapeNameLocal"), props.get("shapeNameEn")
+        )
+        target = None
+        source = "OpenStreetMap"
+        license_name = "ODbL-1.0"
+        quality = "osm-boundary"
+
         for name in candidates:
             key = normalize(name)
             if not key:
                 continue
-            if level in {"6", "7"} and key in district_names:
-                gov, district = district_names[key]
-                target, kind = {"governorate": gov, "district": district}, "district"
+            if (level in {"6", "7", "ADM2", "ADM3"} or not is_osm) and key in district_names:
+                matches = district_names[key]
+                if len(matches) == 1:
+                    governorate, district = matches[0]
+                else:
+                    # Same district name may exist in more than one governorate.
+                    # Resolve duplicate names using distance to the published
+                    # Open Admin Data district centre, not a name-only guess.
+                    centre = geometry_point(geometry)
+                    if centre:
+                        lat, lon = centre
+                        selected = min(
+                            (item for item in districts if (item["governorate"], item["name"]) in matches),
+                            key=lambda item: distance_km(lat, lon, item["lat"], item["lon"])
+                        )
+                        governorate, district = selected["governorate"], selected["name"]
+                    else:
+                        continue
+                target = {"governorate": governorate, "district": district}
+                if props.get("shapeName"):
+                    source = "geoBoundaries"
+                    license_name = clean(props.get("boundaryLicense") or props.get("license") or "CC BY 3.0 IGO", 120)
+                    quality = "geoboundaries-polygon"
                 break
-            if level in {"4", "5"} and key in gov_names:
-                target, kind = {"governorate": gov_names[key], "district": ""}, "governorate"
+            if (level in {"4", "5", "ADM1"} or not is_osm) and key in gov_names:
+                target = {"governorate": gov_names[key], "district": ""}
+                if props.get("shapeName"):
+                    source = "geoBoundaries"
+                    license_name = clean(props.get("boundaryLicense") or props.get("license") or "CC BY 3.0 IGO", 120)
+                    quality = "geoboundaries-governorate-polygon"
                 break
-        geometry = feature.get("geometry") or {}
-        if not target or geometry.get("type") not in {"Polygon", "MultiPolygon"}:
+
+        if not target:
             continue
         coords = geometry.get("coordinates") or []
         points = []
@@ -261,11 +306,19 @@ def prepare_boundaries(features, governors, districts):
         walk(coords)
         if not points:
             continue
-        bbox = (min(p[0] for p in points), min(p[1] for p in points),
-                max(p[0] for p in points), max(p[1] for p in points))
-        output.append({"target": target, "geometry": geometry, "bbox": bbox})
-    return output
-
+        bbox = (min(point[0] for point in points), min(point[1] for point in points),
+                max(point[0] for point in points), max(point[1] for point in points))
+        output.append({
+            "target": target,
+            "geometry": geometry,
+            "bbox": bbox,
+            "quality": quality,
+            "source": source,
+            "license": license_name,
+            "sourceId": clean(props.get("shapeID") or tags.get("id") or feature.get("id"), 120)
+        })
+    # More specific district polygons are checked before governorate polygons.
+    return sorted(output, key=lambda item: 0 if item["target"].get("district") else 1)
 
 def assign_region(lat, lon, governors, districts, boundaries):
     matched_governorate = None
@@ -276,7 +329,7 @@ def assign_region(lat, lon, governors, districts, boundaries):
             # A district polygon is more specific than a governorate polygon.
             # Do not stop at a governorate boundary when no district polygon matched.
             if target.get("district"):
-                return target["governorate"], target["district"], "osm-boundary"
+                return target["governorate"], target["district"], boundary.get("quality", "osm-boundary")
             matched_governorate = target.get("governorate") or matched_governorate
 
     if matched_governorate:
@@ -452,13 +505,14 @@ def write_catalog(items, governors, districts, output):
         if bucket is None:
             continue
         bucket["count"] += 1
-        if item.get("assignmentQuality") == "osm-boundary":
+        if item.get("assignmentQuality") in {"osm-boundary", "geoboundaries-polygon"}:
             bucket["boundaryCount"] += 1
         else:
             bucket["approximateCount"] += 1
-        category = clean(item.get("category"), 40)
-        if category:
-            bucket["categories"][category] += 1
+        for category in item.get("categories", [item.get("category")]):
+            category = clean(category, 40)
+            if category:
+                bucket["categories"][category] += 1
 
     district_manifest = [
         {
@@ -480,7 +534,11 @@ def write_catalog(items, governors, districts, output):
                 "source": "OpenStreetMap contributors", "license": "ODbL-1.0",
                 "attribution": "© OpenStreetMap contributors",
                 "administrativeSource": "Open Admin Data Yemen (CC BY 4.0)",
-                "assignmentNote": "District counts include boundary matches and centroid estimates. boundaryCount is matched to an OSM administrative polygon; approximateCount uses the nearest district centroid and must be treated as an estimate.",
+                "assignmentNote": "District counts include polygon matches (OSM administrative boundaries or geoBoundaries Yemen ADM2) and explicitly marked nearest-centroid estimates. Use boundaryCount for polygon-derived assignments and approximateCount for estimates.",
+                "boundarySources": [
+                    {"name": "geoBoundaries Yemen ADM2", "level": "ADM2", "source": "Central Statistical Organization (CSO), OCHA Yemen", "license": "CC BY 3.0 IGO", "url": "https://www.geoboundaries.org/api/current/gbOpen/YEM/ADM2/"},
+                    {"name": "OpenStreetMap administrative boundaries", "license": "ODbL-1.0", "url": "https://www.openstreetmap.org/copyright"}
+                ],
                 "governorates": manifest_rows}
     (output / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
     return manifest
