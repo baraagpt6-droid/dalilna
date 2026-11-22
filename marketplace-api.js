@@ -108,5 +108,41 @@ async function submit(req,res){if(!limit(req,"submit",60,3600000))return send(re
 }
 async function pending(req,res){admin(req);if(!limit(req,"admin",60,60000))return send(res,429,{ok:false,error:"طلبات مراجعة كثيرة."});const db=getPool();await schema(db);const r=await db.query("SELECT id,client_ref,title,category,product_type,listing_type,condition,governorate,district,area,village,country,description,phone,opening_hours,website,seller_name,price,currency,image_data,latitude,longitude,deadline,status,created_at,approved_at,updated_at FROM marketplace_listings WHERE status='pending' ORDER BY created_at ASC LIMIT 100");return send(res,200,{ok:true,items:r.rows.map(x=>map(x,true)),count:r.rows.length});}
 async function review(req,res){admin(req);const b=await body(req,12000),id=clean(b.id,50),decision=clean(b.decision,16),note=clean(b.note,500);if(!/^[0-9a-f-]{36}$/i.test(id)||!["approve","reject"].includes(decision))throw error("INVALID_REVIEW","قرار المراجعة غير صالح.");const db=getPool();await schema(db);const c=await db.connect();try{await c.query("BEGIN");const status=decision==="approve"?"approved":"rejected";const r=await c.query("UPDATE marketplace_listings SET status=$2,review_note=$3,approved_at=CASE WHEN $2='approved' THEN NOW() ELSE NULL END,updated_at=NOW() WHERE id=$1 AND status='pending' RETURNING id,title,category,status",[id,status,note]);if(!r.rows.length){await c.query("ROLLBACK");return send(res,404,{ok:false,error:"الإعلان غير موجود أو تمت مراجعته."});}await c.query("INSERT INTO marketplace_moderation_log(listing_id,action,note) VALUES($1,$2,$3)",[id,status,note]);await c.query("COMMIT");return send(res,200,{ok:true,item:r.rows[0]});}catch(e){try{await c.query("ROLLBACK");}catch(_){}throw e;}finally{c.release();}}
-async function handleMarketplaceRequest(req,res,url){if(!url.pathname.startsWith("/api/marketplace/"))return false;try{const r=url.pathname.slice("/api/marketplace/".length);if(r==="status"&&req.method==="GET")await status(res);else if(r==="counts"&&req.method==="GET")await counts(req,res);else if(r==="listings"&&req.method==="GET")await list(req,res,url);else if(r==="listings"&&req.method==="POST")await submit(req,res);else if(r==="admin/pending"&&req.method==="GET")await pending(req,res);else if(r==="admin/review"&&req.method==="POST")await review(req,res);else send(res,404,{ok:false,error:"المسار غير موجود."});}catch(e){send(res,e.statusCode||500,{ok:false,code:e.code||"INTERNAL_ERROR",error:clean(e.message,240)||"تعذر تنفيذ الطلب."});}return true;}
+async function syncMerchantFeed(req,res){
+ const expected=String(process.env.DALILNA_PRODUCT_SYNC_TOKEN||"");
+ const authorization=String(req.headers.authorization||"");
+ const supplied=authorization.startsWith("Bearer ")?authorization.slice(7).trim():"";
+ if(expected.length<32)throw error("PRODUCT_SYNC_NOT_CONFIGURED","مزامنة منتجات التجار غير مهيأة على الخادم.",503);
+ const expectedBytes=Buffer.from(expected),suppliedBytes=Buffer.from(supplied);
+ if(expectedBytes.length!==suppliedBytes.length||!crypto.timingSafeEqual(expectedBytes,suppliedBytes))throw error("PRODUCT_SYNC_AUTH_FAILED","رمز مزامنة المنتجات غير صحيح.",403);
+ if(!limit(req,"product-feed-sync",30,3600000))throw error("PRODUCT_SYNC_RATE_LIMIT","طلبات مزامنة كثيرة.",429);
+ const payload=await body(req,2500000),items=Array.isArray(payload.items)?payload.items:[];
+ const sourceKey=clean(payload.sourceKey,50).toLowerCase().replace(/[^a-z0-9_-]/g,"");
+ const sourceName=clean(payload.sourceName||sourceKey,100);
+ if(!sourceKey||!items.length||items.length>250)throw error("INVALID_PRODUCT_FEED","خلاصة المنتجات فارغة أو غير صالحة.");
+ const db=getPool();await schema(db);const client=await db.connect();
+ let inserted=0,updated=0,skipped=0;
+ try{
+  await client.query("BEGIN");
+  for(const raw of items){
+   try{
+    const clientRef="feed:"+sourceKey+":"+clean(raw.id,80).replace(/[^a-zA-Z0-9._:-]/g,"-");
+    if(clientRef.length<10||clientRef.length>100||!raw.phone||!raw.sellerName)throw new Error("seller contact missing");
+    const item=validate({...raw,category:"souq",clientRef,country:"اليمن",listingType:raw.listingType||"sale",condition:raw.condition||"unknown"});
+    if(!item.governorate||!item.district)throw new Error("location missing");
+    const sql="INSERT INTO marketplace_listings (id,client_ref,title,category,product_type,listing_type,condition,governorate,district,area,village,country,description,phone,opening_hours,website,seller_name,price,currency,image_data,latitude,longitude,deadline,status,approved_at,review_note,expires_at) VALUES ($1,$2,$3,'souq',$4,$5,$6,$7,$8,$9,$10,'اليمن',$11,$12,'',$13,$14,$15,$16,$17,$18,NULL,'approved',NOW(),$19,NOW()+INTERVAL '60 days') ON CONFLICT(client_ref) DO UPDATE SET title=EXCLUDED.title,product_type=EXCLUDED.product_type,listing_type=EXCLUDED.listing_type,condition=EXCLUDED.condition,governorate=EXCLUDED.governorate,district=EXCLUDED.district,area=EXCLUDED.area,village=EXCLUDED.village,description=EXCLUDED.description,phone=EXCLUDED.phone,website=EXCLUDED.website,seller_name=EXCLUDED.seller_name,price=EXCLUDED.price,currency=EXCLUDED.currency,image_data=EXCLUDED.image_data,latitude=EXCLUDED.latitude,longitude=EXCLUDED.longitude,review_note=EXCLUDED.review_note,updated_at=NOW(),expires_at=NOW()+INTERVAL '60 days' WHERE marketplace_listings.client_ref LIKE 'feed:%' AND marketplace_listings.status='approved' RETURNING (xmax=0) AS inserted";
+    const values=[item.id,item.clientRef,item.title,item.productType,item.listingType,item.condition,item.governorate,item.district,item.area,item.village,item.description,item.phone,item.website,item.sellerName,item.price,item.currency,item.image,item.latitude,item.longitude,"merchant_feed:"+sourceName];
+    const result=await client.query(sql,values);
+    if(!result.rows.length)skipped++;
+    else if(result.rows[0].inserted)inserted++;
+    else updated++;
+   }catch(_){skipped++;}
+  }
+  await client.query("COMMIT");
+ }catch(e){await client.query("ROLLBACK");throw e;}
+ finally{client.release();}
+ console.info(JSON.stringify({event:"marketplace.feed_sync",source:sourceName,received:items.length,inserted,updated,skipped}));
+ return send(res,200,{ok:true,source:sourceName,received:items.length,inserted,updated,skipped,fetchedAt:new Date().toISOString()});
+}
+async function handleMarketplaceRequest(req,res,url){if(!url.pathname.startsWith("/api/marketplace/"))return false;try{const r=url.pathname.slice("/api/marketplace/".length);if(r==="status"&&req.method==="GET")await status(res);else if(r==="counts"&&req.method==="GET")await counts(req,res);else if(r==="listings"&&req.method==="GET")await list(req,res,url);else if(r==="listings"&&req.method==="POST")await submit(req,res);else if(r==="feed-sync"&&req.method==="POST")await syncMerchantFeed(req,res);else if(r==="admin/pending"&&req.method==="GET")await pending(req,res);else if(r==="admin/review"&&req.method==="POST")await review(req,res);else send(res,404,{ok:false,error:"المسار غير موجود."});}catch(e){send(res,e.statusCode||500,{ok:false,code:e.code||"INTERNAL_ERROR",error:clean(e.message,240)||"تعذر تنفيذ الطلب."});}return true;}
 module.exports={handleMarketplaceRequest,validate,CATEGORIES,PRODUCT_TYPES,GOVERNORATES,PRODUCT_GROUPS};
