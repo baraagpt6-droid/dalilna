@@ -63,7 +63,7 @@ test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black 
  assert.equal((bar.match(/<svg width="18" height="18"/g)||[]).length,3);
  assert.ok(html.includes(".quick-jump-bar{display:grid!important"));
  assert.ok(html.includes(".quick-jump-icon svg{display:block!important;width:18px!important;height:18px!important"));
- assert.ok(bar.includes('text-decoration:none'));
+ assert.ok(html.includes('.quick-jump-btn{display:flex;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:6px;padding:6px 5px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--ink);font:600 11.5px \'Readex Pro\',Tahoma,sans-serif;text-decoration:none;white-space:normal;text-align:center;overflow:hidden}'));
 });
 test("regional catalogue manifest loads at first visit and does not show a local-only count as the national total",()=>{
  assert.ok(html.includes('loadRegionalCatalogManifest(false).catch'));
