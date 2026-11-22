@@ -740,7 +740,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <div class="cat-hub" id="catHub">
       <div class="cat-head">
         <h2 style="font-size:17px">الأقسام والخدمات الذكية</h2>
-        <input class="cat-search" id="catFilterQ" type="search" placeholder="ابحث في الأقسام (مثلاً: دواء، سباك)…">
+
       </div>
       <p class="live-directory-sub" style="margin:0 0 9px">تعرض الأعداد سجلات المحلات والخدمات في فهرس المحافظة المحددة.</p>
       <div class="cat-tabs" id="catTabs">
@@ -2912,7 +2912,6 @@ function applyLang(){
   $("#themeBtn .lbl").textContent=T("theme");
   $("#q").placeholder=T("searchPh");
   $("#catHub h2").textContent=T("catHubTitle");
-  $("#catFilterQ").placeholder=T("catSearchPh");
   const cgKeys={all:"cgAll",top:"cgTop",daily:"cgDaily",health:"cgHealth",tech:"cgTech",shop:"cgShop"};
   $("#catTabs").querySelectorAll("[data-cg]").forEach(b=>b.textContent=T(cgKeys[b.dataset.cg]));
   $("#recentBox h2 span").textContent=T("recentTitle");
@@ -3404,7 +3403,6 @@ $("#catTabs").addEventListener("click",e=>{
   $("#catTabs").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));
   renderCategories();
 });
-$("#catFilterQ").addEventListener("input",()=>{catExpanded=true;renderCategories();});
 $("#catMoreBtn").addEventListener("click",()=>{catExpanded=!catExpanded;renderCategories();});
 $("#tiles").addEventListener("click",e=>{
   const t=e.target.closest(".tile");if(!t)return;
@@ -3414,7 +3412,7 @@ $("#tiles").addEventListener("click",e=>{
 
 function renderCategories(){
   const cnt={};for(const [key] of CATS)cnt[key]=getDirectoryCategoryCount(key);
-  const q=$("#catFilterQ").value.trim().toLowerCase();
+  const q="";
   let list=CATS;
   if(catGroup!=="all"&&CAT_GROUPS[catGroup])list=CATS.filter(([k])=>CAT_GROUPS[catGroup].includes(k));
   if(q)list=CATS.filter(([k,v])=>v.includes(q)||(CAT_SYN[k]||"").includes(q));
@@ -5097,7 +5095,7 @@ function render(){
   }else if(view==="souq"){
     // Product listings come from the shared PostgreSQL marketplace only.
   }
-  const showTopSearch=view==="home"&&searchActive;
+  const showTopSearch=searchActive;
   const topSection=$("#searchResultsTop"),topList=$("#searchResultList"),homeSlot=$("#homeListSlot");
   if(topSection)topSection.hidden=!showTopSearch;
   const nodes=[$("#latestT"),$("#list"),$("#more")].filter(Boolean);
@@ -5109,7 +5107,7 @@ let searchRenderTimer=0;
 function renderSearchAndRevealResults(){
  clearTimeout(searchRenderTimer);searchRenderTimer=0;
  liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";
- if(view==="fb")go("home");else render();
+ if(view!=="home")go("home");else render();
  const top=$("#searchResultsTop");
  if(top&&!top.hidden)window.requestAnimationFrame(()=>top.scrollIntoView({behavior:"smooth",block:"start"}));
  else if(view==="cat")window.requestAnimationFrame(()=>$("#clist")?.scrollIntoView({behavior:"smooth",block:"start"}));
@@ -5119,8 +5117,8 @@ $("#q").addEventListener("input",()=>{
  clearTimeout(searchRenderTimer);
  searchRenderTimer=window.setTimeout(()=>{
   searchRenderTimer=0;
-  if(view==="fb")go("home");else render();
- },240);
+  if(view!=="home")go("home");else render();
+ },70);
 });
 $("#searchSubmit").addEventListener("click",renderSearchAndRevealResults);
 $("#q").addEventListener("keydown",event=>{
