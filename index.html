@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.4.0">
+<meta name="app-version" content="2.6.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -584,7 +584,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 @media(max-width:420px){.shared-marketplace-controls{grid-template-columns:1fr}.shared-marketplace-controls .wide{grid-column:auto}}
 .add-lifetime-intro{display:grid;gap:7px;margin:0 0 12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card2);font-size:13px;line-height:1.7}.add-lifetime-intro ol{margin:0;padding-inline-start:22px;display:grid;gap:3px}.dalilna-map{height:230px;min-height:230px;margin:8px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card2)}[data-map-toggle]{min-height:34px;padding:7px 12px;border:1px solid var(--line);border-radius:9px;background:var(--card2);color:var(--ink);font:inherit;cursor:pointer}.region-sources summary{cursor:pointer;font-weight:700}
 
-/* 2.4.0 critical quick-access fallback. */
+/* 2.6.0 critical quick-access fallback. */
 .quick-jump-bar{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:7px;padding:9px 14px 7px;max-width:1160px;margin:0 auto}
 .quick-jump-btn{display:flex;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:6px;padding:6px 5px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--ink);font:600 11.5px 'Readex Pro',Tahoma,sans-serif;text-decoration:none;white-space:normal;text-align:center;overflow:hidden}
 .quick-jump-icon{display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:8px;background:var(--chip);color:var(--acc)}
@@ -4101,7 +4101,21 @@ function liveDirectoryPanelHTML(){
  return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>البحث في دليل المحلات والخدمات اليمني</b><div class="live-directory-sub">ابحث في جميع محافظات اليمن، أو اختر قسماً أو مديرية لتضييق النتائج.</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث السجل</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تجهيز فهرس البحث الموحد…</div><div class="live-directory-list" id="liveDirectoryItems"></div></section>';
 }
 const LIVE_DIRECTORY_API="https://dalilna-live.onrender.com";
-const LIVE_CATALOG_BASE="./regional-catalog/";
+const LIVE_CATALOG_LOCAL_BASE="./regional-catalog/";
+const LIVE_CATALOG_REMOTE_BASE="https://baraagpt6-droid.github.io/dalilna/regional-catalog/";
+const LIVE_CATALOG_BASE=location.hostname==="appassets.androidplatform.net"?LIVE_CATALOG_REMOTE_BASE:LIVE_CATALOG_LOCAL_BASE;
+async function fetchCatalogAsset(path){
+ const bases=LIVE_CATALOG_BASE===LIVE_CATALOG_REMOTE_BASE?[LIVE_CATALOG_REMOTE_BASE,LIVE_CATALOG_LOCAL_BASE]:[LIVE_CATALOG_LOCAL_BASE];
+ let lastError;
+ for(const base of bases){
+  try{
+   const response=await fetch(base+path,{headers:{Accept:"application/json"},cache:"no-store"});
+   if(response.ok)return response;
+   lastError=new Error("Regional catalogue returned HTTP "+response.status);
+  }catch(error){lastError=error;}
+ }
+ throw lastError||new Error("Regional catalogue unavailable");
+}
 const LIVE_LOCAL_KEY="dalilna_live_places_159";
 let liveGeoapifyEnabled=false;
 let liveDirectoryTimer=null,liveDirectoryController=null,liveDirectorySeq=0,liveDirectoryCache=new Map(),liveDirectoryLast={query:"",category:"all"};
@@ -4231,7 +4245,7 @@ function getDirectoryCategoryCount(category){const stats=catalogStatsForScope(),
 async function loadRegionalCatalogManifest(force){
  if(!force&&liveCatalogManifestPromise)return liveCatalogManifestPromise;
  const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=2.6.0";
- liveCatalogManifestPromise=fetch(manifestUrl,{headers:{Accept:"application/json"},cache:"no-store"}).then(async response=>{
+ liveCatalogManifestPromise=fetchCatalogAsset("manifest.json?v=2.6.0").then(async response=>{
   if(!response.ok)throw new Error("ملف فهرس المحافظات غير متاح حالياً (HTTP "+response.status+").");
   const data=await response.json();if(!data||!Array.isArray(data.governorates))throw new Error("صيغة فهرس المحافظات غير صالحة.");
   if(Number(data.totalCount||0)<1||!Array.isArray(data.districtCounts)||data.districtCounts.length!==335)throw new Error("فهرس المحافظات لا يحتوي إحصاءات المديريات الـ335.");
@@ -4243,7 +4257,7 @@ async function loadRegionalCatalog(gov,force){
  const manifest=await loadRegionalCatalogManifest(force),key=normalizePlace(gov),region=(manifest.governorates||[]).find(item=>normalizePlace(item?.name)===key);
  if(!region||!region.file)throw new Error("لا توجد قائمة بيانات لهذه المحافظة في ملف الفهرس.");
  const cached=liveCatalogFiles.get(region.file);if(!force&&cached)return {region,manifest,data:cached};
- const response=await fetch(LIVE_CATALOG_BASE+encodeURIComponent(region.file)+"?v=2.4.0",{headers:{Accept:"application/json"},cache:"no-store"});
+ const response=await fetchCatalogAsset(encodeURIComponent(region.file)+"?v=2.6.0");
  if(!response.ok)throw new Error("تعذر تحميل سجل المحافظة.");
  const payload=await response.json(),items=normalizeRegionalCatalogItems(payload);
  if(!items.length&&Number(region.count||0)>0)throw new Error("ملف المحافظة لا يحتوي سجلات قابلة للقراءة.");
@@ -5140,10 +5154,35 @@ else if(location.hash==="#jobs")window.setTimeout(()=>go("jobs"),0);
 /* Initial Boot */
 applyLang();
 buildScopeSelector();
+async function checkRemoteVersionSilently(){
+ const localVersion=document.querySelector('meta[name="app-version"]')?.content||"2.6.0";
+ const remoteUrl=location.hostname==="appassets.androidplatform.net"
+  ?"https://baraagpt6-droid.github.io/dalilna/version.json"
+  :"./version.json";
+ try{
+  const response=await fetch(remoteUrl+"?t="+Date.now(),{headers:{Accept:"application/json"},cache:"no-store"});
+  if(!response.ok)return null;
+  const latest=await response.json();
+  window.DALILNA_REMOTE_VERSION=latest;
+  const localManifest=liveCatalogManifest;
+  if(latest.catalogSnapshotDate&&localManifest?.snapshotDate&&latest.catalogSnapshotDate>localManifest.snapshotDate){
+   await warmUnifiedSearchIndex(true);
+  }
+  if(latest.webVersion&&latest.webVersion!==localVersion&&location.hostname!=="appassets.androidplatform.net"&&"serviceWorker" in navigator){
+   const registration=await navigator.serviceWorker.getRegistration("./");
+   if(registration)await registration.update();
+  }
+  return latest;
+ }catch(error){
+  console.info("Dalilna silent version check skipped:",error?.message||error);
+  return null;
+ }
+}
 loadRegionalCatalogManifest(false).then(()=>warmUnifiedSearchIndex(false)).catch(error=>{
   console.error("Dalilna regional catalog bootstrap failed:",error);
   buildScopeSelector();
 });
+checkRemoteVersionSilently();
 if($("#aiCloudConsent")){
   $("#aiCloudConsent").checked=S.aiCloudConsent===true;
   $("#aiModeHint").textContent=S.aiCloudConsent?"المساعد السحابي مفعّل بموافقتك. قد يُرسل سؤالك وبيانات الإدراجات العامة ذات الصلة، ومنها أرقام التواصل، إلى خادم التطبيق ومزود الذكاء الاصطناعي. يمكنك إيقافه في أي وقت.":"المساعد المحلي يبحث في بيانات هذا الجهاز دون إنترنت. المساعد السحابي متوقف ولن تُرسل بيانات الدليل لخدمة خارجية.";
@@ -5228,6 +5267,6 @@ window.DalilnaMarketplaceBridge={
 })();
 </script>
 <script src="./marketplace-client.js"></script>
-<script src="./features-2.1.js?v=2.4.0" defer></script>
+<script src="./features-2.1.js?v=2.6.0" defer></script>
 </body>
 </html>
