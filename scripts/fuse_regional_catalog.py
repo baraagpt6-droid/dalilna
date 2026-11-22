@@ -324,38 +324,47 @@ def merge_feature(target, incoming):
     if right.get("__operating_status") and not left.get("__operating_status"):
         left["__operating_status"] = right["__operating_status"]
 
-def similar_names(a, b):
-    keys_a, keys_b = name_keys(a), name_keys(b)
+def similar_name_keys(keys_a, keys_b):
     if not keys_a or not keys_b: return False
     if keys_a & keys_b: return True
     return any(SequenceMatcher(None, x, y).ratio() >= 0.92
                for x in keys_a for y in keys_b if len(x) >= 5 and len(y) >= 5)
+
+def similar_names(a, b):
+    return similar_name_keys(name_keys(a), name_keys(b))
 
 def cell_key(lat, lon):
     # Yemen longitudes are near cos(lat)=0.96; square buckets avoid polar distortion.
     return math.floor(lat/CELL), math.floor(lon/CELL)
 
 def deduplicate(features):
-    buckets, merged = defaultdict(list), []
+    buckets, merged, points, keys_cache = defaultdict(list), [], [], []
     stats = {"input": len(features), "unique": 0, "duplicatesMerged": 0}
     for feature in features:
         point = builder.geometry_point(feature.get("geometry"))
         if not point: continue
+        incoming_keys = name_keys(feature)
         lat, lon = point; row, col = cell_key(lat, lon)
         matched = None
-        for dr in (-2, -1, 0, 1, 2):
-            for dc in (-2, -1, 0, 1, 2):
-                for index in buckets[(row+dr, col+dc)]:
-                    existing = merged[index]
-                    other = builder.geometry_point(existing.get("geometry"))
-                    if other and haversine_m(point, other) < MAX_DISTANCE_M and similar_names(existing, feature):
-                        matched = index; break
+        if incoming_keys:
+            for dr in (-2, -1, 0, 1, 2):
+                for dc in (-2, -1, 0, 1, 2):
+                    for index in buckets[(row+dr, col+dc)]:
+                        other = points[index]
+                        if other and haversine_m(point, other) < MAX_DISTANCE_M and similar_name_keys(keys_cache[index], incoming_keys):
+                            matched = index
+                            break
+                    if matched is not None: break
                 if matched is not None: break
-            if matched is not None: break
         if matched is None:
-            index = len(merged); merged.append(feature); buckets[(row, col)].append(index)
+            index = len(merged)
+            merged.append(feature); points.append(point); keys_cache.append(incoming_keys)
+            buckets[(row, col)].append(index)
         else:
-            merge_feature(merged[matched], feature); stats["duplicatesMerged"] += 1
+            merge_feature(merged[matched], feature)
+            points[matched] = builder.geometry_point(merged[matched].get("geometry")) or points[matched]
+            keys_cache[matched] = name_keys(merged[matched])
+            stats["duplicatesMerged"] += 1
     stats["unique"] = len(merged)
     return merged, stats
 
