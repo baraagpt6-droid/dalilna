@@ -64,8 +64,7 @@ function parseYemenHrJobs(html){
   if(!publishedAt)continue;
   const deadlineAt=parseDateLabel(deadline);
   if(deadlineAt&&Date.parse(deadlineAt)<now)continue;
-  const detail=(block.match(/href=["'](https:\/\/telegra\.ph\/[^"']+)["']/i)||[])[1]||"";
-  const links=[...block.matchAll(/href=["'](https:\/\/[^"']+)["']/gi)].map(match=>match[1]);
+  const links=[...block.matchAll(/href=["'](https:\/\/[^"']+)["']/gi)].map(match=>match[1]).filter(link=>!/^https:\/\/(?:www\.)?telegra\.ph\//i.test(link));
   const applicationUrl=links.find(isOfficialApplicationUrl)||"";
   const postId=marks[i][1];
   const summaryMatch=plain.match(/(?:المؤهلات المطلوبة|المؤهلات|المتطلبات|الشروط|المهام والمسؤوليات|وصف الوظيفة)\s*[:：]\s*([\s\S]{1,800}?)(?=\n(?:آخر موعد للتقديم|طريقة التقديم|رابط التقديم|الموقع|تاريخ النشر|المسمى الوظيفي)\s*[:：]|$)/i);
@@ -76,8 +75,8 @@ function parseYemenHrJobs(html){
    location:decode(location)+", Yemen",city:decode(location),
    country:"Yemen",countryCode:"YE",publishedAt,
    deadline:deadline?decode(deadline):"",source:"YemenHR public jobs channel",
-   url:applicationUrl||detail||("https://t.me/hr_yemen/"+postId),
-   applicationUrl,summaryAr,
+   url:applicationUrl||("https://t.me/hr_yemen/"+postId),
+   applicationUrl,sourceUrl:"https://t.me/hr_yemen/"+postId,summaryAr,
    expiresAt:deadlineAt||new Date(now+30*86400000).toISOString()
   });
  }
