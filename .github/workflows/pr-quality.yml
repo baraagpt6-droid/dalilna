@@ -35,7 +35,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
 
       - name: Install Node.js dependencies
         run: npm install --no-audit --no-fund
@@ -44,6 +43,17 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Sync PWA and national catalogue into Android assets
+        shell: bash
+        run: |
+          mkdir -p android/app/src/main/assets/icons android/app/src/main/assets/regional-catalog
+          cp index.html regional-catalog-runtime.js marketplace-client.js features-2.1.js features-2.1.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html android/app/src/main/assets/
+          cp icons/* android/app/src/main/assets/icons/
+          cp regional-catalog/*.json android/app/src/main/assets/regional-catalog/
+          cmp -s index.html android/app/src/main/assets/index.html
+          cmp -s regions-yemen.js android/app/src/main/assets/regions-yemen.js
+          cmp -s version.json android/app/src/main/assets/version.json
 
       - name: Check JavaScript syntax
         run: node --check server.js
@@ -67,17 +77,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-
-      - name: Sync PWA and national catalogue into Android assets
-        shell: bash
-        run: |
-          mkdir -p android/app/src/main/assets/icons android/app/src/main/assets/regional-catalog
-          cp index.html regional-catalog-runtime.js marketplace-client.js features-2.1.js features-2.1.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html android/app/src/main/assets/
-          cp icons/* android/app/src/main/assets/icons/
-          cp regional-catalog/*.json android/app/src/main/assets/regional-catalog/
-          cmp -s index.html android/app/src/main/assets/index.html
-          cmp -s regions-yemen.js android/app/src/main/assets/regions-yemen.js
-          cmp -s version.json android/app/src/main/assets/version.json
 
       - name: Build Android debug APK
         run: gradle --no-daemon :android:app:assembleDebug
