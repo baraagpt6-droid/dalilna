@@ -17,23 +17,45 @@ test("regional profiles open local directory category shortcuts",()=>{
  assert.ok(!html.includes("google.com/maps/search"));
  assert.ok(!html.includes("regionMapSearch("));
 });
-test("AI business lookup uses local regional data and approved shared adverts",()=>{
+test("AI business lookup uses local data, hybrid map search and shared adverts",()=>{
  for(const token of [
-  "loadRegionalCatalog(context.gov",
+  "loadRegionalCatalog(selectedContext.gov",
   "loadLiveMarketplaceMatches",
-  "فهرس الأماكن المفتوح (OpenStreetMap وOverture Maps)",
-  "قاعدة بيانات الإعلانات المشتركة",
+  "searchLiveDirectoryFallback",
+  "assistantCards:cards.slice(0,10)",
   "approvedListings:approved.slice(0,8)",
   'approvalStatus:"approved_by_dalilna_admin"',
   'fieldVerificationStatus:"phone_and_address_not_field_verified"'
  ])assert.ok(html.includes(token),token);
  assert.ok(!html.includes("searchLivePlaces("));
+ assert.ok(html.includes("function renderAssistantResult(container,result)"));
 });
+test("manual refresh buttons are absent and Souq is not a home directory category",()=>{
+ for(const id of ["liveDirectoryRefresh","liveDirectoryRetry","sharedDirectoryRefresh","sharedJobsRefresh","sharedSouqRefresh"])
+  assert.ok(!html.includes('id="'+id+'"'),id);
+ assert.ok(html.includes('CATS.filter(([key])=>!["souq","parts"].includes(key))'));
+});
+test("profile settings, logout and local-auth limitations are present",()=>{
+ for(const token of ['id="profilePanel"','id="profileDefaultGovernorate"','id="profileLanguageBtn"','id="profileThemeBtn"','id="profileNotificationsBtn"','id="profileLogoutBtn"','defaultGovernorate','notificationsEnabled','function renderProfilePanel()'])
+  assert.ok(html.includes(token),token);
+ assert.ok(html.includes("لا يستخدم دليلنا حالياً نظام مصادقة مركزي"));
+});
+test("static English labels and bilingual regional search are wired",()=>{
+ for(const token of ["const STATIC_UI_EN=","function applyStaticBilingualLabels()","document.documentElement.dir=curLang===","const GOVS_EN=","function governorateLabel(name)","Search Yemen's shops and services"])
+  assert.ok(html.includes(token),token);
+});
+test("assistant cards expose call and OpenStreetMap navigation without Google Maps",()=>{
+ assert.ok(html.includes("function renderAssistantResult(container,result)"));
+ assert.ok(html.includes('call.href="tel:"'));
+ assert.ok(html.includes("https://www.openstreetmap.org/search?query="));
+ assert.ok(!html.includes("google.com/maps/search"));
+});
+
 test("jobs, products and property adverts remain in the shared marketplace",()=>{
  for(const token of ["/api/marketplace/listings","إعلانات معتمدة","أرض","شقة","منزل","للإيجار"])assert.ok(html.includes(token),token);
 });
 test("individual place cards use optional map and source links from catalogue data",()=>{
- for(const token of ["record.mapsUrl","record.mapsUrl","data-map-toggle","عرض الخريطة","OpenStreetMap"])assert.ok(html.includes(token),token);
+ for(const token of ["record.mapsUrl","data-map-toggle","View map","OpenStreetMap"])assert.ok(html.includes(token),token);
 });
 test("all-tab search uses the preloaded Yemen index and live OSM fallback",()=>{
  for(const token of ["const showTopSearch=searchActive",'if(view!=="home")go("home")',"warmUnifiedSearchIndex(false)","searchLiveDirectoryFallback","rows.length<5"])assert.ok(html.includes(token),token);
@@ -47,7 +69,7 @@ test("place cards omit local ratings, image search and file upload controls",()=
  assert.ok(start>=0&&end>start);
  const card=html.slice(start,end);
  for(const forbidden of ["تقييم المستخدمين على هذا الجهاز","data-live-rate-id","data-commons-photos","البحث عن صور مرخصة","type=\"file\"","Choose file"])assert.ok(!card.includes(forbidden),forbidden);
- for(const required of ["اتصال","واتساب","الخريطة","record.address","record.openingHours"])assert.ok(card.includes(required),required);
+ for(const required of ["Call","WhatsApp","View map","record.address","record.openingHours"])assert.ok(card.includes(required),required);
 });
 test("seven product-group filters are visible and connected to the shared marketplace API",()=>{
  const groups=["electronics","vehicles","property","solar","home","agriculture","clothing"];
