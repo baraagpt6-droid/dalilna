@@ -26,6 +26,11 @@ OVERTURE_LICENSES = {
     "alltheplaces": "CC0-1.0",
     "opentravel": "CDLA-Permissive-2.0",
     "brightquery": "CDLA-Permissive-2.0",
+    "birdeye": "CDLA-Permissive-2.0",
+    "dac": "CDLA-Permissive-2.0",
+    "pinmeto": "CDLA-Permissive-2.0",
+    "renderseo": "CDLA-Permissive-2.0",
+    "uberall": "CDLA-Permissive-2.0",
 }
 FSQ_LICENSE = "Apache-2.0"
 OSM_LICENSE = "ODbL-1.0"
@@ -156,7 +161,7 @@ def source_metadata(props, source, source_id):
     for item in sources:
         if not isinstance(item, dict): continue
         dataset = text(item.get("dataset") or item.get("provider") or "Overture Maps", 80).lower()
-        license_name = text(item.get("license") or OVERTURE_LICENSES.get(dataset, "CDLA-Permissive-2.0"), 80)
+        license_name = text(item.get("license") or OVERTURE_LICENSES.get(dataset, "license-unresolved"), 80)
         result.append({"name": "Overture Maps", "dataset": dataset,
                        "id": text(item.get("record_id") or props.get("id"), 120),
                        "license": license_name, "confidence": item.get("confidence")})
@@ -164,7 +169,7 @@ def source_metadata(props, source, source_id):
         dataset = "overture"
         result.append({"name": "Overture Maps", "dataset": dataset,
                        "id": text(props.get("id"), 120),
-                       "license": "CDLA-Permissive-2.0",
+                       "license": "license-unresolved",
                        "confidence": props.get("confidence")})
     return result
 
