@@ -53,16 +53,31 @@ class RegionalCatalogTests(unittest.TestCase):
                          ("إب", "حبيش", "approximate-district-centroid"))
 
 
-    def test_mapping_dictionary_covers_english_osm_tags_and_multicategory_health(self):
-        self.assertEqual(set(catalog.categories_for_tags({"amenity": "hospital"})), {"health"})
-        self.assertEqual(set(catalog.categories_for_tags({"amenity": "clinic"})), {"health"})
-        self.assertEqual(set(catalog.categories_for_tags({"amenity": "doctors"})), {"health"})
-        self.assertEqual(set(catalog.categories_for_tags({"amenity": "pharmacy"})), {"health", "pharmacy"})
-        self.assertIn("delivery", catalog.categories_for_tags({"office": "courier"}))
-        self.assertIn("delivery", catalog.categories_for_tags({"shop": "parcel"}))
-        self.assertIn("vehicles", catalog.categories_for_tags({"shop": "car"}))
-        self.assertIn("elec", catalog.categories_for_tags({"shop": "electronics"}))
-        self.assertIn("solar", catalog.categories_for_tags({"shop": "solar"}))
+    def test_mapping_dictionary_uses_one_strict_primary_category_for_overlapping_osm_tags(self):
+        cases = [
+            ({"amenity": "hospital"}, "health"),
+            ({"amenity": "clinic"}, "health"),
+            ({"amenity": "doctors"}, "health"),
+            ({"amenity": "pharmacy"}, "pharmacy"),
+            ({"healthcare": "pharmacy"}, "pharmacy"),
+            ({"shop": "pharmacy"}, "pharmacy"),
+            ({"shop": "car_parts"}, "vehicles"),
+            ({"shop": "car_repair"}, "vehicles"),
+            ({"shop": "motorcycle"}, "vehicles"),
+            ({"amenity": "car_rental"}, "vehicles"),
+            ({"shop": "bakery"}, "food"),
+            ({"shop": "farm"}, "farm"),
+            ({"amenity": "marketplace"}, "market"),
+            ({"shop": "appliance"}, "home"),
+        ]
+        for tags, expected in cases:
+            with self.subTest(tags=tags):
+                self.assertEqual(catalog.categories_for_tags(tags), [expected])
+        self.assertEqual(catalog.classify({"amenity": "hospital", "shop": "car"}), "health")
+        self.assertEqual(catalog.categories_for_tags({"office": "courier"}), ["delivery"])
+        self.assertEqual(catalog.categories_for_tags({"shop": "parcel"}), ["delivery"])
+        self.assertEqual(catalog.categories_for_tags({"shop": "electronics"}), ["elec"])
+        self.assertEqual(catalog.categories_for_tags({"shop": "solar"}), ["solar"])
 
     def test_geoboundaries_adm2_polygon_matches_english_district_name(self):
         governors = [{"name": "إب", "nameEn": "Ibb", "nameLocal": "اب", "lat": 13.9, "lon": 44.1}]
@@ -78,13 +93,13 @@ class RegionalCatalogTests(unittest.TestCase):
         self.assertEqual(catalog.assign_region(13.9, 44.1, governors, districts, boundaries),
                          ("إب", "الظهار", "geoboundaries-polygon"))
 
-    def test_records_include_all_matched_categories_and_bilingual_search_text(self):
+    def test_records_include_one_primary_category_and_bilingual_search_text(self):
         gov = [{"name": "إب", "nameEn": "Ibb", "lat": 14, "lon": 44}]
         districts = [{"governorate": "إب", "name": "حبيش", "nameEn": "Hubaysh", "lat": 14, "lon": 44}]
         feature = {"type": "Feature", "id": "node/234", "geometry": {"type": "Point", "coordinates": [44, 14]},
                    "properties": {"name:ar": "صيدلية الاختبار", "name:en": "Test Pharmacy", "amenity": "pharmacy"}}
         rows = catalog.build_items([feature], gov, districts, [])
-        self.assertEqual(set(rows[0]["categories"]), {"health", "pharmacy"})
+        self.assertEqual(rows[0]["categories"], ["pharmacy"])
         self.assertEqual(rows[0]["nameEn"], "Test Pharmacy")
         self.assertIn("pharmacy", rows[0]["searchText"].lower())
         self.assertIn("صيدليات", rows[0]["searchText"])
