@@ -200,7 +200,7 @@ jobs:
         run: |
           python3 scripts/test_regional_catalog.py
           python3 scripts/build_regional_catalog.py \
-            --places places.geojson \
+            --places fused-places.geojson \
             --boundaries all-boundaries.geojson \
             --governorates all-governorate.json \
             --districts all-district.json \
