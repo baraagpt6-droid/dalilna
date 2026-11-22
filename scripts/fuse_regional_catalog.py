@@ -128,51 +128,45 @@ def extract_category_values(props, tags, source):
                    tags.get("tourism"), tags.get("craft"), tags.get("service")])
     return [text(value, 120) for value in values if text(value, 120)]
 
-def category_for_values(values, mapping):
-    """Resolve external taxonomy labels to one exact primary category.
+def _taxonomy_term_matches(value, term):
+    # Match complete taxonomy words/phrases, not arbitrary substrings.
+    value = norm(value)
+    term = norm(term)
+    if not value or not term:
+        return False
+    return bool(re.search(r"(?<![\\w])" + re.escape(term) + r"(?![\\w])", value, re.UNICODE))
 
-    Overture/FSQ labels often contain taxonomy paths (for example
-    'Health and Beauty > Pharmacies'). Compare normalized leaf labels and
-    explicit provider labels only; never use loose substring matching.
-    """
-    candidates = []
-    for raw in values:
-        value = norm(raw)
-        if not value:
-            continue
-        candidates.append(value)
-        for part in re.split(r"[>/|]", str(raw or "")):
-            part = norm(part)
-            if part:
-                candidates.append(part)
-        for part in re.split(r"[._:]+", value):
-            part = norm(part)
-            if part:
-                candidates.append(part)
-    candidates = list(dict.fromkeys(candidates))
+
+def category_for_values(values, mapping):
+    normalized = [norm(value) for value in values if norm(value)]
     categories = mapping.get("categories", {})
     found = []
-    external_hints = mapping.get("externalCategoryHints") or {}
     for category, definition in categories.items():
+        aliases = [definition.get("labelAr"), definition.get("labelEn"), *(definition.get("aliases") or [])]
+        normalized_aliases = [norm(x) for x in aliases if norm(x)]
+        if any(_taxonomy_term_matches(value, alias) for value in normalized for alias in normalized_aliases):
+            found.append(category)
+    external_hints = mapping.get("externalCategoryHints") or {}
+    for category, hints in external_hints.items():
         if category not in categories:
             continue
-        aliases = [definition.get("labelAr"), definition.get("labelEn"), *(definition.get("aliases") or [])]
-        exact_aliases = {norm(item) for item in aliases if norm(item)}
-        exact_hints = {norm(item) for item in external_hints.get(category, []) if norm(item)}
-        if any(candidate in exact_aliases or candidate in exact_hints for candidate in candidates):
-            found.append(category)
-    if not found and not external_hints:
-        for candidate in candidates:
+        normalized_hints = [norm(hint) for hint in hints if norm(hint)]
+        if any(_taxonomy_term_matches(value, hint) for value in normalized for hint in normalized_hints):
+            if category not in found:
+                found.append(category)
+    if not external_hints:
+        for value in normalized:
             for hints, category in CATEGORY_HINTS:
-                normalized_hints = {norm(hint) for hint in hints if norm(hint)}
-                if candidate in normalized_hints and category in categories:
-                    found.append(category)
-    if not found and candidates and "other" in categories:
+                if any(_taxonomy_term_matches(value, norm(hint)) for hint in hints):
+                    if category not in found:
+                        found.append(category)
+    if not found and normalized and "other" in categories:
         found.append("other")
-    order = mapping.get("externalPrimaryOrder") or mapping.get("primaryCategoryOrder") or list(categories)
+    order = mapping.get("primaryCategoryOrder") or list(categories)
     ranks = {key: index for index, key in enumerate(order)}
-    primary = sorted(set(found), key=lambda key: ranks.get(key, 999))
-    return primary[:1]
+    ranked = sorted(set(found), key=lambda key: ranks.get(key, 999))
+    return ranked[:1]
+
 
 def source_metadata(props, source, source_id):
     if source == "osm":
