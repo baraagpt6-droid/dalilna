@@ -199,7 +199,7 @@ function inferCategoryFromQuery(query) {
   const text=normalizeText(query);
   if(!text)return "";
   const ordered=CATEGORY_MAPPING.primaryCategoryOrder||Object.keys(CATEGORY_MAPPING.categories||{});
-  for(const category of ordered.map(key=>[key,CATEGORY_MAPPING.categories[key]]).filter(([,definition])=>definition)){
+  for(const [category,definition] of ordered.map(key=>[key,CATEGORY_MAPPING.categories[key]]).filter(([,definition])=>definition)){
     const aliases=[definition.labelAr,definition.labelEn,...(definition.aliases||[])].filter(Boolean);
     for(const alias of aliases){
       const normalized=normalizeText(alias);
