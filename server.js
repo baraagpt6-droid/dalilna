@@ -43,7 +43,7 @@ function osmFilter(rule) {
   if(!key)return "";
   if(value==="*")return '["'+key+'"]';
   if(!/^[a-zA-Z0-9:_-]+$/.test(value))return "";
-  return '["'+key+'"]="'+value+'"';
+  return '["'+key+'"="'+value+'"]';
 }
 const FILTERS = Object.fromEntries(Object.entries(CATEGORY_MAPPING.categories||{}).map(([category,definition])=>{
   const rules=(definition.osmTags||[]).map(osmFilter).filter(Boolean);
@@ -198,7 +198,8 @@ function buildOverpassQuery(bbox, category) {
 function inferCategoryFromQuery(query) {
   const text=normalizeText(query);
   if(!text)return "";
-  for(const [category,definition] of Object.entries(CATEGORY_MAPPING.categories||{})){
+  const ordered=CATEGORY_MAPPING.primaryCategoryOrder||Object.keys(CATEGORY_MAPPING.categories||{});
+  for(const category of ordered.map(key=>[key,CATEGORY_MAPPING.categories[key]]).filter(([,definition])=>definition)){
     const aliases=[definition.labelAr,definition.labelEn,...(definition.aliases||[])].filter(Boolean);
     for(const alias of aliases){
       const normalized=normalizeText(alias);
