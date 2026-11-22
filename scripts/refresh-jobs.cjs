@@ -43,13 +43,13 @@ function isOfficialApplicationUrl(value){
  try{
   const url=new URL(String(value||""));
   if(url.protocol!=="https:"||url.username||url.password||url.pathname==="/")return false;
-  const host=url.hostname.toLowerCase().replace(/^www\\./,"");
+  const host=url.hostname.toLowerCase().replace(/^www\./,"");
   const blocked=["t.me","telegram.me","telegra.ph","reliefweb.int","linkedin.com","facebook.com","instagram.com","x.com","twitter.com","t.co","bit.ly","tinyurl.com","linktr.ee","wa.me","whatsapp.com","forms.gle"];
   return !blocked.some(root=>host===root||host.endsWith("."+root));
  }catch(_){return false;}
 }
 function firstDirectApplicationLink(markup){
- const re=/<a\\b[^>]*href=["'](https:\\/\\/[^"']+)["'][^>]*>([\\s\\S]*?)<\\/a>/gi;
+ const re=/<a\b[^>]*href=["']([^"']*\/en\/jobs\/[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
  for(const match of String(markup||"").matchAll(re)){
   const label=stripHtml(match[2]);
   if(/(?:apply|application|submit|apply now|التقديم|تقديم|قدّم|قدم|استمارة)/i.test(label)&&isOfficialApplicationUrl(match[1]))return match[1];
@@ -108,7 +108,7 @@ function parseCareersSaJob(html,url,fallbackTitle){
  const h1=(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)||[])[1];
  const title=stripHtml(h1||fallbackTitle).replace(/\s+/g," ").trim();
  const orgLine=lines.find(line=>/^Jobs\s*[\/›]\s*/i.test(line))||"";
- const organization=orgLine.replace(/^Jobs\s*[\/›]\s*/i,"").trim()||"Employer listing via Careers.sa";
+ const organization=orgLine.replace(/^Jobs\s*(?:\/|›)\s*/i,"").trim()||"Employer listing via Careers.sa";
  const locationLine=lines.find(line=>/,\s*Saudi Arabia/i.test(line))||"Saudi Arabia";
  const locationMatch=locationLine.match(/([A-Za-z][A-Za-z .'-]{1,45},\s*Saudi Arabia)/i);
  const location=locationMatch?locationMatch[1]:"Saudi Arabia";
@@ -141,15 +141,15 @@ async function fetchCareersSaJobs(){
 }
 
 function parseRss(xml,source){
- const blocks=[...String(xml||"").matchAll(/<(item|entry)\\b[\\s\\S]*?<\\/\\1>/gi)].map(match=>match[0]),out=[];
+ const blocks=[...String(xml||"").matchAll(/<(item|entry)\b[\s\S]*?<\/\1>/gi)].map(match=>match[0]),out=[];
  for(const block of blocks){
   const title=tag(block,"title"),sourceUrl=linkFrom(block),url=isOfficialApplicationUrl(sourceUrl)?sourceUrl:"";
   const description=tag(block,"description")||tag(block,"summary")||tag(block,"content");
-  const locationMatch=(description+" "+block).match(/(?:Duty Station|Location|Duty station|الموقع)\\s*[:：]\\s*([^<\\n\\r;|]{2,100})/i);
+  const locationMatch=(description+" "+block).match(/(?:Duty Station|Location|Duty station|الموقع)\s*[:：]\s*([^<\n\r;|]{2,100})/i);
   const location=locationMatch?decode(locationMatch[1]):"",place=inferCountry(location+" "+description.slice(0,1200));
   if(!title||!url||!place)continue;
   const published=tag(block,"pubDate")||tag(block,"published")||tag(block,"updated")||tag(block,"dc:date");
-  const deadline=(description+" "+block).match(/(?:Deadline|Closing Date|Application deadline|آخر موعد)\\s*[:：]\\s*([^<\\n\\r;|]{4,50})/i);
+  const deadline=(description+" "+block).match(/(?:Deadline|Closing Date|Application deadline|آخر موعد)\s*[:：]\s*([^<\n\r;|]{4,50})/i);
   out.push({id:tag(block,"guid")||url,title:title.slice(0,180),organization:source,location:location||place.country,city:location||"",country:place.country,countryCode:place.countryCode,publishedAt:isoDate(published),deadline:deadline?decode(deadline[1]):"",source,url,applicationUrl:url,summary:stripHtml(description).slice(0,700),sourceUrl,expiresAt:new Date(now+30*86400000).toISOString()});
  }
  return out;
