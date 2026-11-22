@@ -110,6 +110,12 @@ test("Geoapify returns in-app place cards and obtains phone from Place Details",
   if(originalKey===undefined)delete process.env.GEOAPIFY_API_KEY;else process.env.GEOAPIFY_API_KEY=originalKey;
  }
 });
+test("live places smoke test follows the current API package version",()=>{
+ const source=fs.readFileSync("scripts/live-places-smoke.cjs","utf8");
+ assert.ok(source.includes('const EXPECTED_VERSION=require("../package.json").version;'));
+ assert.ok(source.includes("r.payload.version===EXPECTED_VERSION"));
+ assert.equal(source.includes("2.6.0"),false);
+});
 test("provider User-Agent versions follow package metadata",()=>{
  const source=fs.readFileSync("server.js","utf8");
  assert.ok(source.includes('const VERSION = require("./package.json").version;'));
