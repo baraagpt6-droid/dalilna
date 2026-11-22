@@ -47,7 +47,7 @@ function osmFilter(rule) {
 }
 const FILTERS = Object.fromEntries(Object.entries(CATEGORY_MAPPING.categories||{}).map(([category,definition])=>{
   const rules=(definition.osmTags||[]).map(osmFilter).filter(Boolean);
-  return [category,rules.length?rules:ALL_FILTERS];
+  return [category,rules.length?rules:(category==="parts"?[]:ALL_FILTERS)];
 }));
 FILTERS.all=ALL_FILTERS;
 FILTERS.land=FILTERS.real_estate||ALL_FILTERS;
@@ -223,9 +223,9 @@ const GEOAPIFY_CATEGORY_MAP = {
   food: ["catering.restaurant", "catering.fast_food", "catering.food_court"],
   cafe: ["catering.cafe"],
   telecom: ["commercial.elektronics"],
-  elec: ["commercial.elektronics"],
+  elec: ["commercial.elektronics", "commercial.computer"],
   pharmacy: ["healthcare.pharmacy", "commercial.health_and_beauty.pharmacy"],
-  health: ["healthcare.hospital", "healthcare.clinic_or_praxis", "healthcare.dentist", "healthcare.pharmacy", "commercial.health_and_beauty.pharmacy"],
+  health: ["healthcare.hospital", "healthcare.clinic_or_praxis", "healthcare.dentist"],
   edu: ["education.school", "education.college", "education.university", "childcare.kindergarten"],
   gov: ["office.government"],
   money: ["service.financial.bank", "service.financial.atm", "service.financial.bureau_de_change", "service.financial.money_transfer"],
@@ -234,8 +234,8 @@ const GEOAPIFY_CATEGORY_MAP = {
   mosque: ["religion.place_of_worship.islam"],
   hotel: ["accommodation.hotel", "accommodation.guest_house", "accommodation.hostel"],
   market: ["commercial.marketplace"],
-  solar: ["commercial.elektronics", "commercial.energy", "service.electrician"],
-  parts: ["commercial.vehicle"],
+  solar: ["commercial.energy"],
+  parts: [],
   build: ["commercial.houseware_and_hardware.building_materials", "commercial.houseware_and_hardware.hardware_and_tools"],
   clothes: ["commercial.clothing"],
   home: ["commercial.furniture_and_interior", "commercial.houseware_and_hardware"],
@@ -246,7 +246,7 @@ const GEOAPIFY_CATEGORY_MAP = {
   salon: ["service.beauty.hairdresser"],
   laundry: ["service.cleaning.laundry"],
   delivery: ["service.post", "service.post.office", "service.post.parcel_locker"],
-  utility: ["service.vehicle.fuel", "commercial.energy"],
+  utility: ["service.vehicle.fuel"],
   gold: ["commercial.jewelry"],
   wedding: ["commercial.wedding", "catering"],
   farm: ["commercial.agrarian", "commercial.garden"]
@@ -517,40 +517,43 @@ async function searchGeoapifyPlaces(params) {
 }
 
 function classifyCategory(tags) {
-  const shop = String(tags.shop || "").toLowerCase();
-  const amenity = String(tags.amenity || "").toLowerCase();
-  const tourism = String(tags.tourism || "").toLowerCase();
-  const office = String(tags.office || "").toLowerCase();
-  const craft = String(tags.craft || "").toLowerCase();
-  if (["convenience", "grocery", "supermarket", "general"].includes(shop) || amenity === "marketplace") return "grocery";
-  if (amenity === "pharmacy") return "pharmacy";
-  if (["hospital", "clinic", "doctors", "dentist"].includes(amenity)) return "health";
-  if (["restaurant", "fast_food"].includes(amenity) || shop === "bakery") return "food";
-  if (amenity === "cafe") return "cafe";
-  if (["school", "college", "university", "kindergarten"].includes(amenity)) return "edu";
-  if (office === "government") return "gov";
-  if (["bank", "atm", "bureau_de_change"].includes(amenity)) return "money";
-  if (amenity === "place_of_worship" || tags.building === "mosque") return "mosque";
-  if (["hotel", "guest_house", "hostel"].includes(tourism)) return "hotel";
-  if (shop === "hairdresser") return "salon";
-  if (shop === "laundry") return "laundry";
-  if (shop === "car_parts") return "parts";
-  if (shop === "building_materials") return "build";
-  if (shop === "jewelry") return "gold";
-  if (shop === "clothes" || shop === "shoes") return "clothes";
-  if (shop === "books" || shop === "stationery" || shop === "newsagent") return "books";
-  if (["car","motorcycle","vehicle","car_repair","car_parts"].includes(shop)) return "vehicles";
-  if (shop === "watches" || craft === "watchmaker") return "watches";
-  if (shop === "furniture" || shop === "houseware" || shop === "appliance") return "home";
-  if (shop === "beauty" || shop === "cosmetics" || shop === "perfumery") return "beauty";
-  if (shop === "electronics" || shop === "electrical") return "solar";
-  if (shop === "hardware") return "build";
-  if (craft) return "craft";
-  if (amenity === "bus_station" || amenity === "taxi") return "transport";
-  if (amenity === "post_office" || shop === "parcel") return "delivery";
-  if (amenity === "fuel" || shop === "gas" || shop === "propane") return "utility";
-  if (amenity === "events_venue") return "wedding";
-  if (shop === "agrarian" || shop === "garden_centre" || shop === "farm") return "farm";
+  const value=(key)=>String(tags&&tags[key]||"").trim().toLowerCase();
+  // Exact high-priority activity tags prevent pharmacies, vehicle services
+  // and other overlapping records from entering multiple directory sections.
+  for(const rule of CATEGORY_MAPPING.strictPrimaryRules||[]){
+    if(value(rule.key)===String(rule.value||"").toLowerCase()&&CATEGORY_MAPPING.categories?.[rule.category])return rule.category;
+  }
+  const shop=value("shop"),amenity=value("amenity"),healthcare=value("healthcare");
+  const tourism=value("tourism"),office=value("office"),craft=value("craft");
+  if(["hospital","clinic","doctors","dentist","doctors_surgery","health_centre","medical_centre"].includes(amenity)
+    ||["hospital","clinic","doctor","doctors","dentist","health_centre","medical_centre"].includes(healthcare))return "health";
+  if(["convenience","grocery","supermarket","greengrocer","butcher","deli","food","seafood"].includes(shop))return "grocery";
+  if(["restaurant","fast_food","food_court"].includes(amenity)||["bakery","pastry","confectionery"].includes(shop))return "food";
+  if(["cafe","tea","internet_cafe"].includes(amenity))return "cafe";
+  if(["school","college","university","kindergarten","language_school","driving_school"].includes(amenity))return "edu";
+  if(["government","administrative","diplomatic"].includes(office)||value("government"))return "gov";
+  if(["bank","atm","bureau_de_change","money_transfer"].includes(amenity))return "money";
+  if(amenity==="place_of_worship"||value("building")==="mosque")return "mosque";
+  if(["hotel","guest_house","hostel","motel","apartment"].includes(tourism))return "hotel";
+  if(["hairdresser","barber"].includes(shop))return "salon";
+  if(["laundry","dry_cleaning"].includes(shop))return "laundry";
+  if(["building_materials","paint","tiles","doors","flooring","plumbing"].includes(shop))return "build";
+  if(["jewelry","jewellery","watches"].includes(shop)||["goldsmith","watchmaker"].includes(craft))return "gold";
+  if(["clothes","shoes","tailor","fabric","fashion","boutique"].includes(shop))return "clothes";
+  if(["books","stationery","copyshop","print","newspaper"].includes(shop)||amenity==="library")return "books";
+  if(["car","motorcycle","vehicle","car_repair","motorcycle_repair","car_parts","vehicle_parts","motorcycle_parts","tyres","car_rental"].includes(shop)
+    ||amenity==="car_rental"||craft==="mechanic")return "vehicles";
+  if(["furniture","houseware","appliance","kitchen","kitchenware","bed","interior_decoration","curtain","carpet","bathroom_furnishing"].includes(shop))return "home";
+  if(["beauty","cosmetics","perfumery","hairdresser_supply"].includes(shop))return "beauty";
+  if(["electronics","computer","electrical","hifi","radiotechnics","computer_parts"].includes(shop))return "elec";
+  if(["mobile_phone","telecommunication","mobile_phone_accessories"].includes(shop)||office==="telecommunication")return "telecom";
+  if(["agrarian","garden_centre","farm","animal_feed","seeds","agricultural_supplies"].includes(shop)
+    ||["veterinary","animal_boarding"].includes(amenity)||healthcare==="veterinary")return "farm";
+  if(["bus_station","taxi","fuel","ferry_terminal"].includes(amenity)||["station","stop_position","platform"].includes(value("public_transport")))return "transport";
+  if(["post_office","parcel_locker","parcel_pickup","courier","delivery"].includes(amenity)||["parcel","shipping","delivery","courier"].includes(shop)||office==="courier"||office==="logistics")return "delivery";
+  if(["gas","propane","water","water_treatment","fuel"].includes(shop)||["fuel","water_point","drinking_water"].includes(amenity))return "utility";
+  if(["events_venue","community_centre"].includes(amenity)||value("leisure")==="events_venue")return "wedding";
+  if(["car_repair","electrician","plumber","carpenter","blacksmith"].includes(craft))return "craft";
   return "other";
 }
 
