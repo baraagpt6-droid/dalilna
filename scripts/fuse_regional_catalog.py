@@ -170,7 +170,8 @@ def source_metadata(props, source, source_id):
         license_name = text(item.get("license") or OVERTURE_LICENSES.get(dataset, "license-unresolved"), 80)
         result.append({"name": "Overture Maps", "dataset": dataset,
                        "id": text(item.get("record_id") or props.get("id"), 120),
-                       "license": license_name, "confidence": item.get("confidence")})
+                       "license": license_name, "confidence": item.get("confidence"),
+                       "url": "https://docs.overturemaps.org/guides/places/"})
     if not result:
         dataset = "overture"
         result.append({"name": "Overture Maps", "dataset": dataset,
