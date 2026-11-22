@@ -1130,9 +1130,10 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <label id="priceLbl">السعر / الراتب<input name="price" placeholder="اختياري"></label>
       <label id="countryLbl">البلد<input name="country" value="اليمن"></label>
     </div>
-    <label>صورة المحل أو المنتج (اختيارية)
-      <input type="file" id="imgInput" accept="image/*">
-    </label>
+    <div class="product-image-control">
+      <button type="button" class="ghost" id="imgChooseBtn">إضافة صورة للمنتج (اختياري)</button>
+      <input type="file" id="imgInput" accept="image/*" hidden>
+    </div>
     <div id="imgPreviewBox" hidden style="display:flex;align-items:center;gap:10px">
       <img id="imgPreview" alt="" style="width:72px;height:54px;object-fit:cover;border-radius:10px;border:1px solid var(--line)">
       <button type="button" class="ghost" id="imgClearBtn" style="min-height:34px;font-size:12.5px">إزالة الصورة</button>
@@ -3704,6 +3705,7 @@ async function compressImage(file){
     r.onerror=rej;r.readAsDataURL(file);
   });
 }
+$("#imgChooseBtn").addEventListener("click",()=>$("#imgInput").click());
 $("#imgInput").addEventListener("change",async e=>{
   const file=e.target.files[0];if(!file)return;
   try{
@@ -4333,7 +4335,7 @@ function renderLiveDirectoryResponse(data){
  liveDirectoryLastData=data;
  const shared=liveDirectorySharedMatchesHTML();
  box.classList.remove("live-google-results");
- if(attribution)attribution.innerHTML='المصدر: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · التقسيم الإداري: <a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.';
+ if(attribution)attribution.innerHTML='الأماكن: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · الحدود: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">geoBoundaries</a> (CSO/OCHA Yemen، CC BY 3.0 IGO) و<a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a> (CC BY 4.0).';
  const date=data.snapshotDate||data.manifest&&data.manifest.snapshotDate||"غير محدد";
  const regionLabel=data.context?.type==="country"?"جميع المحافظات · ":(data.regionName?"محافظة "+data.regionName+" · ":"");
  status.textContent=regionLabel+Number(items.length).toLocaleString("ar")+" نتيجة من فهرس الأماكن · آخر تحديث: "+date+(liveSharedMatches.length?" · إعلانات معتمدة: "+liveSharedMatches.length:"")+(liveSharedLoadError?" · تعذر تحديث الإعلانات المشتركة":"");
