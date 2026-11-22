@@ -1570,7 +1570,10 @@
       "pharmacy",
       "drugstore",
       "chemist",
-      "صيدلية"
+      "صيدلية",
+      "pharmacies",
+      "drugstores",
+      "chemists"
     ],
     "edu": [
       "school",
@@ -1595,13 +1598,19 @@
       "convenience store",
       "food market",
       "بقالة",
-      "سوبرماركت"
+      "سوبرماركت",
+      "supermarkets",
+      "convenience stores",
+      "grocery stores"
     ],
     "food": [
       "restaurant",
       "fast food",
       "food court",
-      "مطعم"
+      "مطعم",
+      "restaurants",
+      "bakeries",
+      "fast food restaurants"
     ],
     "cafe": [
       "cafe",
@@ -1631,7 +1640,20 @@
       "car dealer",
       "motorcycle dealer",
       "قطع غيار",
-      "سيارات"
+      "سيارات",
+      "car repairs",
+      "vehicle repairs",
+      "motorcycle repairs",
+      "auto repairs",
+      "auto parts",
+      "car parts",
+      "vehicle parts",
+      "motorcycle parts",
+      "car dealers",
+      "motorcycle dealers",
+      "car rental",
+      "tyre shop",
+      "tire shop"
     ],
     "telecom": [
       "mobile phone",
@@ -1646,7 +1668,10 @@
       "electronics",
       "computer",
       "إلكترونيات",
-      "كمبيوتر"
+      "كمبيوتر",
+      "electronics stores",
+      "computer stores",
+      "computer shop"
     ],
     "clothes": [
       "clothing store",
@@ -1661,7 +1686,9 @@
       "hardware store",
       "building material",
       "أثاث",
-      "مواد بناء"
+      "مواد بناء",
+      "furniture shops",
+      "home appliance stores"
     ],
     "hotel": [
       "hotel",
