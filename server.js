@@ -7,7 +7,7 @@ const { handleJobsRequest } = require("./jobs-api");
 const geminiAssistantHandler = require("./api/assistant");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "2.4.0";
+const VERSION = "2.6.0";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
