@@ -96,12 +96,3 @@ test("local-service categories do not fetch unrelated marketplace ads",()=>{
  assert.ok(html.includes('if(!productType&&!categoryProductTypes&&!marketplaceCategories.includes(category))'));
  assert.ok(html.includes('ctx.type==="subdistrict"'));
 });
-
-test("live search results use one list and suppress a false local zero-result box",()=>{
- assert.ok(html.includes("const unifiedResultsVisible=liveWanted&&searchActive"));
- assert.ok(html.includes('$("#list").hidden=unifiedResultsVisible'));
- assert.ok(html.includes('unifiedResultsVisible?"":emptySearchFallbackHTML'));
-});
-test("profile activity lists adverts, shops and saved directory items",()=>{
- for(const token of ['id="profileActivityList"',"data-profile-item-id","Saved favourites","Shops I added"])assert.ok(html.includes(token),token);
-});

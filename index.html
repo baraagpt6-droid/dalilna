@@ -598,10 +598,6 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 .profile-metrics b{display:block;font-size:18px;color:var(--acc)}
 .profile-metrics span{display:block;font-size:10px;color:var(--mute)}
 .profile-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:9px}
-.profile-activity{display:grid;gap:9px;margin-top:12px}
-.profile-activity-section{display:grid;gap:5px;padding:9px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
-.profile-activity-section>b{font-size:12px}
-.profile-activity-item{display:block;width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-size:11px;text-align:start}
 .assistant-result-cards{display:grid;gap:8px;margin-top:10px}
 .assistant-result-card{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px}
 .assistant-result-card b{display:block;font-size:13px}
@@ -1038,7 +1034,6 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
         <div><b id="profileShopsCount">0</b><span id="profileShopsLabel">محلات أضفتها</span></div>
         <div><b id="profileFavsCount">0</b><span id="profileFavsLabel">المفضلة</span></div>
       </div>
-      <div id="profileActivityList" class="profile-activity" aria-live="polite"></div>
       <label id="profileRegionLabel" style="display:block;margin-top:10px">المحافظة الافتراضية
         <select id="profileDefaultGovernorate" style="width:100%;margin-top:5px"><option value="">كل اليمن</option></select>
       </label>
@@ -3094,6 +3089,7 @@ applyTheme();
 let liveFxData=null,liveFxError="",liveFxFetchedAt=0,liveFxPending=null,liveFxController=null;
 function applyLang(){
   curLang=S.lang||"ar";
+  window.DALILNA_LANGUAGE=curLang;
   $("#langLbl").textContent=curLang==="en"?"EN":"عربي";
   document.documentElement.lang=curLang;
   document.documentElement.dir=curLang==="en"?"ltr":"rtl";
@@ -3138,7 +3134,6 @@ function applyLang(){
   render();
   applyStaticBilingualLabels();
   window.dispatchEvent(new CustomEvent("dalilna:languagechange",{detail:{language:curLang}}));
-  window.DALILNA_LANGUAGE=curLang;
 }
 $("#langBtn").addEventListener("click",()=>{
   openCustomPicker({
@@ -3191,40 +3186,23 @@ function renderProfilePanel(){
  const name=session.role==="admin"?(admin?.name||session.adminEmail||"Admin"):session.role==="merchant"?(merchant.name||"Merchant"):(english?"Visitor":"مستفيد");
  const contact=session.role==="admin"?(session.adminEmail||""):session.role==="merchant"?(merchant.phone||""):"";
  const remaining=Math.max(0,Math.ceil((60*86400000-(Date.now()-Number(S.installDate||Date.now())))/86400000));
- const ownsPhone=!!merchant.phone;
- const owned=S.items.filter(item=>ownsPhone&&item.cat!=="jobs"&&item.cat!=="souq"&&phoneKey(item.ownerPhone||item.phone)===phoneKey(merchant.phone));
- const ads=S.ads.filter(item=>ownsPhone&&phoneKey(item.phone)===phoneKey(merchant.phone));
- const favoriteIds=Array.isArray(S.favs)?S.favs:[];
- let marketplaceFavorites=[],jobFavorites=[];
- try{marketplaceFavorites=JSON.parse(localStorage.getItem("dalilna-marketplace-favs-v1")||"[]");}catch(_){}
- try{jobFavorites=JSON.parse(localStorage.getItem("dalilna-job-favs-v1")||"[]");}catch(_){}
- if(!Array.isArray(marketplaceFavorites))marketplaceFavorites=[];
- if(!Array.isArray(jobFavorites))jobFavorites=[];
- const favs=new Set([...favoriteIds,...marketplaceFavorites,...jobFavorites]).size;
- const favoriteItems=S.items.filter(item=>favoriteIds.includes(item.id));
+ const owned=S.items.filter(item=>merchant.phone&&phoneKey(item.ownerPhone||item.phone)===phoneKey(merchant.phone));
+ const ads=S.ads.filter(item=>merchant.phone&&phoneKey(item.phone)===phoneKey(merchant.phone));
+ const favs=Array.isArray(S.favs)?S.favs.length:0;
  const set=(id,value)=>{const node=$("#"+id);if(node)node.textContent=String(value);};
  set("profileHeading",english?"My Profile":"ملفي الشخصي");
  set("profileBadge",english?"Not verified":"غير موثّق");
  set("profileName",name);
  set("profileContact",contact||(english?"No phone or email is linked to this local profile.":"لا يوجد رقم أو بريد مرتبط بالملف المحلي."));
  set("profileDaysLeft",english?remaining+" free advertising days remaining":"متبقي "+remaining+" يوماً من الإعلان المجاني");
- set("profileAdsCount",ads.length);set("profileShopsCount",owned.length);set("profileFavsCount",favs);
+ set("profileAdsCount",ads.length);
+ set("profileShopsCount",owned.length);
+ set("profileFavsCount",favs);
  set("profileAdsLabel",english?"My ads":"إعلاناتي");
  set("profileShopsLabel",english?"Shops I added":"محلات أضفتها");
  set("profileFavsLabel",english?"Saved favorites":"المفضلة");
  set("profileRegionLabel",english?"Default governorate":"المحافظة الافتراضية");
  set("profileLocalNote",english?"This profile is stored on this device. Dalilna does not yet use central user authentication or account verification.":"بيانات هذا الملف محفوظة على الجهاز. لا يستخدم دليلنا حالياً نظام مصادقة مركزي أو توثيق حسابات.");
- const list=$("#profileActivityList");
- if(list){
-  const section=(title,items,empty,clickable)=>'<section class="profile-activity-section"><b>'+esc(title)+'</b>'+(items.length
-    ?items.slice(0,8).map(item=>clickable
-      ?'<button type="button" class="profile-activity-item" data-profile-item-id="'+esc(item.id)+'">'+esc(item.name||item.title||"")+'</button>'
-      :'<div class="profile-activity-item">'+esc(item.title||"")+'</div>').join("")
-    :'<p class="where">'+esc(empty)+'</p>')+'</section>';
-  list.innerHTML=section(english?"My adverts":"إعلاناتي",ads,english?"No adverts linked to this device profile.":"لا توجد إعلانات مرتبطة بهذا الملف على الجهاز.",false)
-    +section(english?"Shops I added":"محلات أضفتها",owned,english?"No shops linked to this merchant phone.":"لا توجد محلات مرتبطة برقم حساب التاجر.",true)
-    +section(english?"Saved favourites":"المفضلة",favoriteItems,english?"No saved directory favourites on this device.":"لا توجد محلات محفوظة في مفضلة هذا الجهاز.",true);
- }
  const select=$("#profileDefaultGovernorate");
  if(select){
    const current=S.defaultGovernorate||"";
@@ -3239,14 +3217,6 @@ function renderProfilePanel(){
  };
  for(const [id,label] of Object.entries(labels))set(id,label);
 }
-document.addEventListener("click",event=>{
- const item=event.target.closest("#profileActivityList [data-profile-item-id]");
- if(!item)return;
- const record=S.items.find(row=>row.id===item.dataset.profileItemId);
- if(!record)return;
- closeDlg("#accountDlg");
- openDetail(record);
-});
 $("#accountBtn").addEventListener("click",()=>{
   $("#merchantBox").hidden=S.session.role!=="merchant";
   $("#adminLoginForm").hidden=true;
@@ -4962,7 +4932,7 @@ if(/طوارئ|اسعاف|شرطه|نجده|دفاع|اطفاء/.test(t))return 
   }
   const hits=localDirectorySearch(raw,6);
   if(hits.length){
-    return `وجدت ${hits.length} نتيجة محتملة ضمن الإدراجات المسجلة في دليلنا:\n`+hits.map((i,n)=>`${n+1}. ${i.name} — ${CN[i.cat]||i.cat} — ${[i.village,i.area,i.dist,i.gov].filter(Boolean).join(" / ")}${i.phone?" — "+i.phone:""}`).join("\n")+"\nهذه بيانات محفوظة على الجهاز. يُرجى التأكد من رقم التواصل والعنوان قبل الزيارة.";
+    return `وجدت ${hits.length} نتيجة محتملة ضمن الإدراجات المسجلة في دليلنا:\n`+hits.map((i,n)=>`${n+1}. ${i.name} — ${CN[i.cat]||i.cat} — ${[i.village,i.area,i.dist,i.gov].filter(Boolean).join(" / ")}${i.phone?" — "+i.phone:""}`).join("\n")+"\nهذه بيانات محفوظة على الجهاز، ولم يتم التحقق من أرقام التواصل والعناوين ميدانياً.";
   }
   if(/عزل حبيش|عزلات حبيش|عزله حبيش|كم عزله/.test(t))return `مديرية حبيش في محافظة إب تضم 22 عزلة بحسب مرجع التقسيم الإداري. الأسماء المرجعية في دليلنا: ${HUBAISH_UZ.join("، ")}. قد تختلف بعض الكتابات المحلية، لذلك يدعم التطبيق الأسماء البديلة المعروفة.`;
   const askedGov=GOVS.find(g=>t.includes(normalizeQuery(g)));
