@@ -3,12 +3,13 @@ name: Refresh Yemen regional places catalogue
 on:
   workflow_dispatch:
   schedule:
-    - cron: "20 2 * * *"
+    - cron: "0 */6 * * *"
   push:
     branches: [main]
     paths:
       - "scripts/build_regional_catalog.py"
       - "scripts/test_regional_catalog.py"
+      - "scripts/fuse_regional_catalog.py"
       - "category-mapping.json"
       - "regions-yemen.js"
       - ".github/workflows/refresh-regional-catalog.yml"
@@ -36,6 +37,52 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y osmium-tool
           osmium --version
+      - name: Install Overture Places downloader
+        run: |
+          python3 -m pip install --upgrade overturemaps
+          overturemaps --help
+      - name: Download latest Overture Places for Yemen
+        run: |
+          # Yemen mainland plus Socotra. Overture's Python client resolves the latest STAC release.
+          overturemaps download --bbox=41.0,11.0,55.5,20.5 -f geojson --type=place -o overture-yemen.geojson
+          test -s overture-yemen.geojson
+          python3 - <<'PY'
+          import json
+          payload=json.load(open("overture-yemen.geojson",encoding="utf-8"))
+          features=payload.get("features",[]) if isinstance(payload,dict) else []
+          if not features:
+              raise SystemExit("Overture returned no Yemen place features.")
+          print("Overture Yemen places:",len(features))
+          PY
+      - name: Import optional Foursquare Open Places export
+        env:
+          FSQ_OS_PLACES_EXPORT_URL: ${{ secrets.FSQ_OS_PLACES_EXPORT_URL }}
+          FSQ_OS_PLACES_ACCESS_TOKEN: ${{ secrets.FSQ_OS_PLACES_ACCESS_TOKEN }}
+          FSQ_OS_PLACES_CATEGORIES_URL: ${{ secrets.FSQ_OS_PLACES_CATEGORIES_URL }}
+        run: |
+          if [[ -n "$FSQ_OS_PLACES_EXPORT_URL" ]]; then
+            python3 - <<'PY'
+          import os
+          from urllib.request import Request, urlopen
+          from urllib.parse import urlparse
+          def download(url, target, token=""):
+              if urlparse(url).scheme != "https": raise SystemExit("FSQ exports must use HTTPS")
+              headers={"Accept":"application/geo+json, application/json"}
+              if token: headers["Authorization"]="Bearer "+token
+              request=Request(url,headers=headers)
+              with urlopen(request,timeout=180) as response, open(target,"wb") as out:
+                  while True:
+                      chunk=response.read(1024*1024)
+                      if not chunk: break
+                      out.write(chunk)
+          download(os.environ["FSQ_OS_PLACES_EXPORT_URL"],"fsq-yemen.geojson",os.environ.get("FSQ_OS_PLACES_ACCESS_TOKEN",""))
+          categories=os.environ.get("FSQ_OS_PLACES_CATEGORIES_URL","")
+          if categories: download(categories,"fsq-categories.json",os.environ.get("FSQ_OS_PLACES_ACCESS_TOKEN",""))
+          PY
+            test -s fsq-yemen.geojson
+          else
+            echo "No standalone FSQ Iceberg export configured; Overture's Foursquare-attributed records will still be retained."
+          fi
       - name: Download current open datasets
         run: |
           GEOFABRIK_BASE="https://download.geofabrik.de/asia"
@@ -86,6 +133,15 @@ jobs:
             -o places.osm.pbf
           osmium export places.osm.pbf -o places.geojson
           test -s places.geojson
+      - name: Fuse OSM, Overture and optional Foursquare Places
+        env:
+          FSQ_OS_PLACES_EXPORT_URL: ${{ secrets.FSQ_OS_PLACES_EXPORT_URL }}
+        run: |
+          ARGS=(--osm places.geojson --overture overture-yemen.geojson --output fused-places.geojson)
+          if [[ -s fsq-yemen.geojson ]]; then ARGS+=(--fsq fsq-yemen.geojson); fi
+          if [[ -s fsq-categories.json ]]; then ARGS+=(--fsq-categories fsq-categories.json); fi
+          python3 scripts/fuse_regional_catalog.py "${ARGS[@]}"
+          test -s fused-places.geojson
       - name: Extract available administrative boundaries
         shell: bash
         run: |
@@ -156,7 +212,9 @@ jobs:
               data = json.load(f)
           assert data["totalCount"] > 0, "Refusing to publish an empty catalogue."
           assert len(data["governorates"]) == 22, "Expected all 22 governorates."
-          assert data["license"] == "ODbL-1.0"
+          assert "Per-record source licenses" in data["license"]
+          assert data["sourceCounts"].get("OpenStreetMap", 0) > 0
+          assert data["sourceCounts"].get("Overture Maps", 0) > 0
           assert len(data.get("districtCounts", [])) == 335, "Expected district counts for all 335 districts."
           assert data["districtCountTotal"] + data["unassignedCount"] == data["totalCount"]
           print("Catalogue records:", data["totalCount"])
