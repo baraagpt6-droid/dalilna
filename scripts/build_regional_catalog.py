@@ -432,7 +432,14 @@ def build_items(features, governors, districts, boundaries):
             governorate, gov_info.get("nameEn"), district, dist_info.get("nameEn"),
             " ".join(str(tags.get(key) or "") for key in search_keys)
         ]
-        search_text = clean(" ".join(str(value) for value in searchable_values if value), 1600)
+        # Include Arabic and English category aliases in the record so a user
+        # can search by activity (e.g. "مستشفيات", "hospital", "courier")
+        # even when a shop has no translated name.
+        for category in categories:
+            definition = CATEGORY_MAPPING["categories"].get(category, {})
+            searchable_values.extend(definition.get("aliases", []))
+            searchable_values.extend([definition.get("labelAr", ""), definition.get("labelEn", "")])
+        search_text = clean(" ".join(str(value) for value in searchable_values if value), 2400)
 
         output.append({
             "id": item_id,
