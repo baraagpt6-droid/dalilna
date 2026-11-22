@@ -18,7 +18,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23181411'/%3E%3Cpath d='M18 54 A32 32 0 0 1 82 54 Z' fill='none' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M22 54 L36 54 A14 14 0 0 1 42 42 L29 33 A28 28 0 0 0 22 54 Z' fill='%233A7EC2'/%3E%3Cpath d='M29 33 L42 42 A14 14 0 0 1 50 40 L50 26 A28 28 0 0 0 29 33 Z' fill='%23E8A025'/%3E%3Cpath d='M50 26 L50 40 A14 14 0 0 1 58 42 L71 33 A28 28 0 0 0 50 26 Z' fill='%23D6455D'/%3E%3Cpath d='M71 33 L58 42 A14 14 0 0 1 64 54 L78 54 A28 28 0 0 0 71 33 Z' fill='%23E8A025'/%3E%3Ccircle cx='50' cy='54' r='11' fill='%23F2B949' stroke='%23F4EFE6' stroke-width='3'/%3E%3Crect x='18' y='54' width='64' height='24' rx='4' fill='%23181411' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M50 54 v24 M18 66 h64' stroke='%23F4EFE6' stroke-width='3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./features-2.1.css?v=2.4.0">
+<link rel="stylesheet" href="./features-2.1.css?v=2.6.0">
 <style>
 :root{
   color-scheme:dark;
@@ -946,6 +946,10 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     </div>
   </section>
 </main>
+<footer class="live-directory-attribution" style="padding:18px 16px 92px;text-align:center;line-height:1.8;font-size:10px;color:var(--mute)">
+ <div id="liveDirectoryAttribution">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · <a href="https://docs.overturemaps.org/guides/places/" target="_blank" rel="noopener noreferrer">Overture Maps</a> · <a href="https://docs.foursquare.com/data-products/docs/fsq-places-open-source" target="_blank" rel="noopener noreferrer">Foursquare Open Places</a> · Open Admin Data Yemen · geoBoundaries.</div>
+ <div><a href="./privacy.html">سياسة الخصوصية</a> · <a href="./terms.html">شروط الاستخدام</a></div>
+</footer>
 
 <!-- Compact Floating AI Shortcut -->
 <button type="button" class="ai-fab" id="aiFab" title="اسأل الذكاء الاصطناعي">
@@ -4096,7 +4100,7 @@ function directoryMapSearchInfo(q){
   return {category,productType:product?product.productType:"",label,place,mapQuery,productSearch:!!product};
 }
 function liveDirectoryPanelHTML(){
- return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>البحث في دليل المحلات والخدمات اليمني</b><div class="live-directory-sub">يبحث في المحافظات الـ22 عند كتابة اسم أو اختيار قسم. اختيار المحافظة اختياري لتضييق النتائج.</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث السجل</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تحميل سجل الأماكن…</div><div class="live-directory-list" id="liveDirectoryItems"></div><div class="live-directory-attribution" id="liveDirectoryAttribution">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · التقسيم الإداري: <a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.</div><div class="live-directory-legal"><a href="./privacy.html">سياسة الخصوصية</a><a href="./terms.html">شروط الاستخدام</a></div></section>';
+ return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>البحث في دليل المحلات والخدمات اليمني</b><div class="live-directory-sub">ابحث في جميع محافظات اليمن، أو اختر قسماً أو مديرية لتضييق النتائج.</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث السجل</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تجهيز فهرس البحث الموحد…</div><div class="live-directory-list" id="liveDirectoryItems"></div></section>';
 }
 const LIVE_DIRECTORY_API="https://dalilna-live.onrender.com";
 const LIVE_CATALOG_BASE="./regional-catalog/";
@@ -4123,24 +4127,17 @@ function liveDirectoryContext(){
 }
 function liveDirectoryCardHTML(item){
  const record=item&&typeof item==="object"?item:{},itemId=String(record?.id??"");
- const local=liveLocalData(),ratingValue=local.ratings?.[itemId],rating=ratingValue&&typeof ratingValue==="object"?ratingValue:{count:0,sum:0};
- const photos=Array.isArray(local.photos?.[itemId])?local.photos[itemId].filter(photo=>photo&&typeof photo.data==="string"&&/^data:image\/(?:jpeg|png|webp);base64,/.test(photo.data)).slice(0,3):[];
- const average=Number(rating.count)>0?(Number(rating.sum)/Number(rating.count)).toFixed(1):"—";
- const images=photos.map(photo=>'<figure><img src="'+esc(photo.data)+'" alt="'+esc(record.name||"")+'" loading="lazy"><figcaption>صورة محفوظة</figcaption></figure>').join("");
- const phone=String(record.phone||"").trim(),phoneInfo=yemenPhoneDetails(phone);
- const phoneActions=phone?'<div class="live-directory-actions">'+(phoneInfo.isMobile?'<a href="'+esc(yemenWhatsAppUrl(phone,"مرحباً، وجدت محلكم في تطبيق دليلنا وأريد الاستفسار عن الخدمة."))+'" target="_blank" rel="noopener noreferrer">واتساب</a>':"")+'<a href="tel:'+esc(phone.replace(/[^+\d]/g,""))+'">اتصال</a></div>':"";
+ const phone=String(record.phone||"").trim(),phoneInfo=yemenPhoneDetails(phone),phoneHref=phone.replace(/[^+\\d]/g,"");
+ const location=[record.governorate,record.district].filter(Boolean).join("، ");
+ const contact=phone?'<div class="live-directory-actions"><a href="tel:'+esc(phoneHref)+'">اتصال</a>'+(phoneInfo.isMobile?'<a href="'+esc(yemenWhatsAppUrl(phone,"مرحباً، وجدت محلكم في دليلنا وأريد الاستفسار عن الخدمة."))+'" target="_blank" rel="noopener noreferrer">واتساب</a>':"")+'</div>':"";
  const lat=Number(record.lat??record.latitude),lon=Number(record.lon??record.lng??record.longitude);
- const mapMarkup=Number.isFinite(lat)&&Number.isFinite(lon)?'<div class="live-directory-actions"><button type="button" data-map-toggle data-lat="'+lat+'" data-lon="'+lon+'" data-title="'+esc(record.name||"الموقع")+'">عرض الخريطة</button></div><div class="dalilna-map" hidden></div>':(record.mapsUrl?'<div class="live-directory-actions"><a href="'+esc(record.mapsUrl)+'" target="_blank" rel="noopener noreferrer">فتح الموقع في OpenStreetMap</a></div>':"");
- const sourceMarkup=record.sourceUrl?'<div class="live-directory-actions"><a href="'+esc(record.sourceUrl)+'" target="_blank" rel="noopener noreferrer">مصدر OpenStreetMap</a></div>':"";
-
- const photoSearch='<button type="button" class="live-directory-photo-search" data-commons-photos data-place-name="'+esc(record.name||"")+'">البحث عن صور مرخصة</button><div class="live-directory-commons-panel" hidden></div>';
+ const mapUrl=record.mapsUrl||(Number.isFinite(lat)&&Number.isFinite(lon)?"https://www.openstreetmap.org/?mlat="+lat.toFixed(6)+"&mlon="+lon.toFixed(6)+"#map=18/"+lat.toFixed(6)+"/"+lon.toFixed(6):"");
+ const map=mapUrl?'<div class="live-directory-actions"><a href="'+esc(mapUrl)+'" target="_blank" rel="noopener noreferrer">الخريطة</a></div>':"";
  return '<article class="live-directory-card"><div class="live-directory-card-head"><h3>'+esc(record.name||"مكان بدون اسم")+'</h3><span class="tag">'+esc(CN[record.category]||"خدمة")+'</span></div>'+
- (record.address?'<p>العنوان: '+esc(record.address)+'</p>':"")+(record.description?'<p>'+esc(record.description)+'</p>':"")+
- (phone?'<p>الهاتف: '+esc(phone)+'</p>':"")+(record.website?'<p><a href="'+esc(record.website)+'" target="_blank" rel="noopener noreferrer">الموقع الإلكتروني</a></p>':"")+
- (record.openingHours?'<p>ساعات العمل: '+esc(record.openingHours)+'</p>':"")+phoneActions+mapMarkup+sourceMarkup+
- '<section class="live-directory-local-rating"><b>تقييم المستخدمين على هذا الجهاز</b><strong>★ '+average+' ('+Number(rating.count||0).toLocaleString("ar")+' تقييمات)</strong><div class="live-directory-rate-actions">'+[1,2,3,4,5].map(n=>'<button type="button" data-live-rate-id="'+esc(itemId)+'" data-stars="'+n+'">'+n+' ★</button>').join("")+'</div></section>'+
- (images?'<section class="live-directory-local-photos"><b>الصور المحفوظة</b><div class="live-directory-photo-grid">'+images+'</div></section>':"")+
- photoSearch+'<label class="live-directory-photo-upload">إضافة صورة من جهازك<input type="file" accept="image/jpeg,image/png,image/webp" data-live-photo-input="'+esc(itemId)+'"></label>'+
+ (location?'<p>المحافظة والمديرية: '+esc(location)+'</p>':"")+
+ (record.address?'<p>العنوان: '+esc(record.address)+'</p>':"")+
+ (record.openingHours?'<p>ساعات العمل: '+esc(record.openingHours)+'</p>':"")+
+ (phone?'<p>الهاتف: '+esc(phone)+'</p>':"")+contact+map+
  '<div class="live-directory-actions"><button type="button" data-fav="'+esc(itemId)+'" aria-label="إضافة إلى المفضلة">'+(S.favs.includes(itemId)?"♥":"♡")+'</button></div></article>';
 }
 function geoapifyDirectoryCardHTML(item){
@@ -4235,7 +4232,7 @@ function getMarketplaceCount(category){const ctx=regionCurrentContext(),counts=c
 function getDirectoryCategoryCount(category){const stats=catalogStatsForScope(),categories=stats?.categories||{};const aliases=category==="land"?["real_estate"]:[];return Number(categories?.[category]||0)+aliases.reduce((sum,key)=>sum+Number(categories?.[key]||0),0)+getMarketplaceCount(category);}
 async function loadRegionalCatalogManifest(force){
  if(!force&&liveCatalogManifestPromise)return liveCatalogManifestPromise;
- const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=2.4.0";
+ const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=2.6.0";
  liveCatalogManifestPromise=fetch(manifestUrl,{headers:{Accept:"application/json"},cache:"no-store"}).then(async response=>{
   if(!response.ok)throw new Error("ملف فهرس المحافظات غير متاح حالياً (HTTP "+response.status+").");
   const data=await response.json();if(!data||!Array.isArray(data.governorates))throw new Error("صيغة فهرس المحافظات غير صالحة.");
@@ -4335,7 +4332,7 @@ function renderLiveDirectoryResponse(data){
  liveDirectoryLastData=data;
  const shared=liveDirectorySharedMatchesHTML();
  box.classList.remove("live-google-results");
- if(attribution)attribution.innerHTML='الأماكن: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · الحدود: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">geoBoundaries</a> (CSO/OCHA Yemen، CC BY 3.0 IGO) و<a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a> (CC BY 4.0).';
+ if(attribution)attribution.innerHTML='الأماكن: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL-1.0) · <a href="https://docs.overturemaps.org/guides/places/" target="_blank" rel="noopener noreferrer">Overture Maps Places</a> (CDLA-Permissive-2.0 والتراخيص الخاصة بالمصدر) · <a href="https://docs.foursquare.com/data-products/docs/fsq-places-open-source" target="_blank" rel="noopener noreferrer">Foursquare Open Places</a> (Apache-2.0 عند الاستيراد المستقل) · الحدود: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">geoBoundaries</a> و<a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.';
  const date=data.snapshotDate||data.manifest&&data.manifest.snapshotDate||"غير محدد";
  const regionLabel=data.context?.type==="country"?"جميع المحافظات · ":(data.regionName?"محافظة "+data.regionName+" · ":"");
  status.textContent=regionLabel+Number(items.length).toLocaleString("ar")+" نتيجة من فهرس الأماكن · آخر تحديث: "+date+(liveSharedMatches.length?" · إعلانات معتمدة: "+liveSharedMatches.length:"")+(liveSharedLoadError?" · تعذر تحديث الإعلانات المشتركة":"");
