@@ -5104,7 +5104,7 @@ async function askAssistant(q){
    const lat=Number(item.lat??item.latitude),lon=Number(item.lon??item.lng??item.longitude);
    if(Number.isFinite(lat)&&Number.isFinite(lon))return "https://www.openstreetmap.org/?mlat="+lat+"&mlon="+lon+"#map=18/"+lat+"/"+lon;
    const search=[item.name||item.title,item.address,item.area,item.district,item.governorate||selectedContext.gov,"Yemen"].filter(Boolean).join(" ");
-   return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(search);
+   return "https://www.openstreetmap.org/search?query="+encodeURIComponent(search);
   };
   const addCard=item=>{
    const name=String(item.name||item.title||"").trim();
