@@ -1,26 +1,26 @@
 Dalilna 2.4.0 — Release readiness
-====================================
 
-Implemented in feat/dalilna-root-fix-v2.4.0:
-- Shared OSM Category Mapping Dictionary for build-time classification and live Overpass filters.
-- Multi-category tagging for overlapping services such as pharmacies.
-- Bilingual search text (Arabic/English labels and names), activity tags, governorate, district and neighbourhood.
-- Yemen ADM2 Polygon matching from geoBoundaries (335 districts) plus OSM admin boundaries. Approximate nearest-centroid assignments are clearly marked and counted separately.
-- Removal of the old map-place/restaurants panel from Souq. Shared PostgreSQL product ads are the only products source.
-- Seven product groups: electronics, vehicles, property, solar, home, agriculture, clothing.
-- Authenticated merchant JSON feed ingestion with idempotent upserts. Incomplete, invalid or oversized snapshots do not archive previously active ads.
-- Daily GitHub Actions refreshes for regional OSM catalogue and jobs; a separate daily merchant-feed workflow is included.
-- `scripts/daily-sync.cjs` is the Render Cron entry point. The Cron resource must be created in Render after merging.
-- Daily Render cron entry point uses scripts/daily-sync.cjs and needs product feed URLs/token for actual merchant product ingestion.
-- PWA/Android release metadata 2.4.0 / versionCode 240.
+Version identifiers:
+- PWA: 2.4.0
+- Android versionName: 2.4.0
+- Android versionCode: 240
+- Service worker cache: dalilna-pwa-v2.4.0
 
-Data notes:
-- Current GitHub Pages catalogue will not change until the daily/commit-triggered regional build completes and publishes the new generated files.
-- The current stored catalogue on main still needs a 2.4.0 refresh with the category mapping and ADM2 polygon inputs.
-- No merchant JSON feed providers are configured in the repository yet. Marketplace importer will correctly skip product ingestion until `DALILNA_PRODUCT_FEED_URLS` and `DALILNA_PRODUCT_SYNC_TOKEN` are configured in GitHub/Render; it will not manufacture product ads.
-- Account-registration-based free periods and lifetime-free merchant-store subscriptions are not available until user and merchant accounts are implemented. The current 60-day expiry starts when each listing is submitted.
-- Jobs are collected from configured official/RSS sources and YemenHR public feed; no direct apply URL is claimed unless the domain is verified.
-- The user registration model does not exist in the current marketplace schema. Listing expiry is currently 60 days from each listing's creation time, not account registration.
+Code changes prepared on feat/dalilna-root-fix-v2.4.0:
+- Dictionary-driven OSM category classification and multi-category memberships.
+- Search all 22 governorate catalogue shards by Arabic/English name, activity tags, address/neighbourhood and administrative names.
+- Search/category matching uses normalized Arabic tokens and explicit category membership rather than Arabic label-only matching.
+- Refresh and point-in-polygon assignment use Yemen geoBoundaries ADM2 polygons (335 districts), with centroid assignments explicitly marked approximate.
+- Souq is separated from the OSM place directory and contains seven product groups only.
+- Daily merchant JSON feed import is authenticated, idempotent and snapshot-safe.
+- Daily workflow checks live exchange quotes, marketplace DB and jobs endpoints; regional and jobs workflows run separately every 24 hours.
+- Android WebView cache invalidates once per installed APK version and preserves user localStorage.
 
-Verification:
-- Awaiting PR validation, daily catalogue refresh, GitHub Pages deploy and Android APK build.
+Known data/configuration constraints:
+- No merchant JSON feed URL was configured when this code was prepared. Product feed automation remains dormant until merchant endpoints and the shared sync token are configured in Render and GitHub Actions.
+- OpenStreetMap contains mapped and named records, not every real business. A category can still have zero matches where the source has no corresponding mapped records.
+- District counts report polygon-derived assignments separately from nearest-centroid estimates. Empty districts are not filled with fabricated records.
+- Job feeds retain source links; application buttons are only rendered for approved official provider hosts.
+- The Android artifact is a debug/testing APK, not a Play Store production-signed package.
+
+The PR and its CI/build/deployment results must be checked before calling this release deployed.
