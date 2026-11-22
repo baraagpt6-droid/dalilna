@@ -3,7 +3,7 @@ const crypto=require("node:crypto");
 const {PRODUCT_TYPES,GOVERNORATES,PRODUCT_GROUPS}=require("../marketplace-api");
 const ADMIN_MANIFEST=require("../regional-catalog/manifest.json");
 
-const MAX_FEEDS=20,MAX_ITEMS=200;
+const MAX_FEEDS=20,MAX_ITEMS=5000,MAX_BATCH=200;
 const CURRENCIES=new Set(["YER","SAR","USD","OMR","AED","other"]);
 const ARABIC_REMAP={"أ":"ا","إ":"ا","آ":"ا","ٱ":"ا","ة":"ه","ى":"ي","ؤ":"و","ئ":"ي"};
 function normalizePlace(value){
@@ -85,7 +85,20 @@ function phoneNumber(value){
 function validHttps(value){
  try{const url=new URL(String(value||""));return url.protocol==="https:"&&!url.username&&!url.password?url.href:"";}catch(_){return "";}
 }
-function sourceId(url){return crypto.createHash("sha256").update(url).digest("hex").slice(0,16);}
+function sourceId(value){
+ const url=new URL(value);
+ const stable=url.origin+url.pathname+"?"+[...url.searchParams.keys()].filter(key=>!/(token|key|secret|auth|signature)/i.test(key)).sort().map(key=>key+"="+url.searchParams.get(key)).join("&");
+ return crypto.createHash("sha256").update(stable).digest("hex").slice(0,16);
+}
+function validatePublicFeedUrl(value){
+ let url;
+ try{url=new URL(value);}catch(_){return null;}
+ const host=url.hostname.toLowerCase().replace(/^\\[|\\]$/g,"");
+ if(url.protocol!=="https:"||url.username||url.password||url.port&&url.port!=="443")return null;
+ if(["localhost","localhost.localdomain","metadata.google.internal"].includes(host)||host.endsWith(".localhost")||host.endsWith(".local")||host.endsWith(".internal"))return null;
+ if(require("node:net").isIP(host))return null;
+ return url;
+}
 function isInactiveFeedItem(raw){
  const status=String(raw?.status||raw?.availability||"available").toLowerCase();
  return raw?.active===false||["sold","deleted","expired","inactive","unavailable","out_of_stock"].includes(status);
@@ -125,7 +138,7 @@ function mapFeedItem(raw){
 async function getJson(url){
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
  try{
-  const response=await fetch(url,{headers:{Accept:"application/json"},cache:"no-store",signal:controller.signal});
+  const response=await fetch(url,{headers:{Accept:"application/json"},cache:"no-store",redirect:"error",signal:controller.signal});
   if(!response.ok)throw new Error("HTTP "+response.status+" from "+new URL(url).hostname);
   const text=await response.text();
   if(text.length>5_000_000)throw new Error("Feed exceeds 5 MB");
@@ -136,21 +149,21 @@ async function getJson(url){
  }finally{clearTimeout(timer);}
 }
 async function syncConfiguredFeeds(){
- const configured=String(process.env.DALILNA_PRODUCT_FEED_URLS||"").split(/[\r\n,]+/).map(x=>x.trim()).filter(Boolean).slice(0,MAX_FEEDS);
+ const configured=String(process.env.DALILNA_PRODUCT_FEED_URLS||"").split(/[\\r\\n,]+/).map(x=>x.trim()).filter(Boolean).slice(0,MAX_FEEDS);
  if(!configured.length){
   console.log(JSON.stringify({event:"marketplace.feed_sync.skipped",reason:"No merchant JSON feed URLs configured",requiredEnv:"DALILNA_PRODUCT_FEED_URLS"}));
-  return {configured:0,received:0,accepted:0,skipped:0};
+  return {configured:0,received:0,accepted:0,skipped:0,snapshotComplete:false};
  }
  const token=String(process.env.DALILNA_PRODUCT_SYNC_TOKEN||"");
  if(token.length<32)throw new Error("DALILNA_PRODUCT_SYNC_TOKEN must contain at least 32 characters");
- const collected=[],sourceStats=[],failures=[];let rejected=0,oversized=false;
- for(const feedUrl of configured){
-  let url;
-  try{url=new URL(feedUrl);}catch(_){failures.push("invalid feed URL");continue;}
-  if(url.protocol!=="https:"||url.username||url.password){failures.push("feed URL must use HTTPS");continue;}
+ const collected=[],sourceStats=[],failures=[];let rejected=0,oversized=false,totalReceived=0;
+ for(const rawUrl of configured){
+  const url=validatePublicFeedUrl(rawUrl);
+  if(!url){failures.push("feed URL rejected: HTTPS public host without credentials or redirects is required");continue;}
   try{
    const rawItems=await getJson(url.href),idPrefix=sourceId(url.href),normalized=[];
-   if(rawItems.length>MAX_ITEMS)oversized=true;
+   totalReceived+=rawItems.length;
+   if(rawItems.length>MAX_ITEMS||totalReceived>MAX_ITEMS)oversized=true;
    for(const raw of rawItems.slice(0,MAX_ITEMS)){
     if(isInactiveFeedItem(raw))continue;
     const item=mapFeedItem(raw);
@@ -161,28 +174,44 @@ async function syncConfiguredFeeds(){
    sourceStats.push({host:url.hostname,received:rawItems.length,accepted:normalized.length});
   }catch(error){failures.push(url.hostname+": "+clean(error.message,160));}
  }
- const snapshotComplete=failures.length===0&&rejected===0&&!oversized&&collected.length>0&&collected.length<=MAX_ITEMS;
- if(!collected.length&&!snapshotComplete){
-  if(failures.length)throw new Error("No usable products were returned. "+failures.join("; "));
-  return {configured:configured.length,received:sourceStats.reduce((n,x)=>n+x.received,0),accepted:0,skipped:rejected,sources:sourceStats,snapshotComplete:false};
- }
  const unique=new Map();
  for(const item of collected)unique.set(item.clientRef,item);
- const items=[...unique.values()].slice(0,MAX_ITEMS).map(item=>({
-  id:item.id,clientRef:item.clientRef,title:item.title,productType:item.productType,
-  listingType:item.listingType,condition:item.condition,governorate:item.governorate,
-  district:item.district,area:item.area,description:item.description,phone:item.phone,
-  sellerName:item.sellerName,price:item.price,currency:item.currency,website:item.website,productGroup:item.productGroup
- }));
- const response=await fetch(BASE+"/api/marketplace/feed-sync",{
-  method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,Accept:"application/json"},
-  body:JSON.stringify({sourceKey:"verified-merchant-feeds",sourceName:"Verified merchant product feeds",completeSnapshot:snapshotComplete,items})
- });
- const result=await response.json().catch(()=>({}));
- if(!response.ok)throw new Error("Marketplace API "+response.status+": "+clean(result.error||"feed sync failed",220));
- const summary={configured:configured.length,received:sourceStats.reduce((n,x)=>n+x.received,0),accepted:items.length,skipped:collected.length-items.length,sources:sourceStats,api:result};
- summary.rejected=rejected;
- if(oversized)summary.snapshotWarning="At least one feed exceeded the supported maximum; stale listings were not archived.";
+ const items=[...unique.values()].slice(0,MAX_ITEMS);
+ const snapshotComplete=failures.length===0&&rejected===0&&!oversized&&items.length>0&&items.length===unique.size;
+ if(!items.length){
+  if(failures.length)throw new Error("No usable products were returned. "+failures.join("; "));
+  return {configured:configured.length,received:totalReceived,accepted:0,skipped:rejected,sources:sourceStats,snapshotComplete:false,snapshotWarning:"Empty feed snapshot is not allowed to archive existing products."};
+ }
+ const activeClientRefs=items.map(item=>item.clientRef);
+ let inserted=0,updated=0,skipped=rejected,archived=0;
+ for(let offset=0;offset<items.length;offset+=MAX_BATCH){
+  const batch=items.slice(offset,offset+MAX_BATCH);
+  const isLast=offset+batch.length>=items.length;
+  const completeSnapshotForBatch=isLast&&snapshotComplete;
+  const payloadItems=batch.map(item=>({
+   id:item.id,clientRef:item.clientRef,title:item.title,productType:item.productType,
+   listingType:item.listingType,condition:item.condition,governorate:item.governorate,
+   district:item.district,area:item.area,description:item.description,phone:item.phone,
+   sellerName:item.sellerName,price:item.price,currency:item.currency,website:item.website
+  }));
+  const response=await fetch(BASE+"/api/marketplace/feed-sync",{
+   method:"POST",redirect:"error",
+   headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,Accept:"application/json"},
+   body:JSON.stringify({
+    sourceKey:"verified-merchant-feeds",
+    sourceName:"Verified merchant product feeds",
+    completeSnapshot:completeSnapshotForBatch,
+    activeClientRefs:completeSnapshotForBatch?activeClientRefs:[],
+    items:payloadItems
+   })
+  });
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error("Marketplace API "+response.status+": "+clean(result.error||"feed sync failed",220));
+  inserted+=Number(result.inserted||0);updated+=Number(result.updated||0);skipped+=Number(result.skipped||0);archived+=Number(result.archived||0);
+  if(completeSnapshotForBatch&&(result.skipped||0)>0)throw new Error("The API skipped records in the final batch. Existing feed listings were not archived.");
+ }
+ const summary={configured:configured.length,received:totalReceived,accepted:items.length,inserted,updated,skipped,archived,sources:sourceStats,snapshotComplete};
+ if(oversized)summary.snapshotWarning="Feed size exceeded the maximum supported snapshot; existing listings were not archived.";
  if(failures.length)summary.sourceWarnings=failures;
  console.log(JSON.stringify({event:"marketplace.feed_sync.completed",...summary}));
  return summary;
