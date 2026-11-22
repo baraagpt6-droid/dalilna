@@ -2593,6 +2593,13 @@ const STATIC_UI_EN={
 "أقرب صيدلية":"Nearest pharmacy","سعر الصرف اليوم":"Today's exchange rate","محلات طاقة شمسية":"Solar equipment shops",
 "وظائف متاحة":"Available jobs","إرسال":"Send","تقديم شكوى أو اقتراح":"Submit a complaint or suggestion",
 "سياسة الخصوصية":"Privacy policy","شروط الاستخدام":"Terms of use","المساعد الذكي":"AI assistant",
+"المساعد المحلي يبحث في بيانات هذا الجهاز دون إنترنت. يمكنك تفعيل المساعد السحابي اختيارياً للحصول على إجابات أوسع.":"The local assistant searches this device's directory data offline. You can optionally enable cloud AI for broader answers.",
+"أهلاً بك في مساعد دليلنا الذكي. أستطيع البحث في المحلات والخدمات والوظائف وأسعار الصرف. سأوضح لك مصدر الإجابة، وأميز البيانات غير المؤكدة.":"Welcome to Dalilna AI. I can search shops, services, jobs and exchange rates. I will show the source and distinguish unverified details.",
+"أبحث في بيانات الدليل…":"Searching Dalilna…",
+"البيانات المحلية محفوظة على هذا الجهاز.":"Local data is stored on this device.",
+"أضف بيانات المحل بعد مراجعة رقم التواصل والعنوان.":"Add shop details after checking the phone number and address.",
+"غير متاح":"Not available","غير محدد":"Not specified","لا توجد نتائج مطابقة لبحثك.":"No matching results found.",
+
 "الرئيسية":"Home","السوق":"Marketplace","أضف":"Add","الوظائف":"Jobs","المساعد":"Assistant",
 "اختر":"Choose","اختيار صفة الحساب":"Choose account type","ملفي الشخصي":"My profile",
 "غير موثّق":"Not verified","مستفيد":"Visitor","لا توجد بيانات تواصل للحساب الحالي.":"No contact details are linked to this profile.",
@@ -5026,28 +5033,19 @@ async function requestCloudAssistant(q,context){
  return null;
 }
 function assistantSourceText(result){
+ const english=curLang==="en";
  const labels=Array.isArray(result?.dataSources)?result.dataSources.filter(Boolean):[];
- const dataLabel=labels.length?" · بيانات الدليل: "+labels.join("، "):"";
- if(result?.mode==="gemini"){
-  return "المجيب: Google Gemini"+(result.model?" ("+result.model+")":"")+dataLabel;
- }
- if(result?.mode==="reference"){
-  return "المجيب: مرجع دليلنا"+(result.referenceSource?" · المصدر: "+result.referenceSource:"")+dataLabel;
- }
- if(result?.mode==="local-fallback"){
-  return "المجيب: دليلنا المحلي · تعذّر تأكيد وصول السؤال إلى Gemini"+dataLabel;
- }
- if(result?.mode==="offline"){
-  return "المجيب: دليلنا المحلي دون إنترنت"+dataLabel;
- }
- if(result?.mode==="live-directory"){
-  return "المجيب: نتائج دليلنا المحلية · ليست إجابة من Gemini"+dataLabel;
- }
- if(result?.mode==="directory"){
-  return "المجيب: إدراجات هذا الجهاز · ليست إجابة من Gemini"+dataLabel;
- }
- return "المجيب: دليلنا المحلي"+dataLabel;
+ const dataLabel=labels.length?(english?" · Data: ":" · بيانات الدليل: ")+labels.join(english?", " : "، "):"";
+ if(result?.mode==="gemini")return (english?"Responder: Google Gemini":"المجيب: Google Gemini")+(result.model?" ("+result.model+")":"")+dataLabel;
+ if(result?.mode==="reference")return (english?"Responder: Dalilna reference":"المجيب: مرجع دليلنا")+(result.referenceSource?(english?" · Source: ":" · المصدر: ")+result.referenceSource:"")+dataLabel;
+ if(result?.mode==="local-fallback")return (english?"Responder: local assistant · Gemini response could not be confirmed":"المجيب: دليلنا المحلي · تعذّر تأكيد وصول السؤال إلى Gemini")+dataLabel;
+ if(result?.mode==="offline")return (english?"Responder: offline local assistant":"المجيب: دليلنا المحلي دون إنترنت")+dataLabel;
+ if(result?.mode==="live-directory")return (english?"Responder: live directory results · not a Gemini answer":"المجيب: نتائج دليلنا المحلية · ليست إجابة من Gemini")+dataLabel;
+ if(result?.mode==="live-rates")return (english?"Responder: live rate source":"المجيب: مصدر أسعار مباشر")+dataLabel;
+ if(result?.mode==="directory")return (english?"Responder: on-device listings · not a Gemini answer":"المجيب: إدراجات هذا الجهاز · ليست إجابة من Gemini")+dataLabel;
+ return (english?"Responder: Dalilna local assistant":"المجيب: دليلنا المحلي")+dataLabel;
 }
+
 async function askAssistant(q){
  const serviceIntent=directoryMapSearchInfo(q);
  if(serviceIntent?.rateIntent){
@@ -5262,7 +5260,7 @@ $("#botf").addEventListener("submit",async e=>{
   renderAssistantResult(pending,{answer:answerAI(q),assistantCards:[]});
   const source=document.createElement("small");
   source.className="assistant-source";
-  source.textContent="المجيب: دليلنا المحلي · تعذرت معالجة الطلب عبر المسار السحابي";
+  source.textContent=curLang==="en"?"Responder: local assistant · the cloud route could not process the request":"المجيب: دليلنا المحلي · تعذرت معالجة الطلب عبر المسار السحابي";
   pending.appendChild(source);
  }finally{
   if(sendButton)sendButton.disabled=false;
