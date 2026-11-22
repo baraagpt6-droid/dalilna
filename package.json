@@ -8,6 +8,7 @@
   "scripts": {
     "start": "node server.js",
     "test": "node --test tests/*.test.cjs",
-    "migrate:marketplace": "node scripts/migrate-marketplace-db.cjs"
+    "migrate:marketplace": "node scripts/migrate-marketplace-db.cjs",
+    "sync:daily": "node scripts/daily-sync.cjs"
   }
 }
