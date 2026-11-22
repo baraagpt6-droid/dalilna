@@ -328,6 +328,9 @@ def merge_feature(target, incoming):
             signature = (source.get("name"), source.get("dataset"), source.get("id"))
             if not any((x.get("name"), x.get("dataset"), x.get("id")) == signature for x in values):
                 values.append(source)
+    # Re-run classification after merging provider tags so a multi-source
+    # duplicate still appears in exactly one section.
+    left_tags["__catalog_categories"] = builder.categories_for_tags(left_tags)
     incoming_confidence = right.get("__confidence")
     current_confidence = left.get("__confidence")
     try:
