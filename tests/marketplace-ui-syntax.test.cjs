@@ -28,8 +28,31 @@ test("marketplace client displays rental labels",()=>{
  assert.ok(client.includes('item.listingType === "rent") labels.push("للإيجار")'));
 });
 
-test("PWA version metadata is 2.1.6",()=>{
- assert.ok(html.includes('content="2.1.6"'));
+test("home shared directory panel no longer repeats search controls",()=>{
+ assert.ok(html.includes('id="sharedDirectoryPanel"'));
+ assert.ok(!html.includes('id="sharedDirectoryQuery"'));
+ assert.ok(!html.includes('id="sharedDirectoryCategory"'));
+ assert.ok(html.includes('id="sharedMigrateLocalButton"'));
+});
+test("add listing district is a governorate-dependent picker",()=>{
+ assert.ok(html.includes('id="fdistBtn"'));
+ assert.ok(html.includes('name="dist" id="fdist"'));
+ assert.ok(html.includes('YEMEN_DISTRICTS[gov]'));
+});
+test("souq category pills replace the duplicate product-type selector",()=>{
+ assert.ok(html.includes('id="souqCategoryTabs"')||features.includes('id="souqCategoryTabs"'));
+ assert.ok(!html.includes('id="sharedSouqType"'));
+ assert.ok(client.includes('productGroup: selectedGroup'));
+});
+test("job cards only render apply buttons from approved official provider hosts",()=>{
+ assert.ok(features.includes('officialApplicationUrl(job.applicationUrl)'));
+ assert.ok(features.includes('dalilna-job-favs-v1'));
+ assert.ok(features.includes('navigator.share'));
+ assert.ok(jobs.includes('function isOfficialApplicationUrl'));
+});
+
+test("PWA version metadata is 2.1.7",()=>{
+ assert.ok(html.includes('content="2.1.7"'));
 });
 
 test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});
