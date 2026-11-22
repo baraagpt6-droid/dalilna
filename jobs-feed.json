@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "fetchedAt": "2026-11-22T03:15:43.768Z",
+  "fetchedAt": "2026-11-22T03:54:39.551Z",
   "refreshedBy": "GitHub Actions daily job-feed refresh",
   "sources": [
     {
@@ -38,11 +38,13 @@
       "city": "Jeddah ",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-22T03:15:43.768Z",
+      "publishedAt": "2026-11-22T03:54:39.551Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/professional-onboarding-engagement-pipeline-bupa-arabia-5b4bd86d",
+      "applicationUrl": "https://www.careers.sa/en/jobs/professional-onboarding-engagement-pipeline-bupa-arabia-5b4bd86d",
       "eligibility": "",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:senior-specialist-transport-and-distribution-red-sea-global-f303385a",
@@ -52,11 +54,13 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-22T03:15:43.768Z",
+      "publishedAt": "2026-11-22T03:54:39.551Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/senior-specialist-transport-and-distribution-red-sea-global-f303385a",
+      "applicationUrl": "https://www.careers.sa/en/jobs/senior-specialist-transport-and-distribution-red-sea-global-f303385a",
       "eligibility": "",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:vts-operator-boskalis-4a36a7da",
@@ -66,11 +70,13 @@
       "city": "Saudi Arabia",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-22T03:15:43.768Z",
+      "publishedAt": "2026-11-22T03:54:39.551Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/vts-operator-boskalis-4a36a7da",
+      "applicationUrl": "https://www.careers.sa/en/jobs/vts-operator-boskalis-4a36a7da",
       "eligibility": "",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:low-current-engineer-audio-video-lighting-show-content-parsons-corpora-2bed74ea",
@@ -83,8 +89,10 @@
       "publishedAt": "2026-11-21T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/low-current-engineer-audio-video-lighting-show-content-parsons-corpora-2bed74ea",
+      "applicationUrl": "https://www.careers.sa/en/jobs/low-current-engineer-audio-video-lighting-show-content-parsons-corpora-2bed74ea",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:site-inspector-architectural-id-saudi-national-parsons-corporation-aa4c75cd",
@@ -97,8 +105,10 @@
       "publishedAt": "2026-11-21T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/site-inspector-architectural-id-saudi-national-parsons-corporation-aa4c75cd",
+      "applicationUrl": "https://www.careers.sa/en/jobs/site-inspector-architectural-id-saudi-national-parsons-corporation-aa4c75cd",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:its-engineer-parsons-corporation-544679bc",
@@ -111,8 +121,10 @@
       "publishedAt": "2026-11-21T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/its-engineer-parsons-corporation-544679bc",
+      "applicationUrl": "https://www.careers.sa/en/jobs/its-engineer-parsons-corporation-544679bc",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:hse-manager-parsons-corporation-747a506e",
@@ -125,8 +137,10 @@
       "publishedAt": "2026-11-21T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/hse-manager-parsons-corporation-747a506e",
+      "applicationUrl": "https://www.careers.sa/en/jobs/hse-manager-parsons-corporation-747a506e",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:riyadh-material-master-data-specialist-alfanar-2532da07",
@@ -139,8 +153,10 @@
       "publishedAt": "2026-11-21T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/riyadh-material-master-data-specialist-alfanar-2532da07",
+      "applicationUrl": "https://www.careers.sa/en/jobs/riyadh-material-master-data-specialist-alfanar-2532da07",
       "eligibility": "",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:senior-engineer-elv-ict-parsons-corporation-be60100e",
@@ -153,8 +169,10 @@
       "publishedAt": "2026-11-21T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/senior-engineer-elv-ict-parsons-corporation-be60100e",
+      "applicationUrl": "https://www.careers.sa/en/jobs/senior-engineer-elv-ict-parsons-corporation-be60100e",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:project-coordinator-saudi-national-parsons-corporation-e9db24a2",
@@ -167,8 +185,10 @@
       "publishedAt": "2026-11-21T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/project-coordinator-saudi-national-parsons-corporation-e9db24a2",
+      "applicationUrl": "https://www.careers.sa/en/jobs/project-coordinator-saudi-national-parsons-corporation-e9db24a2",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "yemenhr:5052",
@@ -182,7 +202,8 @@
       "deadline": "11 ديسمبر 2026",
       "source": "YemenHR public jobs channel",
       "url": "https://telegra.ph/Logistics-Officer-11-20",
-      "applicationUrl": "https://www.linkedin.com/in/dawood3",
+      "applicationUrl": "",
+      "summaryAr": "",
       "expiresAt": "2026-12-11T23:59:59.000Z"
     },
     {
@@ -197,7 +218,8 @@
       "deadline": "11 ديسمبر 2026",
       "source": "YemenHR public jobs channel",
       "url": "https://telegra.ph/Senior-Project-Manager-11-20-3",
-      "applicationUrl": "https://www.linkedin.com/in/dawood3",
+      "applicationUrl": "",
+      "summaryAr": "",
       "expiresAt": "2026-12-11T23:59:59.000Z"
     },
     {
@@ -211,8 +233,10 @@
       "publishedAt": "2026-11-20T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/construction-manager-fa-ade-parsons-corporation-fe0f3f65",
+      "applicationUrl": "https://www.careers.sa/en/jobs/construction-manager-fa-ade-parsons-corporation-fe0f3f65",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:contracts-and-claims-specialist-parsons-corporation-1d1e1f9d",
@@ -225,8 +249,10 @@
       "publishedAt": "2026-11-20T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/contracts-and-claims-specialist-parsons-corporation-1d1e1f9d",
+      "applicationUrl": "https://www.careers.sa/en/jobs/contracts-and-claims-specialist-parsons-corporation-1d1e1f9d",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:project-controls-specialist-integrated-controls-parsons-corporation-e8b3a2b8",
@@ -239,8 +265,10 @@
       "publishedAt": "2026-11-20T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/project-controls-specialist-integrated-controls-parsons-corporation-e8b3a2b8",
+      "applicationUrl": "https://www.careers.sa/en/jobs/project-controls-specialist-integrated-controls-parsons-corporation-e8b3a2b8",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:project-manager-procurement-and-packaging-lead-parsons-corporation-6a60ba8f",
@@ -253,8 +281,10 @@
       "publishedAt": "2026-11-20T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/project-manager-procurement-and-packaging-lead-parsons-corporation-6a60ba8f",
+      "applicationUrl": "https://www.careers.sa/en/jobs/project-manager-procurement-and-packaging-lead-parsons-corporation-6a60ba8f",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:p1-7727554-0-marriott-ksa-64c82ce4",
@@ -267,8 +297,10 @@
       "publishedAt": "2026-11-20T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/p1-7727554-0-marriott-ksa-64c82ce4",
+      "applicationUrl": "https://www.careers.sa/en/jobs/p1-7727554-0-marriott-ksa-64c82ce4",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:p1-7737596-0-marriott-ksa-144564aa",
@@ -281,8 +313,10 @@
       "publishedAt": "2026-11-20T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/p1-7737596-0-marriott-ksa-144564aa",
+      "applicationUrl": "https://www.careers.sa/en/jobs/p1-7737596-0-marriott-ksa-144564aa",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:a427-esg-intern-halliburton-677a6df1",
@@ -295,8 +329,10 @@
       "publishedAt": "2026-11-20T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/a427-esg-intern-halliburton-677a6df1",
+      "applicationUrl": "https://www.careers.sa/en/jobs/a427-esg-intern-halliburton-677a6df1",
       "eligibility": "",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:external-funding-mgt-section-manager-stc-51b2752e",
@@ -309,8 +345,10 @@
       "publishedAt": "2026-11-20T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/external-funding-mgt-section-manager-stc-51b2752e",
+      "applicationUrl": "https://www.careers.sa/en/jobs/external-funding-mgt-section-manager-stc-51b2752e",
       "eligibility": "",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:infrastructure-operations-budgeting-assistant-manager-stc-1b5baf87",
@@ -323,8 +361,10 @@
       "publishedAt": "2026-11-20T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/infrastructure-operations-budgeting-assistant-manager-stc-1b5baf87",
+      "applicationUrl": "https://www.careers.sa/en/jobs/infrastructure-operations-budgeting-assistant-manager-stc-1b5baf87",
       "eligibility": "",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "careers-sa:senior-wbu-national-services-analyst-stc-9f316450",
@@ -337,8 +377,10 @@
       "publishedAt": "2026-11-20T00:00:00.000Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/senior-wbu-national-services-analyst-stc-9f316450",
+      "applicationUrl": "https://www.careers.sa/en/jobs/senior-wbu-national-services-analyst-stc-9f316450",
       "eligibility": "",
-      "expiresAt": "2026-12-06T03:15:43.768Z"
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-06T03:54:39.551Z"
     },
     {
       "id": "yemenhr:5042",
@@ -352,7 +394,8 @@
       "deadline": "30 نوفمبر 2026",
       "source": "YemenHR public jobs channel",
       "url": "https://telegra.ph/%D9%85%D8%AF%D9%8A%D8%B1-%D9%85%D8%A8%D9%8A%D8%B9%D8%A7%D8%AA-11-19",
-      "applicationUrl": "https://forms.gle/u6gx3dEvHxooUb1B7",
+      "applicationUrl": "",
+      "summaryAr": "",
       "expiresAt": "2026-11-30T23:59:59.000Z"
     },
     {
@@ -487,8 +530,105 @@
       "deadline": "30 نوفمبر 2026",
       "source": "YemenHR public jobs channel",
       "url": "https://telegra.ph/Medical-Warehouse-Quality-Assurance-Officer-801129-11-19",
-      "applicationUrl": "https://www.linkedin.com/in/dawood3",
+      "applicationUrl": "",
+      "summaryAr": "",
       "expiresAt": "2026-11-30T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5043",
+      "title": "Data Entry Assistant",
+      "organization": "NAHR",
+      "location": "Hajjah, Yemen",
+      "city": "Hajjah",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-19T23:59:59.000Z",
+      "deadline": "23 نوفمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/data-entry-assistant-nahr-hajjah-ba196e6f",
+      "applicationUrl": "https://yemenhr.com/jobs/data-entry-assistant-nahr-hajjah-ba196e6f",
+      "summaryAr": "",
+      "expiresAt": "2026-11-23T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5049",
+      "title": "Field Nutrition Project Assistant",
+      "organization": "NAHR",
+      "location": "Hajjah, Yemen",
+      "city": "Hajjah",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-19T23:59:59.000Z",
+      "deadline": "23 نوفمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/",
+      "applicationUrl": "https://yemenhr.com/",
+      "summaryAr": "",
+      "expiresAt": "2026-11-23T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5046",
+      "title": "Medical Warehouse Quality Assurance Officer",
+      "organization": "ICRC",
+      "location": "Sana'a, Yemen",
+      "city": "Sana'a",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-19T23:59:59.000Z",
+      "deadline": "03 ديسمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/medical-warehouse-quality-assurance-officer-icrc-sanaa-4f0567eb",
+      "applicationUrl": "https://yemenhr.com/jobs/medical-warehouse-quality-assurance-officer-icrc-sanaa-4f0567eb",
+      "summaryAr": "",
+      "expiresAt": "2026-12-03T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5047",
+      "title": "ميسرون ميدانيون محليون",
+      "organization": "Sun-Yemen",
+      "location": "Multiple Cities, Yemen",
+      "city": "Multiple Cities",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-19T23:59:59.000Z",
+      "deadline": "24 نوفمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/mysron-mydanyon-mhlyon-sun-yemen-multiple-cities-830f5f92",
+      "applicationUrl": "https://yemenhr.com/jobs/mysron-mydanyon-mhlyon-sun-yemen-multiple-cities-830f5f92",
+      "summaryAr": "",
+      "expiresAt": "2026-11-24T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5048",
+      "title": "Field Pharmacist Assistant",
+      "organization": "NAHR",
+      "location": "Hajjah, Yemen",
+      "city": "Hajjah",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-19T23:59:59.000Z",
+      "deadline": "23 نوفمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/field-pharmacist-assistant-nahr-hajjah-47abbe9d",
+      "applicationUrl": "https://yemenhr.com/jobs/field-pharmacist-assistant-nahr-hajjah-47abbe9d",
+      "summaryAr": "",
+      "expiresAt": "2026-11-23T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5050",
+      "title": "Field Health Project Assistant",
+      "organization": "NAHR",
+      "location": "Hajjah, Yemen",
+      "city": "Hajjah",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-19T23:59:59.000Z",
+      "deadline": "23 نوفمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/field-health-project-assistant-nahr-hajjah-055952ee",
+      "applicationUrl": "https://yemenhr.com/jobs/field-health-project-assistant-nahr-hajjah-055952ee",
+      "summaryAr": "",
+      "expiresAt": "2026-11-23T23:59:59.000Z"
     },
     {
       "id": "yemenhr:5036",
@@ -547,7 +687,8 @@
       "deadline": "02 ديسمبر 2026",
       "source": "YemenHR public jobs channel",
       "url": "https://telegra.ph/MEAL-Assistant-11-18-2",
-      "applicationUrl": "https://www.linkedin.com/in/dawood3",
+      "applicationUrl": "",
+      "summaryAr": "",
       "expiresAt": "2026-12-02T23:59:59.000Z"
     },
     {
@@ -608,6 +749,118 @@
       "source": "YemenHR public jobs channel",
       "url": "https://telegra.ph/%D9%85%D8%AF%D9%8A%D8%B1-%D9%82%D8%B3%D9%85-%D8%A7%D9%84%D8%B3%D9%8A%D8%A7%D8%B1%D8%A7%D8%AA-%D8%A7%D9%84%D9%83%D9%87%D8%B1%D8%A8%D8%A7%D8%A6%D9%8A%D8%A9-11-18",
       "applicationUrl": "https://www.linkedin.com/in/dawood3",
+      "expiresAt": "2026-11-26T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5035",
+      "title": "Field Assistant",
+      "organization": "MercyCorps",
+      "location": "Hadramout, Yemen",
+      "city": "Hadramout",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-18T23:59:59.000Z",
+      "deadline": "22 نوفمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/field-assistant-mercycorps-hadramout-6bb0affd",
+      "applicationUrl": "https://yemenhr.com/jobs/field-assistant-mercycorps-hadramout-6bb0affd",
+      "summaryAr": "",
+      "expiresAt": "2026-11-22T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5036",
+      "title": "Communication Officer",
+      "organization": "Action Contre la Faim",
+      "location": "Aden, Yemen",
+      "city": "Aden",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-18T23:59:59.000Z",
+      "deadline": "24 نوفمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/communication-officer-action-contre-la-faim-aden-6c320989",
+      "applicationUrl": "https://yemenhr.com/jobs/communication-officer-action-contre-la-faim-aden-6c320989",
+      "summaryAr": "",
+      "expiresAt": "2026-11-24T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5037",
+      "title": "Grants Manager",
+      "organization": "Action Contre la Faim",
+      "location": "Aden, Yemen",
+      "city": "Aden",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-18T23:59:59.000Z",
+      "deadline": "24 نوفمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/grants-manager-action-contre-la-faim-aden-f4d295ed",
+      "applicationUrl": "https://yemenhr.com/jobs/grants-manager-action-contre-la-faim-aden-f4d295ed",
+      "summaryAr": "",
+      "expiresAt": "2026-11-24T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5038",
+      "title": "Partnership Manager",
+      "organization": "Action Contre la Faim",
+      "location": "Aden, Yemen",
+      "city": "Aden",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-18T23:59:59.000Z",
+      "deadline": "24 نوفمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/partnership-manager-action-contre-la-faim-aden-9d7dcd7f",
+      "applicationUrl": "https://yemenhr.com/jobs/partnership-manager-action-contre-la-faim-aden-9d7dcd7f",
+      "summaryAr": "",
+      "expiresAt": "2026-11-24T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5039",
+      "title": "قائمة العمال الاحتياطيين",
+      "organization": "MSF",
+      "location": "Aden, Yemen",
+      "city": "Aden",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-18T23:59:59.000Z",
+      "deadline": "30 نوفمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/kaym-alaamal-alahtyatyyn-msf-aden-0f72c72f",
+      "applicationUrl": "https://yemenhr.com/jobs/kaym-alaamal-alahtyatyyn-msf-aden-0f72c72f",
+      "summaryAr": "",
+      "expiresAt": "2026-11-30T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5040",
+      "title": "Technical Advisor I – Water Security",
+      "organization": "CRS",
+      "location": "Aden, Yemen",
+      "city": "Aden",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-18T23:59:59.000Z",
+      "deadline": "02 ديسمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/technical-advisor-i-water-security-crs-aden-24e9e97f",
+      "applicationUrl": "https://yemenhr.com/jobs/technical-advisor-i-water-security-crs-aden-24e9e97f",
+      "summaryAr": "",
+      "expiresAt": "2026-12-02T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5041",
+      "title": "مدير قسم السيارات الكهربائية",
+      "organization": "Confidential",
+      "location": "Sana'a, Yemen",
+      "city": "Sana'a",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-18T23:59:59.000Z",
+      "deadline": "26 نوفمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/mdyr-ksm-alsyarat-alkhrbayy-confidential-sanaa-0969d929",
+      "applicationUrl": "https://yemenhr.com/jobs/mdyr-ksm-alsyarat-alkhrbayy-confidential-sanaa-0969d929",
+      "summaryAr": "",
       "expiresAt": "2026-11-26T23:59:59.000Z"
     }
   ]
