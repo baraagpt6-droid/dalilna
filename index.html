@@ -4127,7 +4127,7 @@ function liveDirectoryContext(){
 }
 function liveDirectoryCardHTML(item){
  const record=item&&typeof item==="object"?item:{},itemId=String(record?.id??"");
- const phone=String(record.phone||"").trim(),phoneInfo=yemenPhoneDetails(phone),phoneHref=phone.replace(/[^+\\d]/g,"");
+ const phone=String(record.phone||"").trim(),phoneInfo=yemenPhoneDetails(phone),phoneHref=phone.replace(/[^\d+]/g,"");
  const location=[record.governorate,record.district].filter(Boolean).join("، ");
  const contact=phone?'<div class="live-directory-actions"><a href="tel:'+esc(phoneHref)+'">اتصال</a>'+(phoneInfo.isMobile?'<a href="'+esc(yemenWhatsAppUrl(phone,"مرحباً، وجدت محلكم في دليلنا وأريد الاستفسار عن الخدمة."))+'" target="_blank" rel="noopener noreferrer">واتساب</a>':"")+'</div>':"";
  const lat=Number(record.lat??record.latitude),lon=Number(record.lon??record.lng??record.longitude);
@@ -4255,6 +4255,30 @@ async function loadRegionalCatalog(gov,force){
  return {region,manifest,data};
 }
 let liveAllCatalogPromise=null;
+let liveUnifiedIndex=[],liveUnifiedIndexReady=false,liveUnifiedIndexPromise=null;
+let liveFallbackCache=new Map(),liveFallbackLastAt=0;
+function buildUnifiedSearchItem(item){
+ const searchable=normalizeSearchPlace([
+  item.name,item.nameEn,item.altNames,item.searchText,item.activity,item.address,item.neighbourhood,item.street,
+  item.description,item.governorate,item.governorateEn,item.district,item.districtEn,item.category,
+  ...(Array.isArray(item.categories)?item.categories:[]),
+  ...Object.entries(item.osmTags||{}).flatMap(([key,value])=>[key,value])
+ ].filter(Boolean).join(" "));
+ return {...item,_searchKey:searchable};
+}
+async function warmUnifiedSearchIndex(force){
+ if(!force&&liveUnifiedIndexReady)return {manifest:liveCatalogManifest,items:liveUnifiedIndex};
+ if(!force&&liveUnifiedIndexPromise)return liveUnifiedIndexPromise;
+ const loading=loadAllRegionalCatalog(force).then(data=>{
+  liveUnifiedIndex=data.items.map(buildUnifiedSearchItem);
+  liveUnifiedIndexReady=true;
+  window.DALILNA_SEARCH_INDEX={ready:true,count:liveUnifiedIndex.length,snapshotDate:data.manifest.snapshotDate};
+  return {manifest:data.manifest,items:liveUnifiedIndex};
+ });
+ liveUnifiedIndexPromise=loading;
+ try{return await loading;}
+ finally{if(liveUnifiedIndexPromise===loading)liveUnifiedIndexPromise=null;}
+}
 async function loadAllRegionalCatalog(force){
  if(!force&&liveAllCatalogPromise)return liveAllCatalogPromise;
  const loading=(async()=>{
@@ -4282,7 +4306,7 @@ function regionalCatalogMatches(items,context,query,category,productType){
   const values=Array.isArray(item.categories)?item.categories:[item.category];
   return values.includes(key)||(categoryAliases[key]||[]).some(alias=>values.includes(alias));
  };
- const searchable=item=>normalizeSearchPlace([
+ const searchable=item=>item._searchKey||normalizeSearchPlace([
   item.name,item.nameEn,item.altNames,item.searchText,item.activity,item.address,
   item.neighbourhood,item.street,item.description,item.governorate,item.governorateEn,
   item.district,item.districtEn,item.category,
@@ -5065,7 +5089,7 @@ else if(location.hash==="#jobs")window.setTimeout(()=>go("jobs"),0);
 /* Initial Boot */
 applyLang();
 buildScopeSelector();
-loadRegionalCatalogManifest(false).catch(error=>{
+loadRegionalCatalogManifest(false).then(()=>warmUnifiedSearchIndex(false)).catch(error=>{
   console.error("Dalilna regional catalog bootstrap failed:",error);
   buildScopeSelector();
 });
