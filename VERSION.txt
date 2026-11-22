@@ -20,6 +20,7 @@ Souq:
 - Product cards show seller, category, price/currency, location, description, WhatsApp and sharing when supplied.
 - User marketplace listings are free and expire after 60 days from listing creation. The application currently has no user registration/account identity model to calculate a 60-day free period from account registration.
 - Store/business listing lifetime policy is not a billing workflow in the current schema.
+- The requested 60-day free period from account registration and lifetime-free merchant-store plan are not implemented because the current product has no user account/registration or merchant subscription model. Existing user classifieds expire 60 days after the listing is created.
 
 Daily sync:
 - Regional places/catalogue: GitHub Actions daily, plus run on mapping/builder commits.
