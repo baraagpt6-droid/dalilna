@@ -110,6 +110,11 @@ test("Geoapify returns in-app place cards and obtains phone from Place Details",
   if(originalKey===undefined)delete process.env.GEOAPIFY_API_KEY;else process.env.GEOAPIFY_API_KEY=originalKey;
  }
 });
+test("provider User-Agent versions follow package metadata",()=>{
+ const source=fs.readFileSync("server.js","utf8");
+ assert.ok(source.includes('const VERSION = require("./package.json").version;'));
+ assert.equal(source.includes("DalilnaDirectory/1.8.2"),false);
+});
 test("Wikimedia Commons search returns author and license metadata",async()=>{
  const original=global.fetch;
  global.fetch=async(input,options={})=>{
