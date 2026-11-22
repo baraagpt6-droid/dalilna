@@ -195,15 +195,22 @@ function buildOverpassQuery(bbox, category) {
   return "[out:json][timeout:12][maxsize:134217728];\n(\n" + union + "\n);\nout center tags 80;";
 }
 
+function normalizeCategorySearch(value) {
+  return normalizeText(value).replace(/ة/g,"ه").replace(/ى/g,"ي").split(/\\s+/)
+    .filter(Boolean).map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
+}
 function inferCategoryFromQuery(query) {
-  const text=normalizeText(query);
+  const text=normalizeCategorySearch(query);
   if(!text)return "";
+  const queryTokens=new Set(text.split(" "));
   const ordered=CATEGORY_MAPPING.primaryCategoryOrder||Object.keys(CATEGORY_MAPPING.categories||{});
   for(const [category,definition] of ordered.map(key=>[key,CATEGORY_MAPPING.categories[key]]).filter(([,definition])=>definition)){
     const aliases=[definition.labelAr,definition.labelEn,...(definition.aliases||[])].filter(Boolean);
     for(const alias of aliases){
-      const normalized=normalizeText(alias);
-      if(normalized&&text.includes(normalized)){
+      const normalized=normalizeCategorySearch(alias);
+      const tokens=normalized.split(" ").filter(Boolean);
+      const matches=normalized&&(text===normalized||text.includes(normalized)||(text.length>=3&&normalized.includes(text))||tokens.every(token=>queryTokens.has(token)));
+      if(matches){
         if(category==="real_estate")return "land";
         return category;
       }
