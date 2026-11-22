@@ -5154,6 +5154,11 @@ $("#more").addEventListener("click",()=>{homeLim+=24;render();});
 
 /* PWA / offline shell registration. Service workers require HTTPS or localhost. */
 if("serviceWorker" in navigator&&location.protocol!=="file:"){
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{
+    if(!window.DALILNA_PENDING_WORKER_RELOAD)return;
+    window.DALILNA_PENDING_WORKER_RELOAD=false;
+    window.setTimeout(()=>window.location.reload(),120);
+  });
   window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(()=>{}));
 }
 
@@ -5179,8 +5184,10 @@ async function checkRemoteVersionSilently(){
    await warmUnifiedSearchIndex(true);
   }
   if(latest.webVersion&&latest.webVersion!==localVersion&&location.hostname!=="appassets.androidplatform.net"&&"serviceWorker" in navigator){
+   window.DALILNA_PENDING_WORKER_RELOAD=true;
    const registration=await navigator.serviceWorker.getRegistration("./");
    if(registration)await registration.update();
+   else await navigator.serviceWorker.register("./sw.js",{scope:"./"});
   }
   return latest;
  }catch(error){
