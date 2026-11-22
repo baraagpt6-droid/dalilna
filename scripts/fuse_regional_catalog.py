@@ -359,11 +359,29 @@ def deduplicate(features):
     stats["unique"] = len(merged)
     return merged, stats
 
+_COUNTRY_SHAPE_CACHE = {}
+
 def country_contains(feature, geometries):
     point = builder.geometry_point(feature.get("geometry"))
     if not point:
         return False
-    return any(builder.point_in_geometry(point[1], point[0], geometry) for geometry in geometries)
+    lon, lat = point[1], point[0]
+    try:
+        from shapely.geometry import Point, shape
+        from shapely.prepared import prep
+    except ImportError:
+        return any(builder.point_in_geometry(lon, lat, geometry) for geometry in geometries)
+    candidate = Point(lon, lat)
+    for geometry in geometries:
+        key = id(geometry)
+        prepared = _COUNTRY_SHAPE_CACHE.get(key)
+        if prepared is None:
+            polygon = shape(geometry)
+            prepared = prep(polygon)
+            _COUNTRY_SHAPE_CACHE[key] = prepared
+        if prepared.intersects(candidate):
+            return True
+    return False
 
 
 def read_geojson(path):
