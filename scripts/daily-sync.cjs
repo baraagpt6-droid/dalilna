@@ -33,8 +33,8 @@ async function checkExchange(){
 }
 async function checkServices(){
  const [market,jobs]=await Promise.all([
-  readJson(API+"/api/marketplace/status"),
-  readJson(API+"/api/jobs?country=Yemen&limit=1")
+  readJson(API+"/api/marketplace/status",60000),
+  readJson(API+"/api/jobs?country=Yemen&limit=1",60000)
  ]);
  if(market.ready!==true)throw new Error("Shared marketplace database is not ready.");
  if(jobs.ok!==true||!Array.isArray(jobs.items))throw new Error("Jobs feed endpoint returned an invalid response.");
