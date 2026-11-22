@@ -37,12 +37,12 @@ jobs:
           osmium --version
       - name: Download current open datasets
         run: |
-          if ! curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen/yemen-latest.osm.pbf -o yemen-latest.osm.pbf; then
-            echo "Latest Geofabrik extract unavailable; using the verified 2026-11-15 snapshot."
-            curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen/yemen-261121.osm.pbf -o yemen-latest.osm.pbf
+          if ! curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen-latest.osm.pbf -o yemen-latest.osm.pbf; then
+            echo "Latest Geofabrik extract unavailable; using the verified 2026-11-21 snapshot."
+            curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen-261121.osm.pbf -o yemen-latest.osm.pbf
           fi
           if [[ "$(stat -c%s yemen-latest.osm.pbf)" -lt 1000000 ]]; then
-            echo "Latest Geofabrik response was not a valid PBF; falling back to 2026-11-15."
+            echo "Latest Geofabrik response was not a valid PBF; falling back to 2026-11-15 snapshot."
             curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen-261115.osm.pbf -o yemen-latest.osm.pbf
           fi
           download_admin_file() {
