@@ -207,6 +207,7 @@
       const result = await api("/api/marketplace/listings?" + params.toString());
       list.replaceChildren();
       (result.items || []).forEach(item => list.appendChild(makeCard(item)));
+      return result;
       status.textContent = result.count
         ? "يعرض " + result.items.length + " من " + result.count + " إعلاناً منشوراً · آخر تحديث " + new Date(result.fetchedAt).toLocaleTimeString("ar")
         : "";
@@ -215,6 +216,7 @@
       status.textContent = e.status === 503
         ? "خدمة البيانات المشتركة لم تُفعّل بعد. سيظهر المحتوى هنا بعد ربط قاعدة البيانات."
         : "تعذر تحميل الإعلانات المشتركة. " + e.message;
+      return null;
     }
   }
   function loadHome() {
@@ -225,7 +227,7 @@
       district: $("sharedDirectoryDistrict") && $("sharedDirectoryDistrict").value.trim()
     }, "sharedDirectoryStatus", "sharedDirectoryItems");
   }
-  function loadSouq() {
+  async function loadSouq() {
     const selectedType = document.querySelector("#souqTransactionTabs [aria-pressed=true]");
     const selectedGroup = document.querySelector("#souqCategoryTabs [aria-pressed=true]");
     return loadList({
