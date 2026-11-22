@@ -1579,5 +1579,186 @@
     "salon",
     "laundry",
     "other"
-  ]
+  ],
+  "externalCategoryHints": {
+    "health": [
+      "hospital",
+      "clinic",
+      "medical center",
+      "medical centre",
+      "healthcare",
+      "doctor",
+      "dentist",
+      "urgent care",
+      "مستشفى",
+      "عيادة",
+      "مركز صحي"
+    ],
+    "pharmacy": [
+      "pharmacy",
+      "drugstore",
+      "chemist",
+      "صيدلية"
+    ],
+    "edu": [
+      "school",
+      "university",
+      "college",
+      "kindergarten",
+      "education",
+      "مدرسة",
+      "جامعة",
+      "روضة"
+    ],
+    "mosque": [
+      "mosque",
+      "place of worship",
+      "religious organization",
+      "مسجد",
+      "جامع"
+    ],
+    "grocery": [
+      "grocery",
+      "supermarket",
+      "convenience store",
+      "food market",
+      "بقالة",
+      "سوبرماركت"
+    ],
+    "food": [
+      "restaurant",
+      "fast food",
+      "food court",
+      "مطعم"
+    ],
+    "cafe": [
+      "cafe",
+      "coffee shop",
+      "tea house",
+      "مقهى",
+      "كافيه"
+    ],
+    "money": [
+      "bank",
+      "atm",
+      "money transfer",
+      "currency exchange",
+      "صراف",
+      "بنك"
+    ],
+    "utility": [
+      "gas station",
+      "fuel",
+      "petrol station",
+      "محطة وقود"
+    ],
+    "vehicles": [
+      "car repair",
+      "auto repair",
+      "vehicle repair",
+      "car dealer",
+      "motorcycle dealer",
+      "قطع غيار",
+      "سيارات"
+    ],
+    "telecom": [
+      "mobile phone",
+      "cell phone",
+      "telecommunication",
+      "جوال",
+      "اتصالات"
+    ],
+    "elec": [
+      "electronics store",
+      "computer store",
+      "electronics",
+      "computer",
+      "إلكترونيات",
+      "كمبيوتر"
+    ],
+    "clothes": [
+      "clothing store",
+      "shoe store",
+      "clothing",
+      "ملابس",
+      "أحذية"
+    ],
+    "home": [
+      "furniture store",
+      "home goods",
+      "hardware store",
+      "building material",
+      "أثاث",
+      "مواد بناء"
+    ],
+    "hotel": [
+      "hotel",
+      "motel",
+      "hostel",
+      "guest house",
+      "فندق"
+    ],
+    "delivery": [
+      "courier",
+      "post office",
+      "delivery",
+      "parcel",
+      "شحن",
+      "توصيل"
+    ],
+    "gov": [
+      "government office",
+      "municipal office",
+      "public service",
+      "حكومي",
+      "بلدية"
+    ],
+    "beauty": [
+      "hair salon",
+      "beauty salon",
+      "barber",
+      "صالون",
+      "حلاقة",
+      "عطور"
+    ],
+    "craft": [
+      "repair",
+      "craft",
+      "electrician",
+      "plumber",
+      "mechanic",
+      "صيانة",
+      "سباك",
+      "كهربائي"
+    ],
+    "tourism": [
+      "park",
+      "tourist attraction",
+      "museum",
+      "landmark",
+      "حديقة",
+      "متحف"
+    ],
+    "solar": [
+      "solar",
+      "solar energy",
+      "renewable energy",
+      "طاقة شمسية"
+    ],
+    "farm": [
+      "farm",
+      "agriculture",
+      "agricultural",
+      "livestock",
+      "مزرعة",
+      "زراعة",
+      "مواشي"
+    ],
+    "market": [
+      "market",
+      "marketplace",
+      "بازار",
+      "سوق"
+    ]
+  }
 }
