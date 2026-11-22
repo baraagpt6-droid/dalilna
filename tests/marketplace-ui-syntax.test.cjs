@@ -171,8 +171,9 @@ test("daily sync workflow checks jobs, marketplace, exchange and configured merc
 test("empty merchant snapshots never archive existing feed listings",()=>{
  const feed=fs.readFileSync(path.join(__dirname,"../scripts/refresh-marketplace-products.cjs"),"utf8");
  const api=fs.readFileSync(path.join(__dirname,"../marketplace-api.js"),"utf8");
- assert.ok(feed.includes("items.length>0"));
- assert.ok(api.includes("completeSnapshot&&skipped===0&&activeRefs.length>0"));
+ assert.ok(feed.includes("items.length>0&&items.length<=MAX_BATCH"));
+ assert.ok(api.includes("items.length===0"));
+ assert.ok(api.includes("activeRefs.length===activeClientRefs.length"));
 });
 test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black shapes",()=>{
  const start=html.indexOf('<nav class="quick-jump-bar"'),end=html.indexOf('</nav>',start);
