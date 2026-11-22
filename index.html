@@ -3104,15 +3104,15 @@ $("#back").addEventListener("click",()=>go("home"));
 
 /* Yemen administrative hierarchy: 22 governorates, 335 districts, and Hubaish 22 local sub-districts. */
 function normalizePlace(s){
-  return String(s||"").normalize("NFKC").replace(/[\\u064B-\\u065F\\u0670\\u0640]/g,"")
+  return String(s||"").normalize("NFKC").replace(/[\u064B-\u065F\u0670\u0640]/g,"")
     .replace(/[أإآٱ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي")
-    .replace(/[ًٌٍَُِّْـ]/g,"").replace(/[^\\u0600-\\u06FF0-9a-z\\s]/gi," ")
-    .replace(/\\s+/g," ").trim().toLowerCase();
+    .replace(/[ًٌٍَُِّْـ]/g,"").replace(/[^\u0600-\u06FF0-9a-z\s]/gi," ")
+    .replace(/\s+/g," ").trim().toLowerCase();
 }
 function normalizeSearchPlace(s){
  const runtime=window.DalilnaRegionalCatalog;
  if(runtime&&typeof runtime.normalizeSearchText==="function")return runtime.normalizeSearchText(s);
- return normalizePlace(s).split(/\\s+/).map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
+ return normalizePlace(s).split(/\s+/).map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
 }
 const HUBAISH_ALIASES={
   "بني الضاحتين":"بني الضاحيتين","جبل عميقة":"جبل عنقه","وادي المعقاب":"وادي العقاب",
@@ -4162,7 +4162,7 @@ function liveDirectoryCardHTML(item){
  '<div class="live-directory-actions"><button type="button" data-fav="'+esc(itemId)+'" aria-label="إضافة إلى المفضلة">'+(S.favs.includes(itemId)?"♥":"♡")+'</button></div></article>';
 }
 function geoapifyDirectoryCardHTML(item){
- const phone=String(item.phone||"").trim(),phoneHref=phone.replace(/[^+\\d]/g,"");
+ const phone=String(item.phone||"").trim(),phoneHref=phone.replace(/[^+\d]/g,"");
  const phoneHtml=phone
   ?'<p class="google-place-phone">الهاتف: <a href="tel:'+esc(phoneHref)+'">'+esc(phone)+'</a></p>'
   :'<p class="google-place-phone muted">رقم الهاتف غير متوفر في بيانات هذا المكان.</p>';
@@ -4331,7 +4331,7 @@ function regionalCatalogMatches(items,context,query,category,productType){
  };
  const filler=["ابحث","بحث","عن","في","من","و","اليمن","محل","محلات","خدمة","خدمات","مكان","اماكن"];
  const ignored=new Set([...(categoryWords[wanted]||[]).map(normalizeSearchPlace),...filler.map(normalizeSearchPlace)].filter(Boolean));
- const tokens=normalizeSearchPlace(query).split(/\\s+/).filter(token=>token&&!ignored.has(token));
+ const tokens=normalizeSearchPlace(query).split(/\s+/).filter(token=>token&&!ignored.has(token));
  return (items||[]).filter(item=>{
   if(wanted!=="all"&&item.category!==wanted)return false;
   if(context&&(context.type==="district"||context.type==="subdistrict")&&context.district&&normalizePlace(item.district)!==normalizePlace(context.district))return false;
