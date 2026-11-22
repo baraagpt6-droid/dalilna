@@ -3064,7 +3064,7 @@ function renderProfilePanel(){
  const select=$("#profileDefaultGovernorate");
  if(select){
    const current=S.defaultGovernorate||"";
-   select.innerHTML='<option value="">'+(english?"All Yemen":"كل اليمن")+'</option>'+GOVS.map(g=>'<option value="'+esc(g)+'">'+esc(g)+'</option>').join("");
+   select.innerHTML='<option value="">'+(english?"All Yemen":"كل اليمن")+'</option>'+GOVS.map((g,index)=>'<option value="'+esc(g)+'">'+esc(english?GOVS_EN[index]:g)+'</option>').join("");
    select.value=current;
  }
  const labels={
@@ -3175,7 +3175,7 @@ $("#toggleAdmPass").addEventListener("click",()=>{
 });
 
 /* Navigation & Smart Shortcuts */
-let view="home",curCat="",scope="",catGroup="all",catExpanded=false,homeLim=24;
+let view="home",curCat="",scope=S.defaultGovernorate?"gov:"+S.defaultGovernorate:"",catGroup="all",catExpanded=false,homeLim=24;
 let flt={open:false,ver:false,fav:false,near:false};
 let userPos=null;
 
@@ -4211,7 +4211,6 @@ function directoryMapSearchInfo(q){
   const service=services.find(item=>item.test.test(text));
   const rateIntent=/(سعر الصرف|اسعار الصرف|سعر العملات|سعر الدولار|صرف الدولار|كم سعر الدولار|الدولار اليوم|exchange rate|currency rate|forex rate|usd rate)/.test(text);
   if(!product&&!service&&!rateIntent)return null;
-  const GOVS_EN=["Capital Municipality","Sana'a","Aden","Taiz","Ibb","Al Hudaydah","Dhamar","Al Bayda","Lahij","Abyan","Al Dhale'e","Marib","Al Jawf","Sa'dah","Hajjah","Amran","Al Mahwit","Raymah","Hadramaut","Shabwah","Al Mahrah","Socotra"];
   const govIndex=GOVS.findIndex((name,index)=>text.includes(normalizePlace(name))||text.includes(normalizePlace(GOVS_EN[index])));
   const gov=govIndex>=0?GOVS[govIndex]:"";
   const districtEntry=Object.entries(YEMEN_DISTRICTS).find(([parent,districts])=>
