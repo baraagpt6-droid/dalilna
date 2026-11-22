@@ -1759,6 +1759,86 @@
       "marketplace",
       "بازار",
       "سوق"
+    ],
+    "build": [
+      "building materials",
+      "construction materials",
+      "hardware store",
+      "construction supply",
+      "مواد بناء",
+      "حديد",
+      "أسمنت",
+      "أدوات بناء"
+    ],
+    "parts": [
+      "auto parts",
+      "car parts",
+      "spare parts",
+      "vehicle parts",
+      "قطع غيار",
+      "مستلزمات سيارات"
+    ],
+    "transport": [
+      "bus station",
+      "taxi stand",
+      "public transport",
+      "transportation",
+      "terminal",
+      "محطة باص",
+      "نقل",
+      "مواصلات"
+    ],
+    "wedding": [
+      "wedding venue",
+      "event venue",
+      "banquet hall",
+      "wedding hall",
+      "قاعة أفراح",
+      "صالة أعراس",
+      "قاعات مناسبات"
+    ],
+    "gold": [
+      "jewelry",
+      "jewellery",
+      "gold shop",
+      "precious metals",
+      "ذهب",
+      "مجوهرات",
+      "صياغة"
+    ],
+    "books": [
+      "book store",
+      "bookshop",
+      "stationery",
+      "library",
+      "مكتبة",
+      "قرطاسية",
+      "كتب"
+    ],
+    "salon": [
+      "barber",
+      "hair salon",
+      "beauty salon",
+      "حلاق",
+      "كوافير",
+      "صالون حلاقة"
+    ],
+    "laundry": [
+      "laundry",
+      "dry cleaner",
+      "clothing care",
+      "مغسلة",
+      "غسيل ملابس",
+      "كوي"
+    ],
+    "real_estate": [
+      "real estate agency",
+      "property agency",
+      "estate agent",
+      "property management",
+      "عقار",
+      "مكتب عقاري",
+      "وسيط عقاري"
     ]
   }
 }
