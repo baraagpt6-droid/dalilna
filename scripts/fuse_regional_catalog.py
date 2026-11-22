@@ -158,7 +158,7 @@ def category_for_values(values, mapping):
 def source_metadata(props, source, source_id):
     if source == "osm":
         return {"name": "OpenStreetMap", "id": source_id, "license": OSM_LICENSE,
-                "url": ("https://www.openstreetmap.org/" + source_id.replace("/", "/", 1)) if "/" in source_id else ""}
+                "url": ("https://www.openstreetmap.org/" + source_id) if source_id else "https://www.openstreetmap.org/copyright"}
     if source == "fsq":
         return {"name": "Foursquare Open Places", "id": source_id, "license": FSQ_LICENSE,
                 "url": "https://foursquare.com/placemakers/review-place/" + source_id if source_id else "https://docs.foursquare.com/data-products/docs/fsq-places-open-source"}
