@@ -87,3 +87,19 @@ test("marketplace public records return their expiry timestamp",()=>{
  const source=fs.readFileSync("marketplace-api.js","utf8");
  assert.match(source,/expiresAt:row\.expires_at/);
 });
+
+test("daily merchant feed endpoint is authenticated, idempotent and retires missing feed products only on a complete snapshot",()=>{
+ const source=fs.readFileSync("marketplace-api.js","utf8");
+ assert.ok(source.includes('r==="feed-sync"&&req.method==="POST"'));
+ assert.ok(source.includes("DALILNA_PRODUCT_SYNC_TOKEN"));
+ assert.ok(source.includes("crypto.timingSafeEqual"));
+ assert.ok(source.includes("ON CONFLICT(client_ref) DO UPDATE"));
+ assert.ok(source.includes("completeSnapshot"));
+ assert.ok(source.includes("client_ref=ANY($1::text[])"));
+ assert.ok(source.includes("status='archived'"));
+});
+test("solar, screen, battery and inverter products are valid marketplace items",()=>{
+ for(const productType of ["solar_equipment","solar_panel","battery","inverter","power_system","screen","monitor","charger","audio_accessories"]) {
+  assert.ok(PRODUCT_TYPES.has(productType),productType);
+ }
+});
