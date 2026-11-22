@@ -4136,7 +4136,7 @@ function liveDirectoryCardHTML(item){
  (record.address?'<p>العنوان: '+esc(record.address)+'</p>':"")+
  (record.openingHours?'<p>ساعات العمل: '+esc(record.openingHours)+'</p>':"")+
  (phone?'<p>الهاتف: '+esc(phone)+'</p>':"")+contact+map+
- '<div class="live-directory-actions"><button type="button" data-fav="'+esc(itemId)+'" aria-label="إضافة إلى المفضلة">'+(S.favs.includes(itemId)?"♥":"♡")+'</button></div></article>';
+ "</article>";
 }
 function geoapifyDirectoryCardHTML(item){
  const phone=String(item.phone||"").trim(),phoneHref=phone.replace(/[^+\d]/g,"");
