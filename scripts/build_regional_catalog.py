@@ -191,8 +191,9 @@ def categories_for_tags(tags, mapping=None):
     definitions = mapping.get("categories", {})
 
     # Exact activity tags take priority over broad Overture/OSM aliases.
-    # One primary category keeps hospitals, pharmacies and vehicle services
-    # out of unrelated sections throughout the national catalogue.
+    # If a malformed record contains conflicting activity tags, resolve them
+    # by the national primary-category order rather than rule insertion order.
+    strict_matches = set()
     for rule in mapping.get("strictPrimaryRules", []):
         if not _matches_rule(tags, rule):
             continue
@@ -201,7 +202,12 @@ def categories_for_tags(tags, mapping=None):
             continue
         category = rule.get("category")
         if category in definitions:
-            return [category]
+            strict_matches.add(category)
+    if strict_matches:
+        order = mapping.get("primaryCategoryOrder") or list(definitions)
+        rank = {category: index for index, category in enumerate(order)}
+        return [min(strict_matches, key=lambda category: rank.get(category, len(rank)))]
+
 
     matched = []
     external = tags.get("__catalog_categories") or []
