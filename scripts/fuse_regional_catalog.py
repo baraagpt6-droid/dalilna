@@ -126,10 +126,18 @@ def category_for_values(values, mapping):
         normalized_aliases = [norm(x) for x in aliases if norm(x)]
         if any(alias and (alias in value or value in alias) for alias in normalized_aliases for value in normalized):
             found.append(category)
-    for value in normalized:
-        for hints, category in CATEGORY_HINTS:
-            if any(norm(hint) in value or value in norm(hint) for hint in hints):
-                if category not in found: found.append(category)
+    external_hints = mapping.get("externalCategoryHints") or {}
+    for category, hints in external_hints.items():
+        if category not in categories:
+            continue
+        normalized_hints = [norm(hint) for hint in hints if norm(hint)]
+        if any(hint in value or value in hint for hint in normalized_hints for value in normalized):
+            if category not in found: found.append(category)
+    if not external_hints:
+        for value in normalized:
+            for hints, category in CATEGORY_HINTS:
+                if any(norm(hint) in value or value in norm(hint) for hint in hints):
+                    if category not in found: found.append(category)
     if not found and normalized and "other" in categories:
         found.append("other")
     order = mapping.get("primaryCategoryOrder") or list(categories)
