@@ -236,7 +236,7 @@ jobs:
           version["catalogTotalCount"]=manifest["totalCount"]
           version["sourceCounts"]=manifest.get("sourceCounts",{})
           version["updatedAt"]=datetime.now(timezone.utc).isoformat()
-          Path("version.json").write_text(json.dumps(version,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+          Path("version.json").write_text(json.dumps(version,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
           PY
       - name: Publish catalogue and trigger web and Android builds
         env:
