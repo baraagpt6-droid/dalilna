@@ -171,6 +171,10 @@ def source_metadata(props, source, source_id):
 def as_feature(feature, source, mapping):
     props = feature.get("properties") or {}
     tags = props.get("tags") if isinstance(props.get("tags"), dict) else {}
+    if props.get("operating_status") == "permanently_closed" or (props.get("confidence") is not None and float(props.get("confidence") or 0) <= 0):
+        return None
+    if props.get("date_closed") or props.get("date_closed_utc"):
+        return None
     point = point_of(feature, props, source)
     if not point: return None
     lat, lon = point
