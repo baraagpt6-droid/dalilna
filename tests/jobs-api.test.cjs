@@ -38,13 +38,13 @@ test("public YemenHR parser rejects Telegraph-only intermediary links",()=>{
 
 test("public YemenHR parser keeps a direct HTTPS application link and source metadata",()=>{
  const {parseYemenHrJobs}=require("../scripts/refresh-jobs.cjs");
- const html='<div class="tgme_widget_message_wrap"><div data-post="hr_yemen/9999"></div><div class="tgme_widget_message_text js-message_text">📋 المسمى الوظيفي:<br>Project Officer<br>🏢 الجهة:<br>Test NGO<br>📍 الموقع:<br>Aden<br>📅 تاريخ النشر:<br>18 نوفمبر 2026<br>⏰ آخر موعد للتقديم:<br>24 نوفمبر 2026</div><a href="https://telegra.ph/Project-Officer-11-18">details</a><a href="https://employer.example/apply/123">Apply now</a></div>';
+ const html='<div class="tgme_widget_message_wrap"><div data-post="hr_yemen/9999"></div><div class="tgme_widget_message_text js-message_text">📋 المسمى الوظيفي:<br>Project Officer<br>🏢 الجهة:<br>Test NGO<br>📍 الموقع:<br>Aden<br>📅 تاريخ النشر:<br>18 نوفمبر 2026<br>⏰ آخر موعد للتقديم:<br>24 نوفمبر 2026</div><a href="https://telegra.ph/Project-Officer-11-18">details</a><a href="https://yemenhr.com/apply/123">Apply now</a></div>';
  const items=parseYemenHrJobs(html);
  assert.equal(items.length,1);
  assert.equal(items[0].title,"Project Officer");
  assert.equal(items[0].organization,"Test NGO");
  assert.equal(items[0].country,"Yemen");
- assert.equal(items[0].url,"https://employer.example/apply/123");
+ assert.equal(items[0].url,"https://yemenhr.com/apply/123");
  assert.equal(items[0].sourceUrl,"https://t.me/hr_yemen/9999");
 });
 
