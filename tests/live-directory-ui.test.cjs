@@ -29,7 +29,7 @@ test("individual place cards use optional map and source links from catalogue da
 });
 test("all-tab search uses the preloaded Yemen index and live OSM fallback",()=>{
  for(const token of ["const showTopSearch=searchActive",'if(view!=="home")go("home")',"warmUnifiedSearchIndex(false)","searchLiveDirectoryFallback","rows.length<5"])assert.ok(html.includes(token),token);
- assert.ok(!html.includes("id=\\"catFilterQ\\""));
+ assert.ok(!html.includes('id="catFilterQ"'));
 });
 
 
