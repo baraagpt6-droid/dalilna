@@ -111,7 +111,7 @@ def extract_category_values(props, tags, source):
             values.extend(taxonomy.get("hierarchy") or [])
             values.extend(taxonomy.get("alternates") or [])
     elif source == "fsq":
-        for field in ("categories", "category", "category_name", "category_label", "fsq_category_names"):
+        for field in ("categories", "category", "category_name", "category_label", "fsq_category_names", "fsq_category_labels"):
             value = props.get(field)
             if isinstance(value, list):
                 for entry in value:
@@ -179,6 +179,14 @@ def as_feature(feature, source, mapping):
     if props.get("operating_status") == "permanently_closed" or (props.get("confidence") is not None and float(props.get("confidence") or 0) <= 0):
         return None
     if props.get("date_closed") or props.get("date_closed_utc"):
+        return None
+    flags = props.get("unresolved_flags") or []
+    if isinstance(flags, str): flags = [flags]
+    blocked_flags = {"closed", "duplicate", "delete", "privatevenue", "inappropriate", "doesnt_exist"}
+    if blocked_flags.intersection(str(flag).strip().lower() for flag in flags):
+        return None
+    country = str(props.get("country") or "").strip().upper()
+    if source == "fsq" and country and country != "YE":
         return None
     point = point_of(feature, props, source)
     if not point: return None
@@ -379,10 +387,18 @@ def main():
     parser.add_argument("--fsq", default="")
     parser.add_argument("--fsq-url", default="")
     parser.add_argument("--fsq-categories", default="")
+    parser.add_argument("--country-boundary", default="")
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     mapping = builder.load_category_mapping()
     fsq_category_names = load_fsq_category_names(args.fsq_categories)
+    country_geometries = []
+    if args.country_boundary:
+        boundary_payload = json.loads(Path(args.country_boundary).read_text(encoding="utf-8"))
+        boundary_features = boundary_payload.get("features", []) if isinstance(boundary_payload, dict) else []
+        country_geometries = [feature.get("geometry") for feature in boundary_features if feature.get("geometry")]
+        if not country_geometries:
+            raise ValueError("Yemen country boundary file does not contain polygon features.")
     groups = [
         ("osm", read_geojson(args.osm)),
         ("overture", read_geojson(args.overture)),
@@ -409,6 +425,10 @@ def main():
                 ids = props.get("fsq_category_ids") or props.get("category_ids") or []
                 props["fsq_category_names"] = [fsq_category_names[x] for x in ids if x in fsq_category_names]
             item = as_feature(feature, source, mapping)
+            if item and country_geometries:
+                point = builder.geometry_point(item.get("geometry"))
+                if not point or not any(builder.point_in_geometry(point[0], point[1], geometry) for geometry in country_geometries):
+                    item = None
             if item:
                 if source == "overture":
                     props = feature.get("properties") or {}
