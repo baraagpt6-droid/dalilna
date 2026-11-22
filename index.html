@@ -5165,7 +5165,7 @@ async function checkRemoteVersionSilently(){
   const latest=await response.json();
   window.DALILNA_REMOTE_VERSION=latest;
   const localManifest=liveCatalogManifest;
-  if(latest.catalogSnapshotDate&&localManifest?.snapshotDate&&latest.catalogSnapshotDate>localManifest.snapshotDate){
+  if(latest.catalogGeneratedAt&&localManifest?.generatedAt&&latest.catalogGeneratedAt>localManifest.generatedAt){
    await warmUnifiedSearchIndex(true);
   }
   if(latest.webVersion&&latest.webVersion!==localVersion&&location.hostname!=="appassets.androidplatform.net"&&"serviceWorker" in navigator){
@@ -5178,11 +5178,10 @@ async function checkRemoteVersionSilently(){
   return null;
  }
 }
-loadRegionalCatalogManifest(false).then(()=>warmUnifiedSearchIndex(false)).catch(error=>{
+loadRegionalCatalogManifest(false).then(()=>warmUnifiedSearchIndex(false)).then(()=>checkRemoteVersionSilently()).catch(error=>{
   console.error("Dalilna regional catalog bootstrap failed:",error);
   buildScopeSelector();
 });
-checkRemoteVersionSilently();
 if($("#aiCloudConsent")){
   $("#aiCloudConsent").checked=S.aiCloudConsent===true;
   $("#aiModeHint").textContent=S.aiCloudConsent?"المساعد السحابي مفعّل بموافقتك. قد يُرسل سؤالك وبيانات الإدراجات العامة ذات الصلة، ومنها أرقام التواصل، إلى خادم التطبيق ومزود الذكاء الاصطناعي. يمكنك إيقافه في أي وقت.":"المساعد المحلي يبحث في بيانات هذا الجهاز دون إنترنت. المساعد السحابي متوقف ولن تُرسل بيانات الدليل لخدمة خارجية.";
