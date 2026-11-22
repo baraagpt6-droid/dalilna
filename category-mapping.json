@@ -1307,6 +1307,10 @@
         {
           "key": "amenity",
           "value": "parcel_pickup"
+        },
+        {
+          "key": "delivery",
+          "value": "*"
         }
       ]
     },
