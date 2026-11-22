@@ -138,7 +138,7 @@ jobs:
           ARGS=(--osm places.geojson --overture overture-yemen.geojson --country-boundary yemen-country.geojson --output fused-places.geojson)
           if [[ -n "$FSQ_OS_PLACES_EXPORT_URL" ]]; then ARGS+=(--fsq-url "$FSQ_OS_PLACES_EXPORT_URL"); fi
           if [[ -n "$FSQ_OS_PLACES_CATEGORIES_URL" ]]; then ARGS+=(--fsq-categories-url "$FSQ_OS_PLACES_CATEGORIES_URL"); fi
-          python3 scripts/fuse_regional_catalog.py "${ARGS[@]}"
+          .venv/bin/python scripts/fuse_regional_catalog.py "${ARGS[@]}"
           test -s fused-places.geojson
       - name: Extract available administrative boundaries
         shell: bash
