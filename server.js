@@ -217,7 +217,7 @@ function buildYemenOverpassQuery(query,category="all"){
   if(categoryOnly&&selected!=="all"){
     filters=FILTERS[selected]||[];
   }else{
-    const pattern=String(query||"").trim().replace(/[^\u0600-\u06FFa-zA-Z0-9\\s_-]/g," ").replace(/\s+/g," ").trim();
+    const pattern=String(query||"").trim().replace(/[^\u0600-\u06FFa-zA-Z0-9\s_-]/g," ").replace(/\s+/g," ").trim();
     const qlValue=pattern.replace(/\\/g,"\\\\").replace(/"/g,'\\"');
     if(!qlValue)return "";
     filters=["name","name:ar","name:en","brand","operator"].map(key=>'["'+key+'"~"'+qlValue+'",i]');
@@ -946,7 +946,9 @@ async function searchPlaces(params) {
   const radius = Math.min(15000, Math.max(1000, Number(params.radius) || 7000));
   const countrywideSearch = !hasCoordinates && (!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen");
   if (countrywideSearch && query) {
-    const nominal=await searchYemenNominatim(query,category);
+    let nominal={items:[],count:0,category,source:"OpenStreetMap Nominatim",place:"اليمن",cached:false};
+    let nomError=null;
+    try{nominal=await searchYemenNominatim(query,category);}catch(error){nomError=error;}
     if((nominal.items||[]).length>=8)return nominal;
     let live=[];
     try{
@@ -954,7 +956,7 @@ async function searchPlaces(params) {
       live=Array.isArray(fallback.items)?fallback.items:[];
     }catch(error){
       if((nominal.items||[]).length)return nominal;
-      throw error;
+      throw nomError||error;
     }
     const merged=[...(nominal.items||[])],seen=new Set();
     for(const item of merged)seen.add(String(item.id||"")+"|"+normalizeText(item.name)+"|"+Number(item.lat).toFixed(4)+"|"+Number(item.lon).toFixed(4));
@@ -964,7 +966,7 @@ async function searchPlaces(params) {
     }
     const result={...nominal,items:merged.slice(0,80),count:Math.min(80,merged.length),
       source:"OpenStreetMap Nominatim + Overpass",liveFallbackCount:live.length,
-      note:"تم دمج البحث الاسمي مع فهرس Overpass الحي داخل حدود اليمن."};
+      note:"تم دمج البحث الاسمي مع فهرس Overpass الحي داخل حدود اليمن.",nominalSearchError:nomError?cleanText(nomError.message,160):""};
     if(result.items.length)touchCache(resultCache,"yemen-hybrid:"+normalizeText(query)+"|"+category,result,2*60*1000);
     return result;
   }
