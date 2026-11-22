@@ -91,10 +91,10 @@
   const jobs=$("vJobs"),shared=$("sharedJobsPanel");
   if(jobs&&shared&&!$("jobsFeaturePanel")){
    const panel=el("section",{id:"jobsFeaturePanel",class:"jobs-feature-panel"});
-   panel.innerHTML='<div class="feature-head"><h3>فرص عمل من مصادرها</h3><span class="tag">تحديث يومي</span></div><div class="country-tabs" id="jobsCountryTabs" aria-label="اختيار الدولة"></div><div class="job-source-links" id="jobSourceLinks"></div><div class="job-feed-status" id="jobsFeedStatus">جارٍ تحميل الوظائف من المصادر الخارجية…</div><div class="job-feed-list" id="jobsFeedCards"></div>';
+   panel.innerHTML='<div class="feature-head"><h3>فرص عمل من مصادرها</h3><span class="tag">تحديث يومي</span></div><div class="country-tabs" id="jobsCountryTabs" aria-label="اختيار الدولة"></div><div class="job-source-links" id="jobSourceLinks"></div><div class="job-feed-status" id="jobsFeedStatus"></div><div class="job-feed-list" id="jobsFeedCards"></div>';
    shared.parentNode.insertBefore(panel,shared);
    const seekers=el("section",{id:"jobSeekersPanel",class:"job-seekers-panel"});
-   seekers.innerHTML='<div class="feature-head"><h3>باحثون عن عمل</h3><span class="tag">بموافقة أصحاب الملفات</span></div><div class="job-seeker-panel-actions"><button type="button" class="add" id="addJobSeeker">سجّل كباحث عن عمل</button></div><div class="job-seeker-status" id="jobSeekersStatus">جارٍ تحميل ملفات الباحثين عن عمل…</div><div class="job-seeker-list" id="jobSeekersList"></div>';
+   seekers.innerHTML='<div class="feature-head"><h3>باحثون عن عمل</h3><span class="tag">بموافقة أصحاب الملفات</span></div><div class="job-seeker-panel-actions"><button type="button" class="add" id="addJobSeeker">سجّل كباحث عن عمل</button></div><div class="job-seeker-status" id="jobSeekersStatus"></div><div class="job-seeker-list" id="jobSeekersList"></div>';
    $("jobs").parentNode.insertBefore(seekers,$("jobs"));
   }
   if(!$("jobSeekerDlg")){
@@ -162,17 +162,19 @@
  async function loadJobs(){
   const status=$("jobsFeedStatus"),box=$("jobsFeedCards");
   if(!status||!box)return;
-  status.textContent="جارٍ تحميل أحدث الوظائف…";translateFeatureTree(status);box.replaceChildren();
+  status.textContent="";
   try{
    const response=await fetch(API+"/api/jobs?country="+encodeURIComponent(country)+"&limit=60",{cache:"no-store",headers:{Accept:"application/json"}});
    const data=await response.json().catch(()=>({}));
    if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
    if(!Array.isArray(data.items)||!data.items.length){
+    box.replaceChildren();
     status.textContent="لا توجد وظائف مطابقة في آخر مزامنة. استخدم روابط المنصات أعلاه للبحث المباشر.";
     translateFeatureTree(status);
     return;
    }
    status.textContent="عدد الوظائف: "+data.items.length+" · آخر مزامنة: "+(formatDate(data.fetchedAt)||"غير متاح");
+   const fragment=document.createDocumentFragment();
    data.items.forEach(job=>{
     const card=el("article",{class:"job-feed-card"});
     card.appendChild(el("h4",{},job.title||"وظيفة"));
@@ -207,11 +209,12 @@
      catch(error){if(error.name!=="AbortError")toast("تعذرت المشاركة من هذا الجهاز.");}
     });
     actions.appendChild(share);
-    card.appendChild(actions);box.appendChild(card);
+    card.appendChild(actions);fragment.appendChild(card);
    });
+   box.replaceChildren(fragment);
    translateFeatureTree(box);
    translateFeatureTree(status.parentElement||status);
-  }catch(error){status.textContent="تعذر تحميل الوظائف من الخادم. "+error.message;translateFeatureTree(status);}
+  }catch(error){if(!box.childElementCount){status.textContent="تعذر تحميل الوظائف من الخادم. "+error.message;translateFeatureTree(status);}}
  }
  function waUrl(phone){
   const digits=String(phone||"").replace(/[^0-9]/g,"");
@@ -220,14 +223,15 @@
  async function loadCandidates(){
   const status=$("jobSeekersStatus"),box=$("jobSeekersList");
   if(!status||!box)return;
-  status.textContent="جارٍ تحميل ملفات الباحثين…";translateFeatureTree(status);box.replaceChildren();
+  status.textContent="";
   try{
    const countryName=COUNTRY_NAMES[country]||"all";
    const response=await fetch(API+"/api/jobs/candidates?country="+encodeURIComponent(countryName),{cache:"no-store",headers:{Accept:"application/json"}});
    const data=await response.json().catch(()=>({}));
    if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
-   if(!Array.isArray(data.items)||!data.items.length){status.textContent="لا توجد ملفات منشورة لهذه الدولة حالياً.";translateFeatureTree(status);return;}
+   if(!Array.isArray(data.items)||!data.items.length){box.replaceChildren();status.textContent="لا توجد ملفات منشورة لهذه الدولة حالياً.";translateFeatureTree(status);return;}
    status.textContent="ملفات منشورة بموافقة أصحابها: "+data.items.length;
+   const fragment=document.createDocumentFragment();
    data.items.forEach(person=>{
     const card=el("article",{class:"job-seeker-card"});
     card.appendChild(el("h4",{},person.fullName||"باحث عن عمل"));
@@ -241,11 +245,12 @@
      actions.appendChild(el("a",{href:href,target:"_blank",rel:"noopener noreferrer"},"تواصل واتساب"));
      card.appendChild(actions);
     }
-    box.appendChild(card);
+    fragment.appendChild(card);
    });
+   box.replaceChildren(fragment);
    translateFeatureTree(box);
    translateFeatureTree(status.parentElement||status);
-  }catch(error){status.textContent="تعذر تحميل الباحثين عن عمل. "+error.message;translateFeatureTree(status);}
+  }catch(error){if(!box.childElementCount){status.textContent="تعذر تحميل الباحثين عن عمل. "+error.message;translateFeatureTree(status);}}
  }
  async function submitCandidate(event){
   event.preventDefault();

@@ -118,3 +118,14 @@ test("job seeker refresh button is removed from the UI and event bindings",()=>{
  assert.ok(!fs.readFileSync("features-2.1.js","utf8").includes('id="refreshJobSeekers"'));
  assert.ok(!fs.readFileSync("features-2.1.js","utf8").includes('refreshJobSeekers")?.addEventListener'));
 });
+
+test("background sync does not clear lists or show loading labels",()=>{
+ const features=fs.readFileSync("features-2.1.js","utf8");
+ const marketplace=fs.readFileSync("marketplace-client.js","utf8");
+ assert.ok(features.includes('status.textContent="";'));
+ assert.ok(features.includes("box.replaceChildren(fragment)"));
+ assert.ok(features.includes("if(!box.childElementCount)"));
+ assert.ok(marketplace.includes('const hadLoadedData = list.dataset.loaded === "true";'));
+ assert.ok(marketplace.includes("if (!hadLoadedData) status.textContent"));
+ assert.ok(marketplace.includes("6*60*60*1000"));
+});

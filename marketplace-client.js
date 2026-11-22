@@ -209,7 +209,7 @@
   async function loadList(filters, statusId, listId) {
     const status = $(statusId), list = $(listId);
     if (!list || !status) return;
-    status.textContent = label("جارٍ تحميل الإعلانات المعتمدة من قاعدة البيانات المشتركة…");
+    const hadLoadedData = list.dataset.loaded === "true";
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key,value]) => { if (value && value !== "all") params.set(key,value); });
     params.set("limit","12");
@@ -218,15 +218,15 @@
       const result = await api("/api/marketplace/listings?" + params.toString());
       list.replaceChildren();
       (result.items || []).forEach(item => list.appendChild(makeCard(item)));
+      list.dataset.loaded = "true";
       status.textContent = result.count
         ? ui("يعرض ","Showing ") + result.items.length + ui(" من "," of ") + result.count + ui(" إعلاناً منشوراً · آخر تحديث "," published listings · Last update ") + new Date(result.fetchedAt).toLocaleTimeString(isEnglish()?"en":"ar")
         : "";
       return result;
     } catch (e) {
-      list.replaceChildren();
-      status.textContent = e.status === 503
-        ? "خدمة البيانات المشتركة لم تُفعّل بعد. سيظهر المحتوى هنا بعد ربط قاعدة البيانات."
-        : "تعذر تحميل الإعلانات المشتركة. " + e.message;
+      if (!hadLoadedData) status.textContent = e.status === 503
+        ? label("خدمة البيانات المشتركة لم تُفعّل بعد. سيظهر المحتوى هنا بعد ربط قاعدة البيانات.")
+        : label("تعذر تحميل الإعلانات المشتركة. ") + e.message;
       return null;
     }
   }
@@ -429,7 +429,7 @@
     }).catch(()=>{});
     window.addEventListener("focus",()=>{loadHome();if($("vSouq")&&!$("vSouq").hidden)loadSouq();if($("vJobs")&&!$("vJobs").hidden)loadJobs();});
     document.addEventListener("visibilitychange",()=>{if(!document.hidden){loadHome();if($("vSouq")&&!$("vSouq").hidden)loadSouq();if($("vJobs")&&!$("vJobs").hidden)loadJobs();}});
-    loadTimer=window.setInterval(()=>{if(document.hidden)return;loadHome();if($("vSouq")&&!$("vSouq").hidden)loadSouq();if($("vJobs")&&!$("vJobs").hidden)loadJobs();},120000);
+    loadTimer=window.setInterval(()=>{if(document.hidden)return;loadHome();if($("vSouq")&&!$("vSouq").hidden)loadSouq();if($("vJobs")&&!$("vJobs").hidden)loadJobs();},6*60*60*1000);
     document.addEventListener("click",event=>{if(event.target.closest("[data-go='jobs']"))window.setTimeout(loadJobs,120);if(event.target.closest("[data-go='souq']"))window.setTimeout(loadSouq,120);});
   }
   window.DalilnaShared = { submitListing, loadHome, loadSouq, loadJobs, loadAdminQueue, loadCategoryCounts };
