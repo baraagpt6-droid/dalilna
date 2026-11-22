@@ -907,24 +907,6 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <button class="add" id="sqSell">+ اعرض غرضاً للبيع</button>
       <button class="ghost" id="sqBuy">+ اطلب غرضاً</button>
     </div>
-    <section class="shared-marketplace-panel" id="souqStoresPanel">
-      <div class="shared-marketplace-head"><h3>دليل المتاجر والمحلات المرتبطة بالسوق</h3><button type="button" class="ghost" id="souqStoresRefresh">تحديث المتاجر</button></div>
-      <p class="shared-marketplace-status">أسماء ومواقع متاجر من فهرس OpenStreetMap. وجود المتجر لا يؤكد توفر سلعة أو مخزون أو سعر.</p>
-      <div class="shared-marketplace-controls">
-        <select id="souqStoreCategory">
-          <option value="all">جميع المتاجر المسجلة</option>
-          <option value="telecom">جوالات واتصالات</option><option value="elec">إلكترونيات وكمبيوتر</option>
-          <option value="vehicles">سيارات ومركبات</option><option value="home">أثاث وأجهزة منزلية</option>
-          <option value="solar">طاقة شمسية</option><option value="gold">ذهب ومجوهرات</option>
-          <option value="grocery">بقالات ومواد غذائية</option><option value="food">مطاعم ومخابز</option>
-          <option value="books">مكتبات وقرطاسية</option><option value="build">مواد بناء</option>
-          <option value="real_estate">مكاتب عقارية</option>
-        </select>
-      </div>
-      <div class="shared-marketplace-status" id="souqStoresStatus">جارٍ تحميل دليل المتاجر من فهرس الأماكن.</div>
-      <div class="shared-marketplace-list" id="souqStoresItems"></div>
-      <div id="souqStoresMoreRow" hidden><button type="button" class="ghost" id="souqStoresMore">عرض المزيد</button></div>
-    </section>
     <section class="shared-marketplace-panel" id="sharedSouqPanel">
       <div class="shared-marketplace-head"><h3>المعروضات المعتمدة في كل اليمن</h3><button type="button" class="ghost" id="sharedSouqRefresh">تحديث السوق</button></div>
       <div class="shared-marketplace-controls">
@@ -3087,7 +3069,6 @@ function go(v,c){
   if(v==="cat"){$("#catT").textContent=catLabel(c);$("#area").value="";$("#areaLbl").textContent=curLang==="en"?"All Areas":"كل المناطق";}
   window.scrollTo(0,0);
   render();
-  if(v==="souq")runSouqStores(false);
 }
 $("#logoHome").addEventListener("click",e=>{
   e.preventDefault();
@@ -4295,9 +4276,52 @@ async function loadAllRegionalCatalog(force){
  finally{if(liveAllCatalogPromise===loading)liveAllCatalogPromise=null;}
 }
 function regionalCatalogMatches(items,context,query,category,productType){
- if(category==="jobs"||category==="souq"||category==="land"||category==="marketplace")return [];
+ if(category==="jobs"||category==="souq"||category==="marketplace")return [];
  const wanted=String(category||"all");
- const categoryWords={
+ const categoryAliases={land:["real_estate"]};
+ const hasCategory=(item,key)=>{
+  if(!key||key==="all")return true;
+  const values=Array.isArray(item.categories)?item.categories:[item.category];
+  return values.includes(key)||(categoryAliases[key]||[]).some(alias=>values.includes(alias));
+ };
+ const searchable=item=>normalizeSearchPlace([
+  item.name,item.nameEn,item.altNames,item.searchText,item.activity,item.address,
+  item.neighbourhood,item.street,item.description,item.governorate,item.governorateEn,
+  item.district,item.districtEn,item.category,
+  ...(Array.isArray(item.categories)?item.categories:[]),
+  ...Object.entries(item.osmTags||{}).flatMap(([key,value])=>[key,value])
+ ].filter(Boolean).join(" "));
+ const tokens=normalizeSearchPlace(query).split(/\\s+/).filter(Boolean);
+ return (items||[]).filter(item=>{
+  if(!hasCategory(item,wanted))return false;
+  if(context&&context.gov&&normalizePlace(item.governorate)!==normalizePlace(context.gov))return false;
+  if(context&&context.district&&normalizePlace(item.district)!==normalizePlace(context.district))return false;
+  const hay=searchable(item);
+  return tokens.every(token=>hay.includes(token));
+ });
+}
+function regionalCatalogCardHTML(item,requestedCategory){
+ const displayCategory=requestedCategory&&requestedCategory!=="all"&&((item.categories||[item.category]).includes(requestedCategory)||requestedCategory==="land"&&(item.categories||[]).includes("real_estate"))?requestedCategory:item.category;
+ const labels={
+  grocery:"بقالات وتموينات",food:"مطاعم ومخابز",cafe:"بوفيات ومقاهي",edu:"مدارس وتعليم",
+  health:"مستشفيات ومراكز",pharmacy:"صيدليات",gov:"جهات حكومية",money:"بنوك وصرافة",
+  real_estate:"أراضٍ وعقارات",vehicles:"سيارات وورش مركبات",parts:"قطع غيار",build:"مواد بناء",
+  craft:"حرفيون وصيانة",transport:"نقل ومواصلات",telecom:"جوالات واتصالات",utility:"مياه وغاز",
+  farm:"زراعة ومواشٍ",mosque:"مساجد وجوامع",gold:"ذهب ومجوهرات",wedding:"قاعات أعراس",
+  hotel:"فنادق وشقق",market:"أسواق",solar:"طاقة شمسية",elec:"إلكترونيات وكمبيوتر",
+  clothes:"ملابس وأحذية",home:"أثاث وأجهزة منزلية",books:"مكتبات وقرطاسية",
+  beauty:"عطور وتجميل",delivery:"توصيل وشحن",salon:"صالونات وحلاقة",laundry:"مغاسل"
+ };
+ let card=liveDirectoryCardHTML({...item,category:displayCategory});
+ const label=labels[displayCategory]||catLabel(displayCategory)||item.category;
+ card=card.replace('<span class="tag">خدمة</span>','<span class="tag">'+esc(label)+'</span>');
+ const exact=["osm-boundary","geoboundaries-polygon"].includes(item.assignmentQuality);
+ const note=exact
+  ?"توزيع المديرية مستند إلى مضلع حدود إداري."
+  :"توزيع المديرية تقديري من أقرب مركز إداري؛ راجع الموقع قبل الاعتماد عليه.";
+ return card.replace("</article>",'<small class="live-directory-local-note">'+esc(note)+'</small></article>');
+}
+
   grocery:["بقالة","بقاله","بقالات","بقال","تموين","تموينات","سوبرماركت"],
   food:["مطعم","مطاعم","مخبز","مخابز","مأكولات"],
   cafe:["مقهى","مقاهي","كافيه","بوفيه","بوفيات"],
@@ -4460,40 +4484,6 @@ async function runLiveDirectorySearch(force){
   }
  },260);
 }
-let souqStoresSeq=0,souqStoresVisibleCount=12;
-async function runSouqStores(force){
- const box=$("#souqStoresItems"),status=$("#souqStoresStatus");
- if(!box||!status)return;
- const seq=++souqStoresSeq,gov=$("#sharedSouqGovernorate")?.value||"all",category=$("#souqStoreCategory")?.value||"all";
- status.textContent="جارٍ تحميل دليل المتاجر من فهرس الأماكن المفتوح…";
- box.innerHTML='<p class="where">جارٍ تحميل المتاجر المسجلة…</p>';
- try{
-  let items=[],manifest;
-  if(gov!=="all"){
-   const loaded=await loadRegionalCatalog(gov,force);manifest=loaded.manifest;items=loaded.data.items;
-  }else{
-   const loaded=await loadAllRegionalCatalog(force);manifest=loaded.manifest;items=loaded.items;
-  }
-  if(seq!==souqStoresSeq)return;
-  const storeCategories=new Set(["grocery","food","cafe","telecom","elec","vehicles","real_estate","build","craft","parts","transport","money","utility","market","solar","wedding","hotel","clothes","home","books","beauty","salon","laundry","delivery","gold","watches","farm"]);
-  if(category==="all")items=items.filter(item=>storeCategories.has(item.category));
-  else items=items.filter(item=>item.category===category);
-  const visible=items.slice(0,souqStoresVisibleCount);
-  status.textContent=Number(items.length).toLocaleString("ar")+" متجراً/موقعاً تجارياً مسجلاً · "+(gov==="all"?"كل المحافظات":gov)+" · فهرس "+(manifest.snapshotDate||"");
-  box.innerHTML=visible.map(regionalCatalogCardHTML).join("")||'<div class="live-directory-empty">لا توجد أماكن مسجلة في هذه الفئة ضمن بيانات المصدر لهذه المنطقة. هذا لا يؤكد عدم وجود متاجر على أرض الواقع.</div>';
-  if($("#souqStoresMoreRow"))$("#souqStoresMoreRow").hidden=items.length<=visible.length;
-  if($("#souqStoresMore"))$("#souqStoresMore").textContent="عرض المزيد ("+(items.length-visible.length)+")";
- }catch(error){
-  if(seq!==souqStoresSeq)return;
-  status.textContent="تعذر تحميل دليل المتاجر: "+String(error?.message||"خطأ غير معروف");
-  box.innerHTML='<div class="live-directory-empty">تعذر تحميل بيانات المتاجر. حاول التحديث مرة أخرى.</div>';
- }
-}
-$("#souqStoresRefresh")?.addEventListener("click",()=>{souqStoresVisibleCount=12;runSouqStores(true);});
-$("#souqStoresMore")?.addEventListener("click",()=>{souqStoresVisibleCount+=12;runSouqStores(false);});
-document.addEventListener("change",event=>{
- if(event.target.closest("#sharedSouqGovernorate,#souqStoreCategory")){souqStoresVisibleCount=12;runSouqStores(false);}
-});
 async function loadLiveCommonsPhotos(button){
  const panel=button.parentElement.querySelector(".live-directory-commons-panel");if(!panel)return;
  if(!panel.hidden){panel.hidden=true;button.textContent="البحث عن صور مرخصة";return;}
@@ -5051,7 +5041,7 @@ function render(){
   const q=$("#q").value.trim().toLowerCase();
   const liveWanted=view==="home"||view==="cat";
   const liveInfo=directoryMapSearchInfo(q);
-  liveDirectoryLast={query:q||(view==="cat"?(CN[curCat]||curCat):""),category:liveDirectoryCategoryOverride||(liveInfo?liveInfo.category:(view==="cat"?curCat:"all")),productType:liveDirectoryCategoryOverride?"":(liveInfo?liveInfo.productType:""),listingType:liveDirectoryListingTypeOverride};
+  liveDirectoryLast={query:q,category:liveDirectoryCategoryOverride||(view==="cat"?curCat:(liveInfo?liveInfo.category:"all")),productType:liveInfo?liveInfo.productType:"",listingType:liveDirectoryListingTypeOverride};
   const searchActive=!!q||Object.values(flt).some(Boolean);
   const liveTop=$("#liveDirectoryTop"),liveAnchor=view==="cat"?$("#catFltRow"):$("#fltRow"),searchLiveMount=$("#searchLiveMount");
   if(liveTop&&view==="home"&&searchActive&&searchLiveMount)searchLiveMount.appendChild(liveTop);
