@@ -190,18 +190,23 @@ def categories_for_tags(tags, mapping=None):
     mapping = mapping or CATEGORY_MAPPING
     definitions = mapping.get("categories", {})
 
-    # Strict activity tags always take precedence over broad place taxonomy.
-    # A record receives exactly one primary directory category.
+    # Exact activity tags take priority over broad Overture/OSM aliases.
+    # One primary category keeps hospitals, pharmacies and vehicle services
+    # out of unrelated sections throughout the national catalogue.
     for rule in mapping.get("strictPrimaryRules", []):
-        if _matches_rule(tags, rule):
-            category = rule.get("category")
-            if category in definitions:
-                return [category]
+        if not _matches_rule(tags, rule):
+            continue
+        condition = rule.get("when")
+        if condition and str(tags.get(condition.get("key")) or "").strip().lower() != str(condition.get("value") or "").strip().lower():
+            continue
+        category = rule.get("category")
+        if category in definitions:
+            return [category]
 
+    matched = []
     external = tags.get("__catalog_categories") or []
     if isinstance(external, str):
         external = [external]
-    matched = []
     for category in external:
         if category in definitions and category not in matched:
             matched.append(category)
@@ -211,18 +216,27 @@ def categories_for_tags(tags, mapping=None):
                 matched.append(category)
                 break
 
-    # Retain named commercial and public-service features with unfamiliar tags.
+    for rule in mapping.get("multiCategoryRules", []):
+        if not _matches_rule(tags, rule):
+            continue
+        condition = rule.get("when")
+        if condition and str(tags.get(condition.get("key")) or "").strip().lower() != str(condition.get("value") or "").strip().lower():
+            continue
+        for category in rule.get("categories", []):
+            if category in definitions and category not in matched:
+                matched.append(category)
+
     fallback_keys = ("shop", "amenity", "office", "healthcare", "tourism", "craft",
-                     "leisure", "public_transport", "railway", "building", "emergency",
-                     "delivery", "courier", "service", "government", "product")
+                     "leisure", "public_transport", "railway", "emergency", "delivery",
+                     "courier", "service", "government")
     if not matched and any(str(tags.get(key) or "").strip() for key in fallback_keys):
         if "other" in definitions:
             matched.append("other")
 
-    order = mapping.get("externalPrimaryOrder") or mapping.get("primaryCategoryOrder") or list(definitions)
+    order = mapping.get("primaryCategoryOrder") or list(definitions)
     rank = {category: index for index, category in enumerate(order)}
-    primary = sorted(set(matched), key=lambda category: rank.get(category, len(rank)))
-    return primary[:1]
+    ranked = sorted(set(matched), key=lambda category: rank.get(category, len(rank)))
+    return ranked[:1]
 
 
 def classify(tags):
