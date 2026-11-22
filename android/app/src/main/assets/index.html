@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.6.1">
+<meta name="app-version" content="2.7.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -18,7 +18,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23181411'/%3E%3Cpath d='M18 54 A32 32 0 0 1 82 54 Z' fill='none' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M22 54 L36 54 A14 14 0 0 1 42 42 L29 33 A28 28 0 0 0 22 54 Z' fill='%233A7EC2'/%3E%3Cpath d='M29 33 L42 42 A14 14 0 0 1 50 40 L50 26 A28 28 0 0 0 29 33 Z' fill='%23E8A025'/%3E%3Cpath d='M50 26 L50 40 A14 14 0 0 1 58 42 L71 33 A28 28 0 0 0 50 26 Z' fill='%23D6455D'/%3E%3Cpath d='M71 33 L58 42 A14 14 0 0 1 64 54 L78 54 A28 28 0 0 0 71 33 Z' fill='%23E8A025'/%3E%3Ccircle cx='50' cy='54' r='11' fill='%23F2B949' stroke='%23F4EFE6' stroke-width='3'/%3E%3Crect x='18' y='54' width='64' height='24' rx='4' fill='%23181411' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M50 54 v24 M18 66 h64' stroke='%23F4EFE6' stroke-width='3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./features-2.1.css?v=2.6.1">
+<link rel="stylesheet" href="./features-2.1.css?v=2.7.0">
 <style>
 :root{
   color-scheme:dark;
@@ -584,7 +584,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 @media(max-width:420px){.shared-marketplace-controls{grid-template-columns:1fr}.shared-marketplace-controls .wide{grid-column:auto}}
 .add-lifetime-intro{display:grid;gap:7px;margin:0 0 12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card2);font-size:13px;line-height:1.7}.add-lifetime-intro ol{margin:0;padding-inline-start:22px;display:grid;gap:3px}.dalilna-map{height:230px;min-height:230px;margin:8px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card2)}[data-map-toggle]{min-height:34px;padding:7px 12px;border:1px solid var(--line);border-radius:9px;background:var(--card2);color:var(--ink);font:inherit;cursor:pointer}.region-sources summary{cursor:pointer;font-weight:700}
 
-/* 2.6.1 critical quick-access fallback. */
+/* 2.7.0 critical quick-access fallback. */
 .quick-jump-bar{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:7px;padding:9px 14px 7px;max-width:1160px;margin:0 auto}
 .quick-jump-btn{display:flex;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:6px;padding:6px 5px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--ink);font:600 11.5px 'Readex Pro',Tahoma,sans-serif;text-decoration:none;white-space:normal;text-align:center;overflow:hidden}
 .quick-jump-icon{display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:8px;background:var(--chip);color:var(--acc)}
@@ -593,6 +593,21 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 .quick-jump-btn:nth-child(3) .quick-jump-icon{color:var(--danger)}
 @media(max-width:380px){.quick-jump-bar{gap:5px;padding-inline:8px}.quick-jump-btn{min-height:46px;padding:5px 3px;font-size:10px}.quick-jump-icon{flex-basis:23px;width:23px;height:23px}.quick-jump-icon svg{width:17px!important;height:17px!important}}
 
+.profile-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:8px 0}
+.profile-metrics>div{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px;text-align:center}
+.profile-metrics b{display:block;font-size:18px;color:var(--acc)}
+.profile-metrics span{display:block;font-size:10px;color:var(--mute)}
+.profile-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:9px}
+.profile-activity{display:grid;gap:9px;margin-top:12px}
+.profile-activity-section{display:grid;gap:5px;padding:9px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.profile-activity-section>b{font-size:12px}
+.profile-activity-item{display:block;width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-size:11px;text-align:start}
+.assistant-result-cards{display:grid;gap:8px;margin-top:10px}
+.assistant-result-card{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px}
+.assistant-result-card b{display:block;font-size:13px}
+.assistant-result-meta{display:block;color:var(--mute);font-size:11px;margin-top:3px}
+.assistant-result-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.assistant-result-actions a{display:inline-flex;align-items:center;min-height:32px;border:1px solid var(--line);border-radius:8px;padding:5px 10px;color:var(--acc);text-decoration:none;font-size:11px}
 </style>
 </head>
 <body>
@@ -778,9 +793,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <section class="shared-marketplace-panel" id="sharedDirectoryPanel">
       <div class="shared-marketplace-head"><h2>الإعلانات المعتمدة في دليلنا</h2><span class="tag">تظهر للجميع</span></div>
       <p class="shared-marketplace-status">تظهر هنا إضافات المستخدمين التي اعتمدتها الإدارة، وتدخل أيضاً في نتائج البحث حسب المنطقة.</p>
-      <div class="shared-marketplace-actions">
-        <button type="button" class="ghost" id="sharedDirectoryRefresh">تحديث الإعلانات المعتمدة</button>
-      </div>
+      
       <div class="shared-marketplace-status" id="sharedDirectoryStatus" aria-live="polite">جارٍ التحقق من قاعدة البيانات المشتركة…</div>
       <div class="shared-marketplace-list" id="sharedDirectoryItems"></div>
     </section>
@@ -888,7 +901,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <button class="add" id="addJob">+ أضف وظيفة</button>
     </div>
     <section class="shared-marketplace-panel" id="sharedJobsPanel">
-      <div class="shared-marketplace-head"><h3>الوظائف المعتمدة في اليمن</h3><button type="button" class="ghost" id="sharedJobsRefresh">تحديث الوظائف</button></div>
+      <div class="shared-marketplace-head"><h3>الوظائف المعتمدة في اليمن</h3></div>
       <div class="shared-marketplace-status" id="sharedJobsStatus">الإعلانات المعتمدة من جميع المحافظات ستظهر هنا.</div>
       <div class="shared-marketplace-list" id="sharedJobsItems"></div>
       <div class="shared-source-links"><a href="https://yemenboard.com/" target="_blank" rel="noopener noreferrer">Yemen Board</a><a href="https://www.yemenshortlist.com/en/home" target="_blank" rel="noopener noreferrer">Yemen ShortList</a></div>
@@ -908,7 +921,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <button class="ghost" id="sqBuy">+ اطلب غرضاً</button>
     </div>
     <section class="shared-marketplace-panel" id="sharedSouqPanel">
-      <div class="shared-marketplace-head"><h3>المعروضات المعتمدة في كل اليمن</h3><button type="button" class="ghost" id="sharedSouqRefresh">تحديث السوق</button></div>
+      <div class="shared-marketplace-head"><h3>المعروضات المعتمدة في كل اليمن</h3></div>
       <div class="cat-tabs souq-category-tabs" id="souqCategoryTabs" aria-label="أقسام سوق البيع والشراء">
         <button type="button" data-group="all" aria-pressed="true">الكل</button>
         <button type="button" data-group="electronics" aria-pressed="false">جوالات وإلكترونيات</button>
@@ -1010,6 +1023,33 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <h2 style="font-size:20px">اختيار صفة الحساب</h2>
       <button type="button" class="x" id="accClose">✕</button>
     </div>
+    <section class="panel" id="profilePanel" style="margin:10px 0">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <h3 id="profileHeading" style="margin:0">ملفي الشخصي</h3>
+        <span id="profileBadge" class="tag">غير موثّق</span>
+      </div>
+      <div style="display:grid;gap:4px;margin:10px 0">
+        <b id="profileName">مستفيد</b>
+        <span id="profileContact" class="where">لا توجد بيانات تواصل للحساب الحالي.</span>
+        <span id="profileDaysLeft" class="where">متبقي 60 يوماً من عرض الإعلانات المجاني</span>
+      </div>
+      <div class="profile-metrics">
+        <div><b id="profileAdsCount">0</b><span id="profileAdsLabel">إعلاناتي</span></div>
+        <div><b id="profileShopsCount">0</b><span id="profileShopsLabel">محلات أضفتها</span></div>
+        <div><b id="profileFavsCount">0</b><span id="profileFavsLabel">المفضلة</span></div>
+      </div>
+      <div id="profileActivityList" class="profile-activity" aria-live="polite"></div>
+      <label id="profileRegionLabel" style="display:block;margin-top:10px">المحافظة الافتراضية
+        <select id="profileDefaultGovernorate" style="width:100%;margin-top:5px"><option value="">كل اليمن</option></select>
+      </label>
+      <div class="profile-actions">
+        <button type="button" class="ghost" id="profileLanguageBtn">تغيير اللغة</button>
+        <button type="button" class="ghost" id="profileThemeBtn">تبديل المظهر</button>
+        <button type="button" class="ghost" id="profileNotificationsBtn">إدارة الإشعارات</button>
+        <button type="button" class="ghost" id="profileLogoutBtn">تسجيل الخروج</button>
+      </div>
+      <p id="profileLocalNote" class="where" style="margin:8px 0 0">الملف المحلي محفوظ على هذا الجهاز، ولا يمثل حساباً مركزياً موثقاً.</p>
+    </section>
     <section class="panel" style="margin:10px 0">
       <h3 style="margin:0 0 6px">إضافاتي</h3>
       <p class="where" style="margin:0 0 8px">انقل الإضافات القديمة المحفوظة على هذا الجهاز إلى قائمة مراجعة الإدارة.</p>
@@ -2444,10 +2484,10 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="2.6.1";
+const APP_VERSION="2.7.0";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
-  ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
+  ["health","مستشفيات ومراكز صحية"],["pharmacy","صيدليات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
   ["jobs","وظائف"],["land","أراضٍ وعقارات"],["vehicles","سيارات ودراجات"],["build","مواد بناء"],["parts","قطع غيار"],
   ["craft","حرفيون وصيانة"],["transport","نقل ومواصلات"],["telecom","جوالات واتصالات"],["utility","مياه وغاز"],
   ["farm","زراعة ومواشي"],["mosque","مساجد"],["gold","ذهب ومجوهرات"],["wedding","قاعات أعراس"],
@@ -2459,7 +2499,7 @@ const CN=Object.fromEntries(CATS);
 const CAT_KEYS=new Set(CATS.map(([k])=>k));
 const CN_EN={
   grocery:"Groceries",food:"Restaurants & Bakeries",cafe:"Cafes & Coffee",edu:"Schools & Education",
-  health:"Hospitals & Centers",pharmacy:"Pharmacies & Clinics",gov:"Government Offices",money:"Exchange & Transfers",
+  health:"Hospitals & Health Centres",pharmacy:"Pharmacies",gov:"Government Offices",money:"Exchange & Transfers",
   jobs:"Jobs",land:"Real Estate & Land",vehicles:"Cars & Motorcycles",build:"Building Materials",parts:"Spare Parts",
   craft:"Craftsmen & Repair",transport:"Transport",telecom:"Mobiles & Telecom",utility:"Water & Gas",
   farm:"Agriculture & Livestock",mosque:"Mosques",gold:"Gold & Jewelry",wedding:"Wedding Halls",
@@ -2513,6 +2553,140 @@ const I18N={
     inYer:"In YER",currCol:"Currency / Gold",buyCol:"Buy",sellCol:"Sell"
   }
 };
+const STATIC_UI_EN={
+"دليلنا":"Dalilna","دليلك لكل الخدمات في اليمن":"Your guide to services across Yemen","عميل":"Client","المظهر":"Appearance","عربي":"العربية",
+"كل مناطق اليمن":"All regions of Yemen","الصرف والذهب":"Exchange and gold","حاسبة التحويل":"Currency converter","أرقام الطوارئ":"Emergency numbers",
+"جارٍ الاستماع… تحدث الآن":"Listening… speak now","إيقاف":"Stop","عرض البداية: 60 يوماً للإعلان المجاني":"Welcome offer: 60 days of free advertising",
+"تبدأ المدة من أول تشغيل للتطبيق على هذا الجهاز. الإعلان يحتاج موافقة الإدارة قبل ظهوره.":"The period starts on this device's first launch. Ads require admin approval before publication.",
+"متبقي 60 يوماً":"60 days remaining","اطلب إعلانك المجاني":"Request your free advert","لوحة تحكم المشرف":"Admin dashboard",
+"+ إضافة موثّقة":"+ Add verified listing","خروج":"Exit","طلبات بانتظار المراجعة":"Pending review requests",
+"افتح لمراجعة الطلبات وقبولها أو رفضها":"Open to review, approve or reject requests","مراجعة الإعلانات المشتركة":"Review shared adverts",
+"تحميل طلبات المراجعة":"Load review requests","يتطلب ربط PostgreSQL ورمز إدارة الخادم.":"Requires PostgreSQL and a server admin token.",
+"نظرة عامة":"Overview","الإدراجات والحذف":"Listings and deletion","المراجعة":"Review","الصلاحيات":"Permissions",
+"الإعلانات":"Adverts","الصرف والطوارئ":"Rates and emergencies","البلاغات والسجل":"Reports and activity log",
+"الحظر والإيقاف":"Blocks and suspensions","النسخ الاحتياطي":"Backup","إدارة التاجر":"Merchant management",
+"إضافة خدمة":"Add a service","إعلان مجاني":"Free advert","حساب التاجر في هذه النسخة محفوظ محلياً على الجهاز. توثيق رقم الهاتف يحتاج خدمة تحقق على الخادم.":"The merchant profile in this version is stored locally. Phone verification requires a server-side verification service.",
+"الأقسام والخدمات الذكية":"Smart categories and services","تعرض الأعداد سجلات المحلات والخدمات في فهرس المحافظة المحددة.":"Counts show shops and services indexed for the selected governorate.",
+"الكل":"All","الأكثر طلباً":"Most requested","يومية وغذاء":"Daily needs and food","صحة وتعليم":"Health and education",
+"طاقة وصيانة":"Energy and repair","تسوق ومناسبات":"Shopping and events","عرض كل الأقسام":"Show all categories",
+"شاهدته مؤخراً":"Recently viewed","مسح":"Clear","أُضيف حديثاً":"Recently added","عرض المزيد":"Show more",
+"الإعلانات المعتمدة في دليلنا":"Approved Dalilna adverts","تظهر للجميع":"Visible to everyone",
+"تظهر هنا إضافات المستخدمين التي اعتمدتها الإدارة، وتدخل أيضاً في نتائج البحث حسب المنطقة.":"Approved user submissions appear here and are included in regional search results.",
+"جارٍ التحقق من قاعدة البيانات المشتركة…":"Checking the shared database…","معلومات المنطقة":"Region information",
+"عن المنطقة المختارة في دليلنا":"About the selected region","محل وخدمة في الفهرس":"Shops and services in the catalogue",
+"أقسام ممثلة":"Categories represented","موثّق":"Verified","شارك معلومات منطقتك":"Share information about your region",
+"أضف اسم معلم أو وصفًا أو صورة للمساعدة في إثراء الملف.":"Add a landmark, description or photo to enrich this region profile.",
+"أعجبني 0":"Like 0","أضف صورة أو معلومة":"Add a photo or detail","نوع المساهمة":"Contribution type",
+"معلم أو مكان مشهور":"Landmark or notable place","موقع تراثي أو أثري":"Heritage or archaeological site",
+"جامع أو مدرسة أو مستشفى":"Mosque, school or hospital","وصف أو معلومة":"Description or information",
+"اسم المكان أو عنوان المعلومة":"Place name or information title","التفاصيل":"Details","صورة من جهازك (اختياري)":"Photo from your device (optional)",
+"حفظ المساهمة على هذا الجهاز":"Save contribution on this device","إلغاء":"Cancel",
+"أسعار الصرف والذهب اليوم":"Exchange and gold rates today","في انتظار المصدر":"Awaiting source","تحديث الأسعار":"Refresh rates",
+"حاسبة تحويل العملات الفورية":"Instant currency converter","دولار أمريكي (USD)":"US Dollar (USD)",
+"إلى ريال يمني (صنعاء)":"To Yemeni Rial (Sana'a)","53,500 ريال يمني":"53,500 Yemeni Rial",
+"أرقام الطوارئ والخدمات":"Emergency and service numbers","رجوع":"Back","كل المناطق":"All areas",
+"بوابة الوظائف":"Jobs portal","تنبيه: لا تدفع أي مبلغ مقابل فيزا أو وظيفة. الدليل يعرض الوظائف مجاناً للتواصل المباشر.":"Never pay for a visa or job. Dalilna lists jobs free of charge for direct contact.",
+"+ أضف وظيفة":"+ Post a job","الوظائف المعتمدة في اليمن":"Approved jobs in Yemen",
+"الإعلانات المعتمدة من جميع المحافظات ستظهر هنا.":"Approved adverts from all governorates will appear here.",
+"المواقع الخارجية تفتح في مصدرها الأصلي. لا ننسخ إعلاناتها دون واجهة بيانات موثقة أو إذن.":"External websites open at their original source. We do not copy adverts without a documented data interface or permission.",
+"سوق البيع والشراء":"Buy and sell marketplace","+ اعرض غرضاً للبيع":"+ List an item for sale","+ اطلب غرضاً":"+ Request an item",
+"المعروضات المعتمدة في كل اليمن":"Approved listings across Yemen","جوالات وإلكترونيات":"Phones and electronics",
+"سيارات ودراجات":"Cars and motorcycles","عقارات وأراضٍ":"Property and land","طاقة شمسية":"Solar power",
+"أثاث وأجهزة":"Furniture and appliances","مواشٍ وزراعة":"Livestock and agriculture","ملابس وعطور":"Clothing and perfumes",
+"كل المحافظات":"All governorates","الجوالات والساعات والسيارات والأراضي والعقارات وغيرها من المعروضات المعتمدة ستظهر هنا.":"Approved phones, watches, cars, land, property and other listings will appear here.",
+"مساعد دليلنا الذكي":"Dalilna AI Assistant","السماح بالمساعد السحابي":"Enable cloud assistant",
+"أقرب صيدلية":"Nearest pharmacy","سعر الصرف اليوم":"Today's exchange rate","محلات طاقة شمسية":"Solar equipment shops",
+"وظائف متاحة":"Available jobs","إرسال":"Send","تقديم شكوى أو اقتراح":"Submit a complaint or suggestion",
+"سياسة الخصوصية":"Privacy policy","شروط الاستخدام":"Terms of use","المساعد الذكي":"AI assistant",
+"المساعد المحلي يبحث في بيانات هذا الجهاز دون إنترنت. يمكنك تفعيل المساعد السحابي اختيارياً للحصول على إجابات أوسع.":"The local assistant searches this device's directory data offline. You can optionally enable cloud AI for broader answers.",
+"أهلاً بك في مساعد دليلنا الذكي. أستطيع البحث في المحلات والخدمات والوظائف وأسعار الصرف. سأوضح لك مصدر الإجابة، وأميز البيانات غير المؤكدة.":"Welcome to Dalilna AI. I can search shops, services, jobs and exchange rates. I will show the source and distinguish unverified details.",
+"أبحث في بيانات الدليل…":"Searching Dalilna…",
+"البيانات المحلية محفوظة على هذا الجهاز.":"Local data is stored on this device.",
+"أضف بيانات المحل بعد مراجعة رقم التواصل والعنوان.":"Add shop details after checking the phone number and address.",
+"غير متاح":"Not available","غير محدد":"Not specified","لا توجد نتائج مطابقة لبحثك.":"No matching results found.",
+
+"الرئيسية":"Home","السوق":"Marketplace","أضف":"Add","الوظائف":"Jobs","المساعد":"Assistant",
+"اختر":"Choose","اختيار صفة الحساب":"Choose account type","ملفي الشخصي":"My profile",
+"غير موثّق":"Not verified","مستفيد":"Visitor","لا توجد بيانات تواصل للحساب الحالي.":"No contact details are linked to this profile.",
+"متبقي 60 يوماً من عرض الإعلانات المجاني":"60 free advertising days remaining","إعلاناتي":"My adverts",
+"محلات أضفتها":"Shops I added","المفضلة":"Favorites","المحافظة الافتراضية":"Default governorate",
+"كل اليمن":"All Yemen","تغيير اللغة":"Change language","تبديل المظهر":"Toggle appearance",
+"إدارة الإشعارات":"Manage notifications","تسجيل الخروج":"Log out",
+"الملف المحلي محفوظ على هذا الجهاز، ولا يمثل حساباً مركزياً موثقاً.":"This local profile is stored on this device and is not a centrally verified account.",
+"إضافاتي":"My submissions","انقل الإضافات القديمة المحفوظة على هذا الجهاز إلى قائمة مراجعة الإدارة.":"Move older submissions saved on this device to the admin review queue.",
+"نقل إضافاتي القديمة للمراجعة":"Move my older submissions to review","اختر كيف ترغب في استخدام التطبيق الآن:":"Choose how you would like to use the app.",
+"مستفيد / عميل":"Visitor / customer","تصفح المحلات، البحث الصوتي، التقييم، وحفظ المفضلة.":"Browse shops, use voice search, rate and save favorites.",
+"صاحب محل / بائع":"Shop owner / seller","إدارة محلاتك وإضافة عروضك وإعلاناتك برقم جوالك.":"Manage shops and add offers and adverts using your phone number.",
+"اسم التاجر أو المحل":"Merchant or shop name","رقم الجوال / واتساب":"Phone number / WhatsApp","تفعيل حساب التاجر":"Activate merchant profile",
+"دخول المشرف":"Admin sign-in","للمشرفين فقط — الدخول بالبريد الإلكتروني وكلمة المرور.":"Administrators only — sign in with email and password.",
+"ملاحظة: حسابات الإدارة في هذه النسخة محفوظة محلياً على الجهاز، وليست مصادقة مركزية لخدمة عامة.":"Admin accounts in this version are stored locally on this device; they are not central authentication for a public service.",
+"البريد الإلكتروني":"Email","كلمة المرور":"Password","إظهار":"Show","إخفاء":"Hide",
+"طلب إعلان مجاني لمدة 60 يوماً":"Request a free 60-day advert","المدة محسوبة من أول تشغيل للتطبيق على هذا الجهاز. يراجع المشرف الإعلان قبل نشره.":"The period starts on the first app launch on this device. An administrator reviews adverts before publication.",
+"نوع الإعلان":"Advert type","متجر أو محل":"Shop or service","منتج أو عرض":"Product or offer","وظيفة":"Job",
+"عنوان الإعلان":"Advert title","تفاصيل الإعلان":"Advert details","رقم التواصل":"Contact number",
+"إرسال إلى مراجعة المشرف":"Submit for admin review","إرسال عبر واتساب الإدارة":"Send through admin WhatsApp",
+"شكوى أو اقتراح للإدارة":"Complaint or suggestion to management","نوع الرسالة":"Message type","شكوى":"Complaint",
+"اقتراح تحسين":"Improvement suggestion","تحديث بيانات محل":"Update shop details","طلب إعلان":"Advert request",
+"الاسم":"Name","إرسال إلى صندوق المشرف":"Send to admin inbox",
+"أضف محلك أو إعلانك مجاناً مدى الحياة ليصل إلى الزبائن في محافظتك.":"Add your shop or advert for free so customers in your governorate can find it.",
+"سجّل بياناتك مجاناً":"Register your details for free","يظهر محلك في دليل محافظتك بعد المراجعة":"Your shop appears in the governorate directory after review",
+"استقبل اتصالات وطلبات الزبائن مباشرة":"Receive customer calls and requests directly",
+"إضافة إلى الدليل":"Add to directory","اسم المحل أو الخدمة":"Shop or service name","القسم":"Category",
+"بقالات":"Groceries","المحافظة":"Governorate","إب":"Ibb","المديرية":"District","حبيش":"Hubaysh",
+"العزلة / المنطقة (اختياري)":"Subdistrict / area (optional)","القرية أو الشارع":"Village or street","أوقات العمل":"Opening hours",
+"الموقع الإلكتروني للمحل":"Shop website","موقع المحل على الخريطة":"Shop location on map",
+"تحديد موقع المحل تلقائياً عبر GPS":"Set shop location using GPS","اختياري. لن نستخدم موقعك إلا بعد الضغط.":"Optional. Your location is used only after you tap.",
+"نوع المعروض":"Listing type","جوال":"Mobile phone","إكسسوارات جوال":"Phone accessories","ساعة":"Watch",
+"كمبيوتر / لابتوب":"Computer / laptop","ملحقات كمبيوتر":"Computer accessories","جهاز لوحي":"Tablet","كاميرا":"Camera","سيارة":"Car",
+"دراجة نارية":"Motorcycle","قطع غيار مركبات":"Vehicle parts","أرض":"Land","عقار":"Property","شقة":"Apartment","منزل":"House",
+"إلكترونيات":"Electronics","أجهزة منزلية":"Home appliances","أثاث":"Furniture","ملابس":"Clothing","أحذية":"Shoes",
+"ذهب ومجوهرات":"Gold and jewellery","عسل":"Honey","بن وقهوة":"Coffee beans and coffee","بهارات":"Spices","مواد غذائية":"Food",
+"مواشٍ":"Livestock","منتجات زراعية":"Agricultural products","مواد بناء":"Building materials","كتب":"Books",
+"قرطاسية وأدوات مدرسية":"Stationery and school supplies","عطور":"Perfumes","مستحضرات تجميل":"Cosmetics",
+"معدات طاقة شمسية":"Solar equipment","أدوات ومعدات":"Tools and equipment","مستلزمات منزلية":"Household supplies",
+"أدوات مطبخ":"Kitchenware","منتجات أطفال":"Baby products","ألعاب":"Toys","معدات رياضية":"Sports equipment",
+"أعلاف":"Animal feed","بذور ومحاصيل":"Seeds and crops","معدات إنشاءات":"Construction equipment","أخرى":"Other",
+"للبيع":"For sale","مطلوب":"Wanted","مقايضة":"Barter","مجاناً":"Free","للإيجار":"For rent",
+"العملة":"Currency","ريال يمني":"Yemeni Rial","ريال سعودي":"Saudi Riyal","دولار أمريكي":"US Dollar",
+"حالة المعروض":"Item condition","غير محدد":"Not specified","جديد":"New","مستعمل":"Used",
+"آخر موعد للتقديم":"Application deadline","السعر / الراتب":"Price / salary","البلد":"Country",
+"إضافة صورة للمنتج (اختياري)":"Add product photo (optional)","إزالة الصورة":"Remove photo",
+"وصف مختصر":"Short description","حفظ ونشر":"Save and publish"
+};
+function applyStaticBilingualLabels(){
+ const english=curLang==="en",root=document.body;
+ if(!root||typeof document.createTreeWalker!=="function")return;
+ const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+ let node;
+ while((node=walker.nextNode())){
+  const parent=node.parentElement;
+  if(!parent||parent.closest("script,style,textarea,pre,code,[data-no-translate]"))continue;
+  if(!Object.prototype.hasOwnProperty.call(node,"__dalilnaArabicOriginal"))node.__dalilnaArabicOriginal=node.nodeValue;
+  const original=String(node.__dalilnaArabicOriginal||"");
+  const trimmed=original.trim(),translation=STATIC_UI_EN[trimmed];
+  if(english&&translation)node.nodeValue=original.replace(trimmed,translation);
+  else if(!english)node.nodeValue=original;
+ }
+ const attributes=["placeholder","aria-label","title"];
+ const attrMap={
+  "ابحث هنا…":"Search here…","مثلاً: صيدلية الشفاء":"e.g. Al Shifa Pharmacy",
+  "مثلاً: محلات الأمل":"e.g. Al Amal Shops","77xxxxxxx":"77xxxxxxx",
+  "اكتب سؤالك هنا…":"Type your question…","بحث":"Search","مسح البحث":"Clear search",
+  "تنفيذ البحث":"Run search","فلترة المنطقة":"Filter by area",
+  "أقسام سوق البيع والشراء":"Marketplace categories","محادثة مساعد دليلنا":"Dalilna assistant chat",
+  "معاينة الصورة":"Image preview","إظهار أو إخفاء كلمة المرور":"Show or hide password"
+ };
+ for(const node of document.querySelectorAll("[placeholder],[aria-label],[title]")){
+  for(const attr of attributes){
+   if(!node.hasAttribute(attr))continue;
+   const marker="data-dalilna-original-"+attr;
+   if(!node.hasAttribute(marker))node.setAttribute(marker,node.getAttribute(attr)||"");
+   const original=node.getAttribute(marker)||"";
+   if(english&&attrMap[original])node.setAttribute(attr,attrMap[original]);
+   else if(!english)node.setAttribute(attr,original);
+  }
+ }
+}
 let curLang="ar";
 const T=k=>(I18N[curLang]&&I18N[curLang][k])||I18N.ar[k]||k;
 const catLabel=k=>curLang==="en"?(CN_EN[k]||CN[k]||k):(CN[k]||k);
@@ -2521,7 +2695,7 @@ const CAT_GROUPS={
   daily:["grocery","food","cafe","utility","delivery","market","laundry"],
   health:["pharmacy","health","edu","gov","mosque"],
   tech:["solar","elec","craft","parts","transport","telecom","build"],
-  shop:["clothes","home","gold","beauty","books","wedding","hotel","souq"]
+  shop:["clothes","home","gold","beauty","books","wedding","hotel"]
 };
 const CAT_SYN={
   pharmacy:"صيدلية صيدليات دواء ادوية عقاقير علاج حبوب مستلزمات طبية",
@@ -2605,6 +2779,11 @@ const HUBAISH_UZ=["بني معين", "السلق", "بني شبيب", "بني ا
 const NEARBY_AREAS=["مفرق حبيش","المخادر","مدينة إب"];
 const AREAS=[...HUBAISH_UZ,...NEARBY_AREAS];
 const GOVS=["أمانة العاصمة","صنعاء","عدن","تعز","إب","الحديدة","ذمار","البيضاء","لحج","أبين","الضالع","مأرب","الجوف","صعدة","حجة","عمران","المحويت","ريمة","حضرموت","شبوة","المهرة","سقطرى"];
+const GOVS_EN=["Capital Municipality","Sana'a","Aden","Taiz","Ibb","Al Hudaydah","Dhamar","Al Bayda","Lahij","Abyan","Al Dhale'e","Marib","Al Jawf","Sa'dah","Hajjah","Amran","Al Mahwit","Raymah","Hadramaut","Shabwah","Al Mahrah","Socotra"];
+function governorateLabel(name){
+ const index=GOVS.findIndex(value=>normalizePlace(value)===normalizePlace(name));
+ return index>=0&&curLang==="en"?GOVS_EN[index]:String(name||"");
+}
 const YEMEN_DISTRICTS=(window.DALILNA_YEMEN_DISTRICTS||{"أبين":["احور","المحفد","الوضيع","جيشان","خنفر","رصد","زنجبار","سباح","سرار","لودر","موديه"],"الضالع":["الازارق","الحشاء","الحصين","الشعيب","الضالع","جبن","جحاف","دمت","قعطبه"],"حضرموت":["الديس","الريدة وقصيعر","السوم","الشحر","الضليعه","العبر","القطن","القف","المكلا","بروم ميفع","تريم","ثمود","حجر","حجر الصيعر","حريضه","دوعن","رخيه","رماه","زمخ ومنوخ","ساه","سيئون","شبام","عمد","غيل باوزير","غيل بن يمين","مدينة المكلا","وادي العين","يبعث"],"الحديدة":["التحيتا","الجراحي","الحالي","الحجيله","الحوك","الخوخه","الدريهمي","الزهره","الزيديه","السخنه","الصليف","الضحى","القناوص","اللحيه","المراوعه","المغلاف","المنصوريه","المنيره","الميناء","باجل","برع","بيت الفقيه","جبل راس","حيس","زبيد","كمران"],"صعدة":["الحشوه","الصفراء","الظاهر","باقم","حيدان","رازح","ساقين","سحار","شداء","صعده","غمر","قطابر","كتاف والبقع","مجز","منبه"],"إب":["اب","الرضمه","السبره","السده","السياني","الشعر","الظهار","العدين","القفر","المخادر","المشنه","النادره","بعدان","جبله","حبيش","حزم العدين","ذي السفال","فرع العدين","مذيخره","يريم"],"مأرب":["الجوبه","العبديه","بدبده","جبل مراد","حريب","حريب القرامش","رحبه","رغوان","صرواح","مارب","ماهليه","مجزر","مدغل الجدعان","مدينة مارب"],"البيضاء":["البيضاء","الرياشيه","الزاهر","السواديه","الشريه","الصومعه","الطفه","العرش","القريشيه","الملاجم","ذي ناعم","رداع","ردمان","صباح","مدينة البيضاء","مسوره","مكيراس","ناطع","نعمان","ولدربيع"],"عمران":["السود","السوده","العشه","المدان","بني صريم","ثلاء","جبل عيال يزيد","حرف سفيان","حوث","خارف","خمر","ذيبين","ريده","شهاره","صوير","ظليمة حبور","عمران","عيال سريح","قفلة عذر","مسور"],"عدن":["البريقه","التواهي","الشيخ عثمان","المعلا","المنصوره","خور مكسر","دار سعد","صيره"],"المهرة":["الغيظه","المسيله","حات","حصوين","حوف","سيحوت","شحن","قشن","منعر"],"الجوف":["الحزم","الحميدات","الخلق","الزاهر","الغيل","المتون","المصلوب","المطمه","برط العنان","خب و الشعف","خراب المراشى","رجوزه"],"لحج":["الحد","الحوطه","القبيطه","المسيمير","المضاربة و العاره","المفلحي","المقاطره","الملاح","تبن","حالمين","حبيل جبر","ردفان","طور الباحه","يافع","يهر"],"ذمار":["الحداء","المنار","جبل الشرق","جهران","ضوران انس","عتمه","عنس","مدينة ذمار","مغرب عنس","ميفعة عنس","وصاب السافل","وصاب العالي"],"صنعاء":["ارحب","الحصن","الحيمة الخارجيه","الحيمة الداخليه","الطيال","بلاد الروس","بني حشيش","بني ضبيان","بني مطر","جحانه","خولان","سنحان وبني بهلول","صعفان","مناخه","نهم","همدان"],"ريمة":["الجبين","الجعفريه","السلفيه","بلاد الطعام","كسمه","مزهر"],"المحويت":["الخبت","الرجم","الطويله","المحويت","بني سعد","حفاش","شبام كوكبان","مدينة المحويت","ملحان"],"تعز":["التعزيه","الشمايتين","الصلو","القاهره","المخاء","المسراخ","المظفر","المعافر","المواسط","الوازعيه","باب المندب","جبل حبشي","حيفان","خدير","سامع","شرعب الرونه","شرعب السلام","صاله","صبر الموادم","ماويه","مشرعة وحدنان","مقبنه","موزع"],"أمانة العاصمة":["ازال","التحرير","الثوره","السبعين","الصافيه","الوحده","بني الحارث","شعوب","صنعاء القديمه","ضواحي الامانة سنحان وبني بهلول","ضواحي الامانة همدان","معين"],"شبوة":["الروضه","الصعيد","الطلح","بيحان","جردان","حبان","حطيب","دهر","رضوم","عتق","عرماء","عسيلان","عين","مرخة السفلى","مرخة العليا","ميفعه","نصاب"],"سقطرى":["حديبو","قلنسية وعبد الكوري"],"حجة":["اسلم","افلح الشام","افلح اليمن","الجميمه","الشاهل","الشغادره","المحابشه","المغربه","المفتاح","بكيل المير","بني العوام","بني قيس الطور","حجه","حرض","حيران","خيران المحرق","شرس","عبس","قاره","قفل شمر","كحلان الشرف","كحلان عفار","كشر","كعيدنه","مبين","مدينة حجه","مستباء","ميدي","نجره","وشحه","وضره"]});
 const YEMEN_DISTRICT_TOTAL=window.DALILNA_YEMEN_DISTRICT_TOTAL||335;
 const YEMEN_GOV_TOTAL=window.DALILNA_YEMEN_GOV_TOTAL||22;
@@ -2865,7 +3044,9 @@ function normalizeState(raw){
     aiCloudConsent:raw.aiCloudConsent===true,
     onboarded:raw.onboarded===true,
     adminWhatsApp:digits(cleanText(raw.adminWhatsApp,24))||base.adminWhatsApp,
-    theme:raw.theme==="light"?"light":"dark",lang:raw.lang==="en"?"en":"ar"
+    theme:raw.theme==="light"?"light":"dark",lang:raw.lang==="en"?"en":"ar",
+    defaultGovernorate:cleanText(raw.defaultGovernorate,80),
+    notificationsEnabled:raw.notificationsEnabled===true
   };
 }
 const storedInitialState=loadState();
@@ -2913,6 +3094,7 @@ applyTheme();
 let liveFxData=null,liveFxError="",liveFxFetchedAt=0,liveFxPending=null,liveFxController=null;
 function applyLang(){
   curLang=S.lang||"ar";
+  window.DALILNA_LANGUAGE=curLang;
   $("#langLbl").textContent=curLang==="en"?"EN":"عربي";
   document.documentElement.lang=curLang;
   document.documentElement.dir=curLang==="en"?"ltr":"rtl";
@@ -2950,10 +3132,13 @@ function applyLang(){
   if(typeof updateFormPickerLabels==="function")updateFormPickerLabels();
   if($("#areaLbl"))$("#areaLbl").textContent=$("#area").value||(curLang==="en"?"All Areas":"كل المناطق");
   syncRoleUI();
+  if(typeof renderProfilePanel==="function")renderProfilePanel();
   buildScopeSelector();
   renderAds();
   renderFx();
   render();
+  applyStaticBilingualLabels();
+  window.dispatchEvent(new CustomEvent("dalilna:languagechange",{detail:{language:curLang}}));
 }
 $("#langBtn").addEventListener("click",()=>{
   openCustomPicker({
@@ -3000,15 +3185,119 @@ function syncRoleUI(){
   renderMerchantTools();
 }
 
+function renderProfilePanel(){
+ const english=curLang==="en",session=S.session||{},merchant=session.role==="merchant"?(session.merchant||S.merchantProfile||{}):{};
+ const admin=session.role==="admin"?curAdmin():null;
+ const name=session.role==="admin"?(admin?.name||session.adminEmail||"Admin"):session.role==="merchant"?(merchant.name||"Merchant"):(english?"Visitor":"مستفيد");
+ const contact=session.role==="admin"?(session.adminEmail||""):session.role==="merchant"?[merchant.phone,merchant.area].filter(Boolean).join(" · "):"";
+ const remaining=Math.max(0,Math.ceil((60*86400000-(Date.now()-Number(S.installDate||Date.now())))/86400000));
+ const ownsPhone=!!merchant.phone;
+ const ownRecords=S.items.filter(item=>ownsPhone&&phoneKey(item.ownerPhone||item.phone)===phoneKey(merchant.phone));
+ const owned=ownRecords.filter(item=>!["jobs","souq","land"].includes(item.cat));
+ const marketplaceAds=ownRecords.filter(item=>["souq","land","jobs"].includes(item.cat));
+ const ads=S.ads.filter(item=>ownsPhone&&phoneKey(item.phone)===phoneKey(merchant.phone));
+ const favoriteIds=Array.isArray(S.favs)?S.favs:[];
+ let marketplaceFavorites=[],jobFavorites=[];
+ try{marketplaceFavorites=JSON.parse(localStorage.getItem("dalilna-marketplace-favs-v1")||"[]");}catch(_){}
+ try{jobFavorites=JSON.parse(localStorage.getItem("dalilna-job-favs-v1")||"[]");}catch(_){}
+ if(!Array.isArray(marketplaceFavorites))marketplaceFavorites=[];
+ if(!Array.isArray(jobFavorites))jobFavorites=[];
+ const favs=new Set([...favoriteIds,...marketplaceFavorites,...jobFavorites].map(String)).size;
+ const favoriteItems=S.items.filter(item=>favoriteIds.includes(item.id));
+ const set=(id,value)=>{const node=$("#"+id);if(node)node.textContent=String(value);};
+ set("profileHeading",english?"My Profile":"ملفي الشخصي");
+ set("profileBadge",english?"Not verified":"غير موثّق");
+ set("profileName",name);
+ set("profileContact",contact||(english?"No phone or email is linked to this local profile.":"لا يوجد رقم أو بريد مرتبط بالملف المحلي."));
+ set("profileDaysLeft",english?remaining+" free advertising days remaining":"متبقي "+remaining+" يوماً من الإعلان المجاني");
+ set("profileAdsCount",ads.length+marketplaceAds.length);
+ set("profileShopsCount",owned.length);
+ set("profileFavsCount",favs);
+ set("profileAdsLabel",english?"My adverts":"إعلاناتي");
+ set("profileShopsLabel",english?"Shops I added":"محلات أضفتها");
+ set("profileFavsLabel",english?"Saved favourites":"المفضلة");
+ set("profileRegionLabel",english?"Default governorate":"المحافظة الافتراضية");
+ set("profileLocalNote",english?"This profile is stored on this device. It is not a central verified account; adverts and shops appear only when this device has a matching merchant phone number.":"بيانات هذا الملف محفوظة على الجهاز. لا يمثل حساباً مركزياً موثقاً؛ تظهر الإعلانات والمحلات عندما يتطابق رقم التاجر مع البيانات المحفوظة على هذا الجهاز.");
+ const list=$("#profileActivityList");
+ if(list){
+  const section=(title,items,empty,clickable)=>'<section class="profile-activity-section"><b>'+esc(title)+'</b>'+(items.length
+    ?items.slice(0,8).map(item=>clickable
+      ?'<button type="button" class="profile-activity-item" data-profile-item-id="'+esc(item.id)+'">'+esc(item.name||item.title||"")+'</button>'
+      :'<div class="profile-activity-item">'+esc(item.title||item.name||"")+'</div>').join("")
+    :'<p class="where">'+esc(empty)+'</p>')+'</section>';
+  list.innerHTML=section(english?"My marketplace adverts":"إعلاناتي في السوق",marketplaceAds,english?"No marketplace adverts are linked to this phone.":"لا توجد إعلانات سوق مرتبطة برقم هذا التاجر.",true)
+   +section(english?"My other adverts":"إعلاناتي الأخرى",ads,english?"No other adverts are linked to this phone.":"لا توجد إعلانات أخرى مرتبطة بهذا الرقم.",false)
+   +section(english?"Shops I added":"محلات أضفتها",owned,english?"No shops are linked to this merchant phone on this device.":"لا توجد محلات مرتبطة برقم التاجر في هذا الجهاز.",true)
+   +section(english?"Saved directory places":"المحلات المحفوظة",favoriteItems,english?"No saved directory places on this device.":"لا توجد محلات محفوظة في مفضلة هذا الجهاز.",true);
+ }
+ const select=$("#profileDefaultGovernorate");
+ if(select){
+   const current=S.defaultGovernorate||"";
+   select.innerHTML='<option value="">'+(english?"All Yemen":"كل اليمن")+'</option>'+GOVS.map((g,index)=>'<option value="'+esc(g)+'">'+esc(english?GOVS_EN[index]:g)+'</option>').join("");
+   select.value=current;
+ }
+ const labels={
+  profileLanguageBtn:english?"Change language":"تغيير اللغة",
+  profileThemeBtn:english?(S.theme==="light"?"Dark mode":"Light mode"):(S.theme==="light"?"الوضع الليلي":"الوضع النهاري"),
+  profileNotificationsBtn:english?(S.notificationsEnabled?"Disable notifications":"Enable notifications"):(S.notificationsEnabled?"إيقاف الإشعارات":"تفعيل الإشعارات"),
+  profileLogoutBtn:english?"Log out":"تسجيل الخروج"
+ };
+ for(const [id,label] of Object.entries(labels))set(id,label);
+}
+document.addEventListener("click",event=>{
+ const button=event.target.closest("#profileActivityList [data-profile-item-id]");
+ if(!button)return;
+ const record=S.items.find(item=>item.id===button.dataset.profileItemId);
+ if(!record)return;
+ closeDlg("#accountDlg");
+ openDetail(record);
+});
 $("#accountBtn").addEventListener("click",()=>{
   $("#merchantBox").hidden=S.session.role!=="merchant";
   $("#adminLoginForm").hidden=true;
   const mp=S.session.merchant||S.merchantProfile||{};
   $("#merchName").value=mp.name||"";
   $("#merchPhone").value=mp.phone||"";
+  if(typeof renderProfilePanel==="function")renderProfilePanel();
   showDlg("#accountDlg");
 });
 $("#accClose").addEventListener("click",()=>{S.onboarded=true;saveState();closeDlg("#accountDlg");});
+$("#profileDefaultGovernorate").addEventListener("change",event=>{
+ S.defaultGovernorate=String(event.target.value||"").trim();
+ saveState();
+ scope=S.defaultGovernorate?"gov:"+S.defaultGovernorate:"";
+ liveDirectoryCoords=null;
+ buildScopeSelector();
+ render();
+});
+$("#profileLanguageBtn").addEventListener("click",()=>{
+ S.lang=S.lang==="en"?"ar":"en";
+ saveState();applyLang();renderProfilePanel();
+ toast(S.lang==="en"?"Language changed":"تم تغيير اللغة");
+});
+$("#profileThemeBtn").addEventListener("click",()=>{
+ S.theme=S.theme==="light"?"dark":"light";
+ applyTheme();saveState();renderProfilePanel();
+});
+$("#profileNotificationsBtn").addEventListener("click",async()=>{
+ if(!("Notification" in window)){
+  toast(curLang==="en"?"Notifications are not supported by this browser.":"هذا المتصفح لا يدعم الإشعارات.");
+  return;
+ }
+ let permission=Notification.permission;
+ if(permission==="default"){
+  try{permission=await Notification.requestPermission();}catch(_){permission="denied";}
+ }
+ S.notificationsEnabled=permission==="granted";
+ saveState();renderProfilePanel();
+ toast(S.notificationsEnabled?(curLang==="en"?"Notifications permission enabled on this device.":"تم السماح بالإشعارات على هذا الجهاز."):(curLang==="en"?"Notifications permission was not granted.":"لم يتم منح إذن الإشعارات."));
+});
+$("#profileLogoutBtn").addEventListener("click",()=>{
+ S.session={role:"client",adminEmail:"",merchant:null};
+ saveState();syncRoleUI();render();renderProfilePanel();closeDlg("#accountDlg");
+ toast(curLang==="en"?"Signed out on this device.":"تم تسجيل الخروج من هذا الجهاز.");
+});
+
 $("#accountDlg").addEventListener("close",()=>{
   $("#adminAccessHint").hidden=true;
   $("#adminLoginForm").hidden=true;
@@ -3063,7 +3352,7 @@ $("#toggleAdmPass").addEventListener("click",()=>{
 });
 
 /* Navigation & Smart Shortcuts */
-let view="home",curCat="",scope="",catGroup="all",catExpanded=false,homeLim=24;
+let view="home",curCat="",scope=S.defaultGovernorate?"gov:"+S.defaultGovernorate:"",catGroup="all",catExpanded=false,homeLim=24;
 let flt={open:false,ver:false,fav:false,near:false};
 let userPos=null;
 
@@ -3421,11 +3710,12 @@ $("#tiles").addEventListener("click",e=>{
 });
 
 function renderCategories(){
-  const cnt={};for(const [key] of CATS)cnt[key]=getDirectoryCategoryCount(key);
+  const directoryCategories=CATS.filter(([key])=>!["souq","parts"].includes(key));
+  const cnt={};for(const [key] of directoryCategories)cnt[key]=getDirectoryCategoryCount(key);
   const q="";
-  let list=CATS;
-  if(catGroup!=="all"&&CAT_GROUPS[catGroup])list=CATS.filter(([k])=>CAT_GROUPS[catGroup].includes(k));
-  if(q)list=CATS.filter(([k,v])=>v.includes(q)||(CAT_SYN[k]||"").includes(q));
+  let list=directoryCategories;
+  if(catGroup!=="all"&&CAT_GROUPS[catGroup])list=directoryCategories.filter(([k])=>CAT_GROUPS[catGroup].includes(k));
+  if(q)list=directoryCategories.filter(([k,v])=>v.includes(q)||(CAT_SYN[k]||"").includes(q));
   const limit=(!catExpanded&&!q&&catGroup==="all")?12:list.length;
   const shown=list.slice(0,limit);
   $("#tiles").innerHTML=shown.map(([k])=>`
@@ -4048,54 +4338,58 @@ function localDirectorySearch(q,limit=6){
 function directoryMapSearchInfo(q){
   const text=normalizeQuery(q);
   const productIntents=[
-    {category:"books",productType:"stationery",label:"مكتبات وقرطاسيات",test:/(قلم|اقلام|دفتر|دفاتر|كراس[ةه]|قرطاسي|ادوات مدرسيه|ممحاه|مبراة|مسطره)/},
-    {category:"books",productType:"books",label:"مكتبات وكتب",test:/(كتاب|كتب|روايه|روايات|مراجع)/},
+    {category:"books",productType:"stationery",label:"مكتبات وقرطاسيات",test:/(قلم|اقلام|دفتر|دفاتر|كراس[ةه]|قرطاسي|ادوات مدرسيه|ممحاه|مبراة|مسطره|stationery)/},
+    {category:"books",productType:"books",label:"مكتبات وكتب",test:/(كتاب|كتب|روايه|روايات|مراجع|bookshop|book store|books)/},
     {category:"telecom",productType:"phone_accessories",label:"محلات إكسسوارات الجوال",test:/(اكسسوارات الجوال|جراب|كفر جوال|شاحن جوال|سماعه جوال)/},
     {category:"telecom",productType:"phone",label:"محلات الجوالات",test:/(جوال|جوالات|موبايل|موبايلات|هاتف|هواتف|ايفون|سامسونج)/},
     {category:"watches",productType:"watch",label:"محلات الساعات",test:/(ساعه|ساعات|ساعات يد)/},
     {category:"vehicles",productType:"car",label:"معارض السيارات",test:/(سياره|سيارات|معرض سيارات)/},
     {category:"vehicles",productType:"motorcycle",label:"محلات الدراجات النارية",test:/(دراجه ناريه|دراجات ناريه|دباب)/},
-    {category:"vehicles",productType:"vehicle_parts",label:"محلات قطع غيار المركبات",test:/(قطع غيار|قطع سيارات|قطع مركبات)/},
-    {category:"elec",productType:"computer",label:"محلات الكمبيوتر واللابتوب",test:/(كمبيوتر|حاسوب|لابتوب|لاب توب)/},
-    {category:"elec",productType:"camera",label:"محلات الكاميرات",test:/(كاميرا|كاميرات)/},
-    {category:"beauty",productType:"perfume",label:"محلات العطور",test:/(عطر|عطور|بخور)/},
-    {category:"beauty",productType:"cosmetics",label:"محلات التجميل",test:/(تجميل|مكياج|كوزمتك|مستحضرات)/},
-    {category:"gold",productType:"jewelry",label:"محلات الذهب والمجوهرات",test:/(ذهب|مجوهرات|صياغة)/},
-    {category:"real_estate",productType:"apartment",label:"الشقق المعروضة",test:/(شقة|شقق)/},
-    {category:"real_estate",productType:"house",label:"المنازل المعروضة",test:/(منزل|منازل|بيت|بيوت)/},
-    {category:"real_estate",productType:"land",label:"الأراضي المعروضة",test:/(أرض|أراضي|اراضي)/},
-    {category:"grocery",productType:"honey",label:"محلات العسل",test:/(عسل|عسل طبيعي)/},
-    {category:"grocery",productType:"coffee",label:"محلات البن والقهوة",test:/(بن|قهوه|قهوة|حبوب قهوه)/},
-    {category:"grocery",productType:"spices",label:"محلات البهارات",test:/(بهارات|توابل|هيل|فلفل اسود)/},
-    {category:"build",productType:"building_materials",label:"محلات مواد البناء",test:/(مواد بناء|اسمنت|حديد|دهانات|ادوات بناء)/},
-    {category:"home",productType:"furniture",label:"محلات الأثاث",test:/(اثاث|كنب|غرف نوم|طاولات)/},
-    {category:"home",productType:"appliance",label:"محلات الأجهزة المنزلية",test:/(اجهزه منزليه|ثلاجه|غساله|مكيف|فرن)/}
+    {category:"vehicles",productType:"vehicle_parts",label:"محلات قطع غيار المركبات",test:/(قطع غيار|قطع سيارات|قطع مركبات|spare parts|car parts|vehicle parts)/},
+    {category:"vehicles",productType:"car",label:"معارض السيارات",test:/(car dealer|car showroom|auto dealer|cars)/},
+    {category:"vehicles",productType:"motorcycle",label:"محلات الدراجات النارية",test:/(motorcycle|motorbike|bike dealer)/},
+    {category:"elec",productType:"computer",label:"محلات الكمبيوتر واللابتوب",test:/(كمبيوتر|حاسوب|لابتوب|لاب توب|computer|laptop|pc)/},
+    {category:"elec",productType:"camera",label:"محلات الكاميرات",test:/(كاميرا|كاميرات|camera|cameras)/},
+    {category:"beauty",productType:"perfume",label:"محلات العطور",test:/(عطر|عطور|بخور|perfume|perfumery)/},
+    {category:"beauty",productType:"cosmetics",label:"محلات التجميل",test:/(تجميل|مكياج|كوزمتك|مستحضرات|cosmetics|beauty salon)/},
+    {category:"gold",productType:"jewelry",label:"محلات الذهب والمجوهرات",test:/(ذهب|مجوهرات|صياغة|jewelry|jewellery|gold shop)/},
+    {category:"real_estate",productType:"apartment",label:"الشقق المعروضة",test:/(شقة|شقق|apartment)/},
+    {category:"real_estate",productType:"house",label:"المنازل المعروضة",test:/(منزل|منازل|بيت|بيوت|house|home)/},
+    {category:"real_estate",productType:"land",label:"الأراضي المعروضة",test:/(أرض|أراضي|اراضي|land)/},
+    {category:"grocery",productType:"honey",label:"محلات العسل",test:/(عسل|عسل طبيعي|honey)/},
+    {category:"grocery",productType:"coffee",label:"محلات البن والقهوة",test:/(بن|قهوه|قهوة|حبوب قهوه|coffee)/},
+    {category:"grocery",productType:"spices",label:"محلات البهارات",test:/(بهارات|توابل|هيل|فلفل اسود|spices|spice shop)/},
+    {category:"build",productType:"building_materials",label:"محلات مواد البناء",test:/(مواد بناء|اسمنت|حديد|دهانات|ادوات بناء|building materials|cement|hardware store)/},
+    {category:"home",productType:"furniture",label:"محلات الأثاث",test:/(اثاث|كنب|غرف نوم|طاولات|furniture store)/},
+    {category:"home",productType:"appliance",label:"محلات الأجهزة المنزلية",test:/(اجهزه منزليه|ثلاجه|غساله|مكيف|فرن|home appliances)/}
   ];
   const product=productIntents.find(item=>item.test.test(text));
   const services=[
-    {category:"grocery",label:"بقالات ومحلات تموين",test:/بقال|تموين|سوبر\s?ماركت|مواد غذائيه|جمعيه استهلاكيه/},
-    {category:"health",label:"مستشفيات وعيادات ومراكز صحية",test:/مستشف|مستوصف|مركز صحي|مركز طبي|عياده|عيادات|مختبر|طبيب|دكتور|اسنان/},
-    {category:"pharmacy",label:"صيدليات",test:/صيدل|دواء|ادويه|علاج|حبوب|مستلزمات طبيه/},
-    {category:"food",label:"مطاعم ومخابز",test:/مطعم|مطاعم|مخبز|مخابز|وجبات/},
-    {category:"cafe",label:"بوفيات وكافيهات",test:/بوفيه|كافيه|كوفي|قهوه|كافتيريا/},
-    {category:"edu",label:"مدارس ومعاهد وجامعات",test:/مدرس|مدرسه|مدارس|معهد|جامعه|كليه|روضه|حضان/},
-    {category:"mosque",label:"مساجد وجوامع",test:/مسجد|مساجد|جامع|جوامع/},
-    {category:"telecom",label:"محلات الجوالات والاتصالات",test:/جوال|جوالات|موبايل|موبايلات|هاتف|هواتف|اتصالات|شرائح/},
-    {category:"elec",label:"الإلكترونيات والكمبيوتر",test:/الكترونيات|اجهزه كهربائيه|كمبيوتر|حاسوب|لابتوب|طابعات|شاشات/},
-    {category:"craft",label:"فنيون وورش صيانة",test:/سباك|كهربائي|نجار|حداد|ورشه|صيانه|تصليح|فني/},
+    {category:"grocery",label:"بقالات ومحلات تموين",test:/(بقال|تموين|سوبر\s?ماركت|مواد غذائيه|جمعيه استهلاكيه|grocery|groceries|supermarket|convenience store)/},
+    {category:"health",label:"مستشفيات وعيادات ومراكز صحية",test:/(مستشف|مستوصف|مركز صحي|مركز طبي|عياده|عيادات|مختبر|طبيب|دكتور|اسنان|hospital|clinic|medical center|doctor|dentist)/},
+    {category:"pharmacy",label:"صيدليات",test:/(صيدل|دواء|ادويه|علاج|حبوب|مستلزمات طبيه|pharmacy|pharmacies|chemist|drugstore)/},
+    {category:"food",label:"مطاعم ومخابز",test:/(مطعم|مطاعم|مخبز|مخابز|وجبات|restaurant|restaurants|bakery|bakeries|fast food)/},
+    {category:"cafe",label:"بوفيات وكافيهات",test:/(بوفيه|كافيه|كوفي|قهوه|كافتيريا|cafe|coffee shop)/},
+    {category:"edu",label:"مدارس ومعاهد وجامعات",test:/(مدرس|مدرسه|مدارس|معهد|جامعه|كليه|روضه|حضان|school|university|college|kindergarten)/},
+    {category:"mosque",label:"مساجد وجوامع",test:/(مسجد|مساجد|جامع|جوامع|mosque)/},
+    {category:"telecom",label:"محلات الجوالات والاتصالات",test:/(جوال|جوالات|موبايل|موبايلات|هاتف|هواتف|اتصالات|شرائح|mobile phone|cell phone|telecom)/},
+    {category:"elec",label:"الإلكترونيات والكمبيوتر",test:/(الكترونيات|اجهزه كهربائيه|كمبيوتر|حاسوب|لابتوب|طابعات|شاشات|electronics store|computer store|electronics)/},
+    {category:"craft",label:"فنيون وورش صيانة",test:/(سباك|كهربائي|نجار|حداد|ورشه|صيانه|تصليح|فني|plumber|electrician|carpenter|mechanic|repair shop)/},
     {category:"build",label:"مواد بناء",test:/مواد بناء|اسمنت|حديد|دهانات|ادوات بناء/},
-    {category:"money",label:"بنوك وصرافة وتحويلات",test:/بنك|صراف|صرافه|تحويل|حوالات|صرف عمله/},
-    {category:"transport",label:"نقل ومواصلات",test:/مواصلات|تاكسي|باص|نقل/},
-    {category:"hotel",label:"فنادق وشقق",test:/فندق|فنادق|شقق مفروشه|سكن/},
-    {category:"salon",label:"حلاقون وصالونات",test:/حلاق|حلاقه|صالون/},
-    {category:"laundry",label:"مغاسل ملابس",test:/مغسله|مغاسل|غسيل ملابس|كوي/},
-    {category:"market",label:"أسواق ومحلات",test:/سوق مركزي|اسواق|مول|مركز تجاري/},
+    {category:"money",label:"بنوك وصرافة وتحويلات",test:/(بنك|صراف|صرافه|تحويل|حوالات|صرف عمله|bank|atm|money transfer|currency exchange)/},
+    {category:"transport",label:"نقل ومواصلات",test:/(مواصلات|تاكسي|باص|نقل|transport|bus station|taxi)/},
+    {category:"hotel",label:"فنادق وشقق",test:/(فندق|فنادق|شقق مفروشه|سكن|hotel|hostel|guest house)/},
+    {category:"salon",label:"حلاقون وصالونات",test:/(حلاق|حلاقه|صالون|barber|hairdresser)/},
+    {category:"laundry",label:"مغاسل ملابس",test:/(مغسله|مغاسل|غسيل ملابس|كوي|laundry|dry cleaner)/},
+    {category:"market",label:"أسواق ومحلات",test:/(سوق مركزي|اسواق|مول|مركز تجاري|market|shopping mall)/},
     {category:"real_estate",label:"مكاتب عقارية",test:/مكتب عقاري|مكاتب عقاريه|وسيط عقاري/},
-    {category:"jobs",label:"وظائف وإعلانات توظيف",test:/وظيفه|وظائف|توظيف|فرص عمل/}
+    {category:"jobs",label:"وظائف وإعلانات توظيف",test:/(وظيفه|وظائف|توظيف|فرص عمل|job|jobs|employment|vacancy)/}
   ];
   const service=services.find(item=>item.test.test(text));
-  if(!product&&!service)return null;
-  const gov=GOVS.find(name=>text.includes(normalizePlace(name)));
+  const rateIntent=/(سعر الصرف|اسعار الصرف|سعر العملات|سعر الدولار|صرف الدولار|كم سعر الدولار|الدولار اليوم|exchange rate|currency rate|forex rate|usd rate)/.test(text);
+  if(!product&&!service&&!rateIntent)return null;
+  const govIndex=GOVS.findIndex((name,index)=>text.includes(normalizePlace(name))||text.includes(normalizePlace(GOVS_EN[index])));
+  const gov=govIndex>=0?GOVS[govIndex]:"";
   const districtEntry=Object.entries(YEMEN_DISTRICTS).find(([parent,districts])=>
     districts.some(name=>text.includes(normalizePlace(name)))
   );
@@ -4103,12 +4397,13 @@ function directoryMapSearchInfo(q){
   const place=gov?("محافظة "+gov+"، اليمن")
     :districtEntry?("مديرية "+district+"، محافظة "+districtEntry[0]+"، اليمن")
     :scope?regionScopeLabel(regionCurrentContext()):"اليمن";
-  const category=product?product.category:service.category,label=product?product.label:service.label;
+  const category=product?product.category:rateIntent?"money":service.category,label=product?product.label:rateIntent?"أسعار الصرف":service.label;
   const mapQuery=label+" "+String(q||"").trim()+" "+place;
-  return {category,productType:product?product.productType:"",label,place,mapQuery,productSearch:!!product};
+  return {category,productType:product?product.productType:"",label,place,mapQuery,productSearch:!!product,
+   rateIntent,governorate:gov||districtEntry?.[0]||"",district:district||""};
 }
 function liveDirectoryPanelHTML(){
- return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>البحث في دليل المحلات والخدمات اليمني</b><div class="live-directory-sub">ابحث في جميع محافظات اليمن، أو اختر قسماً أو مديرية لتضييق النتائج.</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث السجل</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تجهيز فهرس البحث الموحد…</div><div class="live-directory-list" id="liveDirectoryItems"></div></section>';
+ return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>'+(curLang==="en"?"Search Yemen's shops and services":"البحث في دليل المحلات والخدمات اليمني")+'</b><div class="live-directory-sub">'+(curLang==="en"?"Search across all governorates or narrow by category and district.":"ابحث في جميع محافظات اليمن، أو اختر قسماً أو مديرية لتضييق النتائج.")+'</div></div></div><div class="live-directory-status" id="liveDirectoryStatus">'+(curLang==="en"?"Preparing the unified search index…":"جارٍ تجهيز فهرس البحث الموحد…")+'</div><div class="live-directory-list" id="liveDirectoryItems"></div></section>';
 }
 const LIVE_DIRECTORY_API="https://dalilna-live.onrender.com";
 const LIVE_CATALOG_LOCAL_BASE="./regional-catalog/";
@@ -4148,22 +4443,24 @@ function liveDirectoryContext(){
  return {place,fallbackPlace:ctx.gov&&ctx.type!=="governorate"?"محافظة "+ctx.gov+"، اليمن":""};
 }
 function liveDirectoryCardHTML(item){
- const record=item&&typeof item==="object"?item:{};
- const phone=String(record.phone||"").trim(),phoneInfo=yemenPhoneDetails(phone),phoneHref=phone.replace(/[^\d+]/g,"");
- const location=[record.governorate,record.district].filter(Boolean).join("، ");
- const contact=phone?'<div class="live-directory-actions"><a href="tel:'+esc(phoneHref)+'">اتصال</a>'+(phoneInfo.isMobile?'<a href="'+esc(yemenWhatsAppUrl(phone,"مرحباً، وجدت محلكم في دليلنا وأريد الاستفسار عن الخدمة."))+'" target="_blank" rel="noopener noreferrer">واتساب</a>':"")+'</div>':"";
+ const english=curLang==="en",record=item&&typeof item==="object"?item:{};
+ const phone=String(record.phone||"").trim(),phoneInfo=yemenPhoneDetails(phone),phoneHref=phone.replace(/[^\\d+]/g,"");
+ const gov=record.governorate||"",district=record.district||"";
+ const location=[english?governorateLabel(gov):gov,district].filter(Boolean).join(english?", ":"، ");
+ const contact=phone?'<div class="live-directory-actions"><a href="tel:'+esc(phoneHref)+'">'+(english?"Call":"اتصال")+'</a>'+(phoneInfo.isMobile?'<a href="'+esc(yemenWhatsAppUrl(phone,english?"Hello, I found your business in Dalilna and would like to ask about your service.":"مرحباً، وجدت محلكم في دليلنا وأريد الاستفسار عن الخدمة."))+'" target="_blank" rel="noopener noreferrer">'+(english?"WhatsApp":"واتساب")+'</a>':"")+'</div>':"";
  const lat=Number(record.lat??record.latitude),lon=Number(record.lon??record.lng??record.longitude);
  const mapUrl=record.mapsUrl||(Number.isFinite(lat)&&Number.isFinite(lon)?"https://www.openstreetmap.org/?mlat="+lat.toFixed(6)+"&mlon="+lon.toFixed(6)+"#map=18/"+lat.toFixed(6)+"/"+lon.toFixed(6):"");
- const map=mapUrl?'<div class="live-directory-actions"><a href="'+esc(mapUrl)+'" target="_blank" rel="noopener noreferrer">الخريطة</a></div>':"";
+ const map=mapUrl?'<div class="live-directory-actions"><a href="'+esc(mapUrl)+'" target="_blank" rel="noopener noreferrer">'+(english?"View map":"الخريطة")+'</a></div>':"";
  const verified=Boolean(record.verifiedAt||record.verified===true);
  const status=verified
-  ?'<small class="live-directory-local-note">حالة الإدراج: موثّق لدى دليلنا. قد تتغير أرقام الاتصال أو العناوين، فتأكد منها قبل الزيارة.</small>'
-  :'<small class="live-directory-local-note">بيانات من مصدر خارجي أو مفتوح، ولم يتم التحقق منها ميدانياً من فريق دليلنا. رقم الهاتف والعنوان قد يكونان غير دقيقين أو غير محدثين.</small>';
- return '<article class="live-directory-card"><div class="live-directory-card-head"><h3>'+esc(record.name||"مكان بدون اسم")+'</h3><span class="tag">'+esc(CN[record.category]||"خدمة")+'</span></div>'+
- (location?'<p>المحافظة والمديرية: <bdi dir="auto">'+esc(location)+'</bdi></p>':"")+
- (record.address?'<p>العنوان: <bdi dir="auto">'+esc(record.address)+'</bdi></p>':"")+
- (record.openingHours?'<p>ساعات العمل: '+esc(record.openingHours)+'</p>':"")+
- (phone?'<p>الهاتف: <bdi dir="ltr" class="ltr-value">'+esc(phone)+'</bdi>'+(verified?"":" <small>غير مؤكد</small>")+'</p>':"")+contact+map+status+
+  ?'<small class="live-directory-local-note">'+(english?"Listing verified by Dalilna. Contact details may change, so confirm before visiting.":"حالة الإدراج: موثّق لدى دليلنا. قد تتغير أرقام الاتصال أو العناوين، فتأكد منها قبل الزيارة.")+'</small>'
+  :'<small class="live-directory-local-note">'+(english?"This record comes from an open or external source and has not been field-verified by Dalilna. Phone and address details may be incomplete or outdated.":"بيانات من مصدر خارجي أو مفتوح، ولم يتم التحقق منها ميدانياً من فريق دليلنا. رقم الهاتف والعنوان قد يكونان غير دقيقين أو غير محدثين.")+'</small>';
+ const category=catLabel(record.category||"other");
+ return '<article class="live-directory-card"><div class="live-directory-card-head"><h3>'+esc(record.name||(english?"Unnamed place":"مكان بدون اسم"))+'</h3><span class="tag">'+esc(category)+'</span></div>'+
+ (location?'<p>'+(english?"Governorate and district: ":"المحافظة والمديرية: ")+'<bdi dir="auto">'+esc(location)+'</bdi></p>':"")+
+ (record.address?'<p>'+(english?"Address: ":"العنوان: ")+'<bdi dir="auto">'+esc(record.address)+'</bdi></p>':"")+
+ (record.openingHours?'<p>'+(english?"Opening hours: ":"ساعات العمل: ")+esc(record.openingHours)+'</p>':"")+
+ (phone?'<p>'+(english?"Phone: ":"الهاتف: ")+'<bdi dir="ltr" class="ltr-value">'+esc(phone)+'</bdi>'+(verified?"":' <small>'+(english?"Not verified":"غير مؤكد")+'</small>')+'</p>':"")+contact+map+status+
  "</article>";
 }
 function geoapifyDirectoryCardHTML(item){
@@ -4258,8 +4555,8 @@ function getMarketplaceCount(category){const ctx=regionCurrentContext(),counts=c
 function getDirectoryCategoryCount(category){const stats=catalogStatsForScope(),categories=stats?.categories||{};const aliases=category==="land"?["real_estate"]:[];return Number(categories?.[category]||0)+aliases.reduce((sum,key)=>sum+Number(categories?.[key]||0),0)+getMarketplaceCount(category);}
 async function loadRegionalCatalogManifest(force){
  if(!force&&liveCatalogManifestPromise)return liveCatalogManifestPromise;
- const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=2.6.1";
- liveCatalogManifestPromise=fetchCatalogAsset("manifest.json?v=2.6.1").then(async response=>{
+ const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=2.7.0";
+ liveCatalogManifestPromise=fetchCatalogAsset("manifest.json?v=2.7.0").then(async response=>{
   if(!response.ok)throw new Error("ملف فهرس المحافظات غير متاح حالياً (HTTP "+response.status+").");
   const data=await response.json();if(!data||!Array.isArray(data.governorates))throw new Error("صيغة فهرس المحافظات غير صالحة.");
   if(Number(data.totalCount||0)<1||!Array.isArray(data.districtCounts)||data.districtCounts.length!==335)throw new Error("فهرس المحافظات لا يحتوي إحصاءات المديريات الـ335.");
@@ -4271,7 +4568,7 @@ async function loadRegionalCatalog(gov,force){
  const manifest=await loadRegionalCatalogManifest(force),key=normalizePlace(gov),region=(manifest.governorates||[]).find(item=>normalizePlace(item?.name)===key);
  if(!region||!region.file)throw new Error("لا توجد قائمة بيانات لهذه المحافظة في ملف الفهرس.");
  const cached=liveCatalogFiles.get(region.file);if(!force&&cached)return {region,manifest,data:cached};
- const response=await fetchCatalogAsset(encodeURIComponent(region.file)+"?v=2.6.1");
+ const response=await fetchCatalogAsset(encodeURIComponent(region.file)+"?v=2.7.0");
  if(!response.ok)throw new Error("تعذر تحميل سجل المحافظة.");
  const payload=await response.json(),items=normalizeRegionalCatalogItems(payload);
  if(!items.length&&Number(region.count||0)>0)throw new Error("ملف المحافظة لا يحتوي سجلات قابلة للقراءة.");
@@ -4350,29 +4647,18 @@ function regionalCatalogMatches(items,context,query,category,productType){
 }
 function regionalCatalogCardHTML(item,requestedCategory){
  const displayCategory=requestedCategory&&requestedCategory!=="all"&&((item.categories||[item.category]).includes(requestedCategory)||requestedCategory==="land"&&(item.categories||[]).includes("real_estate"))?requestedCategory:item.category;
- const labels={
-  grocery:"بقالات وتموينات",food:"مطاعم ومخابز",cafe:"بوفيات ومقاهي",edu:"مدارس وتعليم",
-  health:"مستشفيات ومراكز",pharmacy:"صيدليات",gov:"جهات حكومية",money:"بنوك وصرافة",
-  real_estate:"أراضٍ وعقارات",vehicles:"سيارات وورش مركبات",parts:"قطع غيار",build:"مواد بناء",
-  craft:"حرفيون وصيانة",transport:"نقل ومواصلات",telecom:"جوالات واتصالات",utility:"مياه وغاز",
-  farm:"زراعة ومواشٍ",mosque:"مساجد وجوامع",gold:"ذهب ومجوهرات",wedding:"قاعات أعراس",
-  hotel:"فنادق وشقق",market:"أسواق",solar:"طاقة شمسية",elec:"إلكترونيات وكمبيوتر",
-  clothes:"ملابس وأحذية",home:"أثاث وأجهزة منزلية",books:"مكتبات وقرطاسية",
-  beauty:"عطور وتجميل",delivery:"توصيل وشحن",salon:"صالونات وحلاقة",laundry:"مغاسل"
- };
  let card=liveDirectoryCardHTML({...item,category:displayCategory});
- const label=labels[displayCategory]||catLabel(displayCategory)||item.category;
- card=card.replace('<span class="tag">خدمة</span>','<span class="tag">'+esc(label)+'</span>');
  const exact=["osm-boundary","geoboundaries-polygon"].includes(item.assignmentQuality);
+ const english=curLang==="en";
  const note=exact
-  ?"توزيع المديرية مستند إلى مضلع حدود إداري."
-  :"توزيع المديرية تقديري من أقرب مركز إداري؛ راجع الموقع قبل الاعتماد عليه.";
+  ?(english?"District assignment is based on an administrative boundary polygon.":"توزيع المديرية مستند إلى مضلع حدود إداري.")
+  :(english?"District assignment is approximate, based on the nearest administrative centre. Check the map before relying on it.":"توزيع المديرية تقديري من أقرب مركز إداري؛ راجع الموقع قبل الاعتماد عليه.");
  return card.replace("</article>",'<small class="live-directory-local-note">'+esc(note)+'</small></article>');
 }
 
 
 function renderLiveDirectoryResponse(data){
- const status=$("#liveDirectoryStatus"),box=$("#liveDirectoryItems"),attribution=$("#liveDirectoryAttribution");
+ const english=curLang==="en",status=$("#liveDirectoryStatus"),box=$("#liveDirectoryItems"),attribution=$("#liveDirectoryAttribution");
  if(!status||!box)return;
  let items=Array.isArray(data?.items)?data.items:[];
  if(flt.open)items=items.filter(item=>isOpenNow(item?.openingHours||item?.hours)===true);
@@ -4382,30 +4668,40 @@ function renderLiveDirectoryResponse(data){
  liveDirectoryLastData=data;
  const shared=liveDirectorySharedMatchesHTML();
  box.classList.remove("live-google-results");
- if(attribution)attribution.innerHTML='الأماكن: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL-1.0) · <a href="https://docs.overturemaps.org/guides/places/" target="_blank" rel="noopener noreferrer">Overture Maps Places</a> (CDLA-Permissive-2.0 والتراخيص الخاصة بالمصدر) · <a href="https://docs.foursquare.com/data-products/docs/fsq-places-open-source" target="_blank" rel="noopener noreferrer">Foursquare Open Places</a> (Apache-2.0 عند الاستيراد المستقل) · الحدود: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">geoBoundaries</a> و<a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.';
- const date=data.snapshotDate||data.manifest&&data.manifest.snapshotDate||"غير محدد";
- const regionLabel=data.context?.type==="country"?"جميع المحافظات · ":(data.regionName?"محافظة "+data.regionName+" · ":"");
- status.textContent=regionLabel+Number(items.length).toLocaleString("ar")+" نتيجة من فهرس الأماكن · آخر تحديث: "+date+(liveSharedMatches.length?" · إعلانات معتمدة: "+liveSharedMatches.length:"")+(liveSharedLoadError?" · تعذر تحديث الإعلانات المشتركة":"");
- if(view==="cat"&&$("#count"))$("#count").textContent=Number(items.length).toLocaleString("ar")+" نتيجة في "+(CN[curCat]||curCat);
+ if(attribution)attribution.innerHTML=english
+  ?'Places: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL-1.0) · <a href="https://docs.overturemaps.org/guides/places/" target="_blank" rel="noopener noreferrer">Overture Maps Places</a> · <a href="https://docs.foursquare.com/data-products/docs/fsq-places-open-source" target="_blank" rel="noopener noreferrer">Foursquare Open Places</a> · boundaries: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">geoBoundaries</a> and <a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.'
+  :'الأماكن: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL-1.0) · <a href="https://docs.overturemaps.org/guides/places/" target="_blank" rel="noopener noreferrer">Overture Maps Places</a> (CDLA-Permissive-2.0 والتراخيص الخاصة بالمصدر) · <a href="https://docs.foursquare.com/data-products/docs/fsq-places-open-source" target="_blank" rel="noopener noreferrer">Foursquare Open Places</a> (Apache-2.0 عند الاستيراد المستقل) · الحدود: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">geoBoundaries</a> و<a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.';
+ const date=data.snapshotDate||data.manifest&&data.manifest.snapshotDate||(english?"Not specified":"غير محدد");
+ const regionLabel=data.context?.type==="country"?(english?"All governorates · ":"جميع المحافظات · "):(data.regionName?(english?"Governorate ":"محافظة ")+governorateLabel(data.regionName)+" · ":"");
+ status.textContent=regionLabel+Number(items.length).toLocaleString(english?"en-US":"ar-YE")+(english?" results in the places index · Snapshot: ":" نتيجة من فهرس الأماكن · آخر تحديث: ")+date+
+  (liveSharedMatches.length?(english?" · Approved adverts: ":" · إعلانات معتمدة: ")+liveSharedMatches.length:"")+
+  (liveSharedLoadError?(english?" · Shared adverts could not be refreshed":" · تعذر تحديث الإعلانات المشتركة"):"");
+ if(view==="cat"&&$("#count"))$("#count").textContent=Number(items.length).toLocaleString(english?"en-US":"ar-YE")+(english?" results in ":" نتيجة في ")+catLabel(curCat);
  if(!items.length){
   const msg=data.classifiedOnly
-   ?"هذا القسم يعتمد على إعلانات المستخدمين والتجار التي تعتمدها الإدارة. لم توجد إعلانات معتمدة تطابق البحث حالياً."
-   :"لم نجد سجلات مطابقة في فهرس OpenStreetMap الحالي. هذا لا يعني أن المكان غير موجود. يمكنك إرسال بياناته إلى دليلنا لمراجعتها.";
-  box.innerHTML=shared+'<div class="live-directory-empty">'+esc(msg)+'</div>'+(liveSharedLoadError?'<div class="live-directory-empty">تعذر تحديث الإعلانات المشتركة الآن. سجل الأماكن المحلي ما زال يعمل.</div>':"");
+   ?(english?"This section uses adverts approved by Dalilna administrators. No approved advert matched this search.":"هذا القسم يعتمد على إعلانات المستخدمين والتجار التي تعتمدها الإدارة. لم توجد إعلانات معتمدة تطابق البحث حالياً.")
+   :(english?"No matching records were found in the current open-map catalogue. This does not mean the place does not exist. You can submit its details for review.":"لم نجد سجلات مطابقة في فهرس OpenStreetMap الحالي. هذا لا يعني أن المكان غير موجود. يمكنك إرسال بياناته إلى دليلنا لمراجعتها.");
+  box.innerHTML=shared+'<div class="live-directory-empty">'+esc(msg)+'</div>'+(liveSharedLoadError?'<div class="live-directory-empty">'+esc(english?"Shared adverts could not be refreshed. The local places catalogue is still available.":"تعذر تحديث الإعلانات المشتركة الآن. سجل الأماكن المحلي ما زال يعمل.")+'</div>':"");
   return;
  }
  const visible=items.slice(0,liveDirectoryVisibleCount);
  let cards=visible.map(item=>regionalCatalogCardHTML(item,data.category)).join("");
- if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">عرض المزيد ('+(items.length-visible.length)+')</button>';
- box.innerHTML=shared+cards;
+ if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">'+(english?"Show more (":"عرض المزيد (")+(items.length-visible.length)+')</button>';
+ const dataNote=english
+  ?'<div class="live-directory-empty">Open-map records are not field-verified by Dalilna. Phone numbers and addresses are shown only when the source provides them.</div>'
+  :'<div class="live-directory-empty">السجلات المفتوحة ليست موثقة ميدانياً من دليلنا. لا نعرض أرقام الهواتف أو العناوين إلا عندما يوفرها المصدر.</div>';
+ box.innerHTML=shared+dataNote+cards;
 }
 function liveDirectoryLocationPrompt(manifest){
- const box=$("#liveDirectoryItems");if(!box)return;
+ const english=curLang==="en",box=$("#liveDirectoryItems");if(!box)return;
  const rows=manifest&&manifest.governorates||[];
  const total=rows.reduce((sum,row)=>sum+Number(row.count||0),0);
- $("#liveDirectoryStatus").textContent="فهرس اليمن المحلي: "+Number(total).toLocaleString("ar")+" مكاناً مسجلاً موزعة على "+rows.length+" محافظة. اكتب اسم المحل أو النشاط للبحث في اليمن كله، أو اختر محافظة أو مديرية لتضييق النتائج.";
- const buttons=rows.map(row=>'<button type="button" class="region-governorate-pill" data-region-gov="'+esc(row.name)+'">'+esc(row.name)+' <small>'+Number(row.count||0).toLocaleString("ar")+'</small></button>').join("");
- box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">اختر المحافظة لعرض المحلات والخدمات والمدارس والمرافق المسجلة فيها. السجل لا يحصر كل نشاط موجود في الواقع.</div><div class="region-governorate-pills">'+buttons+'</div>';
+ $("#liveDirectoryStatus").textContent=english
+  ?"Yemen places index: "+Number(total).toLocaleString("en-US")+" records across "+rows.length+" governorates. Search a business or activity across Yemen, or choose a governorate or district."
+  :"فهرس اليمن المحلي: "+Number(total).toLocaleString("ar")+" مكاناً مسجلاً موزعة على "+rows.length+" محافظة. اكتب اسم المحل أو النشاط للبحث في اليمن كله، أو اختر محافظة أو مديرية لتضييق النتائج.";
+ const buttons=rows.map(row=>'<button type="button" class="region-governorate-pill" data-region-gov="'+esc(row.name)+'">'+esc(governorateLabel(row.name))+' <small>'+Number(row.count||0).toLocaleString(english?"en-US":"ar-YE")+'</small></button>').join("");
+ const prompt=english?"Choose a governorate to see its indexed shops, services, schools and public facilities. The catalogue does not include every real-world business.":"اختر المحافظة لعرض المحلات والخدمات والمدارس والمرافق المسجلة فيها. السجل لا يحصر كل نشاط موجود في الواقع.";
+ box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">'+esc(prompt)+'</div><div class="region-governorate-pills">'+buttons+'</div>';
 }
 async function loadLiveMarketplaceMatches(query,category,productType,signal,force,listingType){
  const region=regionCurrentContext(),gov=region.gov||"",district=region.district||"",key=[query,category,productType,listingType||"",gov,district].join("|");
@@ -4456,25 +4752,52 @@ async function searchLiveDirectoryFallback(query,category,context,signal,force){
  if(liveFallbackCache.size>80)liveFallbackCache.delete(liveFallbackCache.keys().next().value);
  return mapped;
 }
+function localDirectoryCatalogMatches(query,context,category,productType){
+ if(!query)return [];
+ const aliases={land:["real_estate"],watches:["gold"],vehicles:["parts"]};
+ return localDirectorySearch(query,80).filter(item=>{
+  const wanted=String(category||"all"),cat=String(item.cat||"");
+  if(wanted!=="all"&&cat!==wanted&&!(aliases[wanted]||[]).includes(cat))return false;
+  if(productType&&item.productType&&item.productType!==productType)return false;
+  if(context?.gov&&normalizePlace(item.gov)!==normalizePlace(context.gov))return false;
+  if(context?.district&&normalizePlace(item.dist)!==normalizePlace(context.district))return false;
+  return true;
+ }).map(item=>{
+  const lat=Number(item.lat??item.latitude),lon=Number(item.lng??item.lon??item.longitude);
+  const point=Number.isFinite(lat)&&Number.isFinite(lon);
+  return {...item,id:"local-"+String(item.id||item.name),name:item.name,nameEn:item.nameEn||"",
+   category:item.cat,categories:[item.cat],
+   address:[item.area,item.village,item.dist,item.gov].filter(Boolean).join("، "),
+   governorate:item.gov||"",district:item.dist||"",phone:item.phone||"",
+   lat:point?lat:null,lon:point?lon:null,
+   mapsUrl:item.mapsUrl||(point?"https://www.openstreetmap.org/?mlat="+lat+"&mlon="+lon+"#map=18/"+lat+"/"+lon:""),
+   source:"Dalilna local listing",verifiedAt:item.verifiedAt||null,assignmentQuality:"local-entry"};
+ });
+}
 function mergeLiveFallbackRows(localRows,remoteRows){
  const result=[...(localRows||[])];
- const names=new Set(result.map(item=>normalizeSearchPlace(item.name||"")).filter(Boolean));
  for(const remote of remoteRows||[]){
   const remoteName=normalizeSearchPlace(remote.name||"");
   if(!remoteName)continue;
   const lat=Number(remote.lat??remote.latitude),lon=Number(remote.lon??remote.lng??remote.longitude);
-  const duplicate=result.some(existing=>{
-   const name=normalizeSearchPlace(existing.name||"");
-   if(name!==remoteName)return false;
+  const duplicateIndex=result.findIndex(existing=>{
+   if(normalizeSearchPlace(existing.name||"")!==remoteName)return false;
    const aLat=Number(existing.lat??existing.latitude),aLon=Number(existing.lon??existing.lng??existing.longitude);
    if(!Number.isFinite(lat)||!Number.isFinite(lon)||!Number.isFinite(aLat)||!Number.isFinite(aLon))return true;
    const dy=(lat-aLat)*111000,dx=(lon-aLon)*111000*Math.cos(lat*Math.PI/180);
    return Math.hypot(dx,dy)<50;
   });
-  if(!duplicate){result.push(remote);names.add(remoteName);}
+  if(duplicateIndex>=0){
+   const current=result[duplicateIndex];
+   result[duplicateIndex]={...remote,...current,
+    phone:current.phone||remote.phone||"",address:current.address||remote.address||"",
+    website:current.website||remote.website||"",lat:current.lat??remote.lat,lon:current.lon??remote.lon,
+    mapsUrl:current.mapsUrl||remote.mapsUrl||"",source:current.source||remote.source};
+  }else result.push(remote);
  }
  return result;
 }
+
 async function runLiveDirectorySearch(force){
  const box=$("#liveDirectoryItems"),status=$("#liveDirectoryStatus");
  clearTimeout(liveDirectoryTimer);
@@ -4505,6 +4828,7 @@ async function runLiveDirectorySearch(force){
     const loaded=await warmUnifiedSearchIndex(false);
     manifest=loaded.manifest;
     rows=regionalCatalogMatches(loaded.items,context,query,category,productType);
+     rows=mergeLiveFallbackRows(localDirectoryCatalogMatches(query,context,category,productType),rows);
    }
    if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
    const responseData={items:rows,manifest,snapshotDate:manifest?.snapshotDate,regionName:context.gov||"اليمن",context,classifiedOnly,category,liveFallbackCount:0};
@@ -4528,7 +4852,7 @@ async function runLiveDirectorySearch(force){
   }catch(error){
    if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
    status.textContent="تعذر تحميل الفهرس المحلي: "+String(error&&error.message||"خطأ غير معروف");
-   box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">لم يكتمل تحميل السجل المحلي. يمكنك إعادة المحاولة أو اختيار منطقة أخرى.</div><button type="button" class="live-directory-refresh" id="liveDirectoryRetry">إعادة تحميل السجل</button>';
+   box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">'+(curLang==="en"?"The local catalogue could not be loaded. The directory will retry automatically when you search again.":"لم يكتمل تحميل السجل المحلي. سيُعاد المحاولة تلقائياً عند البحث مرة أخرى.")+'</div>';
   }finally{
    clearTimeout(requestTimer);
    if(liveDirectoryController===controller)liveDirectoryController=null;
@@ -4562,7 +4886,6 @@ document.addEventListener("click",event=>{
  }
  const commons=event.target.closest("[data-commons-photos]");if(commons){loadLiveCommonsPhotos(commons);return;}
  if(event.target.closest("#liveDirectoryMore")){liveDirectoryVisibleCount+=8;if(liveDirectoryLastData)renderLiveDirectoryResponse(liveDirectoryLastData);return;}
- if(event.target.closest("#liveDirectoryRefresh")||event.target.closest("#liveDirectoryRetry")){runLiveDirectorySearch(true);return;}
  if(event.target.closest("#liveDirectoryChooseRegion")){$("#scopeBtn").click();return;}
  if(event.target.closest("#liveDirectoryUseLocation")){
   if(!navigator.geolocation){toast("المتصفح لا يدعم تحديد الموقع.");return;}
@@ -4644,7 +4967,7 @@ if(/طوارئ|اسعاف|شرطه|نجده|دفاع|اطفاء/.test(t))return 
   }
   const hits=localDirectorySearch(raw,6);
   if(hits.length){
-    return `وجدت ${hits.length} نتيجة محتملة ضمن الإدراجات المسجلة في دليلنا:\n`+hits.map((i,n)=>`${n+1}. ${i.name} — ${CN[i.cat]||i.cat} — ${[i.village,i.area,i.dist,i.gov].filter(Boolean).join(" / ")}${i.phone?" — "+i.phone:""}${i.verifiedAt?" — موثّق":" — لم يوثّق بعد"}`).join("\n")+"\nهذه نتائج من قاعدة هذا الجهاز وليست تحققاً خارجياً من النشاط.";
+    return `وجدت ${hits.length} نتيجة محتملة ضمن الإدراجات المسجلة في دليلنا:\n`+hits.map((i,n)=>`${n+1}. ${i.name} — ${CN[i.cat]||i.cat} — ${[i.village,i.area,i.dist,i.gov].filter(Boolean).join(" / ")}${i.phone?" — "+i.phone:""}`).join("\n")+"\nهذه بيانات محفوظة على الجهاز، ولم يتم التحقق من أرقام التواصل والعناوين ميدانياً.";
   }
   if(/عزل حبيش|عزلات حبيش|عزله حبيش|كم عزله/.test(t))return `مديرية حبيش في محافظة إب تضم 22 عزلة بحسب مرجع التقسيم الإداري. الأسماء المرجعية في دليلنا: ${HUBAISH_UZ.join("، ")}. قد تختلف بعض الكتابات المحلية، لذلك يدعم التطبيق الأسماء البديلة المعروفة.`;
   const askedGov=GOVS.find(g=>t.includes(normalizeQuery(g)));
@@ -4747,91 +5070,142 @@ async function requestCloudAssistant(q,context){
  return null;
 }
 function assistantSourceText(result){
+ const english=curLang==="en";
  const labels=Array.isArray(result?.dataSources)?result.dataSources.filter(Boolean):[];
- const dataLabel=labels.length?" · بيانات الدليل: "+labels.join("، "):"";
- if(result?.mode==="gemini"){
-  return "المجيب: Google Gemini"+(result.model?" ("+result.model+")":"")+dataLabel;
- }
- if(result?.mode==="reference"){
-  return "المجيب: مرجع دليلنا"+(result.referenceSource?" · المصدر: "+result.referenceSource:"")+dataLabel;
- }
- if(result?.mode==="local-fallback"){
-  return "المجيب: دليلنا المحلي · تعذّر تأكيد وصول السؤال إلى Gemini"+dataLabel;
- }
- if(result?.mode==="offline"){
-  return "المجيب: دليلنا المحلي دون إنترنت"+dataLabel;
- }
- if(result?.mode==="live-directory"){
-  return "المجيب: نتائج دليلنا المحلية · ليست إجابة من Gemini"+dataLabel;
- }
- if(result?.mode==="directory"){
-  return "المجيب: إدراجات هذا الجهاز · ليست إجابة من Gemini"+dataLabel;
- }
- return "المجيب: دليلنا المحلي"+dataLabel;
+ const dataLabel=labels.length?(english?" · Data: ":" · بيانات الدليل: ")+labels.join(english?", " : "، "):"";
+ if(result?.mode==="gemini")return (english?"Responder: Google Gemini":"المجيب: Google Gemini")+(result.model?" ("+result.model+")":"")+dataLabel;
+ if(result?.mode==="reference")return (english?"Responder: Dalilna reference":"المجيب: مرجع دليلنا")+(result.referenceSource?(english?" · Source: ":" · المصدر: ")+result.referenceSource:"")+dataLabel;
+ if(result?.mode==="local-fallback")return (english?"Responder: local assistant · Gemini response could not be confirmed":"المجيب: دليلنا المحلي · تعذّر تأكيد وصول السؤال إلى Gemini")+dataLabel;
+ if(result?.mode==="offline")return (english?"Responder: offline local assistant":"المجيب: دليلنا المحلي دون إنترنت")+dataLabel;
+ if(result?.mode==="live-directory")return (english?"Responder: live directory results · not a Gemini answer":"المجيب: نتائج دليلنا المحلية · ليست إجابة من Gemini")+dataLabel;
+ if(result?.mode==="live-rates")return (english?"Responder: live rate source":"المجيب: مصدر أسعار مباشر")+dataLabel;
+ if(result?.mode==="directory")return (english?"Responder: on-device listings · not a Gemini answer":"المجيب: إدراجات هذا الجهاز · ليست إجابة من Gemini")+dataLabel;
+ return (english?"Responder: Dalilna local assistant":"المجيب: دليلنا المحلي")+dataLabel;
 }
+
 async function askAssistant(q){
  const serviceIntent=directoryMapSearchInfo(q);
+ if(serviceIntent?.rateIntent){
+  const payload=await loadLiveFx(false);
+  if(!payload?.fresh){
+   return {answer:curLang==="en"?"The rate source has not confirmed a fresh market reading. I won't show an old or estimated price.":"لم يؤكد مصدر الأسعار قراءة حديثة. لن أعرض سعراً قديماً أو تقديرياً.",mode:"reference",dataSources:["ye-rial.com"]};
+  }
+  const markets=[["sanaa",curLang==="en"?"Sana'a":"صنعاء"],["aden",curLang==="en"?"Aden":"عدن"]];
+  const moneyItems=[];
+  for(const [key,label] of markets){
+   const items=payload.data?.[key]?.items||{};
+   const usd=items.usd||{},sar=items.sar||{};
+   const format=value=>cleanMarketNumber(value)===null?"—":Number(value).toLocaleString(curLang==="en"?"en-US":"ar-YE",{maximumFractionDigits:2});
+   moneyItems.push(label+": USD buy "+format(usd.buy)+" / sell "+format(usd.sell)+"; SAR buy "+format(sar.buy)+" / sell "+format(sar.sell));
+  }
+  const verified=payload.last_verified_at||payload.last_sync||"";
+  return {
+   answer:(curLang==="en"?"Latest confirmed market readings from the available Sana'a and Aden sources":"آخر القراءات السوقية المؤكدة المتاحة لمصدري صنعاء وعدن")+":\n"+moneyItems.join("\n")+(verified?"\n"+(curLang==="en"?"Last verified: ":"آخر تحقق: ")+verified:""),
+   mode:"live-rates",referenceSource:"ye-rial.com",dataSources:["ye-rial.com"]
+  };
+ }
  if(serviceIntent){
-  const localHits=localDirectorySearch(q,12).filter(item=>item.cat===serviceIntent.category&&(!scope||scopeMatchesItem(item)));
   const context=regionCurrentContext(),query=String(q||"");
+  const selectedContext={
+   ...context,
+   gov:serviceIntent.governorate||context.gov||"",
+   district:serviceIntent.district||context.district||"",
+   place:serviceIntent.place||context.place||"اليمن"
+  };
+  const localHits=localDirectorySearch(q,20).filter(item=>{
+   if(serviceIntent.category!=="all"&&item.cat!==serviceIntent.category&&!(serviceIntent.category==="vehicles"&&item.cat==="parts"))return false;
+   if(scope&&!scopeMatchesItem(item))return false;
+   if(selectedContext.gov&&normalizePlace(item.gov)!==normalizePlace(selectedContext.gov))return false;
+   if(selectedContext.district&&normalizePlace(item.dist)!==normalizePlace(selectedContext.district))return false;
+   return true;
+  });
   let places=[],approved=[];
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),22000);
   try{
-   const tasks=[loadLiveMarketplaceMatches(query,serviceIntent.category,serviceIntent.productType,controller.signal,true)];
-   if(context.gov&&!serviceIntent.productType&&!["jobs","souq","land"].includes(serviceIntent.category)){
-    tasks.push(loadRegionalCatalog(context.gov,false).then(result=>regionalCatalogMatches(result.data.items,context,query,serviceIntent.category,"")));
+   const tasks=[
+    loadLiveMarketplaceMatches(query,serviceIntent.category,serviceIntent.productType,controller.signal,true),
+    searchLiveDirectoryFallback(query,serviceIntent.category,selectedContext,controller.signal,true).catch(()=>[])
+   ];
+   if(selectedContext.gov&&!serviceIntent.productType&&![ "jobs","souq","land"].includes(serviceIntent.category)){
+    tasks.push(loadRegionalCatalog(selectedContext.gov,false).then(result=>regionalCatalogMatches(result.data.items,selectedContext,query,serviceIntent.category,"")).catch(()=>[]));
    }else tasks.push(Promise.resolve([]));
    const results=await Promise.allSettled(tasks);
    if(results[0].status==="fulfilled")approved=Array.isArray(results[0].value)?results[0].value.slice():liveSharedMatches.slice();
    if(results[1].status==="fulfilled")places=Array.isArray(results[1].value)?results[1].value:[];
+   if(results[2].status==="fulfilled"&&Array.isArray(results[2].value))places=mergeLiveFallbackRows(results[2].value,places);
   }finally{clearTimeout(timer);}
+  const cards=[],seen=new Set();
+  const mapFor=item=>{
+   const direct=String(item.mapsUrl||item.mapUrl||"").trim();
+   if(/^https:\/\//i.test(direct))return direct;
+   const lat=Number(item.lat??item.latitude),lon=Number(item.lon??item.lng??item.longitude);
+   if(Number.isFinite(lat)&&Number.isFinite(lon))return "https://www.openstreetmap.org/?mlat="+lat+"&mlon="+lon+"#map=18/"+lat+"/"+lon;
+   const search=[item.name||item.title,item.address,item.area,item.district,item.governorate||selectedContext.gov,"Yemen"].filter(Boolean).join(" ");
+   return "https://www.openstreetmap.org/search?query="+encodeURIComponent(search);
+  };
+  const addCard=item=>{
+   const name=String(item.name||item.title||"").trim();
+   if(!name)return;
+   const signature=normalizeSearchPlace(name)+"|"+normalizeSearchPlace(item.governorate||item.gov||selectedContext.gov||"")+"|"+normalizeSearchPlace(item.district||item.dist||"");
+   if(seen.has(signature))return;
+   seen.add(signature);
+   cards.push({
+    name,
+    category:String(item.category||CN[item.cat]||serviceIntent.label||""),
+    location:[item.address||item.area||item.village,item.district||item.dist,item.governorate||item.gov||selectedContext.gov].filter(Boolean).join("، "),
+    phone:String(item.phone||"").trim(),
+    mapUrl:mapFor(item),
+    source:String(item.source||"").trim()
+   });
+  };
+  localHits.forEach(item=>addCard({...item,category:CN[item.cat]||item.cat,source:"إدراج محلي"}));
+  places.forEach(addCard);
+  approved.forEach(item=>addCard({...item,name:item.title||item.name,category:item.category||serviceIntent.label,
+    location:[item.area,item.district,item.governorate].filter(Boolean).join("، "),source:"إعلان معتمد"}));
   const dataSources=[];
-  if(localHits.length)dataSources.push("إدراجات هذا الجهاز");
-  if(places.length)dataSources.push("فهرس الأماكن المفتوح (OpenStreetMap وOverture Maps)");
-  if(approved.length)dataSources.push("قاعدة بيانات الإعلانات المشتركة");
-  if(!dataSources.length)dataSources.push("لا توجد سجلات مطابقة في المصادر التي تم فحصها");
+  if(localHits.length)dataSources.push(curLang==="en"?"On-device listings":"الإدراجات المحلية على الجهاز");
+  if(places.length)dataSources.push("OpenStreetMap / Overture Maps");
+  if(approved.length)dataSources.push(curLang==="en"?"Shared approved listings":"الإعلانات المشتركة المعتمدة");
+  if(!dataSources.length)dataSources.push(curLang==="en"?"No matching records in checked sources":"لا توجد سجلات مطابقة في المصادر التي فُحصت");
   const assistantContext={
    liveSearch:{
     intent:serviceIntent.category,
-    selectedRegion:{governorate:context.gov||"",district:context.district||"",place:context.place||""},
-    localListings:localHits.slice(0,5).map(item=>({
+    selectedRegion:{governorate:selectedContext.gov||"",district:selectedContext.district||"",place:selectedContext.place||""},
+    localListings:localHits.slice(0,8).map(item=>({
      name:item.name,category:CN[item.cat]||item.cat,governorate:item.gov||"",district:item.dist||"",
      address:item.area||item.village||"",phone:item.phone||"",
      verificationStatus:item.verifiedAt?"verified_in_dalilna":"not_verified"
     })),
-    openDataPlaces:places.slice(0,8).map(item=>({
-     name:item.name,category:item.category||serviceIntent.category,
-     governorate:item.governorate||context.gov||"",district:item.district||"",
-     address:item.address||"",phone:item.phone||"",
-     source:"OpenStreetMap / Overture Maps",
-     verificationStatus:"not_field_verified_by_dalilna"
+    openDataPlaces:places.slice(0,10).map(item=>({
+     name:item.name,category:item.category||serviceIntent.category,governorate:item.governorate||selectedContext.gov||"",
+     district:item.district||"",address:item.address||"",phone:item.phone||"",
+     source:item.source||"OpenStreetMap / Overture Maps",verificationStatus:"not_field_verified_by_dalilna"
     })),
     approvedListings:approved.slice(0,8).map(item=>({
-     name:item.title||"",category:item.category||serviceIntent.category,
+     name:item.title||item.name||"",category:item.category||serviceIntent.category,
      governorate:item.governorate||"",district:item.district||"",address:item.area||"",
      phone:item.phone||"",price:item.price||"",currency:item.currency||"",
-     approvalStatus:"approved_by_dalilna_admin",
-     fieldVerificationStatus:"phone_and_address_not_field_verified"
+     approvalStatus:"approved_by_dalilna_admin",fieldVerificationStatus:"phone_and_address_not_field_verified"
     })),
-    dataQualityNotice:"وجود رقم أو عنوان في سجل لا يثبت صحته أو حداثته. لا تخترع قيماً. وضح حالة التحقق لكل سجل."
+    dataQualityNotice:"وجود رقم أو عنوان في سجل لا يثبت صحته أو حداثته. لا تخترع قيماً."
    }
   };
   if(S.aiCloudConsent===true&&navigator.onLine){
    const cloud=await requestCloudAssistant(q,assistantContext);
-   if(cloud)return {...cloud,dataSources};
+   if(cloud)return {...cloud,dataSources,assistantCards:cards};
   }
-  const parts=[];
-  if(localHits.length)parts.push("إدراجات محفوظة على هذا الجهاز:\n"+localHits.slice(0,5).map((item,n)=>(n+1)+". "+item.name+" — "+[item.area,item.dist,item.gov].filter(Boolean).join(" / ")+(item.phone?" — الهاتف: "+item.phone+(item.verifiedAt?" (راجع الرقم قبل الاستخدام)":" (غير مؤكد)"):"")+(item.verifiedAt?" — حالة الإدراج: موثّق لدى دليلنا":" — إدراج غير موثّق")).join("\n"));
-  if(places.length)parts.push("أماكن مسجلة في فهرس المصادر المفتوحة (OpenStreetMap وOverture Maps)، وليست إدراجات موثقة ميدانياً من دليلنا:\n"+places.slice(0,8).map((item,n)=>(n+1)+". "+item.name+" — "+[item.address,item.district,item.governorate].filter(Boolean).join(" / ")+(item.phone?" — هاتف غير مؤكد: "+item.phone:"") +" — البيانات تحتاج تحققاً ميدانياً").join("\n"));
-  if(approved.length)parts.push("إعلانات موجودة في قاعدة البيانات المشتركة ومعتمدة للنشر من الإدارة. الاعتماد لا يعني التحقق الميداني من الهاتف أو العنوان:\n"+approved.slice(0,8).map((item,n)=>(n+1)+". "+item.title+" — "+([item.area,item.district,item.governorate].filter(Boolean).join(" / ")||"الموقع غير مكتمل")+(item.price?" — "+item.price+" "+(item.currency||""):"")+(item.phone?" — رقم غير مؤكد: "+item.phone:"")).join("\n"));
-  if(!places.length&&!approved.length&&!localHits.length)parts.push(serviceIntent.productSearch||["jobs","souq","land"].includes(serviceIntent.category)
-   ?"لا توجد إعلانات معتمدة تطابق هذا البحث حالياً. أضف إعلانك ليصل إلى مراجعة المشرف."
-   :"لم نجد سجلات مطابقة في المصادر التي تم فحصها. هذا لا يثبت عدم وجود محلات أو خدمات في المنطقة. يمكنك إرسال بياناته إلى دليلنا لمراجعتها.");
+  const count=cards.length;
+  const answer=count
+   ?(curLang==="en"?"I found "+count+" matching places for "+serviceIntent.label+" in "+selectedContext.place+". Use the contact and map links where available. Details can change, so confirm before visiting.":"وجدت لك "+count+" نتائج تطابق "+serviceIntent.label+" في "+selectedContext.place+". استخدم رابط الاتصال والخريطة عند توفرهما. قد تتغير البيانات، فتحقق قبل الزيارة.")
+   :(serviceIntent.productSearch||["jobs","souq","land"].includes(serviceIntent.category)
+     ?(curLang==="en"?"There are no approved listings matching this search right now.":"لا توجد إعلانات معتمدة تطابق هذا البحث حالياً.")
+     :(curLang==="en"?"I couldn't find matching records in the local catalogue or the live map sources checked. This does not mean the place does not exist.":"لم أعثر على سجل مطابق في الفهرس المحلي أو مصادر الخرائط الحية التي فُحصت. هذا لا يعني أن المكان غير موجود."));
   return {
-   answer:parts.join("\n\n"),
+   answer,
    mode:places.length||approved.length?"live-directory":localHits.length?"directory":"reference",
-   referenceSource:"فهرس دليلنا وقاعدة البيانات المشتركة",
-   dataSources
+   referenceSource:"Dalilna directory and shared marketplace",
+   dataSources,
+   assistantCards:cards.slice(0,10)
   };
  }
  if(asksHubaishSubdistricts(q))return {answer:hubaishSubdistrictAnswer(),mode:"reference",referenceSource:"مرجع دليلنا الإداري",dataSources:["مرجع دليلنا الإداري"]};
@@ -4840,15 +5214,55 @@ async function askAssistant(q){
   if(cloud)return {...cloud,dataSources:["سياق بيانات دليلنا المرفق بالسؤال"]};
   return {answer:answerAI(q),mode:"local-fallback",dataSources:["بيانات محفوظة على هذا الجهاز"]};
  }
- return {
-  answer:answerAI(q),
-  mode:navigator.onLine?"local":"offline",
-  dataSources:["بيانات محفوظة على هذا الجهاز"]
- };
+ return {answer:answerAI(q),mode:navigator.onLine?"local":"offline",dataSources:["بيانات محفوظة على هذا الجهاز"]};
 }
 
 function isolateMixedDirectionText(value){
  return String(value??"").replace(/(?:\+?[0-9٠-٩۰-۹][0-9٠-٩۰-۹\s().,-]{4,}[0-9٠-٩۰-۹]|[A-Z0-9]{3,}\+[A-Z0-9]{2,})/gi,match=>"\u2066"+match.trim()+"\u2069");
+}
+function assistantMapUrl(item){
+ const direct=String(item?.mapUrl||item?.mapsUrl||"").trim();
+ if(/^https:\/\//i.test(direct))return direct;
+ const lat=Number(item?.lat??item?.latitude),lon=Number(item?.lon??item?.lng??item?.longitude);
+ if(Number.isFinite(lat)&&Number.isFinite(lon))return "https://www.openstreetmap.org/?mlat="+lat+"&mlon="+lon+"#map=18/"+lat+"/"+lon;
+ return "";
+}
+function renderAssistantResult(container,result){
+ container.replaceChildren();
+ const answer=document.createElement("div");
+ answer.className="assistant-answer-text";
+ answer.dir="auto";
+ answer.textContent=isolateMixedDirectionText(result?.answer||"");
+ container.appendChild(answer);
+ const cards=Array.isArray(result?.assistantCards)?result.assistantCards:[];
+ if(cards.length){
+  const list=document.createElement("div");
+  list.className="assistant-result-cards";
+  for(const item of cards){
+   const card=document.createElement("article");
+   card.className="assistant-result-card";
+   const title=document.createElement("b");title.dir="auto";title.textContent=item.name||"";
+   card.appendChild(title);
+   const meta=document.createElement("span");meta.className="assistant-result-meta";meta.dir="auto";
+   meta.textContent=[item.category,item.location,item.source].filter(Boolean).join(" · ");
+   card.appendChild(meta);
+   const actions=document.createElement("div");actions.className="assistant-result-actions";
+   if(item.phone){
+    const call=document.createElement("a");
+    call.href="tel:"+String(item.phone).replace(/[^+\d]/g,"");
+    call.textContent=curLang==="en"?"Call":"اتصال";
+    actions.appendChild(call);
+   }
+   const mapUrl=assistantMapUrl(item);
+   if(mapUrl){
+    const map=document.createElement("a");map.href=mapUrl;map.target="_blank";map.rel="noopener noreferrer";
+    map.textContent=curLang==="en"?"View map":"عرض على الخريطة";actions.appendChild(map);
+   }
+   if(actions.childNodes.length)card.appendChild(actions);
+   list.appendChild(card);
+  }
+  container.appendChild(list);
+ }
 }
 function appendChatMessage(type,text){
  const el=document.createElement("div");
@@ -4874,16 +5288,16 @@ $("#botf").addEventListener("submit",async e=>{
  if(sendButton)sendButton.disabled=true;
  try{
   const result=await askAssistant(q);
-  pending.textContent=isolateMixedDirectionText(result.answer);
+  renderAssistantResult(pending,result);
   const source=document.createElement("small");
   source.className="assistant-source";
   source.textContent=assistantSourceText(result);
   pending.appendChild(source);
  }catch(error){
-  pending.textContent=isolateMixedDirectionText(answerAI(q));
+  renderAssistantResult(pending,{answer:answerAI(q),assistantCards:[]});
   const source=document.createElement("small");
   source.className="assistant-source";
-  source.textContent="المجيب: دليلنا المحلي · تعذرت معالجة الطلب عبر المسار السحابي";
+  source.textContent=curLang==="en"?"Responder: local assistant · the cloud route could not process the request":"المجيب: دليلنا المحلي · تعذرت معالجة الطلب عبر المسار السحابي";
   pending.appendChild(source);
  }finally{
   if(sendButton)sendButton.disabled=false;
@@ -5217,8 +5631,11 @@ function render(){
     const base=S.items.filter(i=>i.cat!=="souq"&&i.cat!=="jobs");
     const res=applyFilters(base.filter(match));
     $("#latestT").innerHTML=`${q?T("searchRes"):T("latestTitle")} <span>${res.length}</span>`;
-    $("#list").innerHTML=res.slice(0,homeLim).map(cardHTML).join("")||emptySearchFallbackHTML(q||"محلات وخدمات");
-    $("#more").hidden=res.length<=homeLim;
+    const unifiedResultsVisible=liveWanted&&searchActive;
+    $("#latestT").hidden=unifiedResultsVisible;
+    $("#list").hidden=unifiedResultsVisible;
+    $("#list").innerHTML=res.slice(0,homeLim).map(cardHTML).join("")||(unifiedResultsVisible?"":emptySearchFallbackHTML(q||"محلات وخدمات"));
+    $("#more").hidden=unifiedResultsVisible||res.length<=homeLim;
   }else if(view==="cat"){
     $("#clist").hidden=true;
     $("#areaBtn").hidden=true;
@@ -5232,9 +5649,11 @@ function render(){
   const showTopSearch=searchActive;
   const topSection=$("#searchResultsTop"),topList=$("#searchResultList"),homeSlot=$("#homeListSlot");
   if(topSection)topSection.hidden=!showTopSearch;
+  if(topList)topList.hidden=showTopSearch;
   const nodes=[$("#latestT"),$("#list"),$("#more")].filter(Boolean);
   if(showTopSearch&&topList)nodes.forEach(node=>topList.appendChild(node));
   else if(homeSlot)nodes.forEach(node=>homeSlot.appendChild(node));
+  if(typeof applyStaticBilingualLabels==="function")applyStaticBilingualLabels();
 }
 
 let searchRenderTimer=0;
@@ -5280,7 +5699,7 @@ else if(location.hash==="#jobs")window.setTimeout(()=>go("jobs"),0);
 applyLang();
 buildScopeSelector();
 async function checkRemoteVersionSilently(){
- const localVersion=document.querySelector('meta[name="app-version"]')?.content||"2.6.1";
+ const localVersion=document.querySelector('meta[name="app-version"]')?.content||"2.7.0";
  const remoteUrl=location.hostname==="appassets.androidplatform.net"
   ?"https://baraagpt6-droid.github.io/dalilna/version.json"
   :"./version.json";
@@ -5393,6 +5812,6 @@ window.DalilnaMarketplaceBridge={
 })();
 </script>
 <script src="./marketplace-client.js"></script>
-<script src="./features-2.1.js?v=2.6.1" defer></script>
+<script src="./features-2.1.js?v=2.7.0" defer></script>
 </body>
 </html>

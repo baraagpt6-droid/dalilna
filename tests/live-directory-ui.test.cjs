@@ -96,3 +96,24 @@ test("local-service categories do not fetch unrelated marketplace ads",()=>{
  assert.ok(html.includes('if(!productType&&!categoryProductTypes&&!marketplaceCategories.includes(category))'));
  assert.ok(html.includes('ctx.type==="subdistrict"'));
 });
+
+test("hybrid search presents a single results surface when the live directory is active",()=>{
+ assert.ok(html.includes("const unifiedResultsVisible=liveWanted&&searchActive"));
+ assert.ok(html.includes('$("#latestT").hidden=unifiedResultsVisible'));
+ assert.ok(html.includes('$("#list").hidden=unifiedResultsVisible'));
+ assert.ok(html.includes('$("#more").hidden=unifiedResultsVisible||res.length<=homeLim'));
+});
+test("profile lists this device's adverts, shops and saved places without implying central authentication",()=>{
+ for(const token of ['id="profileActivityList"','data-profile-item-id=','My marketplace adverts','Shops I added','Saved directory places'])assert.ok(html.includes(token),token);
+ assert.ok(html.includes("لا يمثل حساباً مركزياً موثقاً"));
+});
+test("language changes reach generated jobs and shared marketplace controls",()=>{
+ assert.ok(html.includes("window.DALILNA_LANGUAGE=curLang"));
+ assert.ok(html.includes("dalilna:languagechange"));
+ assert.ok(fs.readFileSync("features-2.1.js","utf8").includes('window.addEventListener("dalilna:languagechange"'));
+ assert.ok(fs.readFileSync("marketplace-client.js","utf8").includes('window.addEventListener("dalilna:languagechange"'));
+});
+test("job seeker refresh button is removed from the UI and event bindings",()=>{
+ assert.ok(!fs.readFileSync("features-2.1.js","utf8").includes('id="refreshJobSeekers"'));
+ assert.ok(!fs.readFileSync("features-2.1.js","utf8").includes('refreshJobSeekers")?.addEventListener'));
+});
