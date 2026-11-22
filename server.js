@@ -549,10 +549,19 @@ async function searchGeoapifyPlaces(params) {
 
 function classifyCategory(tags) {
   const value=(key)=>String(tags&&tags[key]||"").trim().toLowerCase();
-  // Exact high-priority activity tags prevent pharmacies, vehicle services
-  // and other overlapping records from entering multiple directory sections.
+  // Exact activity tags take priority over broad taxonomy aliases.
+  // Resolve malformed mixed-tag records using the same national primary order
+  // as the offline catalogue builder.
+  const strictMatches=new Set();
   for(const rule of CATEGORY_MAPPING.strictPrimaryRules||[]){
-    if(value(rule.key)===String(rule.value||"").toLowerCase()&&CATEGORY_MAPPING.categories?.[rule.category])return rule.category;
+    if(value(rule.key)===String(rule.value||"").toLowerCase()&&CATEGORY_MAPPING.categories?.[rule.category]){
+      strictMatches.add(rule.category);
+    }
+  }
+  if(strictMatches.size){
+    const order=CATEGORY_MAPPING.primaryCategoryOrder||Object.keys(CATEGORY_MAPPING.categories||{});
+    const rank=new Map(order.map((category,index)=>[category,index]));
+    return [...strictMatches].sort((a,b)=>(rank.get(a)??order.length)-(rank.get(b)??order.length))[0];
   }
   const shop=value("shop"),amenity=value("amenity"),healthcare=value("healthcare");
   const tourism=value("tourism"),office=value("office"),craft=value("craft");
