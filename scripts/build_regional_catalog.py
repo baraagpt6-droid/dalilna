@@ -561,7 +561,8 @@ def write_catalog(items, governors, districts, output):
     grouped = defaultdict(list)
     for item in items:
         grouped[item["governorate"]].append(item)
-    snapshot = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    generated_at = datetime.now(timezone.utc).isoformat()
+    snapshot = generated_at[:10]
     manifest_rows = []
     for gov in governors:
         rows = grouped.get(gov["name"], [])
@@ -625,7 +626,7 @@ def write_catalog(items, governors, districts, output):
                 source_counts[source_name] += 1
             if license_name:
                 license_counts[license_name] += 1
-    manifest = {"schemaVersion": 2, "snapshotDate": snapshot, "totalCount": len(items),
+    manifest = {"schemaVersion": 2, "snapshotDate": snapshot, "generatedAt": generated_at, "totalCount": len(items),
                 "sourceCounts": dict(source_counts), "licenseCounts": dict(license_counts),
                 "districtCountSchemaVersion": 1,
                 "districtCountTotal": district_count_total,
