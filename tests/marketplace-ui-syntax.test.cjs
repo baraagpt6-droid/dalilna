@@ -100,15 +100,15 @@ test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black 
 test("regional catalogue manifest loads at first visit and does not show a local-only count as the national total",()=>{
  assert.ok(html.includes('loadRegionalCatalogManifest(false).catch'));
  assert.ok(html.includes('جارٍ تحميل فهرس اليمن'));
- assert.ok(html.includes('manifest.json?v=2.1.8'));
+ assert.ok(html.includes('manifest.json?v=2.3.0'));
  assert.ok(html.includes('cache:"no-store"'));
  assert.ok(html.includes('districtCounts.length!==335'));
 });
 test("service worker refreshes regional data and critical CSS/JS from the network",()=>{
- assert.ok(sw.includes('CACHE_PREFIX + "v2.1.8"'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.3.0"'));
  assert.ok(sw.includes('url.pathname.includes("/regional-catalog/")'));
  assert.ok(sw.includes('fetch(request, { cache: "no-store" })'));
- assert.ok(sw.includes('features-2.1.css?v=2.1.8'));
+ assert.ok(sw.includes('features-2.1.css?v=2.3.0'));
 });
 
 test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});
