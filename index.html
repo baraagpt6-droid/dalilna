@@ -4209,7 +4209,8 @@ function directoryMapSearchInfo(q){
     {category:"jobs",label:"وظائف وإعلانات توظيف",test:/(وظيفه|وظائف|توظيف|فرص عمل|job|jobs|employment|vacancy)/}
   ];
   const service=services.find(item=>item.test.test(text));
-  if(!product&&!service)return null;
+  const rateIntent=/(سعر الصرف|اسعار الصرف|سعر العملات|سعر الدولار|صرف الدولار|كم سعر الدولار|الدولار اليوم|exchange rate|currency rate|forex rate|usd rate)/.test(text);
+  if(!product&&!service&&!rateIntent)return null;
   const GOVS_EN=["Capital Municipality","Sana'a","Aden","Taiz","Ibb","Al Hudaydah","Dhamar","Al Bayda","Lahij","Abyan","Al Dhale'e","Marib","Al Jawf","Sa'dah","Hajjah","Amran","Al Mahwit","Raymah","Hadramaut","Shabwah","Al Mahrah","Socotra"];
   const govIndex=GOVS.findIndex((name,index)=>text.includes(normalizePlace(name))||text.includes(normalizePlace(GOVS_EN[index])));
   const gov=govIndex>=0?GOVS[govIndex]:"";
@@ -4220,7 +4221,6 @@ function directoryMapSearchInfo(q){
   const place=gov?("محافظة "+gov+"، اليمن")
     :districtEntry?("مديرية "+district+"، محافظة "+districtEntry[0]+"، اليمن")
     :scope?regionScopeLabel(regionCurrentContext()):"اليمن";
-  const rateIntent=/(سعر الصرف|اسعار الصرف|سعر العملات|exchange rate|currency rate|forex rate)/.test(text);
   const category=product?product.category:rateIntent?"money":service.category,label=product?product.label:rateIntent?"أسعار الصرف":service.label;
   const mapQuery=label+" "+String(q||"").trim()+" "+place;
   return {category,productType:product?product.productType:"",label,place,mapQuery,productSearch:!!product,
@@ -4917,6 +4917,25 @@ function assistantSourceText(result){
 }
 async function askAssistant(q){
  const serviceIntent=directoryMapSearchInfo(q);
+ if(serviceIntent?.rateIntent){
+  const payload=await loadLiveFx(false);
+  if(!payload?.fresh){
+   return {answer:curLang==="en"?"The rate source has not confirmed a fresh market reading. I won't show an old or estimated price.":"لم يؤكد مصدر الأسعار قراءة حديثة. لن أعرض سعراً قديماً أو تقديرياً.",mode:"reference",dataSources:["ye-rial.com"]};
+  }
+  const markets=[["sanaa",curLang==="en"?"Sana'a":"صنعاء"],["aden",curLang==="en"?"Aden":"عدن"]];
+  const moneyItems=[];
+  for(const [key,label] of markets){
+   const items=payload.data?.[key]?.items||{};
+   const usd=items.usd||{},sar=items.sar||{};
+   const format=value=>cleanMarketNumber(value)===null?"—":Number(value).toLocaleString(curLang==="en"?"en-US":"ar-YE",{maximumFractionDigits:2});
+   moneyItems.push(label+": USD buy "+format(usd.buy)+" / sell "+format(usd.sell)+"; SAR buy "+format(sar.buy)+" / sell "+format(sar.sell));
+  }
+  const verified=payload.last_verified_at||payload.last_sync||"";
+  return {
+   answer:(curLang==="en"?"Latest confirmed market readings from the available Sana'a and Aden sources":"آخر القراءات السوقية المؤكدة المتاحة لمصدري صنعاء وعدن")+":\n"+moneyItems.join("\n")+(verified?"\n"+(curLang==="en"?"Last verified: ":"آخر تحقق: ")+verified:""),
+   mode:"live-rates",referenceSource:"ye-rial.com",dataSources:["ye-rial.com"]
+  };
+ }
  if(serviceIntent){
   const context=regionCurrentContext(),query=String(q||"");
   const selectedContext={
