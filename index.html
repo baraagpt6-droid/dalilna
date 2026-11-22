@@ -2641,6 +2641,10 @@ const NEARBY_AREAS=["مفرق حبيش","المخادر","مدينة إب"];
 const AREAS=[...HUBAISH_UZ,...NEARBY_AREAS];
 const GOVS=["أمانة العاصمة","صنعاء","عدن","تعز","إب","الحديدة","ذمار","البيضاء","لحج","أبين","الضالع","مأرب","الجوف","صعدة","حجة","عمران","المحويت","ريمة","حضرموت","شبوة","المهرة","سقطرى"];
 const GOVS_EN=["Capital Municipality","Sana'a","Aden","Taiz","Ibb","Al Hudaydah","Dhamar","Al Bayda","Lahij","Abyan","Al Dhale'e","Marib","Al Jawf","Sa'dah","Hajjah","Amran","Al Mahwit","Raymah","Hadramaut","Shabwah","Al Mahrah","Socotra"];
+function governorateLabel(name){
+ const index=GOVS.findIndex(value=>normalizePlace(value)===normalizePlace(name));
+ return index>=0&&curLang==="en"?GOVS_EN[index]:String(name||"");
+}
 const YEMEN_DISTRICTS=(window.DALILNA_YEMEN_DISTRICTS||{"أبين":["احور","المحفد","الوضيع","جيشان","خنفر","رصد","زنجبار","سباح","سرار","لودر","موديه"],"الضالع":["الازارق","الحشاء","الحصين","الشعيب","الضالع","جبن","جحاف","دمت","قعطبه"],"حضرموت":["الديس","الريدة وقصيعر","السوم","الشحر","الضليعه","العبر","القطن","القف","المكلا","بروم ميفع","تريم","ثمود","حجر","حجر الصيعر","حريضه","دوعن","رخيه","رماه","زمخ ومنوخ","ساه","سيئون","شبام","عمد","غيل باوزير","غيل بن يمين","مدينة المكلا","وادي العين","يبعث"],"الحديدة":["التحيتا","الجراحي","الحالي","الحجيله","الحوك","الخوخه","الدريهمي","الزهره","الزيديه","السخنه","الصليف","الضحى","القناوص","اللحيه","المراوعه","المغلاف","المنصوريه","المنيره","الميناء","باجل","برع","بيت الفقيه","جبل راس","حيس","زبيد","كمران"],"صعدة":["الحشوه","الصفراء","الظاهر","باقم","حيدان","رازح","ساقين","سحار","شداء","صعده","غمر","قطابر","كتاف والبقع","مجز","منبه"],"إب":["اب","الرضمه","السبره","السده","السياني","الشعر","الظهار","العدين","القفر","المخادر","المشنه","النادره","بعدان","جبله","حبيش","حزم العدين","ذي السفال","فرع العدين","مذيخره","يريم"],"مأرب":["الجوبه","العبديه","بدبده","جبل مراد","حريب","حريب القرامش","رحبه","رغوان","صرواح","مارب","ماهليه","مجزر","مدغل الجدعان","مدينة مارب"],"البيضاء":["البيضاء","الرياشيه","الزاهر","السواديه","الشريه","الصومعه","الطفه","العرش","القريشيه","الملاجم","ذي ناعم","رداع","ردمان","صباح","مدينة البيضاء","مسوره","مكيراس","ناطع","نعمان","ولدربيع"],"عمران":["السود","السوده","العشه","المدان","بني صريم","ثلاء","جبل عيال يزيد","حرف سفيان","حوث","خارف","خمر","ذيبين","ريده","شهاره","صوير","ظليمة حبور","عمران","عيال سريح","قفلة عذر","مسور"],"عدن":["البريقه","التواهي","الشيخ عثمان","المعلا","المنصوره","خور مكسر","دار سعد","صيره"],"المهرة":["الغيظه","المسيله","حات","حصوين","حوف","سيحوت","شحن","قشن","منعر"],"الجوف":["الحزم","الحميدات","الخلق","الزاهر","الغيل","المتون","المصلوب","المطمه","برط العنان","خب و الشعف","خراب المراشى","رجوزه"],"لحج":["الحد","الحوطه","القبيطه","المسيمير","المضاربة و العاره","المفلحي","المقاطره","الملاح","تبن","حالمين","حبيل جبر","ردفان","طور الباحه","يافع","يهر"],"ذمار":["الحداء","المنار","جبل الشرق","جهران","ضوران انس","عتمه","عنس","مدينة ذمار","مغرب عنس","ميفعة عنس","وصاب السافل","وصاب العالي"],"صنعاء":["ارحب","الحصن","الحيمة الخارجيه","الحيمة الداخليه","الطيال","بلاد الروس","بني حشيش","بني ضبيان","بني مطر","جحانه","خولان","سنحان وبني بهلول","صعفان","مناخه","نهم","همدان"],"ريمة":["الجبين","الجعفريه","السلفيه","بلاد الطعام","كسمه","مزهر"],"المحويت":["الخبت","الرجم","الطويله","المحويت","بني سعد","حفاش","شبام كوكبان","مدينة المحويت","ملحان"],"تعز":["التعزيه","الشمايتين","الصلو","القاهره","المخاء","المسراخ","المظفر","المعافر","المواسط","الوازعيه","باب المندب","جبل حبشي","حيفان","خدير","سامع","شرعب الرونه","شرعب السلام","صاله","صبر الموادم","ماويه","مشرعة وحدنان","مقبنه","موزع"],"أمانة العاصمة":["ازال","التحرير","الثوره","السبعين","الصافيه","الوحده","بني الحارث","شعوب","صنعاء القديمه","ضواحي الامانة سنحان وبني بهلول","ضواحي الامانة همدان","معين"],"شبوة":["الروضه","الصعيد","الطلح","بيحان","جردان","حبان","حطيب","دهر","رضوم","عتق","عرماء","عسيلان","عين","مرخة السفلى","مرخة العليا","ميفعه","نصاب"],"سقطرى":["حديبو","قلنسية وعبد الكوري"],"حجة":["اسلم","افلح الشام","افلح اليمن","الجميمه","الشاهل","الشغادره","المحابشه","المغربه","المفتاح","بكيل المير","بني العوام","بني قيس الطور","حجه","حرض","حيران","خيران المحرق","شرس","عبس","قاره","قفل شمر","كحلان الشرف","كحلان عفار","كشر","كعيدنه","مبين","مدينة حجه","مستباء","ميدي","نجره","وشحه","وضره"]});
 const YEMEN_DISTRICT_TOTAL=window.DALILNA_YEMEN_DISTRICT_TOTAL||335;
 const YEMEN_GOV_TOTAL=window.DALILNA_YEMEN_GOV_TOTAL||22;
@@ -4267,22 +4271,24 @@ function liveDirectoryContext(){
  return {place,fallbackPlace:ctx.gov&&ctx.type!=="governorate"?"محافظة "+ctx.gov+"، اليمن":""};
 }
 function liveDirectoryCardHTML(item){
- const record=item&&typeof item==="object"?item:{};
- const phone=String(record.phone||"").trim(),phoneInfo=yemenPhoneDetails(phone),phoneHref=phone.replace(/[^\d+]/g,"");
- const location=[record.governorate,record.district].filter(Boolean).join("، ");
- const contact=phone?'<div class="live-directory-actions"><a href="tel:'+esc(phoneHref)+'">اتصال</a>'+(phoneInfo.isMobile?'<a href="'+esc(yemenWhatsAppUrl(phone,"مرحباً، وجدت محلكم في دليلنا وأريد الاستفسار عن الخدمة."))+'" target="_blank" rel="noopener noreferrer">واتساب</a>':"")+'</div>':"";
+ const english=curLang==="en",record=item&&typeof item==="object"?item:{};
+ const phone=String(record.phone||"").trim(),phoneInfo=yemenPhoneDetails(phone),phoneHref=phone.replace(/[^\\d+]/g,"");
+ const gov=record.governorate||"",district=record.district||"";
+ const location=[english?governorateLabel(gov):gov,district].filter(Boolean).join(english?", ":"، ");
+ const contact=phone?'<div class="live-directory-actions"><a href="tel:'+esc(phoneHref)+'">'+(english?"Call":"اتصال")+'</a>'+(phoneInfo.isMobile?'<a href="'+esc(yemenWhatsAppUrl(phone,english?"Hello, I found your business in Dalilna and would like to ask about your service.":"مرحباً، وجدت محلكم في دليلنا وأريد الاستفسار عن الخدمة."))+'" target="_blank" rel="noopener noreferrer">'+(english?"WhatsApp":"واتساب")+'</a>':"")+'</div>':"";
  const lat=Number(record.lat??record.latitude),lon=Number(record.lon??record.lng??record.longitude);
  const mapUrl=record.mapsUrl||(Number.isFinite(lat)&&Number.isFinite(lon)?"https://www.openstreetmap.org/?mlat="+lat.toFixed(6)+"&mlon="+lon.toFixed(6)+"#map=18/"+lat.toFixed(6)+"/"+lon.toFixed(6):"");
- const map=mapUrl?'<div class="live-directory-actions"><a href="'+esc(mapUrl)+'" target="_blank" rel="noopener noreferrer">الخريطة</a></div>':"";
+ const map=mapUrl?'<div class="live-directory-actions"><a href="'+esc(mapUrl)+'" target="_blank" rel="noopener noreferrer">'+(english?"View map":"الخريطة")+'</a></div>':"";
  const verified=Boolean(record.verifiedAt||record.verified===true);
  const status=verified
-  ?'<small class="live-directory-local-note">حالة الإدراج: موثّق لدى دليلنا. قد تتغير أرقام الاتصال أو العناوين، فتأكد منها قبل الزيارة.</small>'
-  :'<small class="live-directory-local-note">بيانات من مصدر خارجي أو مفتوح، ولم يتم التحقق منها ميدانياً من فريق دليلنا. رقم الهاتف والعنوان قد يكونان غير دقيقين أو غير محدثين.</small>';
- return '<article class="live-directory-card"><div class="live-directory-card-head"><h3>'+esc(record.name||"مكان بدون اسم")+'</h3><span class="tag">'+esc(CN[record.category]||"خدمة")+'</span></div>'+
- (location?'<p>المحافظة والمديرية: <bdi dir="auto">'+esc(location)+'</bdi></p>':"")+
- (record.address?'<p>العنوان: <bdi dir="auto">'+esc(record.address)+'</bdi></p>':"")+
- (record.openingHours?'<p>ساعات العمل: '+esc(record.openingHours)+'</p>':"")+
- (phone?'<p>الهاتف: <bdi dir="ltr" class="ltr-value">'+esc(phone)+'</bdi>'+(verified?"":" <small>غير مؤكد</small>")+'</p>':"")+contact+map+status+
+  ?'<small class="live-directory-local-note">'+(english?"Listing verified by Dalilna. Contact details may change, so confirm before visiting.":"حالة الإدراج: موثّق لدى دليلنا. قد تتغير أرقام الاتصال أو العناوين، فتأكد منها قبل الزيارة.")+'</small>'
+  :'<small class="live-directory-local-note">'+(english?"This record comes from an open or external source and has not been field-verified by Dalilna. Phone and address details may be incomplete or outdated.":"بيانات من مصدر خارجي أو مفتوح، ولم يتم التحقق منها ميدانياً من فريق دليلنا. رقم الهاتف والعنوان قد يكونان غير دقيقين أو غير محدثين.")+'</small>';
+ const category=catLabel(record.category||"other");
+ return '<article class="live-directory-card"><div class="live-directory-card-head"><h3>'+esc(record.name||(english?"Unnamed place":"مكان بدون اسم"))+'</h3><span class="tag">'+esc(category)+'</span></div>'+
+ (location?'<p>'+(english?"Governorate and district: ":"المحافظة والمديرية: ")+'<bdi dir="auto">'+esc(location)+'</bdi></p>':"")+
+ (record.address?'<p>'+(english?"Address: ":"العنوان: ")+'<bdi dir="auto">'+esc(record.address)+'</bdi></p>':"")+
+ (record.openingHours?'<p>'+(english?"Opening hours: ":"ساعات العمل: ")+esc(record.openingHours)+'</p>':"")+
+ (phone?'<p>'+(english?"Phone: ":"الهاتف: ")+'<bdi dir="ltr" class="ltr-value">'+esc(phone)+'</bdi>'+(verified?"":' <small>'+(english?"Not verified":"غير مؤكد")+'</small>')+'</p>':"")+contact+map+status+
  "</article>";
 }
 function geoapifyDirectoryCardHTML(item){
@@ -4469,29 +4475,18 @@ function regionalCatalogMatches(items,context,query,category,productType){
 }
 function regionalCatalogCardHTML(item,requestedCategory){
  const displayCategory=requestedCategory&&requestedCategory!=="all"&&((item.categories||[item.category]).includes(requestedCategory)||requestedCategory==="land"&&(item.categories||[]).includes("real_estate"))?requestedCategory:item.category;
- const labels={
-  grocery:"بقالات وتموينات",food:"مطاعم ومخابز",cafe:"بوفيات ومقاهي",edu:"مدارس وتعليم",
-  health:"مستشفيات ومراكز",pharmacy:"صيدليات",gov:"جهات حكومية",money:"بنوك وصرافة",
-  real_estate:"أراضٍ وعقارات",vehicles:"سيارات وورش مركبات",parts:"قطع غيار",build:"مواد بناء",
-  craft:"حرفيون وصيانة",transport:"نقل ومواصلات",telecom:"جوالات واتصالات",utility:"مياه وغاز",
-  farm:"زراعة ومواشٍ",mosque:"مساجد وجوامع",gold:"ذهب ومجوهرات",wedding:"قاعات أعراس",
-  hotel:"فنادق وشقق",market:"أسواق",solar:"طاقة شمسية",elec:"إلكترونيات وكمبيوتر",
-  clothes:"ملابس وأحذية",home:"أثاث وأجهزة منزلية",books:"مكتبات وقرطاسية",
-  beauty:"عطور وتجميل",delivery:"توصيل وشحن",salon:"صالونات وحلاقة",laundry:"مغاسل"
- };
  let card=liveDirectoryCardHTML({...item,category:displayCategory});
- const label=labels[displayCategory]||catLabel(displayCategory)||item.category;
- card=card.replace('<span class="tag">خدمة</span>','<span class="tag">'+esc(label)+'</span>');
  const exact=["osm-boundary","geoboundaries-polygon"].includes(item.assignmentQuality);
+ const english=curLang==="en";
  const note=exact
-  ?"توزيع المديرية مستند إلى مضلع حدود إداري."
-  :"توزيع المديرية تقديري من أقرب مركز إداري؛ راجع الموقع قبل الاعتماد عليه.";
+  ?(english?"District assignment is based on an administrative boundary polygon.":"توزيع المديرية مستند إلى مضلع حدود إداري.")
+  :(english?"District assignment is approximate, based on the nearest administrative centre. Check the map before relying on it.":"توزيع المديرية تقديري من أقرب مركز إداري؛ راجع الموقع قبل الاعتماد عليه.");
  return card.replace("</article>",'<small class="live-directory-local-note">'+esc(note)+'</small></article>');
 }
 
 
 function renderLiveDirectoryResponse(data){
- const status=$("#liveDirectoryStatus"),box=$("#liveDirectoryItems"),attribution=$("#liveDirectoryAttribution");
+ const english=curLang==="en",status=$("#liveDirectoryStatus"),box=$("#liveDirectoryItems"),attribution=$("#liveDirectoryAttribution");
  if(!status||!box)return;
  let items=Array.isArray(data?.items)?data.items:[];
  if(flt.open)items=items.filter(item=>isOpenNow(item?.openingHours||item?.hours)===true);
@@ -4501,30 +4496,40 @@ function renderLiveDirectoryResponse(data){
  liveDirectoryLastData=data;
  const shared=liveDirectorySharedMatchesHTML();
  box.classList.remove("live-google-results");
- if(attribution)attribution.innerHTML='الأماكن: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL-1.0) · <a href="https://docs.overturemaps.org/guides/places/" target="_blank" rel="noopener noreferrer">Overture Maps Places</a> (CDLA-Permissive-2.0 والتراخيص الخاصة بالمصدر) · <a href="https://docs.foursquare.com/data-products/docs/fsq-places-open-source" target="_blank" rel="noopener noreferrer">Foursquare Open Places</a> (Apache-2.0 عند الاستيراد المستقل) · الحدود: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">geoBoundaries</a> و<a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.';
- const date=data.snapshotDate||data.manifest&&data.manifest.snapshotDate||"غير محدد";
- const regionLabel=data.context?.type==="country"?"جميع المحافظات · ":(data.regionName?"محافظة "+data.regionName+" · ":"");
- status.textContent=regionLabel+Number(items.length).toLocaleString("ar")+" نتيجة من فهرس الأماكن · آخر تحديث: "+date+(liveSharedMatches.length?" · إعلانات معتمدة: "+liveSharedMatches.length:"")+(liveSharedLoadError?" · تعذر تحديث الإعلانات المشتركة":"");
- if(view==="cat"&&$("#count"))$("#count").textContent=Number(items.length).toLocaleString("ar")+" نتيجة في "+(CN[curCat]||curCat);
+ if(attribution)attribution.innerHTML=english
+  ?'Places: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL-1.0) · <a href="https://docs.overturemaps.org/guides/places/" target="_blank" rel="noopener noreferrer">Overture Maps Places</a> · <a href="https://docs.foursquare.com/data-products/docs/fsq-places-open-source" target="_blank" rel="noopener noreferrer">Foursquare Open Places</a> · boundaries: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">geoBoundaries</a> and <a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.'
+  :'الأماكن: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL-1.0) · <a href="https://docs.overturemaps.org/guides/places/" target="_blank" rel="noopener noreferrer">Overture Maps Places</a> (CDLA-Permissive-2.0 والتراخيص الخاصة بالمصدر) · <a href="https://docs.foursquare.com/data-products/docs/fsq-places-open-source" target="_blank" rel="noopener noreferrer">Foursquare Open Places</a> (Apache-2.0 عند الاستيراد المستقل) · الحدود: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">geoBoundaries</a> و<a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.';
+ const date=data.snapshotDate||data.manifest&&data.manifest.snapshotDate||(english?"Not specified":"غير محدد");
+ const regionLabel=data.context?.type==="country"?(english?"All governorates · ":"جميع المحافظات · "):(data.regionName?(english?"Governorate ":"محافظة ")+governorateLabel(data.regionName)+" · ":"");
+ status.textContent=regionLabel+Number(items.length).toLocaleString(english?"en-US":"ar-YE")+(english?" results in the places index · Snapshot: ":" نتيجة من فهرس الأماكن · آخر تحديث: ")+date+
+  (liveSharedMatches.length?(english?" · Approved adverts: ":" · إعلانات معتمدة: ")+liveSharedMatches.length:"")+
+  (liveSharedLoadError?(english?" · Shared adverts could not be refreshed":" · تعذر تحديث الإعلانات المشتركة"):"");
+ if(view==="cat"&&$("#count"))$("#count").textContent=Number(items.length).toLocaleString(english?"en-US":"ar-YE")+(english?" results in ":" نتيجة في ")+catLabel(curCat);
  if(!items.length){
   const msg=data.classifiedOnly
-   ?"هذا القسم يعتمد على إعلانات المستخدمين والتجار التي تعتمدها الإدارة. لم توجد إعلانات معتمدة تطابق البحث حالياً."
-   :"لم نجد سجلات مطابقة في فهرس OpenStreetMap الحالي. هذا لا يعني أن المكان غير موجود. يمكنك إرسال بياناته إلى دليلنا لمراجعتها.";
-  box.innerHTML=shared+'<div class="live-directory-empty">'+esc(msg)+'</div>'+(liveSharedLoadError?'<div class="live-directory-empty">تعذر تحديث الإعلانات المشتركة الآن. سجل الأماكن المحلي ما زال يعمل.</div>':"");
+   ?(english?"This section uses adverts approved by Dalilna administrators. No approved advert matched this search.":"هذا القسم يعتمد على إعلانات المستخدمين والتجار التي تعتمدها الإدارة. لم توجد إعلانات معتمدة تطابق البحث حالياً.")
+   :(english?"No matching records were found in the current open-map catalogue. This does not mean the place does not exist. You can submit its details for review.":"لم نجد سجلات مطابقة في فهرس OpenStreetMap الحالي. هذا لا يعني أن المكان غير موجود. يمكنك إرسال بياناته إلى دليلنا لمراجعتها.");
+  box.innerHTML=shared+'<div class="live-directory-empty">'+esc(msg)+'</div>'+(liveSharedLoadError?'<div class="live-directory-empty">'+esc(english?"Shared adverts could not be refreshed. The local places catalogue is still available.":"تعذر تحديث الإعلانات المشتركة الآن. سجل الأماكن المحلي ما زال يعمل.")+'</div>':"");
   return;
  }
  const visible=items.slice(0,liveDirectoryVisibleCount);
  let cards=visible.map(item=>regionalCatalogCardHTML(item,data.category)).join("");
- if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">عرض المزيد ('+(items.length-visible.length)+')</button>';
- box.innerHTML=shared+cards;
+ if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">'+(english?"Show more (":"عرض المزيد (")+(items.length-visible.length)+')</button>';
+ const dataNote=english
+  ?'<div class="live-directory-empty">Open-map records are not field-verified by Dalilna. Phone numbers and addresses are shown only when the source provides them.</div>'
+  :'<div class="live-directory-empty">السجلات المفتوحة ليست موثقة ميدانياً من دليلنا. لا نعرض أرقام الهواتف أو العناوين إلا عندما يوفرها المصدر.</div>';
+ box.innerHTML=shared+dataNote+cards;
 }
 function liveDirectoryLocationPrompt(manifest){
- const box=$("#liveDirectoryItems");if(!box)return;
+ const english=curLang==="en",box=$("#liveDirectoryItems");if(!box)return;
  const rows=manifest&&manifest.governorates||[];
  const total=rows.reduce((sum,row)=>sum+Number(row.count||0),0);
- $("#liveDirectoryStatus").textContent="فهرس اليمن المحلي: "+Number(total).toLocaleString("ar")+" مكاناً مسجلاً موزعة على "+rows.length+" محافظة. اكتب اسم المحل أو النشاط للبحث في اليمن كله، أو اختر محافظة أو مديرية لتضييق النتائج.";
- const buttons=rows.map(row=>'<button type="button" class="region-governorate-pill" data-region-gov="'+esc(row.name)+'">'+esc(row.name)+' <small>'+Number(row.count||0).toLocaleString("ar")+'</small></button>').join("");
- box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">اختر المحافظة لعرض المحلات والخدمات والمدارس والمرافق المسجلة فيها. السجل لا يحصر كل نشاط موجود في الواقع.</div><div class="region-governorate-pills">'+buttons+'</div>';
+ $("#liveDirectoryStatus").textContent=english
+  ?"Yemen places index: "+Number(total).toLocaleString("en-US")+" records across "+rows.length+" governorates. Search a business or activity across Yemen, or choose a governorate or district."
+  :"فهرس اليمن المحلي: "+Number(total).toLocaleString("ar")+" مكاناً مسجلاً موزعة على "+rows.length+" محافظة. اكتب اسم المحل أو النشاط للبحث في اليمن كله، أو اختر محافظة أو مديرية لتضييق النتائج.";
+ const buttons=rows.map(row=>'<button type="button" class="region-governorate-pill" data-region-gov="'+esc(row.name)+'">'+esc(governorateLabel(row.name))+' <small>'+Number(row.count||0).toLocaleString(english?"en-US":"ar-YE")+'</small></button>').join("");
+ const prompt=english?"Choose a governorate to see its indexed shops, services, schools and public facilities. The catalogue does not include every real-world business.":"اختر المحافظة لعرض المحلات والخدمات والمدارس والمرافق المسجلة فيها. السجل لا يحصر كل نشاط موجود في الواقع.";
+ box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">'+esc(prompt)+'</div><div class="region-governorate-pills">'+buttons+'</div>';
 }
 async function loadLiveMarketplaceMatches(query,category,productType,signal,force,listingType){
  const region=regionCurrentContext(),gov=region.gov||"",district=region.district||"",key=[query,category,productType,listingType||"",gov,district].join("|");
