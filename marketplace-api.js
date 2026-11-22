@@ -119,14 +119,17 @@ async function syncMerchantFeed(req,res){
  const payload=await body(req,2500000),items=Array.isArray(payload.items)?payload.items:[];
  const sourceKey=clean(payload.sourceKey,50).toLowerCase().replace(/[^a-z0-9_-]/g,"");
  const sourceName=clean(payload.sourceName||sourceKey,100);
- if(!sourceKey||!items.length||items.length>250)throw error("INVALID_PRODUCT_FEED","خلاصة المنتجات فارغة أو غير صالحة.");
+ const completeSnapshot=payload.completeSnapshot===true;
+ if(!sourceKey||items.length>250||(!items.length&&!completeSnapshot))throw error("INVALID_PRODUCT_FEED","خلاصة المنتجات فارغة أو غير صالحة.");
+ const activeRefs=items.map(raw=>clean(raw?.clientRef,100)).filter(ref=>ref.startsWith("feed:"));
  const db=getPool();await schema(db);const client=await db.connect();
  let inserted=0,updated=0,skipped=0;
  try{
   await client.query("BEGIN");
   for(const raw of items){
    try{
-    const clientRef="feed:"+sourceKey+":"+clean(raw.id,80).replace(/[^a-zA-Z0-9._:-]/g,"-");
+    const suppliedRef=clean(raw.clientRef,100);
+    const clientRef=suppliedRef.startsWith("feed:")?suppliedRef:"feed:"+sourceKey+":"+clean(raw.id,80).replace(/[^a-zA-Z0-9._:-]/g,"-");
     if(clientRef.length<10||clientRef.length>100||!raw.phone||!raw.sellerName)throw new Error("seller contact missing");
     const item=validate({...raw,category:"souq",clientRef,country:"اليمن",listingType:raw.listingType||"sale",condition:raw.condition||"unknown"});
     if(!item.governorate||!item.district)throw new Error("location missing");
@@ -138,11 +141,16 @@ async function syncMerchantFeed(req,res){
     else updated++;
    }catch(_){skipped++;}
   }
+  let archived=0;
+  if(completeSnapshot){
+   const stale=await client.query("UPDATE marketplace_listings SET status='archived',expires_at=NOW(),updated_at=NOW() WHERE client_ref LIKE 'feed:%' AND status='approved' AND NOT (client_ref=ANY($1::text[])) RETURNING id",[activeRefs]);
+   archived=stale.rowCount||0;
+  }
   await client.query("COMMIT");
+  console.info(JSON.stringify({event:"marketplace.feed_sync",source:sourceName,received:items.length,inserted,updated,skipped,archived}));
+  return send(res,200,{ok:true,source:sourceName,received:items.length,inserted,updated,skipped,archived,fetchedAt:new Date().toISOString()});
  }catch(e){await client.query("ROLLBACK");throw e;}
  finally{client.release();}
- console.info(JSON.stringify({event:"marketplace.feed_sync",source:sourceName,received:items.length,inserted,updated,skipped}));
- return send(res,200,{ok:true,source:sourceName,received:items.length,inserted,updated,skipped,fetchedAt:new Date().toISOString()});
 }
 async function handleMarketplaceRequest(req,res,url){if(!url.pathname.startsWith("/api/marketplace/"))return false;try{const r=url.pathname.slice("/api/marketplace/".length);if(r==="status"&&req.method==="GET")await status(res);else if(r==="counts"&&req.method==="GET")await counts(req,res);else if(r==="listings"&&req.method==="GET")await list(req,res,url);else if(r==="listings"&&req.method==="POST")await submit(req,res);else if(r==="feed-sync"&&req.method==="POST")await syncMerchantFeed(req,res);else if(r==="admin/pending"&&req.method==="GET")await pending(req,res);else if(r==="admin/review"&&req.method==="POST")await review(req,res);else send(res,404,{ok:false,error:"المسار غير موجود."});}catch(e){send(res,e.statusCode||500,{ok:false,code:e.code||"INTERNAL_ERROR",error:clean(e.message,240)||"تعذر تنفيذ الطلب."});}return true;}
 module.exports={handleMarketplaceRequest,validate,CATEGORIES,PRODUCT_TYPES,GOVERNORATES,PRODUCT_GROUPS};
