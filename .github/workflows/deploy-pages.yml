@@ -66,3 +66,40 @@ jobs:
         uses: actions/deploy-pages@v4
         with:
           artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Smoke-test published homepage, styles and Yemen district catalogue
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          node --input-type=module <<'NODE'
+          const base = process.env.PAGE_URL;
+          if (!base) throw new Error("GitHub Pages URL was not provided.");
+          async function get(path) {
+            let lastError;
+            for (let attempt = 0; attempt < 5; attempt++) {
+              try {
+                const response = await fetch(new URL(path, base), { cache: "no-store" });
+                if (response.ok) return response;
+                lastError = new Error(path + " returned HTTP " + response.status);
+              } catch (error) { lastError = error; }
+              await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+            throw lastError;
+          }
+          const [page, css, js, swResponse, manifestResponse] = await Promise.all([
+            get("./index.html"),
+            get("./features-2.1.css?v=2.1.8"),
+            get("./features-2.1.js?v=2.1.8"),
+            get("./sw.js"),
+            get("./regional-catalog/manifest.json?v=2.1.8")
+          ]);
+          const html = await page.text();
+          const manifest = await manifestResponse.json();
+          if (!html.includes('content="2.1.8"')) throw new Error("Deployed homepage version is not 2.1.8.");
+          if (!(await css.text()).includes(".quick-jump-btn")) throw new Error("Quick-access stylesheet was not published.");
+          if (!(await js.text()).includes("officialApplicationUrl")) throw new Error("Feature JavaScript is incomplete.");
+          if (!(await swResponse.text()).includes("v2.1.8")) throw new Error("Updated service worker was not published.");
+          if (!Array.isArray(manifest.districtCounts) || manifest.districtCounts.length !== 335) throw new Error("Published regional manifest does not contain all 335 districts.");
+          if (Number(manifest.totalCount) !== 14883) throw new Error("Published regional total count is unexpected: " + manifest.totalCount);
+          console.log(JSON.stringify({ page: base, version: "2.1.8", districtRows: manifest.districtCounts.length, places: manifest.totalCount }, null, 2));
+          NODE
