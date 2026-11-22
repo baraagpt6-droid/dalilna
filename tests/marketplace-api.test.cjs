@@ -46,6 +46,10 @@ test("supports apartment and house rentals in the land and property category",()
 });
 
 
+test("marketplace exposes exactly seven browseable product groups",()=>{
+ const keys=Object.keys(PRODUCT_GROUPS);
+ assert.deepEqual(keys,["electronics","vehicles","property","solar","home","agriculture","clothing"]);
+});
 test("rent is restricted to homes, land and vehicles",()=>{
  const valid=validate({title:"سيارة للإيجار",category:"souq",productType:"car",listingType:"rent"});
  assert.equal(valid.listingType,"rent");
