@@ -140,6 +140,23 @@ test("daily catalogue workflow fetches Yemen ADM2 polygon boundaries",()=>{
  assert.ok(workflow.includes("YEM/ADM2"));
  assert.ok(workflow.includes("geoBoundaries"));
 });
+
+test("merchant feed SQL maps latitude, longitude and source metadata to distinct parameters",()=>{
+ const api=fs.readFileSync(path.join(__dirname,"../marketplace-api.js"),"utf8");
+ const feed=api.slice(api.indexOf("async function syncMerchantFeed"),api.indexOf("async function handleMarketplaceRequest"));
+ assert.ok(feed.includes("$18,$19,NULL,'approved',NOW(),$20"));
+ assert.ok(feed.includes("item.latitude,item.longitude"));
+ assert.ok(feed.includes("ON CONFLICT(client_ref) DO UPDATE"));
+ assert.ok(feed.includes("completeSnapshot&&skipped===0"));
+});
+test("Android 2.4.0 cache and version metadata remain synchronized",()=>{
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.4.0"'));
+ assert.ok(html.includes('content="2.4.0"'));
+ const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
+ assert.ok(gradle.includes("versionCode = 240"));
+ assert.ok(gradle.includes('versionName = "2.4.0"'));
+});
+
 test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black shapes",()=>{
  const start=html.indexOf('<nav class="quick-jump-bar"'),end=html.indexOf('</nav>',start);
  const bar=html.slice(start,end);
