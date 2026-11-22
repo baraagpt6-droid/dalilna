@@ -26,13 +26,13 @@
   return records;
  }
  function normalizeArabic(value){
-  return String(value||"").normalize("NFKC").replace(/[\\u064B-\\u065F\\u0670\\u0640]/g,"")
+  return String(value||"").normalize("NFKC").replace(/[\u064B-\u065F\u0670\u0640]/g,"")
    .replace(/[أإآٱ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي")
-   .replace(/ؤ/g,"و").replace(/ئ/g,"ي").replace(/[^\\u0600-\\u06FF0-9a-z\\s]/gi," ")
-   .replace(/\\s+/g," ").trim().toLowerCase();
+   .replace(/ؤ/g,"و").replace(/ئ/g,"ي").replace(/[^\u0600-\u06FF0-9a-z\s]/gi," ")
+   .replace(/\s+/g," ").trim().toLowerCase();
  }
  function normalizeSearchText(value){
-  return normalizeArabic(value).split(/\\s+/).filter(Boolean)
+  return normalizeArabic(value).split(/\s+/).filter(Boolean)
    .map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
  }
  function yemenPhone(phone){
