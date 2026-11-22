@@ -2,7 +2,7 @@
 const crypto=require("node:crypto");
 const {URL}=require("node:url");
 const CATEGORIES=new Set(["grocery","food","cafe","edu","health","pharmacy","gov","money","jobs","land","build","parts","craft","transport","telecom","utility","farm","mosque","gold","wedding","hotel","market","solar","elec","clothes","home","books","beauty","delivery","salon","laundry","souq","other","marketplace"]);
-const PRODUCT_TYPES=new Set(["phone","phone_accessories","watch","computer","computer_accessories","tablet","camera","screen","monitor","charger","audio_accessories","car","motorcycle","vehicle_parts","land","property","apartment","house","electronics","appliance","furniture","clothing","shoes","jewelry","honey","coffee","spices","livestock","agriculture","building_materials","books","stationery","perfume","cosmetics","solar_equipment","solar_panel","battery","inverter","power_system","tools","household_items","kitchenware","baby_products","games","sports_equipment","animal_feed","seeds","construction_equipment","other"]);
+const PRODUCT_TYPES=new Set(["phone","phone_accessories","watch","computer","computer_accessories","tablet","camera","screen","monitor","charger","audio_accessories","car","motorcycle","vehicle_parts","land","property","apartment","house","electronics","appliance","furniture","clothing","shoes","jewelry","honey","coffee","spices","livestock","agriculture","building_materials","books","stationery","perfume","cosmetics","solar_equipment","solar_panel","battery","inverter","power_system","tools","household_items","kitchenware","baby_products","games","sports_equipment","animal_feed","seeds","construction_equipment","accessories","bag","other"]);
 const LISTING_TYPES=new Set(["sale","wanted","barter","free","rent"]);
 const PRODUCT_GROUPS = Object.freeze({
   electronics:["phone","phone_accessories","computer","computer_accessories","tablet","camera","electronics","watch","screen","monitor","charger","audio_accessories"],
@@ -11,7 +11,7 @@ const PRODUCT_GROUPS = Object.freeze({
   solar:["solar_equipment","solar_panel","battery","inverter","power_system"],
   home:["furniture","appliance","household_items","kitchenware","baby_products"],
   agriculture:["livestock","agriculture","animal_feed","seeds","honey","coffee","spices","tools","building_materials","construction_equipment"],
-  clothing:["clothing","shoes","perfume","cosmetics","jewelry","books","stationery","games","sports_equipment","other"]
+  clothing:["clothing","shoes","perfume","cosmetics","jewelry","accessories","bag","other"]
 });
 
 const CONDITIONS=new Set(["new","used","unknown"]);
