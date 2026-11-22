@@ -14,7 +14,7 @@
   JO:[["بيت.كوم","https://www.bayt.com/en/jordan/jobs/"],["Indeed","https://jo.indeed.com/jobs"],["LinkedIn","https://www.linkedin.com/jobs/search/?location=Jordan"]],
   all:[["Bayt","https://www.bayt.com/"],["GulfTalent","https://www.gulftalent.com/jobs"],["LinkedIn","https://www.linkedin.com/jobs/"],["ReliefWeb","https://reliefweb.int/jobs"]]
  };
- const TYPES=[["all","الكل"],["sale","للبيع"],["wanted","مطلوب"],["barter","مقايضة"],["free","مجاناً"]];
+ const TYPES=[["all","الكل"],["sale","للبيع"],["wanted","مطلوب"],["barter","مقايضة"],["free","مجاناً"],["rent","للإيجار"]];
  const GROUPS=[
   ["all","كل الأصناف"],
   ["electronics","جوالات وإلكترونيات"],
