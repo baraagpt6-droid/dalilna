@@ -25,6 +25,37 @@
   ["agriculture","مواشي وزراعة ومعدات"],
   ["clothing","ملابس وعطور ومستلزمات"]
  ];
+ const COUNTRY_EN={YE:"Yemen",SA:"Saudi Arabia",AE:"United Arab Emirates",OM:"Oman",QA:"Qatar",BH:"Bahrain",IQ:"Iraq",JO:"Jordan",all:"All countries"};
+ const TYPE_EN={all:"All",sale:"For sale",wanted:"Wanted",barter:"Barter",free:"Free",rent:"For rent"};
+ const GROUP_EN={all:"All categories",electronics:"Phones and electronics",vehicles:"Cars, motorcycles and parts",property:"Property and land",solar:"Solar power and batteries",home:"Furniture and home appliances",agriculture:"Livestock, farming and equipment",clothing:"Clothing, perfumes and accessories"};
+ const SOURCE_EN={"وظائف الأمم المتحدة":"UN Careers","بيت.كوم اليمن":"Bayt.com Yemen","بيت.كوم":"Bayt.com"};
+ const TEXT_EN={
+  "جارٍ تحميل أحدث الوظائف…":"Loading the latest jobs…","لا توجد وظائف مطابقة في آخر مزامنة. استخدم روابط المنصات أعلاه للبحث المباشر.":"No matching jobs in the latest sync. Use the source links above to search directly.",
+  "عدد الوظائف: ":"Jobs: "," · آخر مزامنة: ":" · Last synced: ","غير متاح":"Unavailable","المؤهلات / الشروط: ":"Qualifications / requirements: ","آخر موعد للتقديم: ":"Application deadline: ",
+  "التقديم من المصدر":"Apply at source","لا يتوفر رابط تقديم رسمي مباشر لهذا الإعلان":"No official direct application link is available for this advert","صفحة المصدر":"Source page","★ محفوظة":"★ Saved","☆ حفظ":"☆ Save",
+  "مشاركة":"Share","تعذرت المشاركة من هذا الجهاز.":"Sharing is not available on this device.","تعذر تحميل الوظائف من الخادم. ":"Could not load jobs from the server.",
+  "جارٍ تحميل ملفات الباحثين…":"Loading job seeker profiles…","لا توجد ملفات منشورة لهذه الدولة حالياً.":"There are no published profiles for this country yet.",
+  "ملفات منشورة بموافقة أصحابها: ":"Profiles published with their owners' consent: ","دون خبرة":"No experience"," سنة خبرة":" years of experience",
+  "تواصل واتساب":"Contact on WhatsApp","تعذر تحميل الباحثين عن عمل. ":"Could not load job seekers.",
+  "يجب الموافقة على عرض معلوماتك قبل النشر.":"You must consent to showing your information before publishing.","جارٍ إرسال ملفك إلى دليلنا…":"Sending your profile to Dalilna…",
+  "تم نشر ملفك. سيبقى متاحاً لمدة 60 يوماً.":"Your profile has been published and will remain available for 60 days.","تعذر نشر الملف. ":"Could not publish the profile.",
+  "تعذر تحميل الصورة":"Image could not be loaded","إعلان":"Advert","إعلان دليلنا":"Dalilna advert","☆ مفضلة":"☆ Save","★ مفضلة":"★ Saved",
+  "لا توجد صورة مرفقة":"No image attached","البائع: ":"Seller: ","أوقات العمل: ":"Opening hours: ","الموقع الإلكتروني":"Website","آخر موعد للتقديم: ":"Application deadline: ",
+  "إعلان مجاني · مدة الصلاحية 60 يوماً":"Free advert · 60-day validity","إعلان مجاني · ينتهي ":"Free advert · Expires ",
+  "واتساب البائع":"Seller WhatsApp","اتصال":"Call","عرض الخريطة":"View map","فتح الموقع في OpenStreetMap":"Open in OpenStreetMap",
+  "جديد":"New","مستعمل":"Used","للبيع":"For sale","للإيجار":"For rent","مطلوب":"Wanted","مقايضة":"Barter","مجاني":"Free"
+ };
+ const isEnglish=()=>document.documentElement.lang==="en";
+ const tr=value=>isEnglish()?(TEXT_EN[value]||value):value;
+ function translateFeatureTree(root){
+  if(!root)return;
+  root.querySelectorAll("[data-ar][data-en]").forEach(node=>{node.textContent=isEnglish()?node.dataset.en:node.dataset.ar;});
+  root.querySelectorAll("[data-placeholder-ar][data-placeholder-en]").forEach(node=>{node.placeholder=isEnglish()?node.dataset.placeholderEn:node.dataset.placeholderAr;});
+ }
+ function applyFeatureLanguage(){
+  ["jobsFeaturePanel","jobSeekersPanel","souqFeatureWrap","jobSeekerDlg"].forEach(id=>translateFeatureTree($(id)));
+  renderTabs();loadJobs();loadCandidates();
+ }
  let country="YE",transaction="all",group="all";
  const $=id=>document.getElementById(id);
  function el(tag,attrs,text){
@@ -49,17 +80,18 @@
   const jobs=$("vJobs"),shared=$("sharedJobsPanel");
   if(jobs&&shared&&!$("jobsFeaturePanel")){
    const panel=el("section",{id:"jobsFeaturePanel",class:"jobs-feature-panel"});
-   panel.innerHTML='<div class="feature-head"><h3>فرص عمل من مصادرها</h3><span class="tag">تحديث يومي</span></div><div class="country-tabs" id="jobsCountryTabs" aria-label="اختيار الدولة"></div><div class="job-source-links" id="jobSourceLinks"></div><div class="job-feed-status" id="jobsFeedStatus">جارٍ تحميل الوظائف من المصادر الخارجية…</div><div class="job-feed-list" id="jobsFeedCards"></div>';
+   panel.innerHTML='<div class="feature-head"><h3 data-ar="فرص عمل من مصادرها" data-en="Jobs from their original sources">فرص عمل من مصادرها</h3><span class="tag" data-ar="تحديث يومي" data-en="Daily update">تحديث يومي</span></div><div class="country-tabs" id="jobsCountryTabs" aria-label="Country selection"></div><div class="job-source-links" id="jobSourceLinks"></div><div class="job-feed-status" id="jobsFeedStatus" data-ar="جارٍ تحميل الوظائف من المصادر الخارجية…" data-en="Loading jobs from external sources…">جارٍ تحميل الوظائف من المصادر الخارجية…</div><div class="job-feed-list" id="jobsFeedCards"></div>';
    shared.parentNode.insertBefore(panel,shared);
-   const seekers=el("section",{id:"jobSeekersPanel",class:"job-seekers-panel"});
-   seekers.innerHTML='<div class="feature-head"><h3>باحثون عن عمل</h3><span class="tag">بموافقة أصحاب الملفات</span></div><div class="job-seeker-panel-actions"><button type="button" class="add" id="addJobSeeker">سجّل كباحث عن عمل</button><button type="button" class="ghost" id="refreshJobSeekers">تحديث القائمة</button></div><div class="job-seeker-status" id="jobSeekersStatus">جارٍ تحميل ملفات الباحثين عن عمل…</div><div class="job-seeker-list" id="jobSeekersList"></div>';
+   const seekers=el("section",{id:"jobSeekersPanel",class:"job-seeker-panel"});
+   seekers.innerHTML='<div class="feature-head"><h3 data-ar="باحثون عن عمل" data-en="Job seekers">باحثون عن عمل</h3><span class="tag" data-ar="بموافقة أصحاب الملفات" data-en="Published with owner consent">بموافقة أصحاب الملفات</span></div><div class="job-seeker-panel-actions"><button type="button" class="add" id="addJobSeeker" data-ar="سجّل كباحث عن عمل" data-en="Register as a job seeker">سجّل كباحث عن عمل</button></div><div class="job-seeker-status" id="jobSeekersStatus" data-ar="جارٍ تحميل ملفات الباحثين عن عمل…" data-en="Loading job seeker profiles…">جارٍ تحميل ملفات الباحثين عن عمل…</div><div class="job-seeker-list" id="jobSeekersList"></div>';
    $("jobs").parentNode.insertBefore(seekers,$("jobs"));
   }
   if(!$("jobSeekerDlg")){
    const dialog=el("dialog",{id:"jobSeekerDlg"});
-   dialog.innerHTML='<form id="jobSeekerForm"><div class="feature-head"><h3>التسجيل كباحث عن عمل</h3><button type="button" class="x" id="closeJobSeeker">×</button></div><label>الاسم الكامل<input name="fullName" maxlength="100" required></label><label>التخصص أو المهنة<input name="specialty" maxlength="120" required placeholder="مثلاً: محاسب، مبرمج، فني كهرباء"></label><label>سنوات الخبرة<input name="experienceYears" type="number" min="0" max="60" step="1" required value="0"></label><label>الدولة<select name="country" required><option value="Yemen">اليمن</option><option value="Saudi Arabia">السعودية</option><option value="United Arab Emirates">الإمارات</option><option value="Oman">عُمان</option><option value="Qatar">قطر</option><option value="Bahrain">البحرين</option><option value="Iraq">العراق</option><option value="Jordan">الأردن</option></select></label><label>المحافظة أو المدينة<input name="governorate" maxlength="80" required></label><label>نبذة مختصرة<textarea name="bio" rows="3" maxlength="800" required placeholder="اكتب مهاراتك ونوع العمل الذي تبحث عنه"></textarea></label><label>رقم واتساب مع مفتاح الدولة<input name="whatsapp" type="tel" inputmode="tel" dir="ltr" maxlength="24" required placeholder="+9677xxxxxxxx"></label><label class="job-public-consent"><input name="consentPublic" type="checkbox" required><span>أوافق على نشر اسمي وتخصصي وخبرتي وموقعي ونبذتي ورقم واتسابي للعامة ليتمكن أصحاب العمل من التواصل معي مباشرة.</span></label><p class="job-seeker-status" id="jobSeekerFormStatus">الملف مجاني ويظل منشوراً 60 يوماً. لا تسجل إن لم توافق على إظهار بيانات التواصل.</p><div class="fbtn"><button class="add" type="submit">حفظ ونشر الملف</button></div></form>';
+   dialog.innerHTML='<form id="jobSeekerForm"><div class="feature-head"><h3 data-ar="التسجيل كباحث عن عمل" data-en="Register as a job seeker">التسجيل كباحث عن عمل</h3><button type="button" class="x" id="closeJobSeeker">×</button></div><label><span data-ar="الاسم الكامل" data-en="Full name">الاسم الكامل</span><input name="fullName" maxlength="100" required></label><label><span data-ar="التخصص أو المهنة" data-en="Specialty or occupation">التخصص أو المهنة</span><input name="specialty" maxlength="120" required placeholder="مثلاً: محاسب، مبرمج، فني كهرباء" data-placeholder-ar="مثلاً: محاسب، مبرمج، فني كهرباء" data-placeholder-en="e.g. accountant, programmer, electrician"></label><label><span data-ar="سنوات الخبرة" data-en="Years of experience">سنوات الخبرة</span><input name="experienceYears" type="number" min="0" max="60" step="1" required value="0"></label><label><span data-ar="الدولة" data-en="Country">الدولة</span><select name="country" required><option value="Yemen" data-ar="اليمن" data-en="Yemen">اليمن</option><option value="Saudi Arabia" data-ar="السعودية" data-en="Saudi Arabia">السعودية</option><option value="United Arab Emirates" data-ar="الإمارات" data-en="United Arab Emirates">الإمارات</option><option value="Oman" data-ar="عُمان" data-en="Oman">عُمان</option><option value="Qatar" data-ar="قطر" data-en="Qatar">قطر</option><option value="Bahrain" data-ar="البحرين" data-en="Bahrain">البحرين</option><option value="Iraq" data-ar="العراق" data-en="Iraq">العراق</option><option value="Jordan" data-ar="الأردن" data-en="Jordan">الأردن</option></select></label><label><span data-ar="المحافظة أو المدينة" data-en="Governorate or city">المحافظة أو المدينة</span><input name="governorate" maxlength="80" required></label><label><span data-ar="نبذة مختصرة" data-en="Short bio">نبذة مختصرة</span><textarea name="bio" rows="3" maxlength="800" required placeholder="اكتب مهاراتك ونوع العمل الذي تبحث عنه" data-placeholder-ar="اكتب مهاراتك ونوع العمل الذي تبحث عنه" data-placeholder-en="Describe your skills and the work you are looking for"></textarea></label><label><span data-ar="رقم واتساب مع مفتاح الدولة" data-en="WhatsApp number with country code">رقم واتساب مع مفتاح الدولة</span><input name="whatsapp" type="tel" inputmode="tel" dir="ltr" maxlength="24" required placeholder="+9677xxxxxxxx"></label><label class="job-public-consent"><input name="consentPublic" type="checkbox" required><span data-ar="أوافق على نشر اسمي وتخصصي وخبرتي وموقعي ونبذتي ورقم واتسابي للعامة ليتمكن أصحاب العمل من التواصل معي مباشرة." data-en="I agree to publish my name, specialty, experience, location, bio and WhatsApp number so employers can contact me.">أوافق على نشر اسمي وتخصصي وخبرتي وموقعي ونبذتي ورقم واتسابي للعامة ليتمكن أصحاب العمل من التواصل معي مباشرة.</span></label><p class="job-seeker-status" id="jobSeekerFormStatus" data-ar="الملف مجاني ويظل منشوراً 60 يوماً. لا تسجل إن لم توافق على إظهار بيانات التواصل." data-en="The profile is free and remains published for 60 days. Do not register unless you agree to show your contact details.">الملف مجاني ويظل منشوراً 60 يوماً. لا تسجل إن لم توافق على إظهار بيانات التواصل.</p><div class="fbtn"><button class="add" type="submit" data-ar="حفظ ونشر الملف" data-en="Save and publish profile">حفظ ونشر الملف</button></div></form>';
    document.body.appendChild(dialog);
   }
+  translateFeatureTree($("jobsFeaturePanel"));translateFeatureTree($("jobSeekersPanel"));translateFeatureTree($("jobSeekerDlg"));
  }
  function buildSouq(){
   const panel=$("sharedSouqPanel");
@@ -72,38 +104,17 @@
  }
  function renderTabs(){
   const tabs=$("jobsCountryTabs");
-  if(tabs){
-   tabs.replaceChildren();
-   COUNTRIES.forEach(pair=>{
-    const button=el("button",{type:"button","aria-pressed":pair[0]===country?"true":"false"},pair[1]);
-    button.dataset.country=pair[0];tabs.appendChild(button);
-   });
-  }
+  if(tabs){tabs.replaceChildren();COUNTRIES.forEach(pair=>{const button=el("button",{type:"button","aria-pressed":pair[0]===country?"true":"false"},isEnglish()?(COUNTRY_EN[pair[0]]||pair[1]):pair[1]);button.dataset.country=pair[0];tabs.appendChild(button);});}
   const sourceLinks=$("jobSourceLinks");
-  if(sourceLinks){
-   sourceLinks.replaceChildren();
-   (SOURCES[country]||SOURCES.all).forEach(pair=>sourceLinks.appendChild(el("a",{href:pair[1],target:"_blank",rel:"noopener noreferrer"},pair[0])));
-  }
+  if(sourceLinks){sourceLinks.replaceChildren();(SOURCES[country]||SOURCES.all).forEach(pair=>sourceLinks.appendChild(el("a",{href:pair[1],target:"_blank",rel:"noopener noreferrer"},isEnglish()?(SOURCE_EN[pair[0]]||pair[0]):pair[0])));}
   const typeTabs=$("souqTransactionTabs");
-  if(typeTabs){
-   typeTabs.replaceChildren();
-   TYPES.forEach(pair=>{
-    const button=el("button",{type:"button","aria-pressed":pair[0]===transaction?"true":"false"},pair[1]);
-    button.dataset.transaction=pair[0];typeTabs.appendChild(button);
-   });
-  }
+  if(typeTabs){typeTabs.replaceChildren();TYPES.forEach(pair=>{const button=el("button",{type:"button","aria-pressed":pair[0]===transaction?"true":"false"},isEnglish()?(TYPE_EN[pair[0]]||pair[1]):pair[1]);button.dataset.transaction=pair[0];typeTabs.appendChild(button);});}
   const groupTabs=$("souqCategoryTabs");
-  if(groupTabs){
-   groupTabs.replaceChildren();
-   GROUPS.forEach(pair=>{
-    const button=el("button",{type:"button","aria-pressed":pair[0]===group?"true":"false"},pair[1]);
-    button.dataset.group=pair[0];groupTabs.appendChild(button);
-   });
-  }
+  if(groupTabs){groupTabs.replaceChildren();GROUPS.forEach(pair=>{const button=el("button",{type:"button","aria-pressed":pair[0]===group?"true":"false"},isEnglish()?(GROUP_EN[pair[0]]||pair[1]):pair[1]);button.dataset.group=pair[0];groupTabs.appendChild(button);});}
  }
  function formatDate(value){
   const date=new Date(value);
-  return Number.isNaN(date.getTime())?"":new Intl.DateTimeFormat("ar",{year:"numeric",month:"short",day:"numeric"}).format(date);
+  return Number.isNaN(date.getTime())?"":new Intl.DateTimeFormat(isEnglish()?"en-US":"ar",{year:"numeric",month:"short",day:"numeric"}).format(date);
  }
  function safeJobUrl(value){
   try{const url=new URL(String(value||""));return url.protocol==="https:"?url.href:"";}catch(_){return "";}
@@ -118,87 +129,55 @@
   try{const value=JSON.parse(localStorage.getItem("dalilna-job-favs-v1")||"[]");return Array.isArray(value)?value:[];}catch(_){return [];}
  }
  async function loadJobs(){
-  const status=$("jobsFeedStatus"),box=$("jobsFeedCards");
-  if(!status||!box)return;
-  status.textContent="جارٍ تحميل أحدث الوظائف…";box.replaceChildren();
+  const status=$("jobsFeedStatus"),box=$("jobsFeedCards");if(!status||!box)return;
+  status.textContent=tr("جارٍ تحميل أحدث الوظائف…");box.replaceChildren();
   try{
    const response=await fetch(API+"/api/jobs?country="+encodeURIComponent(country)+"&limit=60",{cache:"no-store",headers:{Accept:"application/json"}});
-   const data=await response.json().catch(()=>({}));
-   if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
-   if(!Array.isArray(data.items)||!data.items.length){
-    status.textContent="لا توجد وظائف مطابقة في آخر مزامنة. استخدم روابط المنصات أعلاه للبحث المباشر.";
-    return;
-   }
-   status.textContent="عدد الوظائف: "+data.items.length+" · آخر مزامنة: "+(formatDate(data.fetchedAt)||"غير متاح");
+   const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
+   if(!Array.isArray(data.items)||!data.items.length){status.textContent=tr("لا توجد وظائف مطابقة في آخر مزامنة. استخدم روابط المنصات أعلاه للبحث المباشر.");return;}
+   status.textContent=tr("عدد الوظائف: ")+data.items.length+tr(" · آخر مزامنة: ")+(formatDate(data.fetchedAt)||tr("غير متاح"));
    data.items.forEach(job=>{
-    const card=el("article",{class:"job-feed-card"});
-    card.appendChild(el("h4",{},job.title||"وظيفة"));
-    const meta=el("div",{class:"job-feed-meta"});
-    [job.organization,job.city||job.location,job.country,formatDate(job.publishedAt),job.source].filter(Boolean).forEach(value=>meta.appendChild(el("span",{},String(value))));
-    card.appendChild(meta);
-    const summary=String(job.summaryAr||job.summary||"").trim();
-    if(summary)card.appendChild(el("p",{class:"job-feed-summary"},summary.slice(0,700)));
-    if(job.eligibility)card.appendChild(el("p",{},"المؤهلات / الشروط: "+job.eligibility));
-    if(job.deadline)card.appendChild(el("p",{},"آخر موعد للتقديم: "+job.deadline));
-    const actions=el("div",{class:"job-feed-actions"});
-    const direct=officialApplicationUrl(job.applicationUrl);
-    const sourceUrl=safeJobUrl(job.url);
-    if(direct)actions.appendChild(el("a",{href:direct,target:"_blank",rel:"noopener noreferrer"},"التقديم من المصدر"));
-    else actions.appendChild(el("span",{class:"job-feed-no-apply"},"لا يتوفر رابط تقديم رسمي مباشر لهذا الإعلان"));
-    if(sourceUrl&&sourceUrl!==direct)actions.appendChild(el("a",{href:sourceUrl,target:"_blank",rel:"noopener noreferrer"},"صفحة المصدر"));
-    const favoriteSet=new Set(readJobFavorites());
-    const favorite=el("button",{type:"button","aria-pressed":favoriteSet.has(String(job.id))?"true":"false"},favoriteSet.has(String(job.id))?"★ محفوظة":"☆ حفظ");
-    favorite.addEventListener("click",()=>{
-     const items=new Set(readJobFavorites()),key=String(job.id||sourceUrl||job.title);
-     if(items.has(key))items.delete(key);else items.add(key);
-     localStorage.setItem("dalilna-job-favs-v1",JSON.stringify([...items].slice(-300)));
-     favorite.setAttribute("aria-pressed",items.has(key)?"true":"false");
-     favorite.textContent=items.has(key)?"★ محفوظة":"☆ حفظ";
-    });
+    const card=el("article",{class:"job-feed-card"});card.appendChild(el("h4",{},job.title||tr("وظيفة")));
+    const meta=el("div",{class:"job-feed-meta"});[job.organization,job.city||job.location,job.country,formatDate(job.publishedAt),job.source].filter(Boolean).forEach(value=>meta.appendChild(el("span",{},String(value))));card.appendChild(meta);
+    const summary=String(isEnglish()?(job.summary||job.summaryAr||""):(job.summaryAr||job.summary||"")).trim();if(summary)card.appendChild(el("p",{class:"job-feed-summary"},summary.slice(0,700)));
+    if(job.eligibility)card.appendChild(el("p",{},tr("المؤهلات / الشروط: ")+job.eligibility));
+    if(job.deadline)card.appendChild(el("p",{},tr("آخر موعد للتقديم: ")+job.deadline));
+    const actions=el("div",{class:"job-feed-actions"}),direct=officialApplicationUrl(job.applicationUrl),sourceUrl=safeJobUrl(job.url);
+    if(direct)actions.appendChild(el("a",{href:direct,target:"_blank",rel:"noopener noreferrer"},tr("التقديم من المصدر")));
+    else actions.appendChild(el("span",{class:"job-feed-no-apply"},tr("لا يتوفر رابط تقديم رسمي مباشر لهذا الإعلان")));
+    if(sourceUrl&&sourceUrl!==direct)actions.appendChild(el("a",{href:sourceUrl,target:"_blank",rel:"noopener noreferrer"},tr("صفحة المصدر")));
+    const favoriteSet=new Set(readJobFavorites()),favorite=el("button",{type:"button","aria-pressed":favoriteSet.has(String(job.id))?"true":"false"},favoriteSet.has(String(job.id))?tr("★ محفوظة"):tr("☆ حفظ"));
+    favorite.addEventListener("click",()=>{const items=new Set(readJobFavorites()),key=String(job.id||sourceUrl||job.title);if(items.has(key))items.delete(key);else items.add(key);try{localStorage.setItem("dalilna-job-favs-v1",JSON.stringify([...items].slice(-300)));}catch(_){}favorite.setAttribute("aria-pressed",items.has(key)?"true":"false");favorite.textContent=items.has(key)?tr("★ محفوظة"):tr("☆ حفظ");});
     actions.appendChild(favorite);
-    const share=el("button",{type:"button"},"مشاركة");
-    share.addEventListener("click",async()=>{
-     const target=direct||sourceUrl;
-     const payload={title:job.title||"وظيفة من دليلنا",text:[job.title,job.organization,job.city||job.location,job.deadline].filter(Boolean).join(" · "),url:target||location.href};
-     try{if(navigator.share)await navigator.share(payload);else if(navigator.clipboard)await navigator.clipboard.writeText(payload.text+" "+payload.url);else throw new Error("share-unavailable");}
-     catch(error){if(error.name!=="AbortError")toast("تعذرت المشاركة من هذا الجهاز.");}
-    });
-    actions.appendChild(share);
-    card.appendChild(actions);box.appendChild(card);
+    const share=el("button",{type:"button"},tr("مشاركة"));
+    share.addEventListener("click",async()=>{const target=direct||sourceUrl,payload={title:job.title||tr("وظيفة من دليلنا"),text:[job.title,job.organization,job.city||job.location,job.deadline].filter(Boolean).join(" · "),url:target||location.href};try{if(navigator.share)await navigator.share(payload);else if(navigator.clipboard)await navigator.clipboard.writeText(payload.text+" "+payload.url);else throw new Error("share-unavailable");}catch(error){if(error.name!=="AbortError")toast(tr("تعذرت المشاركة من هذا الجهاز."));}});
+    actions.appendChild(share);card.appendChild(actions);box.appendChild(card);
    });
-  }catch(error){status.textContent="تعذر تحميل الوظائف من الخادم. "+error.message;}
+  }catch(error){status.textContent=tr("تعذر تحميل الوظائف من الخادم. ")+error.message;}
  }
  function waUrl(phone){
   const digits=String(phone||"").replace(/[^0-9]/g,"");
   return digits.length>=9&&digits.length<=15?"https://wa.me/"+digits:"";
  }
  async function loadCandidates(){
-  const status=$("jobSeekersStatus"),box=$("jobSeekersList");
-  if(!status||!box)return;
-  status.textContent="جارٍ تحميل ملفات الباحثين…";box.replaceChildren();
+  const status=$("jobSeekersStatus"),box=$("jobSeekersList");if(!status||!box)return;
+  status.textContent=tr("جارٍ تحميل ملفات الباحثين…");box.replaceChildren();
   try{
    const countryName=COUNTRY_NAMES[country]||"all";
    const response=await fetch(API+"/api/jobs/candidates?country="+encodeURIComponent(countryName),{cache:"no-store",headers:{Accept:"application/json"}});
-   const data=await response.json().catch(()=>({}));
-   if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
-   if(!Array.isArray(data.items)||!data.items.length){status.textContent="لا توجد ملفات منشورة لهذه الدولة حالياً.";return;}
-   status.textContent="ملفات منشورة بموافقة أصحابها: "+data.items.length;
+   const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
+   if(!Array.isArray(data.items)||!data.items.length){status.textContent=tr("لا توجد ملفات منشورة لهذه الدولة حالياً.");return;}
+   status.textContent=tr("ملفات منشورة بموافقة أصحابها: ")+data.items.length;
    data.items.forEach(person=>{
-    const card=el("article",{class:"job-seeker-card"});
-    card.appendChild(el("h4",{},person.fullName||"باحث عن عمل"));
+    const card=el("article",{class:"job-seeker-card"});card.appendChild(el("h4",{},person.fullName||tr("باحثون عن عمل")));
     const experience=Number(person.experienceYears);
-    card.appendChild(el("div",{class:"job-seeker-meta"},(person.specialty||"")+(experience===0?" · دون خبرة":" · "+experience+" سنة خبرة")));
+    card.appendChild(el("div",{class:"job-seeker-meta"},(person.specialty||"")+(experience===0?" · "+tr("دون خبرة"):" · "+experience+tr(" سنة خبرة"))));
     card.appendChild(el("div",{class:"job-seeker-meta"},[person.governorate,person.country].filter(Boolean).join(" · ")));
     if(person.bio)card.appendChild(el("p",{},person.bio));
-    const href=waUrl(person.whatsapp);
-    if(href){
-     const actions=el("div",{class:"job-seeker-actions"});
-     actions.appendChild(el("a",{href:href,target:"_blank",rel:"noopener noreferrer"},"تواصل واتساب"));
-     card.appendChild(actions);
-    }
+    const href=waUrl(person.whatsapp);if(href){const actions=el("div",{class:"job-seeker-actions"});actions.appendChild(el("a",{href:href,target:"_blank",rel:"noopener noreferrer"},tr("تواصل واتساب")));card.appendChild(actions);}
     box.appendChild(card);
    });
-  }catch(error){status.textContent="تعذر تحميل الباحثين عن عمل. "+error.message;}
+  }catch(error){status.textContent=tr("تعذر تحميل الباحثين عن عمل. ")+error.message;}
  }
  async function submitCandidate(event){
   event.preventDefault();
@@ -213,16 +192,16 @@
    whatsapp:String(fd.get("whatsapp")||"").trim(),
    consentPublic:fd.get("consentPublic")==="on"
   };
-  if(!payload.consentPublic){status.textContent="يجب الموافقة على عرض معلوماتك قبل النشر.";return;}
-  button.disabled=true;status.textContent="جارٍ إرسال ملفك إلى دليلنا…";
+  if(!payload.consentPublic){status.textContent=tr("يجب الموافقة على عرض معلوماتك قبل النشر.");return;}
+  button.disabled=true;status.textContent=tr("جارٍ إرسال ملفك إلى دليلنا…");
   try{
    const response=await fetch(API+"/api/jobs/candidates",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)});
    const data=await response.json().catch(()=>({}));
    if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
    form.reset();closeDialog($("jobSeekerDlg"));
-   const visible=$("jobSeekersStatus");if(visible)visible.textContent="تم نشر ملفك. سيبقى متاحاً لمدة 60 يوماً.";
+   const visible=$("jobSeekersStatus");if(visible)visible.textContent=tr("تم نشر ملفك. سيبقى متاحاً لمدة 60 يوماً.");
    await loadCandidates();
-  }catch(error){status.textContent="تعذر نشر الملف. "+error.message;}
+  }catch(error){status.textContent=tr("تعذر نشر الملف. ")+error.message;}
   finally{button.disabled=false;}
  }
  function syncSearch(){
@@ -263,6 +242,7 @@
  }
  function bind(){
   buildJobs();buildSouq();renderTabs();
+  window.addEventListener("dalilna:languagechange",applyFeatureLanguage);
   $("jobsCountryTabs")?.addEventListener("click",event=>{
    const button=event.target.closest("[data-country]");if(!button)return;
    country=button.dataset.country;renderTabs();loadJobs();loadCandidates();
@@ -280,7 +260,6 @@
   $("addJobSeeker")?.addEventListener("click",()=>openDialog($("jobSeekerDlg")));
   $("closeJobSeeker")?.addEventListener("click",()=>closeDialog($("jobSeekerDlg")));
   $("jobSeekerForm")?.addEventListener("submit",submitCandidate);
-  $("refreshJobSeekers")?.addEventListener("click",loadCandidates);
   document.addEventListener("error",event=>{
    const image=event.target;
    if(!(image instanceof HTMLImageElement)||!image.classList.contains("shared-listing-image"))return;

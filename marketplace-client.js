@@ -27,6 +27,36 @@
     ["animal_feed","أعلاف"],["seeds","بذور ومحاصيل"],["construction_equipment","معدات إنشاءات"],["other","أخرى"]
   ];
   const GOVS = ["أمانة العاصمة","صنعاء","عدن","تعز","إب","الحديدة","ذمار","البيضاء","لحج","أبين","الضالع","مأرب","الجوف","صعدة","حجة","عمران","المحويت","ريمة","حضرموت","شبوة","المهرة","سقطرى"];
+  const CATS_EN={grocery:"Groceries",food:"Restaurants and bakeries",cafe:"Cafes",edu:"Education",health:"Hospitals and health centres",pharmacy:"Pharmacies",gov:"Government services",money:"Banks and exchange",jobs:"Jobs",land:"Property and land",build:"Building materials",parts:"Vehicle parts",craft:"Crafts and repair",transport:"Transport",telecom:"Mobile phones and telecom",utility:"Utilities",farm:"Agriculture and livestock",mosque:"Mosques",gold:"Gold and jewellery",wedding:"Wedding and event venues",hotel:"Hotels and apartments",market:"Markets",solar:"Solar power and batteries",elec:"Electronics and computers",clothes:"Clothing and shoes",home:"Furniture and home appliances",books:"Books and stationery",beauty:"Perfumes and beauty",delivery:"Delivery and courier services",salon:"Hairdressers and salons",laundry:"Laundry",souq:"Buy and sell marketplace",other:"Other"};
+  const PRODUCTS_EN={phone:"Mobile phone",phone_accessories:"Phone accessories",watch:"Watch",computer:"Computer / laptop",computer_accessories:"Computer accessories",tablet:"Tablet",camera:"Camera",car:"Car",motorcycle:"Motorcycle",vehicle_parts:"Vehicle parts",land:"Land",property:"Property",apartment:"Apartment",house:"House",electronics:"Electronics",appliance:"Home appliance",furniture:"Furniture",clothing:"Clothing",shoes:"Shoes",jewelry:"Gold and jewellery",honey:"Honey",coffee:"Coffee",spices:"Spices",livestock:"Livestock",agriculture:"Agricultural products",building_materials:"Building materials",books:"Books",stationery:"Stationery",perfume:"Perfumes",cosmetics:"Cosmetics",solar_equipment:"Solar equipment",tools:"Tools and equipment",household_items:"Household items",kitchenware:"Kitchenware",baby_products:"Baby products",games:"Toys",sports_equipment:"Sports equipment",animal_feed:"Animal feed",seeds:"Seeds and crops",construction_equipment:"Construction equipment",other:"Other"};
+  const GOV_EN={"أمانة العاصمة":"Amanat Al Asimah","صنعاء":"Sana'a","عدن":"Aden","تعز":"Taiz","إب":"Ibb","الحديدة":"Al Hudaydah","ذمار":"Dhamar","البيضاء":"Al Bayda","لحج":"Lahij","أبين":"Abyan","الضالع":"Al Dhale'e","مأرب":"Marib","الجوف":"Al Jawf","صعدة":"Sa'dah","حجة":"Hajjah","عمران":"Amran","المحويت":"Al Mahwit","ريمة":"Raymah","حضرموت":"Hadramaut","شبوة":"Shabwah","المهرة":"Al Mahrah","سقطرى":"Socotra"};
+  const EN_TEXT={
+   "كل الأقسام":"All categories","كل المحافظات":"All governorates","البائع: ":"Seller: ","إعلان":"Advert","إعلان دليلنا":"Dalilna advert","لا توجد صورة مرفقة":"No image attached",
+   "جديد":"New","مستعمل":"Used","للبيع":"For sale","للإيجار":"For rent","مطلوب":"Wanted","مقايضة":"Barter","مجاني":"Free",
+   "أوقات العمل: ":"Opening hours: ","الموقع الإلكتروني":"Website","آخر موعد للتقديم: ":"Application deadline: ","واتساب البائع":"Seller WhatsApp","اتصال":"Call",
+   "عرض الخريطة":"View map","فتح الموقع في OpenStreetMap":"Open in OpenStreetMap","إعلان مجاني · مدة الصلاحية 60 يوماً":"Free advert · 60-day validity",
+   "إعلان مجاني · ينتهي ":"Free advert · Expires ","مشاركة":"Share","مفضلة":"Saved","لا توجد إعلانات مرفقة":"No adverts attached",
+   "جارٍ تحميل الإعلانات المعتمدة من قاعدة البيانات المشتركة…":"Loading approved adverts from the shared database…",
+   "يعرض ":"Showing "," من ":" of "," إعلاناً منشوراً · آخر تحديث ":" published listings · Last updated ",
+   tr("خدمة البيانات المشتركة لم تُفعّل بعد. سيظهر المحتوى هنا بعد ربط قاعدة البيانات."):"The shared data service is not enabled yet. Listings will appear after the database is connected.",
+   "تعذر تحميل الإعلانات المشتركة. ":"Could not load shared adverts. ","واجهة السوق المشترك جاهزة، وتنتظر تهيئة قاعدة PostgreSQL.":"The shared marketplace is ready and waiting for PostgreSQL setup.",
+   "تم استلام الإعلان. سيظهر لجميع المستخدمين بعد موافقة الإدارة.":"Your advert was received. It will appear to users after administrator approval.",
+   "هذا الإعلان سبق إرساله للمراجعة.":"This advert has already been submitted for review.",
+   "تم اعتماد الإعلان ونشره للجميع.":"The advert was approved and published.",
+   "تم رفض الإعلان.":"The advert was rejected.","تعذرت مراجعة الإعلان: ":"Could not review the advert: ",
+   "جارٍ تحميل طلبات المراجعة…":"Loading review requests…","لا توجد إعلانات تنتظر المراجعة.":"No adverts are waiting for review.",
+   "طلبات تنتظر المراجعة: ":"Pending review requests: ","موافقة ونشر":"Approve and publish","رفض":"Reject",
+   "تعذر تحميل الطلبات. ":"Could not load review requests. ","لم نتمكن من قراءة الإضافات المحلية القديمة.":"Could not read older local submissions.",
+   "لا توجد إضافات محلية لنقلها.":"There are no local submissions to move.","تم إرسال ":"Submitted ",
+   " إدخالاً للمراجعة":" records for review","، وتعذر إرسال ":"; could not submit ","تم النسخ":"Copied",
+   "تعذر تحميل الصورة":"Image could not be loaded"
+  };
+  const isEnglish=()=>document.documentElement.lang==="en";
+  const tr=(value)=>isEnglish()?(EN_TEXT[value]||value):value;
+  const categoryLabel=(id,fallback)=>isEnglish()?(CATS_EN[id]||fallback||id):(fallback||id);
+  const productLabel=(id,fallback)=>isEnglish()?(PRODUCTS_EN[id]||fallback||id):(fallback||id);
+  const placeLabel=value=>isEnglish()?(GOV_EN[value]||value):value;
+  const numberLabel=value=>Number(value||0).toLocaleString(isEnglish()?"en-US":"ar-YE");
   let adminToken = "";
   let loadTimer = null;
 
@@ -65,7 +95,7 @@
     entries.forEach(pair => {
       const option = document.createElement("option");
       option.value = pair[0];
-      option.textContent = pair[1];
+      option.textContent = CATS_EN[pair[0]]&&isEnglish()?CATS_EN[pair[0]]:(GOV_EN[pair[0]]&&isEnglish()?GOV_EN[pair[0]]:pair[1]);
       select.appendChild(option);
     });
     if ([...select.options].some(option => option.value === old)) select.value = old;
@@ -77,37 +107,37 @@
       const img = document.createElement("img");
       img.className = "shared-listing-image";
       img.src = item.imageData;
-      img.alt = item.title || "صورة الإعلان";
+      img.alt = item.title || tr("إعلان");
       img.loading = "lazy";
       card.appendChild(img);
     } else {
       const placeholder = document.createElement("div");
       placeholder.className = "shared-listing-image-fallback no-image";
-      placeholder.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3 3 3-4 5 6"/></svg><span>لا توجد صورة مرفقة</span>';
+      placeholder.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3 3 3-4 5 6"/></svg><span>'+tr("لا توجد صورة مرفقة")+'</span>';
       card.appendChild(placeholder);
     }
     const title = document.createElement("h3");
-    title.textContent = item.title || "إعلان";
+    title.textContent = item.title || tr("إعلان");
     card.appendChild(title);
     if (item.sellerName) {
       const seller = document.createElement("p");
       seller.className = "shared-listing-meta";
-      seller.textContent = "البائع: " + item.sellerName;
+      seller.textContent = tr("البائع: ") + item.sellerName;
       card.appendChild(seller);
     }
     const tags = document.createElement("div");
     tags.className = "shared-listing-tags";
     const category = CATS.find(x => x[0] === item.category);
     const product = PRODUCTS.find(x => x[0] === item.productType);
-    const labels = [category ? category[1] : item.category];
-    if (item.category === "souq" || item.category === "land") labels.push(product ? product[1] : "منتج آخر");
-    if (item.condition === "new") labels.push("جديد");
-    if (item.condition === "used") labels.push("مستعمل");
-    if (item.listingType === "sale") labels.push("للبيع");
-    if (item.listingType === "rent") labels.push("للإيجار");
-    if (item.listingType === "wanted") labels.push("مطلوب");
-    if (item.listingType === "barter") labels.push("مقايضة");
-    if (item.listingType === "free") labels.push("مجاني");
+    const labels = [category ? categoryLabel(item.category,category[1]) : categoryLabel(item.category,item.category)];
+    if (item.category === "souq" || item.category === "land") labels.push(product ? productLabel(item.productType,product[1]) : (isEnglish()?"Other product":"منتج آخر"));
+    if (item.condition === "new") labels.push(tr("جديد"));
+    if (item.condition === "used") labels.push(tr("مستعمل"));
+    if (item.listingType === "sale") labels.push(tr("للبيع"));
+    if (item.listingType === "rent") labels.push(tr("للإيجار"));
+    if (item.listingType === "wanted") labels.push(tr("مطلوب"));
+    if (item.listingType === "barter") labels.push(tr("مقايضة"));
+    if (item.listingType === "free") labels.push(tr("مجاني"));
     labels.forEach(label => {
       const tag = document.createElement("span");
       tag.textContent = label;
@@ -118,7 +148,7 @@
     if (place) {
       const p = document.createElement("p");
       p.className = "shared-listing-place";
-      p.textContent = place;
+      p.textContent = place.split(" · ").map(placeLabel).join(" · ");
       card.appendChild(p);
     }
     if (item.price) {
@@ -136,7 +166,7 @@
     if (item.openingHours) {
       const hours = document.createElement("p");
       hours.className = "shared-listing-meta";
-      hours.textContent = "أوقات العمل: " + item.openingHours;
+      hours.textContent = tr("أوقات العمل: ") + item.openingHours;
       card.appendChild(hours);
     }
     if (item.website) {
@@ -144,13 +174,13 @@
       website.href = item.website;
       website.target = "_blank";
       website.rel = "noopener noreferrer";
-      website.textContent = "الموقع الإلكتروني";
+      website.textContent = tr("الموقع الإلكتروني");
       card.appendChild(website);
     }
     if (item.category === "jobs" && item.deadline) {
       const deadline = document.createElement("p");
       deadline.className = "shared-listing-meta";
-      deadline.textContent = "آخر موعد للتقديم: " + item.deadline;
+      deadline.textContent = tr("آخر موعد للتقديم: ") + item.deadline;
       card.appendChild(deadline);
     }
     const actions = document.createElement("div");
@@ -160,36 +190,36 @@
       if (phoneDigits.length >= 9 && phoneDigits.length <= 15) {
         const wa = document.createElement("a");
         wa.href = "https://wa.me/" + phoneDigits + "?text=" + encodeURIComponent("مرحباً، وجدت إعلانكم في دليلنا وأريد الاستفسار.");
-        wa.target = "_blank"; wa.rel = "noopener noreferrer"; wa.textContent = "واتساب البائع"; actions.appendChild(wa);
+        wa.target = "_blank"; wa.rel = "noopener noreferrer"; wa.textContent = tr("واتساب البائع"); actions.appendChild(wa);
       }
       const tel = document.createElement("a");
       tel.href = "tel:" + String(item.phone).replace(/[^0-9+]/g, "");
-      tel.textContent = "اتصال"; actions.appendChild(tel);
+      tel.textContent = tr("اتصال"); actions.appendChild(tel);
     }
     let mapElement = null;
     if (Number.isFinite(Number(item.latitude)) && Number.isFinite(Number(item.longitude))) {
       const mapButton = document.createElement("button");
       mapButton.type = "button"; mapButton.dataset.mapToggle = "1";
       mapButton.dataset.lat = String(item.latitude); mapButton.dataset.lon = String(item.longitude);
-      mapButton.dataset.title = item.title || "موقع الإعلان"; mapButton.textContent = "عرض الخريطة";
+      mapButton.dataset.title = item.title || "موقع الإعلان"; mapButton.textContent = tr("عرض الخريطة");
       actions.appendChild(mapButton);
       mapElement = document.createElement("div"); mapElement.className = "dalilna-map"; mapElement.hidden = true;
     } else if (place) {
       const map = document.createElement("a");
       map.href = "https://www.openstreetmap.org/search?query=" + encodeURIComponent([item.title,place,"اليمن"].join(" "));
-      map.target = "_blank"; map.rel = "noopener noreferrer"; map.textContent = "فتح الموقع في OpenStreetMap"; actions.appendChild(map);
+      map.target = "_blank"; map.rel = "noopener noreferrer"; map.textContent = tr("فتح الموقع في OpenStreetMap"); actions.appendChild(map);
     }
     if (item.category === "souq" || item.category === "land") {
       const expiry = document.createElement("p"); expiry.className = "shared-listing-expiry";
       const expiryDate = item.expiresAt ? new Date(item.expiresAt) : null;
-      expiry.textContent = !expiryDate || Number.isNaN(expiryDate.getTime()) ? "إعلان مجاني · مدة الصلاحية 60 يوماً" : "إعلان مجاني · ينتهي " + expiryDate.toLocaleDateString("ar");
+      expiry.textContent = !expiryDate || Number.isNaN(expiryDate.getTime()) ? tr("إعلان مجاني · مدة الصلاحية 60 يوماً") : tr("إعلان مجاني · ينتهي ") + expiryDate.toLocaleDateString(isEnglish()?"en-US":"ar");
       card.appendChild(expiry);
     }
     if (item.category === "souq" || item.category === "land") {
-      const share = document.createElement("button"); share.type = "button"; share.dataset.shareId = item.id; share.textContent = "مشاركة"; share._item = item; actions.appendChild(share);
+      const share = document.createElement("button"); share.type = "button"; share.dataset.shareId = item.id; share.textContent = tr("مشاركة"); share._item = item; actions.appendChild(share);
       let favs = []; try { favs = JSON.parse(localStorage.getItem("dalilna-marketplace-favs-v1") || "[]"); } catch (_) {}
       const favorite = document.createElement("button"); favorite.type = "button"; favorite.dataset.favId = item.id;
-      favorite.setAttribute("aria-pressed",favs.includes(item.id)?"true":"false"); favorite.className = favs.includes(item.id)?"is-favorite":""; favorite.textContent = favs.includes(item.id)?"★ مفضلة":"☆ مفضلة"; actions.appendChild(favorite);
+      favorite.setAttribute("aria-pressed",favs.includes(item.id)?"true":"false"); favorite.className = favs.includes(item.id)?"is-favorite":""; favorite.textContent = favs.includes(item.id)?tr("★ مفضلة"):tr("☆ مفضلة"); actions.appendChild(favorite);
     }
     card.appendChild(actions);
     if (mapElement) card.appendChild(mapElement);
@@ -198,7 +228,7 @@
   async function loadList(filters, statusId, listId) {
     const status = $(statusId), list = $(listId);
     if (!list || !status) return;
-    status.textContent = "جارٍ تحميل الإعلانات المعتمدة من قاعدة البيانات المشتركة…";
+    status.textContent = tr("جارٍ تحميل الإعلانات المعتمدة من قاعدة البيانات المشتركة…");
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key,value]) => { if (value && value !== "all") params.set(key,value); });
     params.set("limit","12");
@@ -208,14 +238,14 @@
       list.replaceChildren();
       (result.items || []).forEach(item => list.appendChild(makeCard(item)));
       status.textContent = result.count
-        ? "يعرض " + result.items.length + " من " + result.count + " إعلاناً منشوراً · آخر تحديث " + new Date(result.fetchedAt).toLocaleTimeString("ar")
+        ? tr("يعرض ") + numberLabel(result.items.length) + tr(" من ") + numberLabel(result.count) + tr(" إعلاناً منشوراً · آخر تحديث ") + new Date(result.fetchedAt).toLocaleTimeString(isEnglish()?"en-US":"ar")
         : "";
       return result;
     } catch (e) {
       list.replaceChildren();
       status.textContent = e.status === 503
         ? "خدمة البيانات المشتركة لم تُفعّل بعد. سيظهر المحتوى هنا بعد ربط قاعدة البيانات."
-        : "تعذر تحميل الإعلانات المشتركة. " + e.message;
+        : tr("تعذر تحميل الإعلانات المشتركة. ") + e.message;
       return null;
     }
   }
@@ -388,17 +418,14 @@
     } catch (_) { return null; }
   }
   function bind() {
-    fillSelect($("sharedDirectoryCategory"),CATS,"كل الأقسام");
-    fillSelect($("sharedDirectoryGovernorate"),GOVS.map(x=>[x,x]),"كل المحافظات");
-    fillSelect($("sharedSouqGovernorate"),GOVS.map(x=>[x,x]),"كل المحافظات");
+    fillSelect($("sharedDirectoryCategory"),CATS,tr("كل الأقسام"));
+    fillSelect($("sharedDirectoryGovernorate"),GOVS.map(x=>[x,x]),tr("كل المحافظات"));
+    fillSelect($("sharedSouqGovernorate"),GOVS.map(x=>[x,x]),tr("كل المحافظات"));
     const search = $("sharedDirectorySearch");
     if (search) search.addEventListener("click",loadHome);
     ["sharedDirectoryCategory","sharedDirectoryGovernorate"].forEach(id => {const el=$(id);if(el)el.addEventListener("change",loadHome);});
     ["sharedDirectoryQuery","sharedDirectoryDistrict"].forEach(id => {const el=$(id);if(el)el.addEventListener("keydown",e=>{if(e.key==="Enter")loadHome();});});
-    const homeRefresh=$("sharedDirectoryRefresh");if(homeRefresh)homeRefresh.addEventListener("click",loadHome);
-    const souqRefresh=$("sharedSouqRefresh");if(souqRefresh)souqRefresh.addEventListener("click",loadSouq);
-    const jobsRefresh=$("sharedJobsRefresh");if(jobsRefresh)jobsRefresh.addEventListener("click",loadJobs);
-    const souqGov=$("sharedSouqGovernorate");if(souqGov)souqGov.addEventListener("change",loadSouq);
+        const souqGov=$("sharedSouqGovernorate");if(souqGov)souqGov.addEventListener("change",loadSouq);
     const souqTabs=$("souqCategoryTabs");if(souqTabs)souqTabs.addEventListener("click",event=>{
       const button=event.target.closest("[data-group]");if(!button)return;
       souqTabs.querySelectorAll("[data-group]").forEach(item=>item.setAttribute("aria-pressed",item===button?"true":"false"));
@@ -411,11 +438,29 @@
     loadCategoryCounts();
     api("/api/marketplace/status").then(result => {
       const el=$("sharedDirectoryStatus");
-      if(el&&!result.ready)el.textContent="واجهة السوق المشترك جاهزة، وتنتظر تهيئة قاعدة PostgreSQL.";
+      if(el&&!result.ready)el.textContent=tr("واجهة السوق المشترك جاهزة، وتنتظر تهيئة قاعدة PostgreSQL.");
     }).catch(()=>{});
-    window.addEventListener("focus",()=>{loadHome();if($("vSouq")&&!$("vSouq").hidden)loadSouq();if($("vJobs")&&!$("vJobs").hidden)loadJobs();});
-    document.addEventListener("visibilitychange",()=>{if(!document.hidden){loadHome();if($("vSouq")&&!$("vSouq").hidden)loadSouq();if($("vJobs")&&!$("vJobs").hidden)loadJobs();}});
-    loadTimer=window.setInterval(()=>{if(document.hidden)return;loadHome();if($("vSouq")&&!$("vSouq").hidden)loadSouq();if($("vJobs")&&!$("vJobs").hidden)loadJobs();},120000);
+    const refreshIntervalMs=6*60*60*1000;
+    let lastSilentRefreshAt=Date.now();
+    const refreshVisiblePanels=async(force=false)=>{
+      if(document.hidden||(!force&&Date.now()-lastSilentRefreshAt<refreshIntervalMs))return;
+      lastSilentRefreshAt=Date.now();
+      const tasks=[loadHome(),loadCategoryCounts()];
+      if($("vSouq")&&!$("vSouq").hidden)tasks.push(loadSouq());
+      if($("vJobs")&&!$("vJobs").hidden)tasks.push(loadJobs());
+      await Promise.allSettled(tasks);
+    };
+    window.addEventListener("focus",()=>refreshVisiblePanels(false));
+    document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshVisiblePanels(false);});
+    window.addEventListener("dalilna:languagechange",()=>{
+      fillSelect($("sharedDirectoryCategory"),CATS,tr("كل الأقسام"));
+      fillSelect($("sharedDirectoryGovernorate"),GOVS.map(x=>[x,x]),tr("كل المحافظات"));
+      fillSelect($("sharedSouqGovernorate"),GOVS.map(x=>[x,x]),tr("كل المحافظات"));
+      loadHome();
+      if($("vSouq")&&!$("vSouq").hidden)loadSouq();
+      if($("vJobs")&&!$("vJobs").hidden)loadJobs();
+    });
+    loadTimer=window.setInterval(()=>refreshVisiblePanels(false),refreshIntervalMs);
     document.addEventListener("click",event=>{if(event.target.closest("[data-go='jobs']"))window.setTimeout(loadJobs,120);if(event.target.closest("[data-go='souq']"))window.setTimeout(loadSouq,120);});
   }
   window.DalilnaShared = { submitListing, loadHome, loadSouq, loadJobs, loadAdminQueue, loadCategoryCounts };
