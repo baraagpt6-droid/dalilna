@@ -143,7 +143,7 @@ async function syncMerchantFeed(req,res){
    }catch(_){skipped++;}
   }
   let archived=0;
-  if(completeSnapshot&&skipped===0){
+  if(completeSnapshot&&skipped===0&&activeRefs.length>0){
    const stale=await client.query("UPDATE marketplace_listings SET status='archived',expires_at=NOW(),updated_at=NOW() WHERE client_ref LIKE 'feed:%' AND status='approved' AND NOT (client_ref=ANY($1::text[])) RETURNING id",[activeRefs]);
    archived=stale.rowCount||0;
   }
