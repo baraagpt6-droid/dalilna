@@ -571,8 +571,8 @@ def main():
         "snapshotDate": manifest["snapshotDate"], "totalCount": manifest["totalCount"],
         "governorates": len(manifest["governorates"]),
         "withPlaces": sum(1 for row in manifest["governorates"] if row["count"]),
-        "boundaryAssignments": sum(1 for item in items if item["assignmentQuality"] == "osm-boundary"),
-        "approximateAssignments": sum(1 for item in items if item["assignmentQuality"] != "osm-boundary")
+        "boundaryAssignments": sum(1 for item in items if item["assignmentQuality"] in {"osm-boundary", "geoboundaries-polygon"}),
+        "approximateAssignments": sum(1 for item in items if item["assignmentQuality"] == "approximate-district-centroid")
     }, ensure_ascii=False))
 
 
