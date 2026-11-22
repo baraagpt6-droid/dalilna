@@ -63,13 +63,30 @@ test("main directory search loads all 22 governorate files without requiring a s
  assert.ok(html.includes("جارٍ البحث في سجلات المحافظات الـ22"));
  assert.ok(html.includes("normalizeSearchPlace"));
 });
-test("Souq store directory is loaded on demand and kept separate from approved sale listings",()=>{
- assert.ok(html.includes('id="souqStoresPanel"'));
- assert.ok(html.includes('id="souqStoreCategory"'));
- assert.ok(html.includes("async function runSouqStores(force)"));
- assert.ok(html.includes("OpenStreetMap"));
- assert.ok(html.includes("لا يؤكد توفر سلعة"));
+test("Souq renders only shared PostgreSQL product listings and excludes map restaurants and local ratings",()=>{
+ assert.ok(!html.includes('id="souqStoresPanel"'));
+ assert.ok(!html.includes("runSouqStores"));
+ assert.ok(!html.includes('id="sqList"'));
+ assert.ok(!html.includes("Restaurant directory"));
  assert.ok(html.includes('id="sharedSouqPanel"'));
+ assert.ok(features.includes("souqCategoryTabs"));
+ assert.equal((html.match(/function regionalCatalogCardHTML/g)||[]).length,1);
+});
+test("Souq exposes exactly seven product groups",()=>{
+ const groups=features.slice(features.indexOf("const GROUPS=["),features.indexOf("let country="));
+ for(const label of ["جوالات وإلكترونيات","سيارات ودراجات وقطع غيار","عقارات وأراضٍ","طاقة شمسية وبطاريات","أثاث وأجهزة منزلية","مواشي وزراعة ومعدات","ملابس وعطور ومستلزمات"])assert.ok(groups.includes(label),label);
+ assert.ok(!groups.includes('["tools"'));
+ assert.ok(!groups.includes('["other"'));
+});
+test("Souq's optional product image input does not show the browser-native Choose file control",()=>{
+ assert.ok(html.includes('id="imgChooseBtn"'));
+ assert.ok(html.includes('id="imgInput" accept="image/*" hidden'));
+ assert.ok(!html.includes('صورة المحل أو المنتج (اختيارية)'));
+});
+test("Global directory matcher uses normalized whitespace tokens and has no orphaned legacy matcher",()=>{
+ assert.ok(html.includes('split(/\\s+/).filter(Boolean)'));
+ assert.ok(!html.includes('watches:["ساعة","ساعات","ساعاتي"]'));
+ assert.equal((html.match(/function regionalCatalogCardHTML/g)||[]).length,1);
 });
 test("exchange rates use fresh public quotes and do not display saved device prices",()=>{
  assert.ok(html.includes('https://ye-rial.com/api/v1/current/'));
@@ -82,7 +99,7 @@ test("exchange rates use fresh public quotes and do not display saved device pri
 test("Android 2.4.0 updates app version and clears only the WebView HTTP cache",()=>{
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
  const activity=fs.readFileSync("android/app/src/main/java/ye/dalilna/app/MainActivity.java","utf8");
- assert.ok(gradle.includes("versionCode = 230"));
+ assert.ok(gradle.includes("versionCode = 240"));
  assert.ok(gradle.includes('versionName = "2.4.0"'));
  assert.ok(activity.includes("webView.clearCache(true)"));
  assert.ok(activity.includes("installed_version_code"));
