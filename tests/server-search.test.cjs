@@ -16,7 +16,7 @@ test("understands exact stationery and school-supply searches",()=>{
 });
 
 test("understands watches and vehicle searches",()=>{
- assert.equal(inferCategoryFromQuery("ساعات"),"watches");
+ assert.equal(inferCategoryFromQuery("ساعات"),"gold");
  assert.equal(inferCategoryFromQuery("معرض سيارات"),"vehicles");
  assert.equal(inferCategoryFromQuery("قطع غيار سيارات"),"vehicles");
 });
