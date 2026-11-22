@@ -1,0 +1,129 @@
+"use strict";
+
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const { server } = require("../server");
+
+const nativeFetch = global.fetch.bind(globalThis);
+const originalApiKey = process.env.GEMINI_API_KEY;
+const originalModel = process.env.GEMINI_MODEL;
+let baseUrl;
+
+test.before(async () => {
+  await new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+  const address = server.address();
+  baseUrl = "http://127.0.0.1:" + address.port;
+});
+
+test.after(async () => {
+  await new Promise(resolve => server.close(resolve));
+  if (originalApiKey === undefined) delete process.env.GEMINI_API_KEY;
+  else process.env.GEMINI_API_KEY = originalApiKey;
+  if (originalModel === undefined) delete process.env.GEMINI_MODEL;
+  else process.env.GEMINI_MODEL = originalModel;
+});
+
+test("PWA and Android route cloud assistant requests to the Render API", () => {
+  const root = path.resolve(__dirname, "..");
+  const web = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  const android = fs.readFileSync(path.join(root, "android/app/src/main/assets/index.html"), "utf8");
+  assert.equal(web, android, "Android WebView assets must match the PWA");
+  assert.match(web, /https:\/\/dalilna-live\.onrender\.com\/api\/assistant/);
+  assert.doesNotMatch(web, /dalilna-oavk\.vercel\.app\/api\/assistant/);
+});
+
+test("assistant status reveals only whether the Gemini key is configured", async () => {
+  delete process.env.GEMINI_API_KEY;
+  const response = await nativeFetch(baseUrl + "/api/assistant/status");
+  assert.equal(response.status, 200);
+  const payload = await response.json();
+  assert.equal(payload.provider, "Gemini");
+  assert.equal(payload.configured, false);
+  assert.equal(payload.model, "gemini-3.8-flash");
+  assert.equal(JSON.stringify(payload).includes("GEMINI_API_KEY"), false);
+});
+
+test("assistant route returns a clear 503 when the server key is not configured", async () => {
+  delete process.env.GEMINI_API_KEY;
+  const response = await nativeFetch(baseUrl + "/api/assistant", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Origin: "https://dalilna-yemen.onrender.com"
+    },
+    body: JSON.stringify({ question: "عرفني بدليلنا" })
+  });
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), { error: "cloud_ai_not_configured" });
+});
+
+test("assistant route rejects unapproved browser origins", async () => {
+  process.env.GEMINI_API_KEY = "test-only-not-a-real-key";
+  const response = await nativeFetch(baseUrl + "/api/assistant", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Origin: "https://unapproved.example"
+    },
+    body: JSON.stringify({ question: "اختبار" })
+  });
+  assert.equal(response.status, 403);
+  assert.deepEqual(await response.json(), { error: "origin_not_allowed" });
+});
+
+test("assistant route proxies Gemini server-side and never returns the API key", async () => {
+  process.env.GEMINI_API_KEY = "test-only-not-a-real-key";
+  process.env.GEMINI_MODEL = "gemini-3.8-flash";
+  let upstreamRequest;
+  const originalFetch = global.fetch;
+  global.fetch = async (url, options) => {
+    upstreamRequest = { url: String(url), options };
+    return new Response(JSON.stringify({
+      output_text: "أهلاً بك في دليلنا."
+    }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" }
+    });
+  };
+  try {
+    const response = await nativeFetch(baseUrl + "/api/assistant", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://dalilna-yemen.onrender.com"
+      },
+      body: JSON.stringify({
+        question: "عرفني بدليلنا",
+        context: { region: "إب" }
+      })
+    });
+    assert.equal(response.status, 200);
+    const payload = await response.json();
+    assert.equal(payload.answer, "أهلاً بك في دليلنا.");
+    assert.equal(payload.mode, "gemini");
+    assert.match(upstreamRequest.url, /generativelanguage\.googleapis\.com\/v1beta\/interactions$/);
+    assert.equal(upstreamRequest.options.headers["x-goog-api-key"], "test-only-not-a-real-key");
+    assert.equal(JSON.stringify(payload).includes("test-only-not-a-real-key"), false);
+  } finally {
+    global.fetch = originalFetch;
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GEMINI_MODEL;
+  }
+});
+
+test("assistant preflight advertises POST for the Render-backed endpoint", async () => {
+  const response = await nativeFetch(baseUrl + "/api/assistant", {
+    method: "OPTIONS",
+    headers: {
+      Origin: "https://dalilna-yemen.onrender.com",
+      "Access-Control-Request-Method": "POST"
+    }
+  });
+  assert.equal(response.status, 204);
+  assert.match(response.headers.get("access-control-allow-methods") || "", /POST/);
+});
