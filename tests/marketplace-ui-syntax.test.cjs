@@ -55,11 +55,11 @@ test("job cards only render apply buttons from approved official provider hosts"
  assert.ok(jobs.includes('function isOfficialApplicationUrl'));
 });
 
-test("PWA version metadata and asset cache tags are 2.6.0",()=>{
- assert.ok(html.includes('content="2.6.0"'));
- assert.ok(html.includes('features-2.1.css?v=2.6.0'));
- assert.ok(html.includes('features-2.1.js?v=2.6.0'));
- assert.ok(sw.includes('CACHE_PREFIX + "v2.6.0"'));
+test("PWA version metadata and asset cache tags are 2.6.1",()=>{
+ assert.ok(html.includes('content="2.6.1"'));
+ assert.ok(html.includes('features-2.1.css?v=2.6.1'));
+ assert.ok(html.includes('features-2.1.js?v=2.6.1'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.6.1"'));
 });
 test("main directory search loads all 22 governorate files without requiring a selected governorate",()=>{
  assert.ok(html.includes("async function loadAllRegionalCatalog(force)"));
@@ -100,11 +100,11 @@ test("exchange rates use fresh public quotes and do not display saved device pri
  assert.ok(!html.includes("S.fx.s.usdB"));
  assert.ok(!html.includes("S.fx.a.usdB"));
 });
-test("Android 2.6.0 updates app version and clears only the WebView HTTP cache",()=>{
+test("Android 2.6.1 updates app version and clears only the WebView HTTP cache",()=>{
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
  const activity=fs.readFileSync("android/app/src/main/java/ye/dalilna/app/MainActivity.java","utf8");
  assert.ok(gradle.includes("versionCode = 260"));
- assert.ok(gradle.includes('versionName = "2.6.0"'));
+ assert.ok(gradle.includes('versionName = "2.6.1"'));
  assert.ok(activity.includes("webView.clearCache(true)"));
  assert.ok(activity.includes("installed_version_code"));
  assert.ok(activity.includes("Keep DOM storage/localStorage intact"));
@@ -155,12 +155,12 @@ test("merchant feed SQL maps latitude, longitude and source metadata to distinct
  assert.ok(feed.includes("ON CONFLICT(client_ref) DO UPDATE"));
  assert.ok(feed.includes("completeSnapshot&&skipped===0"));
 });
-test("Android 2.6.0 cache and version metadata remain synchronized",()=>{
- assert.ok(sw.includes('CACHE_PREFIX + "v2.6.0"'));
- assert.ok(html.includes('content="2.6.0"'));
+test("Android 2.6.1 cache and version metadata remain synchronized",()=>{
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.6.1"'));
+ assert.ok(html.includes('content="2.6.1"'));
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
  assert.ok(gradle.includes("versionCode = 260"));
- assert.ok(gradle.includes('versionName = "2.6.0"'));
+ assert.ok(gradle.includes('versionName = "2.6.1"'));
 });
 
 test("daily sync workflow checks jobs, marketplace, exchange and configured merchant feeds",()=>{
@@ -191,15 +191,15 @@ test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black 
 test("regional catalogue manifest loads at first visit and does not show a local-only count as the national total",()=>{
  assert.ok(html.includes('loadRegionalCatalogManifest(false).then(()=>warmUnifiedSearchIndex(false))'));
  assert.ok(html.includes('جارٍ تجهيز فهرس البحث الموحد'));
- assert.ok(html.includes('manifest.json?v=2.6.0'));
+ assert.ok(html.includes('manifest.json?v=2.6.1'));
  assert.ok(html.includes('cache:"no-store"'));
  assert.ok(html.includes('districtCounts.length!==335'));
 });
 test("service worker refreshes regional data and critical CSS/JS from the network",()=>{
- assert.ok(sw.includes('CACHE_PREFIX + "v2.6.0"'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.6.1"'));
  assert.ok(sw.includes('url.pathname.includes("/regional-catalog/")'));
  assert.ok(sw.includes('fetch(request, { cache: "no-store" })'));
- assert.ok(sw.includes('features-2.1.css?v=2.6.0'));
+ assert.ok(sw.includes('features-2.1.css?v=2.6.1'));
 });
 
 test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});
