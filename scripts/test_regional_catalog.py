@@ -143,8 +143,8 @@ class RegionalCatalogTests(unittest.TestCase):
         mapping = catalog.load_category_mapping()
         feature = {"type":"Feature","geometry":{"type":"Point","coordinates":[44.2,13.8]},
                    "properties":{"fsq_place_id":"fsq-1","name":"Test Pharmacy",
-                                 "categories":["Pharmacy"],"latitude":13.8,"longitude":44.2,
-                                 "tel":"+967777123456","address":"Test Street"}}
+                                 "fsq_category_labels":["Health and Beauty > Pharmacies"],"latitude":13.8,"longitude":44.2,
+                                 "tel":"+967777123456","address":"Test Street","country":"YE"}}
         converted = fusion.as_feature(feature,"fsq",mapping)
         self.assertIsNotNone(converted)
         tags = converted["properties"]["tags"]
@@ -182,6 +182,13 @@ class RegionalCatalogTests(unittest.TestCase):
         merged,stats=fusion.deduplicate([a,b])
         self.assertEqual(len(merged),2)
         self.assertEqual(stats["duplicatesMerged"],0)
+
+    def test_yemen_country_polygon_filters_out_neighbouring_bbox_records(self):
+        polygon={"type":"Polygon","coordinates":[[[43,12],[46,12],[46,16],[43,16],[43,12]]]}
+        inside={"type":"Feature","geometry":{"type":"Point","coordinates":[44,14]}}
+        outside={"type":"Feature","geometry":{"type":"Point","coordinates":[47,14]}}
+        self.assertTrue(fusion.country_contains(inside,[polygon]))
+        self.assertFalse(fusion.country_contains(outside,[polygon]))
 
     def test_closed_overture_places_are_rejected(self):
         mapping=catalog.load_category_mapping()
