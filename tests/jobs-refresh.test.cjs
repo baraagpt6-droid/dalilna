@@ -31,3 +31,11 @@ test("Telegram and Telegraph links are not exposed as official application URLs"
  assert.equal(job.applicationUrl,"");
  assert.match(job.url,/t\.me\/hr_yemen/);
 });
+
+test("YemenHR parser never emits Telegraph intermediary links",()=>{
+ const [job]=parseYemenHrJobs(fixture("https://telegra.ph/temporary-application-link"));
+ assert.ok(job);
+ assert.doesNotMatch(job.url,/telegra\.ph/i);
+ assert.doesNotMatch(job.sourceUrl,/telegra\.ph/i);
+ assert.equal(job.applicationUrl,"");
+});
