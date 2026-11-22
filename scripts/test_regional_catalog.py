@@ -60,7 +60,8 @@ class RegionalCatalogTests(unittest.TestCase):
         self.assertIn("delivery", catalog.categories_for_tags({"office": "courier"}))
         self.assertIn("delivery", catalog.categories_for_tags({"shop": "parcel"}))
         self.assertIn("vehicles", catalog.categories_for_tags({"shop": "car"}))
-        self.assertIn("solar", catalog.categories_for_tags({"shop": "electronics"}))
+        self.assertIn("elec", catalog.categories_for_tags({"shop": "electronics"}))
+        self.assertIn("solar", catalog.categories_for_tags({"shop": "solar"}))
 
     def test_geoboundaries_adm2_polygon_matches_english_district_name(self):
         governors = [{"name": "إب", "nameEn": "Ibb", "nameLocal": "اب", "lat": 13.9, "lon": 44.1}]
