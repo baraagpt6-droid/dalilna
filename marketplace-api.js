@@ -9,9 +9,9 @@ const PRODUCT_GROUPS = {
   vehicles:["car","motorcycle","vehicle_parts"],
   property:["land","property","apartment","house"],
   solar:["solar_equipment","solar_panel","battery","inverter","power_system"],
-  home:["furniture","appliance","household_items","kitchenware","baby_products"],
-  agriculture:["livestock","agriculture","animal_feed","seeds","tools","construction_equipment","honey","coffee","spices","food"],
-  clothing:["clothing","shoes","perfume","cosmetics","jewelry","watch"]
+  home:["furniture","appliance","household_items","kitchenware","baby_products","tools","building_materials","construction_equipment","games","sports_equipment"],
+  agriculture:["livestock","agriculture","animal_feed","seeds","honey","coffee","spices","food"],
+  clothing:["clothing","shoes","perfume","cosmetics","jewelry","books","stationery","other"]
 };
 
 const CONDITIONS=new Set(["new","used","unknown"]);
