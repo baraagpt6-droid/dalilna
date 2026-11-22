@@ -19,6 +19,10 @@ test("infers map categories from Arabic search terms",()=>{
 test("classifies common OpenStreetMap business tags",()=>{
  assert.equal(classifyCategory({shop:"convenience"}),"grocery");
  assert.equal(classifyCategory({amenity:"pharmacy"}),"pharmacy");
+ assert.equal(classifyCategory({amenity:"hospital",shop:"car"}),"health");
+ assert.equal(classifyCategory({shop:"car_parts"}),"vehicles");
+ assert.equal(classifyCategory({shop:"car_repair"}),"vehicles");
+ assert.equal(classifyCategory({shop:"motorcycle"}),"vehicles");
  assert.equal(classifyCategory({amenity:"restaurant"}),"food");
  assert.equal(classifyCategory({amenity:"school"}),"edu");
  assert.equal(classifyCategory({tourism:"hotel"}),"hotel");
