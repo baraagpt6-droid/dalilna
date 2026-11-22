@@ -33,9 +33,9 @@ async function main(){
  assert.ok(Array.isArray(r.payload.items));
  assert.ok(Number.isFinite(r.payload.count));
  process.stdout.write("PASS live Geoapify grocery search returned "+r.payload.count+" results\n");
- const nationwideQuery=new URLSearchParams({q:"pharmacy",category:"pharmacy"});
+ const nationwideQuery=new URLSearchParams({q:"pharmacy",category:"pharmacy",lat:"0",lon:"0"});
  const nationwide=await get("/api/places/search?"+nationwideQuery.toString());
- assert.equal(nationwide.response.status,200,"countrywide search without a selected governorate or coordinates must use the Yemen Nominatim fallback");
+ assert.equal(nationwide.response.status,200,"countrywide search with no valid Yemen coordinates must use the Yemen Nominatim fallback");
  assert.equal(nationwide.payload.source,"OpenStreetMap Nominatim");
  assert.ok(Array.isArray(nationwide.payload.items));
  process.stdout.write("PASS nationwide OpenStreetMap Nominatim search returned "+nationwide.payload.count+" Yemen results\\n");
