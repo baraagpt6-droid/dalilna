@@ -189,6 +189,26 @@ def categories_for_tags(tags, mapping=None):
         return []
     mapping = mapping or CATEGORY_MAPPING
     definitions = mapping.get("categories", {})
+
+    # Exact activity tags take priority over broad Overture/OSM aliases.
+    # If a malformed record contains conflicting activity tags, resolve them
+    # by the national primary-category order rather than rule insertion order.
+    strict_matches = set()
+    for rule in mapping.get("strictPrimaryRules", []):
+        if not _matches_rule(tags, rule):
+            continue
+        condition = rule.get("when")
+        if condition and str(tags.get(condition.get("key")) or "").strip().lower() != str(condition.get("value") or "").strip().lower():
+            continue
+        category = rule.get("category")
+        if category in definitions:
+            strict_matches.add(category)
+    if strict_matches:
+        order = mapping.get("primaryCategoryOrder") or list(definitions)
+        rank = {category: index for index, category in enumerate(order)}
+        return [min(strict_matches, key=lambda category: rank.get(category, len(rank)))]
+
+
     matched = []
     external = tags.get("__catalog_categories") or []
     if isinstance(external, str):
@@ -198,7 +218,7 @@ def categories_for_tags(tags, mapping=None):
             matched.append(category)
     for category, definition in definitions.items():
         for rule in definition.get("osmTags", []):
-            if _matches_rule(tags, rule):
+            if _matches_rule(tags, rule) and category not in matched:
                 matched.append(category)
                 break
 
@@ -212,18 +232,17 @@ def categories_for_tags(tags, mapping=None):
             if category in definitions and category not in matched:
                 matched.append(category)
 
-    # Retain named shops and public amenities even when OSM introduces a
-    # previously unseen value. They appear under "other" and remain searchable.
     fallback_keys = ("shop", "amenity", "office", "healthcare", "tourism", "craft",
                      "leisure", "public_transport", "railway", "emergency", "delivery",
-                     "courier", "service", "government")
+                     "courier", "service", "government", "building")
     if not matched and any(str(tags.get(key) or "").strip() for key in fallback_keys):
         if "other" in definitions:
             matched.append("other")
 
     order = mapping.get("primaryCategoryOrder") or list(definitions)
     rank = {category: index for index, category in enumerate(order)}
-    return sorted(set(matched), key=lambda category: rank.get(category, len(rank)))
+    ranked = sorted(set(matched), key=lambda category: rank.get(category, len(rank)))
+    return ranked[:1]
 
 
 def classify(tags):

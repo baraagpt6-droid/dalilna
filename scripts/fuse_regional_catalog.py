@@ -128,6 +128,15 @@ def extract_category_values(props, tags, source):
                    tags.get("tourism"), tags.get("craft"), tags.get("service")])
     return [text(value, 120) for value in values if text(value, 120)]
 
+def _taxonomy_term_matches(value, term):
+    # Match complete taxonomy words/phrases, not arbitrary substrings.
+    value = norm(value)
+    term = norm(term)
+    if not value or not term:
+        return False
+    return bool(re.search(r"(?<![\\w])" + re.escape(term) + r"(?![\\w])", value, re.UNICODE))
+
+
 def category_for_values(values, mapping):
     normalized = [norm(value) for value in values if norm(value)]
     categories = mapping.get("categories", {})
@@ -135,25 +144,29 @@ def category_for_values(values, mapping):
     for category, definition in categories.items():
         aliases = [definition.get("labelAr"), definition.get("labelEn"), *(definition.get("aliases") or [])]
         normalized_aliases = [norm(x) for x in aliases if norm(x)]
-        if any(alias and (alias in value or value in alias) for alias in normalized_aliases for value in normalized):
+        if any(_taxonomy_term_matches(value, alias) for value in normalized for alias in normalized_aliases):
             found.append(category)
     external_hints = mapping.get("externalCategoryHints") or {}
     for category, hints in external_hints.items():
         if category not in categories:
             continue
         normalized_hints = [norm(hint) for hint in hints if norm(hint)]
-        if any(hint in value or value in hint for hint in normalized_hints for value in normalized):
-            if category not in found: found.append(category)
+        if any(_taxonomy_term_matches(value, hint) for value in normalized for hint in normalized_hints):
+            if category not in found:
+                found.append(category)
     if not external_hints:
         for value in normalized:
             for hints, category in CATEGORY_HINTS:
-                if any(norm(hint) in value or value in norm(hint) for hint in hints):
-                    if category not in found: found.append(category)
+                if any(_taxonomy_term_matches(value, norm(hint)) for hint in hints):
+                    if category not in found:
+                        found.append(category)
     if not found and normalized and "other" in categories:
         found.append("other")
     order = mapping.get("primaryCategoryOrder") or list(categories)
     ranks = {key: index for index, key in enumerate(order)}
-    return sorted(set(found), key=lambda key: ranks.get(key, 999))
+    ranked = sorted(set(found), key=lambda key: ranks.get(key, 999))
+    return ranked[:1]
+
 
 def source_metadata(props, source, source_id):
     if source == "osm":
@@ -234,7 +247,13 @@ def as_feature(feature, source, mapping):
     phone, website = first_value(phones), first_value(websites)
 
     values = extract_category_values(props, tags, source)
-    categories = category_for_values(values, mapping)
+    # Explicit OSM activity tags outrank broad external taxonomy labels.
+    strict = []
+    for rule in mapping.get("strictPrimaryRules", []):
+        if builder._matches_rule(tags, rule) and rule.get("category") in mapping.get("categories", {}):
+            strict = [rule["category"]]
+            break
+    categories = strict or category_for_values(values, mapping)
     normalized_tags = dict(tags)
     normalized_tags["name"] = arabic_name or primary or english_name
     if arabic_name: normalized_tags["name:ar"] = arabic_name
@@ -309,6 +328,9 @@ def merge_feature(target, incoming):
             signature = (source.get("name"), source.get("dataset"), source.get("id"))
             if not any((x.get("name"), x.get("dataset"), x.get("id")) == signature for x in values):
                 values.append(source)
+    # Re-run classification after merging provider tags so a multi-source
+    # duplicate still appears in exactly one section.
+    left_tags["__catalog_categories"] = builder.categories_for_tags(left_tags)
     incoming_confidence = right.get("__confidence")
     current_confidence = left.get("__confidence")
     try:
@@ -323,6 +345,12 @@ def merge_feature(target, incoming):
             target["geometry"] = incoming_geometry
     if right.get("__operating_status") and not left.get("__operating_status"):
         left["__operating_status"] = right["__operating_status"]
+    # Provider merges can combine several taxonomy labels. Re-resolve after
+    # merging all source tags so a pharmacy or car workshop remains in one
+    # primary directory section.
+    primary_categories = builder.categories_for_tags(left_tags)
+    if primary_categories:
+        left_tags["__catalog_categories"] = primary_categories
 
 def similar_name_keys(keys_a, keys_b):
     if not keys_a or not keys_b: return False

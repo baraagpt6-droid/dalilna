@@ -1,9 +1,9 @@
 {
-  "version": "2.6.1",
-  "versionCode": 261,
-  "webVersion": "2.6.1",
-  "androidVersion": "2.6.1",
-  "androidVersionCode": 261,
+  "version": "2.7.0",
+  "versionCode": 270,
+  "webVersion": "2.7.0",
+  "androidVersion": "2.7.0",
+  "androidVersionCode": 270,
   "catalogSchemaVersion": 2,
   "catalogSnapshotDate": "2026-11-22",
   "catalogTotalCount": 24564,
@@ -20,5 +20,5 @@
     "Foursquare Open Places (via Overture)": 4
   },
   "osmDatasetSource": "Geofabrik latest Yemen extract",
-  "updatedAt": "2026-11-22T20:40:10.293179+00:00"
+  "updatedAt": "2026-11-22T22:42:42.804Z"
 }

@@ -33,7 +33,7 @@ const CATEGORY_MAPPING = require("./category-mapping.json");
 const ALL_OSM_KEYS = [
   "shop","amenity","healthcare","tourism","office","craft","leisure",
   "public_transport","landuse","railway","building","emergency",
-  "delivery","courier","service"
+  "delivery","courier","service","product"
 ];
 const ALL_FILTERS = [...new Set(ALL_OSM_KEYS.map(key => '[ "'+key+'" ]'.replace(/ /g,"")))];
 const CATEGORY_ALIASES = {land:"real_estate",watches:"gold"};
@@ -47,11 +47,13 @@ function osmFilter(rule) {
 }
 const FILTERS = Object.fromEntries(Object.entries(CATEGORY_MAPPING.categories||{}).map(([category,definition])=>{
   const rules=(definition.osmTags||[]).map(osmFilter).filter(Boolean);
-  return [category,rules.length?rules:ALL_FILTERS];
+  return [category,rules.length?rules:(category==="parts"?[]:ALL_FILTERS)];
 }));
 FILTERS.all=ALL_FILTERS;
 FILTERS.land=FILTERS.real_estate||ALL_FILTERS;
 FILTERS.watches=FILTERS.gold||ALL_FILTERS;
+// Spare-parts tags are classified in the vehicles section. Preserve older links.
+FILTERS.parts=FILTERS.vehicles||[];
 
 function json(res, status, payload, extraHeaders = {}) {
   const body = JSON.stringify(payload);
@@ -195,8 +197,37 @@ function buildOverpassQuery(bbox, category) {
   return "[out:json][timeout:12][maxsize:134217728];\n(\n" + union + "\n);\nout center tags 80;";
 }
 
+function isCategoryOnlyYemenQuery(query,category){
+  const definition=CATEGORY_MAPPING.categories?.[category];
+  if(!definition)return false;
+  const normalized=normalizeCategorySearch(query);
+  if(!normalized)return false;
+  const aliases=[definition.labelAr,definition.labelEn,...(definition.aliases||[]),...(CATEGORY_MAPPING.externalCategoryHints?.[category]||[])];
+  const aliasTexts=aliases.map(normalizeCategorySearch).filter(Boolean);
+  if(aliasTexts.includes(normalized))return true;
+  const stop=new Set(["اقرب","قريب","قريبه","قريبة","near","nearest","the","in","at","في","من","اليمن","yemen","خدمات","محلات"]);
+  const allowed=new Set(aliasTexts.flatMap(value=>value.split(/\s+/)));
+  const tokens=normalized.split(/\s+/).filter(Boolean);
+  return tokens.length>0&&tokens.every(token=>stop.has(token)||allowed.has(token));
+}
+function buildYemenOverpassQuery(query,category="all"){
+  const selected=FILTERS[category]?category:(inferCategoryFromQuery(query)||"all");
+  const categoryOnly=isCategoryOnlyYemenQuery(query,selected);
+  let filters=[];
+  if(categoryOnly&&selected!=="all"){
+    filters=FILTERS[selected]||[];
+  }else{
+    const pattern=String(query||"").trim().replace(/[^\u0600-\u06FFa-zA-Z0-9\s_-]/g," ").replace(/\s+/g," ").trim();
+    const qlValue=pattern.replace(/\\/g,"\\\\").replace(/"/g,'\\"');
+    if(!qlValue)return "";
+    filters=["name","name:ar","name:en","brand","operator"].map(key=>'["'+key+'"~"'+qlValue+'",i]');
+  }
+  if(!filters.length)return "";
+  const union=filters.map(filter=>"nwr"+filter+"(area.yemen);").join("\n");
+  return '[out:json][timeout:25][maxsize:134217728];\narea["ISO3166-1"="YE"][admin_level=2]->.yemen;\n(\n'+union+'\n);\nout center tags 80;';
+}
 function normalizeCategorySearch(value) {
-  return normalizeText(value).replace(/ة/g,"ه").replace(/ى/g,"ي").split(/\\s+/)
+  return normalizeText(value).replace(/ة/g,"ه").replace(/ى/g,"ي").split(/\s+/)
     .filter(Boolean).map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
 }
 function inferCategoryFromQuery(query) {
@@ -223,9 +254,9 @@ const GEOAPIFY_CATEGORY_MAP = {
   food: ["catering.restaurant", "catering.fast_food", "catering.food_court"],
   cafe: ["catering.cafe"],
   telecom: ["commercial.elektronics"],
-  elec: ["commercial.elektronics"],
+  elec: ["commercial.elektronics", "commercial.computer"],
   pharmacy: ["healthcare.pharmacy", "commercial.health_and_beauty.pharmacy"],
-  health: ["healthcare.hospital", "healthcare.clinic_or_praxis", "healthcare.dentist", "healthcare.pharmacy", "commercial.health_and_beauty.pharmacy"],
+  health: ["healthcare.hospital", "healthcare.clinic_or_praxis", "healthcare.dentist"],
   edu: ["education.school", "education.college", "education.university", "childcare.kindergarten"],
   gov: ["office.government"],
   money: ["service.financial.bank", "service.financial.atm", "service.financial.bureau_de_change", "service.financial.money_transfer"],
@@ -234,8 +265,8 @@ const GEOAPIFY_CATEGORY_MAP = {
   mosque: ["religion.place_of_worship.islam"],
   hotel: ["accommodation.hotel", "accommodation.guest_house", "accommodation.hostel"],
   market: ["commercial.marketplace"],
-  solar: ["commercial.elektronics", "commercial.energy", "service.electrician"],
-  parts: ["commercial.vehicle"],
+  solar: ["commercial.energy"],
+  parts: [],
   build: ["commercial.houseware_and_hardware.building_materials", "commercial.houseware_and_hardware.hardware_and_tools"],
   clothes: ["commercial.clothing"],
   home: ["commercial.furniture_and_interior", "commercial.houseware_and_hardware"],
@@ -246,7 +277,7 @@ const GEOAPIFY_CATEGORY_MAP = {
   salon: ["service.beauty.hairdresser"],
   laundry: ["service.cleaning.laundry"],
   delivery: ["service.post", "service.post.office", "service.post.parcel_locker"],
-  utility: ["service.vehicle.fuel", "commercial.energy"],
+  utility: ["service.vehicle.fuel"],
   gold: ["commercial.jewelry"],
   wedding: ["commercial.wedding", "catering"],
   farm: ["commercial.agrarian", "commercial.garden"]
@@ -517,40 +548,52 @@ async function searchGeoapifyPlaces(params) {
 }
 
 function classifyCategory(tags) {
-  const shop = String(tags.shop || "").toLowerCase();
-  const amenity = String(tags.amenity || "").toLowerCase();
-  const tourism = String(tags.tourism || "").toLowerCase();
-  const office = String(tags.office || "").toLowerCase();
-  const craft = String(tags.craft || "").toLowerCase();
-  if (["convenience", "grocery", "supermarket", "general"].includes(shop) || amenity === "marketplace") return "grocery";
-  if (amenity === "pharmacy") return "pharmacy";
-  if (["hospital", "clinic", "doctors", "dentist"].includes(amenity)) return "health";
-  if (["restaurant", "fast_food"].includes(amenity) || shop === "bakery") return "food";
-  if (amenity === "cafe") return "cafe";
-  if (["school", "college", "university", "kindergarten"].includes(amenity)) return "edu";
-  if (office === "government") return "gov";
-  if (["bank", "atm", "bureau_de_change"].includes(amenity)) return "money";
-  if (amenity === "place_of_worship" || tags.building === "mosque") return "mosque";
-  if (["hotel", "guest_house", "hostel"].includes(tourism)) return "hotel";
-  if (shop === "hairdresser") return "salon";
-  if (shop === "laundry") return "laundry";
-  if (shop === "car_parts") return "parts";
-  if (shop === "building_materials") return "build";
-  if (shop === "jewelry") return "gold";
-  if (shop === "clothes" || shop === "shoes") return "clothes";
-  if (shop === "books" || shop === "stationery" || shop === "newsagent") return "books";
-  if (["car","motorcycle","vehicle","car_repair","car_parts"].includes(shop)) return "vehicles";
-  if (shop === "watches" || craft === "watchmaker") return "watches";
-  if (shop === "furniture" || shop === "houseware" || shop === "appliance") return "home";
-  if (shop === "beauty" || shop === "cosmetics" || shop === "perfumery") return "beauty";
-  if (shop === "electronics" || shop === "electrical") return "solar";
-  if (shop === "hardware") return "build";
-  if (craft) return "craft";
-  if (amenity === "bus_station" || amenity === "taxi") return "transport";
-  if (amenity === "post_office" || shop === "parcel") return "delivery";
-  if (amenity === "fuel" || shop === "gas" || shop === "propane") return "utility";
-  if (amenity === "events_venue") return "wedding";
-  if (shop === "agrarian" || shop === "garden_centre" || shop === "farm") return "farm";
+  const value=(key)=>String(tags&&tags[key]||"").trim().toLowerCase();
+  // Exact activity tags take priority over broad taxonomy aliases.
+  // Resolve malformed mixed-tag records using the same national primary order
+  // as the offline catalogue builder.
+  const strictMatches=new Set();
+  for(const rule of CATEGORY_MAPPING.strictPrimaryRules||[]){
+    if(value(rule.key)===String(rule.value||"").toLowerCase()&&CATEGORY_MAPPING.categories?.[rule.category]){
+      strictMatches.add(rule.category);
+    }
+  }
+  if(strictMatches.size){
+    const order=CATEGORY_MAPPING.primaryCategoryOrder||Object.keys(CATEGORY_MAPPING.categories||{});
+    const rank=new Map(order.map((category,index)=>[category,index]));
+    return [...strictMatches].sort((a,b)=>(rank.get(a)??order.length)-(rank.get(b)??order.length))[0];
+  }
+  const shop=value("shop"),amenity=value("amenity"),healthcare=value("healthcare");
+  const tourism=value("tourism"),office=value("office"),craft=value("craft");
+  if(["hospital","clinic","doctors","dentist","doctors_surgery","health_centre","medical_centre"].includes(amenity)
+    ||["hospital","clinic","doctor","doctors","dentist","health_centre","medical_centre"].includes(healthcare))return "health";
+  if(["convenience","grocery","supermarket","greengrocer","butcher","deli","food","seafood"].includes(shop))return "grocery";
+  if(["restaurant","fast_food","food_court"].includes(amenity)||["bakery","pastry","confectionery"].includes(shop))return "food";
+  if(["cafe","tea","internet_cafe"].includes(amenity))return "cafe";
+  if(["school","college","university","kindergarten","language_school","driving_school"].includes(amenity))return "edu";
+  if(["government","administrative","diplomatic"].includes(office)||value("government"))return "gov";
+  if(["bank","atm","bureau_de_change","money_transfer"].includes(amenity))return "money";
+  if(amenity==="place_of_worship"||value("building")==="mosque")return "mosque";
+  if(["hotel","guest_house","hostel","motel","apartment"].includes(tourism))return "hotel";
+  if(["hairdresser","barber"].includes(shop))return "salon";
+  if(["laundry","dry_cleaning"].includes(shop))return "laundry";
+  if(["building_materials","paint","tiles","doors","flooring","plumbing"].includes(shop))return "build";
+  if(["jewelry","jewellery","watches"].includes(shop)||["goldsmith","watchmaker"].includes(craft))return "gold";
+  if(["clothes","shoes","tailor","fabric","fashion","boutique"].includes(shop))return "clothes";
+  if(["books","stationery","copyshop","print","newspaper"].includes(shop)||amenity==="library")return "books";
+  if(["car","motorcycle","vehicle","car_repair","motorcycle_repair","car_parts","vehicle_parts","motorcycle_parts","tyres","car_rental"].includes(shop)
+    ||amenity==="car_rental"||craft==="mechanic")return "vehicles";
+  if(["furniture","houseware","appliance","kitchen","kitchenware","bed","interior_decoration","curtain","carpet","bathroom_furnishing"].includes(shop))return "home";
+  if(["beauty","cosmetics","perfumery","hairdresser_supply"].includes(shop))return "beauty";
+  if(["electronics","computer","electrical","hifi","radiotechnics","computer_parts"].includes(shop))return "elec";
+  if(["mobile_phone","telecommunication","mobile_phone_accessories"].includes(shop)||office==="telecommunication")return "telecom";
+  if(["agrarian","garden_centre","farm","animal_feed","seeds","agricultural_supplies"].includes(shop)
+    ||["veterinary","animal_boarding"].includes(amenity)||healthcare==="veterinary")return "farm";
+  if(["bus_station","taxi","fuel","ferry_terminal"].includes(amenity)||["station","stop_position","platform"].includes(value("public_transport")))return "transport";
+  if(["post_office","parcel_locker","parcel_pickup","courier","delivery"].includes(amenity)||["parcel","shipping","delivery","courier"].includes(shop)||office==="courier"||office==="logistics")return "delivery";
+  if(["gas","propane","water","water_treatment","fuel"].includes(shop)||["fuel","water_point","drinking_water"].includes(amenity))return "utility";
+  if(["events_venue","community_centre"].includes(amenity)||value("leisure")==="events_venue")return "wedding";
+  if(["car_repair","electrician","plumber","carpenter","blacksmith"].includes(craft))return "craft";
   return "other";
 }
 
@@ -813,7 +856,8 @@ async function searchYemenNominatim(query, category="all") {
       const name=cleanText(row.name||names.name||row.display_name?.split(",")[0]||"",180);
       if(!name)return null;
       const categoryFromTags=classifyCategory({[row.category||row.class||""]:row.type||""});
-      const categoryValue=category&&category!=="all"?category:(categoryFromTags||"other");
+      if(category&&category!=="all"&&categoryFromTags!==category)return null;
+      const categoryValue=categoryFromTags||"other";
       const lat=Number(row.lat),lon=Number(row.lon),type=String(row.osm_type||"").toLowerCase(),id=String(row.osm_id||"");
       const phone=cleanText(tags.phone||tags["contact:phone"]||tags.mobile||"",60);
       const website=cleanText(tags.website||tags["contact:website"]||"",300);
@@ -845,6 +889,55 @@ async function searchYemenNominatim(query, category="all") {
   }finally{clearTimeout(timer);}
 }
 
+async function searchYemenOverpass(query,category="all"){
+  const normalized=normalizeCategorySearch(query);
+  const selected=FILTERS[category]?category:(inferCategoryFromQuery(query)||"all");
+  const cacheKey="overpass:yemen:"+normalized+"|"+selected;
+  const cached=readCache(resultCache,cacheKey);
+  if(cached)return {...cached,cached:true,fetchedAt:new Date().toISOString()};
+  const ql=buildYemenOverpassQuery(query,selected);
+  if(!ql)return {items:[],count:0,category:selected,source:"OpenStreetMap Overpass",cached:false};
+  const endpoints=[
+    {name:"FOSSGIS",url:"https://overpass-api.de/api/interpreter",timeoutMs:18000},
+    {name:"Private.coffee",url:"https://overpass.private.coffee/api/interpreter",timeoutMs:18000},
+    {name:"VK Maps",url:"https://maps.mail.ru/osm/tools/overpass/api/interpreter",timeoutMs:20000}
+  ];
+  let lastError=null,hadValidEmpty=false;
+  for(const provider of endpoints){
+    await waitForOverpassSlot();lastOverpassAt=Date.now();
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),provider.timeoutMs),startedAt=Date.now();
+    try{
+      const response=await fetch(provider.url,{method:"POST",signal:controller.signal,
+        headers:{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8","Accept":"application/json",
+          "User-Agent":"DalilnaDirectory/"+VERSION+" (+https://dalilna-live.onrender.com)"},
+        body:new URLSearchParams({data:ql})});
+      if([429,503,504].includes(response.status)){lastError=new Error("مصدر بيانات الأماكن مشغول حالياً.");continue;}
+      if(!response.ok){lastError=new Error("تعذّر جلب نتائج البحث الوطني من Overpass.");continue;}
+      const body=await response.json();
+      if(!body||!Array.isArray(body.elements)||body.remark){lastError=new Error("استجابة بحث اليمن من Overpass غير مكتملة.");continue;}
+      const categoryOnly=isCategoryOnlyYemenQuery(query,selected);
+      const tokens=normalized.split(/\s+/).filter(token=>token.length>1);
+      const seen=new Set();
+      const items=body.elements.map(element=>normalizeElement(element,"اليمن"))
+        .filter(item=>item&&(selected==="all"||item.category===selected))
+        .filter(item=>categoryOnly||tokens.every(token=>normalizeCategorySearch([item.name,item.nameEn,item.address,item.brand].join(" ")).includes(token)))
+        .filter(item=>{const key=String(item.id||"")+"|"+normalizeText(item.name)+"|"+Number(item.lat).toFixed(4)+"|"+Number(item.lon).toFixed(4);if(seen.has(key))return false;seen.add(key);return true;})
+        .slice(0,80);
+      if(!items.length){hadValidEmpty=true;continue;}
+      const result={items,count:items.length,category:selected,source:"OpenStreetMap Overpass",
+        attribution:"© OpenStreetMap contributors",sourceUrl:"https://www.openstreetmap.org/copyright",
+        place:"اليمن",fetchedAt:new Date().toISOString(),cached:false,
+        note:"نتائج البحث الحي داخل حدود اليمن. قد لا تتضمن بيانات المصدر أرقام الهاتف."};
+      touchCache(resultCache,cacheKey,result,3*60*1000);
+      console.info(JSON.stringify({event:"places.overpass.yemen.success",provider:provider.name,count:items.length,durationMs:Date.now()-startedAt}));
+      return result;
+    }catch(error){lastError=error.name==="AbortError"?new Error("انتهت مهلة بحث Overpass الوطني."):error;}
+    finally{clearTimeout(timer);}
+  }
+  if(hadValidEmpty)return {items:[],count:0,category:selected,source:"OpenStreetMap Overpass",cached:false};
+  throw lastError||new Error("مصادر بحث اليمن غير متاحة حالياً.");
+}
+
 async function searchPlaces(params) {
   const place = cleanText(params.place, 180);
   const fallbackPlace = cleanText(params.fallbackPlace, 180);
@@ -861,7 +954,31 @@ async function searchPlaces(params) {
     && lat >= 11 && lat <= 20.5 && lon >= 41 && lon <= 55.5;
   const radius = Math.min(15000, Math.max(1000, Number(params.radius) || 7000));
   const countrywideSearch = !hasCoordinates && (!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen");
-  if (countrywideSearch && query) return searchYemenNominatim(query, category);
+  if (countrywideSearch && query) {
+    let nominal={items:[],count:0,category,source:"OpenStreetMap Nominatim",place:"اليمن",cached:false};
+    let nomError=null;
+    try{nominal=await searchYemenNominatim(query,category);}catch(error){nomError=error;}
+    if((nominal.items||[]).length>=8)return nominal;
+    let live=[];
+    try{
+      const fallback=await searchYemenOverpass(query,category);
+      live=Array.isArray(fallback.items)?fallback.items:[];
+    }catch(error){
+      if((nominal.items||[]).length)return nominal;
+      throw nomError||error;
+    }
+    const merged=[...(nominal.items||[])],seen=new Set();
+    for(const item of merged)seen.add(String(item.id||"")+"|"+normalizeText(item.name)+"|"+Number(item.lat).toFixed(4)+"|"+Number(item.lon).toFixed(4));
+    for(const item of live){
+      const key=String(item.id||"")+"|"+normalizeText(item.name)+"|"+Number(item.lat).toFixed(4)+"|"+Number(item.lon).toFixed(4);
+      if(!seen.has(key)){seen.add(key);merged.push(item);}
+    }
+    const result={...nominal,items:merged.slice(0,80),count:Math.min(80,merged.length),
+      source:"OpenStreetMap Nominatim + Overpass",liveFallbackCount:live.length,
+      note:"تم دمج البحث الاسمي مع فهرس Overpass الحي داخل حدود اليمن.",nominalSearchError:nomError?cleanText(nomError.message,160):""};
+    if(result.items.length)touchCache(resultCache,"yemen-hybrid:"+normalizeText(query)+"|"+category,result,2*60*1000);
+    return result;
+  }
   if ((!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen") && !hasCoordinates && !query) {
     const error = new Error("أدخل اسم مكان أو نشاط للبحث في اليمن، أو اختر محافظة أو مديرية لتضييق النطاق.");
     error.statusCode = 400;
@@ -1122,4 +1239,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, inferCategoryFromQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyRectFilter, geoapifyCategoryLabel, createIntervalGate, searchCommonsPhotos, server };
+module.exports = { buildOverpassQuery, buildYemenOverpassQuery, searchYemenOverpass, inferCategoryFromQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyRectFilter, geoapifyCategoryLabel, createIntervalGate, searchCommonsPhotos, server };

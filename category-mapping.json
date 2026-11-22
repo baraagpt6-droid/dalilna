@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "source": "OpenStreetMap tagging taxonomy",
   "categories": {
     "grocery": {
@@ -49,19 +49,7 @@
         },
         {
           "key": "shop",
-          "value": "farm"
-        },
-        {
-          "key": "shop",
           "value": "seafood"
-        },
-        {
-          "key": "shop",
-          "value": "bakery"
-        },
-        {
-          "key": "amenity",
-          "value": "marketplace"
         }
       ]
     },
@@ -76,7 +64,8 @@
         "restaurant",
         "fast food",
         "food court",
-        "bakery"
+        "bakery",
+        "restaurants"
       ],
       "osmTags": [
         {
@@ -205,7 +194,6 @@
         "doctors",
         "dentist",
         "healthcare",
-        "pharmacy",
         "ambulance"
       ],
       "osmTags": [
@@ -232,10 +220,6 @@
         {
           "key": "amenity",
           "value": "health_centre"
-        },
-        {
-          "key": "amenity",
-          "value": "pharmacy"
         },
         {
           "key": "healthcare",
@@ -267,10 +251,6 @@
         },
         {
           "key": "healthcare",
-          "value": "pharmacy"
-        },
-        {
-          "key": "healthcare",
           "value": "nurse"
         },
         {
@@ -292,10 +272,6 @@
         {
           "key": "healthcare",
           "value": "birthing_centre"
-        },
-        {
-          "key": "healthcare",
-          "value": "veterinary"
         },
         {
           "key": "emergency",
@@ -347,6 +323,10 @@
         {
           "key": "shop",
           "value": "medical_supply"
+        },
+        {
+          "key": "healthcare",
+          "value": "pharmacy"
         }
       ]
     },
@@ -509,24 +489,7 @@
         "vehicle parts",
         "tyres"
       ],
-      "osmTags": [
-        {
-          "key": "shop",
-          "value": "car_parts"
-        },
-        {
-          "key": "shop",
-          "value": "tyres"
-        },
-        {
-          "key": "shop",
-          "value": "vehicle_parts"
-        },
-        {
-          "key": "shop",
-          "value": "motorcycle_parts"
-        }
-      ]
+      "osmTags": []
     },
     "craft": {
       "labelAr": "حرفيون وصيانة",
@@ -577,10 +540,6 @@
         {
           "key": "amenity",
           "value": "fuel"
-        },
-        {
-          "key": "amenity",
-          "value": "car_rental"
         },
         {
           "key": "amenity",
@@ -758,6 +717,10 @@
         },
         {
           "key": "amenity",
+          "value": "veterinary"
+        },
+        {
+          "key": "healthcare",
           "value": "veterinary"
         }
       ]
@@ -1007,10 +970,6 @@
         {
           "key": "shop",
           "value": "computer_parts"
-        },
-        {
-          "key": "shop",
-          "value": "appliance"
         }
       ]
     },
@@ -1372,7 +1331,16 @@
         "خدمات أخرى",
         "other"
       ],
-      "osmTags": []
+      "osmTags": [
+        {
+          "key": "building",
+          "value": "commercial"
+        },
+        {
+          "key": "building",
+          "value": "retail"
+        }
+      ]
     },
     "real_estate": {
       "labelAr": "أراضٍ وعقارات",
@@ -1450,45 +1418,37 @@
           "value": "car_repair"
         },
         {
-          "key": "amenity",
+          "key": "shop",
+          "value": "motorcycle_repair"
+        },
+        {
+          "key": "shop",
+          "value": "car_parts"
+        },
+        {
+          "key": "shop",
+          "value": "vehicle_parts"
+        },
+        {
+          "key": "shop",
+          "value": "motorcycle_parts"
+        },
+        {
+          "key": "shop",
+          "value": "tyres"
+        },
+        {
+          "key": "shop",
           "value": "car_rental"
         },
         {
-          "key": "shop",
-          "value": "car_repair"
-        },
-        {
-          "key": "shop",
-          "value": "motorcycle_repair"
+          "key": "amenity",
+          "value": "car_rental"
         }
       ]
     }
   },
   "multiCategoryRules": [
-    {
-      "key": "amenity",
-      "value": "pharmacy",
-      "categories": [
-        "health",
-        "pharmacy"
-      ]
-    },
-    {
-      "key": "healthcare",
-      "value": "pharmacy",
-      "categories": [
-        "health",
-        "pharmacy"
-      ]
-    },
-    {
-      "key": "shop",
-      "value": "pharmacy",
-      "categories": [
-        "health",
-        "pharmacy"
-      ]
-    },
     {
       "key": "amenity",
       "value": "place_of_worship",
@@ -1505,14 +1465,6 @@
       "value": "mosque",
       "categories": [
         "mosque"
-      ]
-    },
-    {
-      "key": "shop",
-      "value": "car_parts",
-      "categories": [
-        "parts",
-        "vehicles"
       ]
     }
   ],
@@ -1598,7 +1550,10 @@
       "pharmacy",
       "drugstore",
       "chemist",
-      "صيدلية"
+      "صيدلية",
+      "pharmacies",
+      "drugstores",
+      "chemists"
     ],
     "edu": [
       "school",
@@ -1623,13 +1578,19 @@
       "convenience store",
       "food market",
       "بقالة",
-      "سوبرماركت"
+      "سوبرماركت",
+      "supermarkets",
+      "convenience stores",
+      "grocery stores"
     ],
     "food": [
       "restaurant",
       "fast food",
       "food court",
-      "مطعم"
+      "مطعم",
+      "restaurants",
+      "bakeries",
+      "fast food restaurants"
     ],
     "cafe": [
       "cafe",
@@ -1659,7 +1620,23 @@
       "car dealer",
       "motorcycle dealer",
       "قطع غيار",
-      "سيارات"
+      "سيارات",
+      "car repairs",
+      "vehicle repairs",
+      "motorcycle repairs",
+      "auto repairs",
+      "auto parts",
+      "car parts",
+      "vehicle parts",
+      "motorcycle parts",
+      "car dealers",
+      "motorcycle dealers",
+      "car rental",
+      "tyre shop",
+      "tire shop",
+      "spare parts",
+      "tyres",
+      "ورشة سيارات"
     ],
     "telecom": [
       "mobile phone",
@@ -1674,7 +1651,10 @@
       "electronics",
       "computer",
       "إلكترونيات",
-      "كمبيوتر"
+      "كمبيوتر",
+      "electronics stores",
+      "computer stores",
+      "computer shop"
     ],
     "clothes": [
       "clothing store",
@@ -1689,7 +1669,9 @@
       "hardware store",
       "building material",
       "أثاث",
-      "مواد بناء"
+      "مواد بناء",
+      "furniture shops",
+      "home appliance stores"
     ],
     "hotel": [
       "hotel",
@@ -1770,14 +1752,7 @@
       "أسمنت",
       "أدوات بناء"
     ],
-    "parts": [
-      "auto parts",
-      "car parts",
-      "spare parts",
-      "vehicle parts",
-      "قطع غيار",
-      "مستلزمات سيارات"
-    ],
+    "parts": [],
     "transport": [
       "bus station",
       "taxi stand",
@@ -1840,5 +1815,253 @@
       "مكتب عقاري",
       "وسيط عقاري"
     ]
-  }
+  },
+  "strictPrimaryRules": [
+    {
+      "key": "amenity",
+      "value": "pharmacy",
+      "category": "pharmacy"
+    },
+    {
+      "key": "healthcare",
+      "value": "pharmacy",
+      "category": "pharmacy"
+    },
+    {
+      "key": "shop",
+      "value": "pharmacy",
+      "category": "pharmacy"
+    },
+    {
+      "key": "shop",
+      "value": "chemist",
+      "category": "pharmacy"
+    },
+    {
+      "key": "shop",
+      "value": "medical_supply",
+      "category": "pharmacy"
+    },
+    {
+      "key": "shop",
+      "value": "car",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "motorcycle",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "vehicle",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "car_repair",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "motorcycle_repair",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "car_parts",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "vehicle_parts",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "motorcycle_parts",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "tyres",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "car_rental",
+      "category": "vehicles"
+    },
+    {
+      "key": "amenity",
+      "value": "car_rental",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "bakery",
+      "category": "food"
+    },
+    {
+      "key": "shop",
+      "value": "pastry",
+      "category": "food"
+    },
+    {
+      "key": "shop",
+      "value": "confectionery",
+      "category": "food"
+    },
+    {
+      "key": "shop",
+      "value": "farm",
+      "category": "farm"
+    },
+    {
+      "key": "amenity",
+      "value": "marketplace",
+      "category": "market"
+    },
+    {
+      "key": "shop",
+      "value": "market",
+      "category": "market"
+    },
+    {
+      "key": "shop",
+      "value": "appliance",
+      "category": "home"
+    },
+    {
+      "key": "craft",
+      "value": "goldsmith",
+      "category": "gold"
+    },
+    {
+      "key": "craft",
+      "value": "watchmaker",
+      "category": "gold"
+    },
+    {
+      "key": "craft",
+      "value": "mechanic",
+      "category": "vehicles"
+    },
+    {
+      "key": "amenity",
+      "value": "hospital",
+      "category": "health"
+    },
+    {
+      "key": "amenity",
+      "value": "clinic",
+      "category": "health"
+    },
+    {
+      "key": "amenity",
+      "value": "doctors",
+      "category": "health"
+    },
+    {
+      "key": "amenity",
+      "value": "dentist",
+      "category": "health"
+    },
+    {
+      "key": "amenity",
+      "value": "doctors_surgery",
+      "category": "health"
+    },
+    {
+      "key": "amenity",
+      "value": "health_centre",
+      "category": "health"
+    },
+    {
+      "key": "amenity",
+      "value": "medical_centre",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "hospital",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "clinic",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "doctor",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "doctors",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "dentist",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "health_centre",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "medical_centre",
+      "category": "health"
+    },
+    {
+      "key": "healthcare",
+      "value": "veterinary",
+      "category": "farm"
+    },
+    {
+      "key": "emergency",
+      "value": "ambulance_station",
+      "category": "health"
+    }
+  ],
+  "externalPrimaryOrder": [
+    "pharmacy",
+    "health",
+    "vehicles",
+    "parts",
+    "food",
+    "grocery",
+    "market",
+    "farm",
+    "money",
+    "edu",
+    "telecom",
+    "elec",
+    "solar",
+    "real_estate",
+    "build",
+    "clothes",
+    "home",
+    "gold",
+    "beauty",
+    "salon",
+    "laundry",
+    "delivery",
+    "transport",
+    "hotel",
+    "cafe",
+    "mosque",
+    "gov",
+    "craft",
+    "wedding",
+    "books",
+    "utility",
+    "tourism",
+    "other"
+  ],
+  "classifierVersion": "strict-primary-v2"
 }
