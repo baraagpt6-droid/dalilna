@@ -9,14 +9,16 @@ Implemented in feat/dalilna-root-fix-v2.4.0:
 - Removal of the old map-place/restaurants panel from Souq. Shared PostgreSQL product ads are the only products source.
 - Seven product groups: electronics, vehicles, property, solar, home, agriculture, clothing.
 - Authenticated merchant JSON feed ingestion with idempotent upserts. Incomplete, invalid or oversized snapshots do not archive previously active ads.
-- Daily GitHub Actions refreshes for regional OSM catalogue and jobs; daily product feed workflow to be added.
+- Daily GitHub Actions refreshes for regional OSM catalogue and jobs; a separate daily merchant-feed workflow is included.
+- `scripts/daily-sync.cjs` is the Render Cron entry point. The Cron resource must be created in Render after merging.
 - Daily Render cron entry point uses scripts/daily-sync.cjs and needs product feed URLs/token for actual merchant product ingestion.
 - PWA/Android release metadata 2.4.0 / versionCode 240.
 
 Data notes:
 - Current GitHub Pages catalogue will not change until the daily/commit-triggered regional build completes and publishes the new generated files.
 - The current stored catalogue on main still needs a 2.4.0 refresh with the category mapping and ADM2 polygon inputs.
-- No merchant JSON feed providers are configured in the repository yet. Marketplace importer will correctly skip product ingestion until feed URLs and token are configured; it will not manufacture product ads.
+- No merchant JSON feed providers are configured in the repository yet. Marketplace importer will correctly skip product ingestion until `DALILNA_PRODUCT_FEED_URLS` and `DALILNA_PRODUCT_SYNC_TOKEN` are configured in GitHub/Render; it will not manufacture product ads.
+- Account-registration-based free periods and lifetime-free merchant-store subscriptions are not available until user and merchant accounts are implemented. The current 60-day expiry starts when each listing is submitted.
 - Jobs are collected from configured official/RSS sources and YemenHR public feed; no direct apply URL is claimed unless the domain is verified.
 - The user registration model does not exist in the current marketplace schema. Listing expiry is currently 60 days from each listing's creation time, not account registration.
 
