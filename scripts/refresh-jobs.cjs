@@ -44,6 +44,7 @@ function isOfficialApplicationUrl(value){
   const url=new URL(String(value||""));
   if(url.protocol!=="https:"||url.username||url.password||url.pathname==="/")return false;
   const host=url.hostname.toLowerCase().replace(/^www\./,"");
+  if(!host.includes(".")||/\.(?:invalid|example|test|localhost)$/.test(host))return false;
   const blocked=["t.me","telegram.me","telegra.ph","reliefweb.int","linkedin.com","facebook.com","instagram.com","x.com","twitter.com","t.co","bit.ly","tinyurl.com","linktr.ee","wa.me","whatsapp.com","forms.gle"];
   return !blocked.some(root=>host===root||host.endsWith("."+root));
  }catch(_){return false;}
