@@ -52,6 +52,8 @@ const FILTERS = Object.fromEntries(Object.entries(CATEGORY_MAPPING.categories||{
 FILTERS.all=ALL_FILTERS;
 FILTERS.land=FILTERS.real_estate||ALL_FILTERS;
 FILTERS.watches=FILTERS.gold||ALL_FILTERS;
+// Spare-parts tags are classified in the vehicles section. Preserve older links.
+FILTERS.parts=FILTERS.vehicles||[];
 
 function json(res, status, payload, extraHeaders = {}) {
   const body = JSON.stringify(payload);
@@ -195,6 +197,35 @@ function buildOverpassQuery(bbox, category) {
   return "[out:json][timeout:12][maxsize:134217728];\n(\n" + union + "\n);\nout center tags 80;";
 }
 
+function isCategoryOnlyYemenQuery(query,category){
+  const definition=CATEGORY_MAPPING.categories?.[category];
+  if(!definition)return false;
+  const normalized=normalizeCategorySearch(query);
+  if(!normalized)return false;
+  const aliases=[definition.labelAr,definition.labelEn,...(definition.aliases||[]),...(CATEGORY_MAPPING.externalCategoryHints?.[category]||[])];
+  const aliasTexts=aliases.map(normalizeCategorySearch).filter(Boolean);
+  if(aliasTexts.includes(normalized))return true;
+  const stop=new Set(["اقرب","قريب","قريبه","قريبة","near","nearest","the","in","at","في","من","اليمن","yemen","خدمات","محلات"]);
+  const allowed=new Set(aliasTexts.flatMap(value=>value.split(/\s+/)));
+  const tokens=normalized.split(/\s+/).filter(Boolean);
+  return tokens.length>0&&tokens.every(token=>stop.has(token)||allowed.has(token));
+}
+function buildYemenOverpassQuery(query,category="all"){
+  const selected=FILTERS[category]?category:(inferCategoryFromQuery(query)||"all");
+  const categoryOnly=isCategoryOnlyYemenQuery(query,selected);
+  let filters=[];
+  if(categoryOnly&&selected!=="all"){
+    filters=FILTERS[selected]||[];
+  }else{
+    const pattern=String(query||"").trim().replace(/[^\u0600-\u06FFa-zA-Z0-9\\s_-]/g," ").replace(/\\s+/g," ").trim();
+    const qlValue=pattern.replace(/\\/g,"\\\\").replace(/"/g,'\\"');
+    if(!qlValue)return "";
+    filters=["name","name:ar","name:en","brand","operator"].map(key=>'["'+key+'"~"'+qlValue+'",i]');
+  }
+  if(!filters.length)return "";
+  const union=filters.map(filter=>"nwr"+filter+"(area.yemen);").join("\\n");
+  return '[out:json][timeout:25][maxsize:134217728];\\narea["ISO3166-1"="YE"][admin_level=2]->.yemen;\\n(\\n'+union+'\\n);\\nout center tags 80;';
+}
 function normalizeCategorySearch(value) {
   return normalizeText(value).replace(/ة/g,"ه").replace(/ى/g,"ي").split(/\\s+/)
     .filter(Boolean).map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
@@ -816,7 +847,8 @@ async function searchYemenNominatim(query, category="all") {
       const name=cleanText(row.name||names.name||row.display_name?.split(",")[0]||"",180);
       if(!name)return null;
       const categoryFromTags=classifyCategory({[row.category||row.class||""]:row.type||""});
-      const categoryValue=category&&category!=="all"?category:(categoryFromTags||"other");
+      if(category&&category!=="all"&&categoryFromTags!==category)return null;
+      const categoryValue=categoryFromTags||"other";
       const lat=Number(row.lat),lon=Number(row.lon),type=String(row.osm_type||"").toLowerCase(),id=String(row.osm_id||"");
       const phone=cleanText(tags.phone||tags["contact:phone"]||tags.mobile||"",60);
       const website=cleanText(tags.website||tags["contact:website"]||"",300);
@@ -848,6 +880,55 @@ async function searchYemenNominatim(query, category="all") {
   }finally{clearTimeout(timer);}
 }
 
+async function searchYemenOverpass(query,category="all"){
+  const normalized=normalizeCategorySearch(query);
+  const selected=FILTERS[category]?category:(inferCategoryFromQuery(query)||"all");
+  const cacheKey="overpass:yemen:"+normalized+"|"+selected;
+  const cached=readCache(resultCache,cacheKey);
+  if(cached)return {...cached,cached:true,fetchedAt:new Date().toISOString()};
+  const ql=buildYemenOverpassQuery(query,selected);
+  if(!ql)return {items:[],count:0,category:selected,source:"OpenStreetMap Overpass",cached:false};
+  const endpoints=[
+    {name:"FOSSGIS",url:"https://overpass-api.de/api/interpreter",timeoutMs:18000},
+    {name:"Private.coffee",url:"https://overpass.private.coffee/api/interpreter",timeoutMs:18000},
+    {name:"VK Maps",url:"https://maps.mail.ru/osm/tools/overpass/api/interpreter",timeoutMs:20000}
+  ];
+  let lastError=null,hadValidEmpty=false;
+  for(const provider of endpoints){
+    await waitForOverpassSlot();lastOverpassAt=Date.now();
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),provider.timeoutMs),startedAt=Date.now();
+    try{
+      const response=await fetch(provider.url,{method:"POST",signal:controller.signal,
+        headers:{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8","Accept":"application/json",
+          "User-Agent":"DalilnaDirectory/"+VERSION+" (+https://dalilna-live.onrender.com)"},
+        body:new URLSearchParams({data:ql})});
+      if([429,503,504].includes(response.status)){lastError=new Error("مصدر بيانات الأماكن مشغول حالياً.");continue;}
+      if(!response.ok){lastError=new Error("تعذّر جلب نتائج البحث الوطني من Overpass.");continue;}
+      const body=await response.json();
+      if(!body||!Array.isArray(body.elements)||body.remark){lastError=new Error("استجابة بحث اليمن من Overpass غير مكتملة.");continue;}
+      const categoryOnly=isCategoryOnlyYemenQuery(query,selected);
+      const tokens=normalized.split(/\s+/).filter(token=>token.length>1);
+      const seen=new Set();
+      const items=body.elements.map(element=>normalizeElement(element,"اليمن"))
+        .filter(item=>item&&(selected==="all"||item.category===selected))
+        .filter(item=>categoryOnly||tokens.every(token=>normalizeCategorySearch([item.name,item.nameEn,item.address,item.brand].join(" ")).includes(token)))
+        .filter(item=>{const key=String(item.id||"")+"|"+normalizeText(item.name)+"|"+Number(item.lat).toFixed(4)+"|"+Number(item.lon).toFixed(4);if(seen.has(key))return false;seen.add(key);return true;})
+        .slice(0,80);
+      if(!items.length){hadValidEmpty=true;continue;}
+      const result={items,count:items.length,category:selected,source:"OpenStreetMap Overpass",
+        attribution:"© OpenStreetMap contributors",sourceUrl:"https://www.openstreetmap.org/copyright",
+        place:"اليمن",fetchedAt:new Date().toISOString(),cached:false,
+        note:"نتائج البحث الحي داخل حدود اليمن. قد لا تتضمن بيانات المصدر أرقام الهاتف."};
+      touchCache(resultCache,cacheKey,result,3*60*1000);
+      console.info(JSON.stringify({event:"places.overpass.yemen.success",provider:provider.name,count:items.length,durationMs:Date.now()-startedAt}));
+      return result;
+    }catch(error){lastError=error.name==="AbortError"?new Error("انتهت مهلة بحث Overpass الوطني."):error;}
+    finally{clearTimeout(timer);}
+  }
+  if(hadValidEmpty)return {items:[],count:0,category:selected,source:"OpenStreetMap Overpass",cached:false};
+  throw lastError||new Error("مصادر بحث اليمن غير متاحة حالياً.");
+}
+
 async function searchPlaces(params) {
   const place = cleanText(params.place, 180);
   const fallbackPlace = cleanText(params.fallbackPlace, 180);
@@ -864,7 +945,29 @@ async function searchPlaces(params) {
     && lat >= 11 && lat <= 20.5 && lon >= 41 && lon <= 55.5;
   const radius = Math.min(15000, Math.max(1000, Number(params.radius) || 7000));
   const countrywideSearch = !hasCoordinates && (!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen");
-  if (countrywideSearch && query) return searchYemenNominatim(query, category);
+  if (countrywideSearch && query) {
+    const nominal=await searchYemenNominatim(query,category);
+    if((nominal.items||[]).length>=8)return nominal;
+    let live=[];
+    try{
+      const fallback=await searchYemenOverpass(query,category);
+      live=Array.isArray(fallback.items)?fallback.items:[];
+    }catch(error){
+      if((nominal.items||[]).length)return nominal;
+      throw error;
+    }
+    const merged=[...(nominal.items||[])],seen=new Set();
+    for(const item of merged)seen.add(String(item.id||"")+"|"+normalizeText(item.name)+"|"+Number(item.lat).toFixed(4)+"|"+Number(item.lon).toFixed(4));
+    for(const item of live){
+      const key=String(item.id||"")+"|"+normalizeText(item.name)+"|"+Number(item.lat).toFixed(4)+"|"+Number(item.lon).toFixed(4);
+      if(!seen.has(key)){seen.add(key);merged.push(item);}
+    }
+    const result={...nominal,items:merged.slice(0,80),count:Math.min(80,merged.length),
+      source:"OpenStreetMap Nominatim + Overpass",liveFallbackCount:live.length,
+      note:"تم دمج البحث الاسمي مع فهرس Overpass الحي داخل حدود اليمن."};
+    if(result.items.length)touchCache(resultCache,"yemen-hybrid:"+normalizeText(query)+"|"+category,result,2*60*1000);
+    return result;
+  }
   if ((!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen") && !hasCoordinates && !query) {
     const error = new Error("أدخل اسم مكان أو نشاط للبحث في اليمن، أو اختر محافظة أو مديرية لتضييق النطاق.");
     error.statusCode = 400;
@@ -1125,4 +1228,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, inferCategoryFromQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyRectFilter, geoapifyCategoryLabel, createIntervalGate, searchCommonsPhotos, server };
+module.exports = { buildOverpassQuery, buildYemenOverpassQuery, searchYemenOverpass, inferCategoryFromQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyRectFilter, geoapifyCategoryLabel, createIntervalGate, searchCommonsPhotos, server };
