@@ -7,13 +7,11 @@ const LISTING_TYPES=new Set(["sale","wanted","barter","free","rent"]);
 const PRODUCT_GROUPS = {
   electronics:["phone","phone_accessories","computer","computer_accessories","tablet","camera","electronics","watch","screen","monitor","charger","audio_accessories"],
   vehicles:["car","motorcycle","vehicle_parts"],
+  property:["land","property","apartment","house"],
   solar:["solar_equipment","solar_panel","battery","inverter","power_system"],
   home:["furniture","appliance","household_items","kitchenware","baby_products"],
-  property:["land","property","apartment","house"],
-  agriculture:["livestock","agriculture","animal_feed","seeds","tools","building_materials","construction_equipment"],
-  tools:["tools","building_materials","construction_equipment"],
-  clothing:["clothing","shoes","perfume","cosmetics","jewelry","watch"],
-  other:["other","games","sports_equipment","honey","coffee","spices","food","books","stationery"]
+  agriculture:["livestock","agriculture","animal_feed","seeds","tools","construction_equipment","honey","coffee","spices","food"],
+  clothing:["clothing","shoes","perfume","cosmetics","jewelry","watch"]
 };
 
 const CONDITIONS=new Set(["new","used","unknown"]);
@@ -145,7 +143,7 @@ async function syncMerchantFeed(req,res){
    }catch(_){skipped++;}
   }
   let archived=0;
-  if(completeSnapshot){
+  if(completeSnapshot&&skipped===0){
    const stale=await client.query("UPDATE marketplace_listings SET status='archived',expires_at=NOW(),updated_at=NOW() WHERE client_ref LIKE 'feed:%' AND status='approved' AND NOT (client_ref=ANY($1::text[])) RETURNING id",[activeRefs]);
    archived=stale.rowCount||0;
   }
