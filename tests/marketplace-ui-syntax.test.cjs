@@ -89,6 +89,39 @@ test("Android 2.3.0 updates app version and clears only the WebView HTTP cache",
  assert.ok(activity.includes("Keep DOM storage/localStorage intact"));
 });
 
+
+test("category mapping includes English OSM tags for health and delivery",()=>{
+ const mapping=JSON.parse(fs.readFileSync(path.join(__dirname,"../category-mapping.json"),"utf8"));
+ for(const key of ["grocery","health","pharmacy","edu","money","delivery","solar","vehicles","real_estate"])assert.ok(mapping.categories[key],key);
+ const tags=JSON.stringify(mapping);
+ for(const token of ['"hospital"','"clinic"','"doctors"','"courier"','"delivery"','"parcel"'])assert.ok(tags.includes(token),token);
+});
+test("catalogue category filters use multi-category memberships and searchable English tags",()=>{
+ assert.ok(html.includes("item.categories"));
+ assert.ok(html.includes("item.searchText"));
+ assert.ok(html.includes("item.nameEn"));
+ assert.ok(html.includes("item.governorateEn"));
+ assert.ok(html.includes("item.districtEn"));
+ assert.ok(html.includes('requestedCategory&&requestedCategory!=="all"'));
+});
+test("Souq has no map-place restaurant directory and exposes only seven product groups",()=>{
+ assert.ok(!html.includes('id="souqStoresPanel"'));
+ assert.ok(!html.includes("runSouqStores"));
+ assert.ok(html.includes('id="sharedSouqPanel"'));
+ for(const label of ["جوالات وإلكترونيات","سيارات ودراجات وقطع غيار","عقارات وأراضٍ","طاقة شمسية وبطاريات","أثاث وأجهزة منزلية","مواشي وزراعة ومعدات","ملابس وعطور ومستلزمات"])assert.ok(features.includes(label),label);
+ assert.ok(!features.includes('["tools","معدات وأدوات"]'));
+});
+test("Souq renders shared product cards with seller, WhatsApp and share actions",()=>{
+ assert.ok(client.includes('category: "marketplace"'));
+ assert.ok(client.includes('item.sellerName'));
+ assert.ok(client.includes("wa.me/"));
+ assert.ok(client.includes("data-shareId"));
+});
+test("daily catalogue workflow fetches Yemen ADM2 polygon boundaries",()=>{
+ assert.ok(workflow.includes('cron: "20 2 * * *"'));
+ assert.ok(workflow.includes("YEM/ADM2"));
+ assert.ok(workflow.includes("geoBoundaries"));
+});
 test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black shapes",()=>{
  const start=html.indexOf('<nav class="quick-jump-bar"'),end=html.indexOf('</nav>',start);
  const bar=html.slice(start,end);
