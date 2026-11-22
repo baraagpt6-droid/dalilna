@@ -5209,6 +5209,14 @@ async function askAssistant(q){
   };
  }
  if(serviceIntent){
+  const serviceNames={
+   health:"hospitals and clinics",pharmacy:"pharmacies",vehicles:"car and motorcycle businesses",parts:"vehicle-parts shops",
+   books:"bookshops and stationery shops",elec:"electronics shops",telecom:"mobile-phone shops",money:"banks and exchange offices",
+   grocery:"grocery stores",food:"restaurants and bakeries",cafe:"cafes",real_estate:"real-estate offices",
+   delivery:"delivery and courier services",edu:"schools and universities",hotel:"hotels",beauty:"beauty shops",
+   build:"building-materials shops",craft:"craft and repair services",transport:"transport services",utility:"water and gas services"
+  };
+  const assistantServiceLabel=curLang==="en"?(serviceNames[serviceIntent.category]||CN_EN[serviceIntent.category]||"businesses"):serviceIntent.label;
   const context=regionCurrentContext(),query=String(q||"");
   const selectedContext={
    ...context,
@@ -5255,7 +5263,7 @@ async function askAssistant(q){
    seen.add(signature);
    cards.push({
     name,
-    category:String(item.category||(curLang==="en"?(CN_EN[item.cat]||CN[item.cat]):CN[item.cat])||serviceIntent.label||""),
+    category:curLang==="en"?assistantServiceLabel:String(item.category||CN[item.cat]||serviceIntent.label||""),
     location:[item.address||item.area||item.village,item.district||item.dist,item.governorate||item.gov||selectedContext.gov].filter(Boolean).join("، "),
     phone:String(item.phone||"").trim(),
     mapUrl:mapFor(item),
@@ -5300,7 +5308,7 @@ async function askAssistant(q){
   }
   const count=cards.length;
   const answer=count
-   ?(curLang==="en"?"I found "+count+" matching places for "+serviceIntent.label+" in "+selectedContext.place+". Use the contact and map links where available. Details can change, so confirm before visiting.":"وجدت لك "+count+" نتائج تطابق "+serviceIntent.label+" في "+selectedContext.place+". استخدم رابط الاتصال والخريطة عند توفرهما. قد تتغير البيانات، فتحقق قبل الزيارة.")
+   ?(curLang==="en"?"I found "+count+" matching "+assistantServiceLabel+" in "+selectedContext.place+". Use the contact and map links where available. Details can change, so confirm before visiting.":"وجدت لك "+count+" نتائج تطابق "+serviceIntent.label+" في "+selectedContext.place+". استخدم رابط الاتصال والخريطة عند توفرهما. قد تتغير البيانات، فتحقق قبل الزيارة.")
    :(serviceIntent.productSearch||["jobs","souq","land"].includes(serviceIntent.category)
      ?(curLang==="en"?"There are no approved listings matching this search right now.":"لا توجد إعلانات معتمدة تطابق هذا البحث حالياً.")
      :(curLang==="en"?"I couldn't find matching records in the local catalogue or the live map sources checked. This does not mean the place does not exist.":"لم أعثر على سجل مطابق في الفهرس المحلي أو مصادر الخرائط الحية التي فُحصت. هذا لا يعني أن المكان غير موجود."));
