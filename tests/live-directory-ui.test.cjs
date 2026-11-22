@@ -18,7 +18,15 @@ test("regional profiles open local directory category shortcuts",()=>{
  assert.ok(!html.includes("regionMapSearch("));
 });
 test("AI business lookup uses local regional data and approved shared adverts",()=>{
- for(const token of ["loadRegionalCatalog(context.gov","loadLiveMarketplaceMatches","فهرس OpenStreetMap المحلي","إعلانات أضافها المستخدمون واعتمدتها إدارة دليلنا"])assert.ok(html.includes(token),token);
+ for(const token of [
+  "loadRegionalCatalog(context.gov",
+  "loadLiveMarketplaceMatches",
+  "فهرس الأماكن المفتوح (OpenStreetMap وOverture Maps)",
+  "قاعدة بيانات الإعلانات المشتركة",
+  "approvedListings:approved.slice(0,8)",
+  'approvalStatus:"approved_by_dalilna_admin"',
+  'fieldVerificationStatus:"phone_and_address_not_field_verified"'
+ ])assert.ok(html.includes(token),token);
  assert.ok(!html.includes("searchLivePlaces("));
 });
 test("jobs, products and property adverts remain in the shared marketplace",()=>{

@@ -933,23 +933,23 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <button class="ghost" data-go="home" style="min-width:42px;padding:0 12px">رجوع</button>
       <h2 style="font-size:21px">مساعد دليلنا الذكي</h2>
     </div>
-    <div class="panel" style="margin-top:6px">
+    <div class="panel ai-chat-panel" style="margin-top:6px">
       <p class="where" id="aiModeHint" style="margin:0 0 8px">المساعد المحلي يبحث في بيانات هذا الجهاز دون إنترنت. يمكنك تفعيل المساعد السحابي اختيارياً للحصول على إجابات أوسع.</p>
       <label class="ai-cloud-consent" for="aiCloudConsent">
         <input type="checkbox" id="aiCloudConsent" style="width:auto;min-width:18px;min-height:18px">
         <span><b>السماح بالمساعد السحابي</b><small>عند التفعيل، يُرسل سؤالك وبيانات الإدراجات العامة ذات الصلة، بما فيها أرقام التواصل المعروضة، إلى خادم التطبيق ثم إلى مزود الذكاء الاصطناعي لمعالجة السؤال. لا تكتب كلمات مرور أو معلومات خاصة.</small></span>
       </label>
-      <div class="msgs" id="msgs">
-        <div class="m a">أهلاً بك في مساعد دليلنا الذكي. أستطيع البحث في جميع المحلات والخدمات والأرقام وأسعار الصرف والوظائف. ماذا تبحث عنه؟</div>
+      <div class="msgs" id="msgs" aria-live="polite" aria-relevant="additions text" aria-label="محادثة مساعد دليلنا">
+        <div class="m a" dir="auto">أهلاً بك في مساعد دليلنا الذكي. أستطيع البحث في المحلات والخدمات والوظائف وأسعار الصرف. سأوضح لك مصدر الإجابة، وأميز البيانات غير المؤكدة.</div>
       </div>
-      <div class="fchips" id="sugg">
+      <div class="fchips ai-suggestions" id="sugg">
         <button type="button">أقرب صيدلية</button>
         <button type="button">سعر الصرف اليوم</button>
         <button type="button">محلات طاقة شمسية</button>
         <button type="button">وظائف متاحة</button>
       </div>
-      <form id="botf" style="display:flex;gap:8px;margin-top:8px">
-        <input id="botq" placeholder="اكتب سؤالك هنا…">
+      <form id="botf" class="ai-composer">
+        <input id="botq" dir="auto" autocomplete="off" placeholder="اكتب سؤالك هنا…">
         <button class="add" type="submit">إرسال</button>
       </form>
       <div class="fbtn" style="margin-top:8px"><button type="button" class="ghost" id="openSupportTicket">تقديم شكوى أو اقتراح</button></div>
@@ -4148,24 +4148,28 @@ function liveDirectoryContext(){
  return {place,fallbackPlace:ctx.gov&&ctx.type!=="governorate"?"محافظة "+ctx.gov+"، اليمن":""};
 }
 function liveDirectoryCardHTML(item){
- const record=item&&typeof item==="object"?item:{},itemId=String(record?.id??"");
+ const record=item&&typeof item==="object"?item:{};
  const phone=String(record.phone||"").trim(),phoneInfo=yemenPhoneDetails(phone),phoneHref=phone.replace(/[^\d+]/g,"");
  const location=[record.governorate,record.district].filter(Boolean).join("، ");
  const contact=phone?'<div class="live-directory-actions"><a href="tel:'+esc(phoneHref)+'">اتصال</a>'+(phoneInfo.isMobile?'<a href="'+esc(yemenWhatsAppUrl(phone,"مرحباً، وجدت محلكم في دليلنا وأريد الاستفسار عن الخدمة."))+'" target="_blank" rel="noopener noreferrer">واتساب</a>':"")+'</div>':"";
  const lat=Number(record.lat??record.latitude),lon=Number(record.lon??record.lng??record.longitude);
  const mapUrl=record.mapsUrl||(Number.isFinite(lat)&&Number.isFinite(lon)?"https://www.openstreetmap.org/?mlat="+lat.toFixed(6)+"&mlon="+lon.toFixed(6)+"#map=18/"+lat.toFixed(6)+"/"+lon.toFixed(6):"");
  const map=mapUrl?'<div class="live-directory-actions"><a href="'+esc(mapUrl)+'" target="_blank" rel="noopener noreferrer">الخريطة</a></div>':"";
+ const verified=Boolean(record.verifiedAt||record.verified===true);
+ const status=verified
+  ?'<small class="live-directory-local-note">حالة الإدراج: موثّق لدى دليلنا. قد تتغير أرقام الاتصال أو العناوين، فتأكد منها قبل الزيارة.</small>'
+  :'<small class="live-directory-local-note">بيانات من مصدر خارجي أو مفتوح، ولم يتم التحقق منها ميدانياً من فريق دليلنا. رقم الهاتف والعنوان قد يكونان غير دقيقين أو غير محدثين.</small>';
  return '<article class="live-directory-card"><div class="live-directory-card-head"><h3>'+esc(record.name||"مكان بدون اسم")+'</h3><span class="tag">'+esc(CN[record.category]||"خدمة")+'</span></div>'+
- (location?'<p>المحافظة والمديرية: '+esc(location)+'</p>':"")+
- (record.address?'<p>العنوان: '+esc(record.address)+'</p>':"")+
+ (location?'<p>المحافظة والمديرية: <bdi dir="auto">'+esc(location)+'</bdi></p>':"")+
+ (record.address?'<p>العنوان: <bdi dir="auto">'+esc(record.address)+'</bdi></p>':"")+
  (record.openingHours?'<p>ساعات العمل: '+esc(record.openingHours)+'</p>':"")+
- (phone?'<p>الهاتف: '+esc(phone)+'</p>':"")+contact+map+
+ (phone?'<p>الهاتف: <bdi dir="ltr" class="ltr-value">'+esc(phone)+'</bdi>'+(verified?"":" <small>غير مؤكد</small>")+'</p>':"")+contact+map+status+
  "</article>";
 }
 function geoapifyDirectoryCardHTML(item){
  const phone=String(item.phone||"").trim(),phoneHref=phone.replace(/[^+\d]/g,"");
  const phoneHtml=phone
-  ?'<p class="google-place-phone">الهاتف: <a href="tel:'+esc(phoneHref)+'">'+esc(phone)+'</a></p>'
+  ?'<p class="google-place-phone">الهاتف: <a href="tel:'+esc(phoneHref)+'"><bdi dir="ltr" class="ltr-value">'+esc(phone)+'</bdi></a> <small>غير مؤكد ميدانياً</small></p>'
   :'<p class="google-place-phone muted">رقم الهاتف غير متوفر في بيانات هذا المكان.</p>';
  const website=item.website
   ?'<p><a href="'+esc(item.website)+'" target="_blank" rel="noopener noreferrer">الموقع الإلكتروني</a></p>'
@@ -4175,23 +4179,23 @@ function geoapifyDirectoryCardHTML(item){
   ?'<a class="google-place-open" href="'+esc(item.mapsUrl)+'" target="_blank" rel="noopener noreferrer">فتح الموقع على الخريطة</a>'
   :"";
  return '<article class="live-directory-card google-place-card"><div class="live-directory-card-head"><h3>'+esc(item.name)+'</h3><span class="tag">'+esc(item.category||"خدمة")+'</span></div>'+
-  (item.address?'<p>العنوان: '+esc(item.address)+'</p>':"")+phoneHtml+website+hours+
+  (item.address?'<p>العنوان: <bdi dir="auto">'+esc(item.address)+'</bdi></p>':"")+phoneHtml+website+hours+
   '<div class="live-directory-actions">'+maps+(item.sourceUrl?'<a href="'+esc(item.sourceUrl)+'" target="_blank" rel="noopener noreferrer">مصدر بيانات المكان</a>':"")+'</div>'+
-  '<small class="live-directory-local-note">الرقم يظهر فقط إذا كان مسجلاً في بيانات المصدر. اتصل للتحقق قبل الزيارة.</small></article>';
+  '<small class="live-directory-local-note">بيانات مصدر خارجي أو مفتوح، وليست توثيقاً ميدانياً من دليلنا. قد لا يكون رقم الهاتف أو العنوان محدثاً؛ تأكد منه قبل الاستخدام.</small></article>';
 }
 function liveApprovedListingCardHTML(item){
  const row=item&&typeof item==="object"?item:{},place=[row.area,row.district,row.governorate].filter(Boolean).join(" · ");
   const image=/^data:image\/(?:jpeg|png|webp);base64,/.test(String(row.imageData||""))&&row.imageData.length<=400000?'<img class="shared-listing-image" src="'+esc(row.imageData)+'" alt="'+esc(row.title||"صورة الإعلان")+'" loading="lazy">':'<div class="shared-listing-image-fallback no-image"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3 3 3-4 5 6"/></svg><span>لا توجد صورة مرفقة</span></div>';
  const phone=String(row.phone||"").trim(),phoneInfo=yemenPhoneDetails(phone),tel=phone.replace(/[^+\d]/g,"");
- const contact=phone?'<div class="shared-listing-actions">'+(phoneInfo.isMobile?'<a href="'+esc(yemenWhatsAppUrl(phone,"مرحباً، وجدت محلكم في تطبيق دليلنا وأريد الاستفسار عن الإعلان."))+'" target="_blank" rel="noopener noreferrer">واتساب</a>':"")+'<a href="tel:'+esc(tel)+'">اتصال</a></div>':"";
+ const contact=phone?'<p class="shared-listing-phone">رقم التواصل: <bdi dir="ltr" class="ltr-value">'+esc(phone)+'</bdi> <small>غير مؤكد ميدانياً</small></p><div class="shared-listing-actions">'+(phoneInfo.isMobile?'<a href="'+esc(yemenWhatsAppUrl(phone,"مرحباً، وجدت محلكم في تطبيق دليلنا وأريد الاستفسار عن الإعلان."))+'" target="_blank" rel="noopener noreferrer">واتساب</a>':"")+'<a href="tel:'+esc(tel)+'">اتصال</a></div>':"";
  const lat=Number(row.latitude??row.lat),lon=Number(row.longitude??row.lon??row.lng);
  const map=Number.isFinite(lat)&&Number.isFinite(lon)?'<div class="shared-listing-actions"><button type="button" data-map-toggle data-lat="'+lat+'" data-lon="'+lon+'" data-title="'+esc(row.title||"الموقع")+'">عرض الخريطة</button></div><div class="dalilna-map" hidden></div>':(place?'<div class="shared-listing-actions"><a href="https://www.openstreetmap.org/search?query='+encodeURIComponent([row.title,place,"اليمن"].join(" "))+'" target="_blank" rel="noopener noreferrer">فتح الموقع في OpenStreetMap</a></div>':"");
  const price=row.price?'<p class="shared-listing-price">'+esc(row.price+" "+(row.currency||""))+'</p>':"";
  const desc=row.description?'<p class="shared-listing-description">'+esc(row.description)+'</p>':"";
  const hours=row.openingHours?'<p class="shared-listing-description">أوقات العمل: '+esc(row.openingHours)+'</p>':"";
  const category=row.category==="jobs"?"وظائف":row.category==="souq"?"السوق":row.category==="land"?"أراضٍ وعقارات":row.category==="grocery"?"بقالات":row.category==="food"?"مطاعم ومخابز":row.category||"إعلان";
- return '<article class="shared-listing-card">'+image+'<div class="shared-listing-card-head"><h3>'+esc(row.title||"إعلان معتمد")+'</h3><span class="ok">موثق ✓</span></div><div class="shared-listing-tags"><span>'+esc(category)+'</span></div>'+
- (place?'<p class="shared-listing-place">'+esc(place)+'</p>':"")+price+desc+hours+contact+map+'</article>';
+ return '<article class="shared-listing-card">'+image+'<div class="shared-listing-card-head"><h3>'+esc(row.title||"إعلان معتمد")+'</h3><span class="ok">معتمد من الإدارة</span></div><div class="shared-listing-tags"><span>'+esc(category)+'</span></div>'+
+ (place?'<p class="shared-listing-place"><bdi dir="auto">'+esc(place)+'</bdi></p>':"")+price+desc+hours+contact+map+'<small class="live-directory-local-note">اعتماد الإعلان يسمح بنشره في دليلنا، لكنه لا يعني التحقق الميداني من رقم الهاتف أو العنوان. تواصل للتأكد قبل الدفع أو الزيارة.</small></article>';
 }
 function liveDirectorySharedMatchesHTML(){
  const items=liveSharedMatches.filter(item=>!flt.fav||S.favs.includes(String(item?.id||"")));
@@ -4709,6 +4713,62 @@ function assistantApiUrl(){
 function assistantFallbackApiUrl(){
   return "https://dalilna-oavk.vercel.app/api/assistant";
 }
+async function requestCloudAssistant(q,context){
+ const payload=JSON.stringify({question:String(q||"").slice(0,1200),context:context||{}});
+ const endpoints=[assistantApiUrl(),assistantFallbackApiUrl()];
+ for(const endpoint of endpoints){
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),28000);
+  try{
+   const response=await fetch(endpoint,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:payload,
+    signal:controller.signal
+   });
+   const data=await response.json().catch(()=>({}));
+   if(response.ok&&data&&typeof data.answer==="string"&&data.answer.trim()){
+    return {
+     answer:data.answer.trim(),
+     mode:data.mode==="gemini"?"gemini":"reference",
+     provider:data.provider|| (data.mode==="gemini"?"Gemini":"Dalilna"),
+     model:typeof data.model==="string"?data.model:"",
+     referenceSource:typeof data.source==="string"?data.source:""
+    };
+   }
+   const canFallback=response.status===404||response.status===502||
+    (response.status===503&&data.error==="cloud_ai_not_configured");
+   if(!canFallback)break;
+  }catch(error){
+   // Try the alternate server-side endpoint before using the local catalogue.
+  }finally{
+   clearTimeout(timer);
+  }
+ }
+ return null;
+}
+function assistantSourceText(result){
+ const labels=Array.isArray(result?.dataSources)?result.dataSources.filter(Boolean):[];
+ const dataLabel=labels.length?" · بيانات الدليل: "+labels.join("، "):"";
+ if(result?.mode==="gemini"){
+  return "المجيب: Google Gemini"+(result.model?" ("+result.model+")":"")+dataLabel;
+ }
+ if(result?.mode==="reference"){
+  return "المجيب: مرجع دليلنا"+(result.referenceSource?" · المصدر: "+result.referenceSource:"")+dataLabel;
+ }
+ if(result?.mode==="local-fallback"){
+  return "المجيب: دليلنا المحلي · تعذّر تأكيد وصول السؤال إلى Gemini"+dataLabel;
+ }
+ if(result?.mode==="offline"){
+  return "المجيب: دليلنا المحلي دون إنترنت"+dataLabel;
+ }
+ if(result?.mode==="live-directory"){
+  return "المجيب: نتائج دليلنا المحلية · ليست إجابة من Gemini"+dataLabel;
+ }
+ if(result?.mode==="directory"){
+  return "المجيب: إدراجات هذا الجهاز · ليست إجابة من Gemini"+dataLabel;
+ }
+ return "المجيب: دليلنا المحلي"+dataLabel;
+}
 async function askAssistant(q){
  const serviceIntent=directoryMapSearchInfo(q);
  if(serviceIntent){
@@ -4725,61 +4785,111 @@ async function askAssistant(q){
    if(results[0].status==="fulfilled")approved=Array.isArray(results[0].value)?results[0].value.slice():liveSharedMatches.slice();
    if(results[1].status==="fulfilled")places=Array.isArray(results[1].value)?results[1].value:[];
   }finally{clearTimeout(timer);}
+  const dataSources=[];
+  if(localHits.length)dataSources.push("إدراجات هذا الجهاز");
+  if(places.length)dataSources.push("فهرس الأماكن المفتوح (OpenStreetMap وOverture Maps)");
+  if(approved.length)dataSources.push("قاعدة بيانات الإعلانات المشتركة");
+  if(!dataSources.length)dataSources.push("لا توجد سجلات مطابقة في المصادر التي تم فحصها");
+  const assistantContext={
+   liveSearch:{
+    intent:serviceIntent.category,
+    selectedRegion:{governorate:context.gov||"",district:context.district||"",place:context.place||""},
+    localListings:localHits.slice(0,5).map(item=>({
+     name:item.name,category:CN[item.cat]||item.cat,governorate:item.gov||"",district:item.dist||"",
+     address:item.area||item.village||"",phone:item.phone||"",
+     verificationStatus:item.verifiedAt?"verified_in_dalilna":"not_verified"
+    })),
+    openDataPlaces:places.slice(0,8).map(item=>({
+     name:item.name,category:item.category||serviceIntent.category,
+     governorate:item.governorate||context.gov||"",district:item.district||"",
+     address:item.address||"",phone:item.phone||"",
+     source:"OpenStreetMap / Overture Maps",
+     verificationStatus:"not_field_verified_by_dalilna"
+    })),
+    approvedListings:approved.slice(0,8).map(item=>({
+     name:item.title||"",category:item.category||serviceIntent.category,
+     governorate:item.governorate||"",district:item.district||"",address:item.area||"",
+     phone:item.phone||"",price:item.price||"",currency:item.currency||"",
+     approvalStatus:"approved_by_dalilna_admin",
+     fieldVerificationStatus:"phone_and_address_not_field_verified"
+    })),
+    dataQualityNotice:"وجود رقم أو عنوان في سجل لا يثبت صحته أو حداثته. لا تخترع قيماً. وضح حالة التحقق لكل سجل."
+   }
+  };
+  if(S.aiCloudConsent===true&&navigator.onLine){
+   const cloud=await requestCloudAssistant(q,assistantContext);
+   if(cloud)return {...cloud,dataSources};
+  }
   const parts=[];
-  if(localHits.length)parts.push("إدراجات محفوظة على هذا الجهاز:\\n"+localHits.slice(0,5).map((item,n)=>(n+1)+". "+item.name+" — "+[item.area,item.dist,item.gov].filter(Boolean).join(" / ")+(item.phone?" — "+item.phone:"")+(item.verifiedAt?" — موثّق":" — غير موثّق")).join("\\n"));
-  if(places.length)parts.push("أماكن مسجلة في فهرس OpenStreetMap المحلي، وليست إعلانات تجارية اعتمدتها إدارة دليلنا:\\n"+places.slice(0,8).map((item,n)=>(n+1)+". "+item.name+" — "+[item.district,item.governorate].filter(Boolean).join(" / ")+(item.phone?" — هاتف: "+item.phone:"")).join("\\n"));
-  if(approved.length)parts.push("إعلانات أضافها المستخدمون واعتمدتها إدارة دليلنا:\\n"+approved.slice(0,8).map((item,n)=>(n+1)+". "+item.title+" — "+([item.area,item.district,item.governorate].filter(Boolean).join(" / ")||"الموقع غير مكتمل")+(item.price?" — "+item.price+" "+(item.currency||""):"")+(item.phone?" — هاتف: "+item.phone:"")).join("\\n"));
+  if(localHits.length)parts.push("إدراجات محفوظة على هذا الجهاز:\n"+localHits.slice(0,5).map((item,n)=>(n+1)+". "+item.name+" — "+[item.area,item.dist,item.gov].filter(Boolean).join(" / ")+(item.phone?" — الهاتف: "+item.phone+(item.verifiedAt?" (راجع الرقم قبل الاستخدام)":" (غير مؤكد)"):"")+(item.verifiedAt?" — حالة الإدراج: موثّق لدى دليلنا":" — إدراج غير موثّق")).join("\n"));
+  if(places.length)parts.push("أماكن مسجلة في فهرس المصادر المفتوحة (OpenStreetMap وOverture Maps)، وليست إدراجات موثقة ميدانياً من دليلنا:\n"+places.slice(0,8).map((item,n)=>(n+1)+". "+item.name+" — "+[item.address,item.district,item.governorate].filter(Boolean).join(" / ")+(item.phone?" — هاتف غير مؤكد: "+item.phone:"") +" — البيانات تحتاج تحققاً ميدانياً").join("\n"));
+  if(approved.length)parts.push("إعلانات موجودة في قاعدة البيانات المشتركة ومعتمدة للنشر من الإدارة. الاعتماد لا يعني التحقق الميداني من الهاتف أو العنوان:\n"+approved.slice(0,8).map((item,n)=>(n+1)+". "+item.title+" — "+([item.area,item.district,item.governorate].filter(Boolean).join(" / ")||"الموقع غير مكتمل")+(item.price?" — "+item.price+" "+(item.currency||""):"")+(item.phone?" — رقم غير مؤكد: "+item.phone:"")).join("\n"));
   if(!places.length&&!approved.length&&!localHits.length)parts.push(serviceIntent.productSearch||["jobs","souq","land"].includes(serviceIntent.category)
    ?"لا توجد إعلانات معتمدة تطابق هذا البحث حالياً. أضف إعلانك ليصل إلى مراجعة المشرف."
-   :"لم نجد سجلات مطابقة في الفهرس المحلي الحالي. هذا لا يثبت عدم وجود محلات أو خدمات في المنطقة. يمكنك إرسال بياناته إلى دليلنا لمراجعتها.");
-  return {answer:parts.join("\\n\\n"),mode:places.length||approved.length?"live-directory":localHits.length?"directory":"reference"};
+   :"لم نجد سجلات مطابقة في المصادر التي تم فحصها. هذا لا يثبت عدم وجود محلات أو خدمات في المنطقة. يمكنك إرسال بياناته إلى دليلنا لمراجعتها.");
+  return {
+   answer:parts.join("\n\n"),
+   mode:places.length||approved.length?"live-directory":localHits.length?"directory":"reference",
+   referenceSource:"فهرس دليلنا وقاعدة البيانات المشتركة",
+   dataSources
+  };
  }
- if(asksHubaishSubdistricts(q))return {answer:hubaishSubdistrictAnswer(),mode:"reference"};
+ if(asksHubaishSubdistricts(q))return {answer:hubaishSubdistrictAnswer(),mode:"reference",referenceSource:"مرجع دليلنا الإداري",dataSources:["مرجع دليلنا الإداري"]};
  if(S.aiCloudConsent===true&&navigator.onLine){
-  const payload=JSON.stringify({question:String(q).slice(0,1200),context:buildAssistantContext(q)});
-  const endpoints=[assistantApiUrl(),assistantFallbackApiUrl()];
-  for(const endpoint of endpoints){
-   try{
-    const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:payload});
-    const data=await response.json().catch(()=>({}));
-    if(response.ok&&data&&typeof data.answer==="string"&&data.answer.trim()){
-     return {answer:data.answer.trim(),mode:data.mode==="gemini"?"gemini":"reference"};
-    }
-    const canFallback=response.status===404||response.status===502||
-      (response.status===503&&data.error==="cloud_ai_not_configured");
-    if(!canFallback)break;
-   }catch(err){
-    // Try the second server-side endpoint before using the local catalogue.
-   }
-  }
-  return {answer:answerAI(q),mode:"local-fallback"};
+  const cloud=await requestCloudAssistant(q,buildAssistantContext(q));
+  if(cloud)return {...cloud,dataSources:["سياق بيانات دليلنا المرفق بالسؤال"]};
+  return {answer:answerAI(q),mode:"local-fallback",dataSources:["بيانات محفوظة على هذا الجهاز"]};
  }
- return {answer:answerAI(q),mode:navigator.onLine?"local":"offline"};
+ return {
+  answer:answerAI(q),
+  mode:navigator.onLine?"local":"offline",
+  dataSources:["بيانات محفوظة على هذا الجهاز"]
+ };
 }
 
+function isolateMixedDirectionText(value){
+ return String(value??"").replace(/(?:\+?[0-9٠-٩۰-۹][0-9٠-٩۰-۹\s().,-]{4,}[0-9٠-٩۰-۹]|[A-Z0-9]{3,}\+[A-Z0-9]{2,})/gi,match=>"\u2066"+match.trim()+"\u2069");
+}
 function appendChatMessage(type,text){
-  const el=document.createElement("div");el.className=type==="user"?"m u":"m a";el.textContent=String(text||"");$("#msgs").appendChild(el);$("#msgs").scrollTop=$("#msgs").scrollHeight;
+ const el=document.createElement("div");
+ el.className=type==="user"?"m u":"m a";
+ el.dir="auto";
+ el.textContent=isolateMixedDirectionText(text);
+ $("#msgs").appendChild(el);
+ $("#msgs").scrollTop=$("#msgs").scrollHeight;
+ return el;
 }
-
 $("#botf").addEventListener("submit",async e=>{
-  e.preventDefault();const q=$("#botq").value.trim();if(!q)return;$("#botq").value="";
-  appendChatMessage("user",q);
-  const pending=document.createElement("div");pending.className="m a";pending.textContent="أبحث في بيانات الدليل…";$("#msgs").appendChild(pending);
-  try{
-    const result=await askAssistant(q);
-    pending.textContent=result.answer;
-    const source=document.createElement("small");
-    source.className="where";
-    source.style.display="block";
-    source.style.marginTop="7px";
-    source.textContent=result.mode==="gemini"?"المصدر: Gemini":result.mode==="reference"?"المصدر: مرجع دليلنا الإداري":result.mode==="local-fallback"?"المصدر: المساعد المحلي — تعذر اتصال Gemini":result.mode==="offline"?"المصدر: المساعد المحلي دون إنترنت":result.mode==="directory"?"المصدر: إدراجات هذا الجهاز":result.mode==="live-directory"?"المصدر: فهرس OpenStreetMap المحلي وإعلانات اعتمدتها إدارة دليلنا":"المصدر: المساعد المحلي";
-    pending.appendChild(source);
-
-  }catch(err){
-    pending.textContent=answerAI(q);
-    const source=document.createElement("small");source.className="where";source.textContent="المصدر: المساعد المحلي";pending.appendChild(source);
-  }
+ e.preventDefault();
+ const q=$("#botq").value.trim();
+ if(!q)return;
+ $("#botq").value="";
+ appendChatMessage("user",q);
+ const pending=document.createElement("div");
+ pending.className="m a";
+ pending.dir="auto";
+ pending.textContent="أبحث في بيانات الدليل…";
+ $("#msgs").appendChild(pending);
+ const sendButton=$("#botf button[type=submit]");
+ if(sendButton)sendButton.disabled=true;
+ try{
+  const result=await askAssistant(q);
+  pending.textContent=isolateMixedDirectionText(result.answer);
+  const source=document.createElement("small");
+  source.className="assistant-source";
+  source.textContent=assistantSourceText(result);
+  pending.appendChild(source);
+ }catch(error){
+  pending.textContent=isolateMixedDirectionText(answerAI(q));
+  const source=document.createElement("small");
+  source.className="assistant-source";
+  source.textContent="المجيب: دليلنا المحلي · تعذرت معالجة الطلب عبر المسار السحابي";
+  pending.appendChild(source);
+ }finally{
+  if(sendButton)sendButton.disabled=false;
   $("#msgs").scrollTop=$("#msgs").scrollHeight;
+  $("#botq").focus({preventScroll:true});
+ }
 });
 $("#sugg").addEventListener("click",e=>{
   const b=e.target.closest("button");if(!b)return;
