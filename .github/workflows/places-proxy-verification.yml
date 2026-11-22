@@ -74,12 +74,12 @@ jobs:
       - name: Verify real HTTP routes with mocked OSM and Commons providers
         run: node scripts/places-proxy-integration.cjs
       - name: Verify deployed Render open-data search and Commons photos
-        if: github.event_name == 'push'
+        if: github.event_name != 'pull_request'
         env:
           LIVE_API_BASE_URL: https://dalilna-live.onrender.com
         run: node scripts/live-places-smoke.cjs
       - name: Verify Dalilna 2.6 live API, marketplace database and jobs endpoints
-        if: github.event_name == 'push'
+        if: github.event_name != 'pull_request'
         env:
           LIVE_API_BASE_URL: https://dalilna-live.onrender.com
         run: |
