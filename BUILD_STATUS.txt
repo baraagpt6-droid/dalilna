@@ -1,34 +1,24 @@
-Dalilna 2.3.0 — Build and deployment status
-=============================================
+Dalilna 2.4.0 — Release readiness
+====================================
 
-Release target: 2.3.0
-Android versionCode: 230
-Web version: 2.3.0
+Implemented in feat/dalilna-root-fix-v2.4.0:
+- Shared OSM Category Mapping Dictionary for build-time classification and live Overpass filters.
+- Multi-category tagging for overlapping services such as pharmacies.
+- Bilingual search text (Arabic/English labels and names), activity tags, governorate, district and neighbourhood.
+- Yemen ADM2 Polygon matching from geoBoundaries (335 districts) plus OSM admin boundaries. Approximate nearest-centroid assignments are clearly marked and counted separately.
+- Removal of the old map-place/restaurants panel from Souq. Shared PostgreSQL product ads are the only products source.
+- Seven product groups: electronics, vehicles, property, solar, home, agriculture, clothing.
+- Authenticated merchant JSON feed ingestion with idempotent upserts. Incomplete, invalid or oversized snapshots do not archive previously active ads.
+- Daily GitHub Actions refreshes for regional OSM catalogue and jobs; daily product feed workflow to be added.
+- Daily Render cron entry point uses scripts/daily-sync.cjs and needs product feed URLs/token for actual merchant product ingestion.
+- PWA/Android release metadata 2.4.0 / versionCode 240.
 
-Changes prepared in branch feat/dalilna-global-search-market-fx-v2.3.0:
-- Global search across all 22 Yemen governorate catalogue files without a required governorate selection.
-- Arabic search normalization for Alif variants, taa marbuta/ha, alif maqsura/ya, diacritics and the definite article.
-- Category selection displays matching regional-catalogue locations without requiring a governorate filter.
-- Souq has a distinct commercial-place directory sourced from OpenStreetMap. It is filtered by governorate/category and loads only when the Souq screen opens.
-- Approved user-submitted marketplace adverts remain separate from map directory records. Map records do not claim product stock, a current selling price or a verified seller.
-- Exchange rates and gold are read from the public ye-rial.com current API. Readings older than 24 hours or missing required USD/SAR/21K gold values are hidden; no hard-coded device values are displayed.
-- The governorate/district scope label no longer repeats the same governorate name.
-- PWA cache namespace and asset versions are updated to 2.3.0.
-- Android versionCode/versionName are 230/2.3.0. WebView HTTP cache is cleared once on app-version upgrades while local user data is preserved.
-- Android CI synchronizes current PWA and regional-catalogue assets before building the debug APK.
+Data notes:
+- Current GitHub Pages catalogue will not change until the daily/commit-triggered regional build completes and publishes the new generated files.
+- The current stored catalogue on main still needs a 2.4.0 refresh with the category mapping and ADM2 polygon inputs.
+- No merchant JSON feed providers are configured in the repository yet. Marketplace importer will correctly skip product ingestion until feed URLs and token are configured; it will not manufacture product ads.
+- Jobs are collected from configured official/RSS sources and YemenHR public feed; no direct apply URL is claimed unless the domain is verified.
+- The user registration model does not exist in the current marketplace schema. Listing expiry is currently 60 days from each listing's creation time, not account registration.
 
-Current source catalogue snapshot:
-- 14,886 OpenStreetMap place records.
-- 22 governorates.
-- 335 districts.
-- Snapshot date: 2026-11-22.
-
-Validation and release status:
-- CI, PWA deployment and Android APK build have not yet run for this branch.
-- Product-stock feeds are not connected. Live inventory and merchant prices must be supplied by a verified merchant integration or approved listings.
-- Android APK remains a debug testing package, not a Play Store production-signed release.
-
-Sources and attribution:
-- OpenStreetMap contributors, ODbL-1.0.
-- Open Admin Data Yemen, CC BY 4.0.
-- Exchange indicators: https://ye-rial.com/ (API documentation: https://ye-rial.com/api/docs/).
+Verification:
+- Awaiting PR validation, daily catalogue refresh, GitHub Pages deploy and Android APK build.
