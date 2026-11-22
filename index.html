@@ -3883,7 +3883,7 @@ function parseYemenMarketTimestamp(value){
  const raw=String(value||"").trim();
  if(!raw)return NaN;
  const normalized=raw.includes("T")?raw:raw.replace(" ","T");
- const zoned=/Z$|[+-]\\d\\d:\\d\\d$/.test(normalized)?normalized:normalized+"+03:00";
+ const zoned=/Z$|[+-]\d\d:\d\d$/.test(normalized)?normalized:normalized+"+03:00";
  return Date.parse(zoned);
 }
 function cleanMarketNumber(value){
@@ -4079,7 +4079,7 @@ function directoryMapSearchInfo(q){
   ];
   const product=productIntents.find(item=>item.test.test(text));
   const services=[
-    {category:"grocery",label:"بقالات ومحلات تموين",test:/بقال|تموين|سوبر\\s?ماركت|مواد غذائيه|جمعيه استهلاكيه/},
+    {category:"grocery",label:"بقالات ومحلات تموين",test:/بقال|تموين|سوبر\s?ماركت|مواد غذائيه|جمعيه استهلاكيه/},
     {category:"health",label:"مستشفيات وعيادات ومراكز صحية",test:/مستشف|مستوصف|مركز صحي|مركز طبي|عياده|عيادات|مختبر|طبيب|دكتور|اسنان/},
     {category:"pharmacy",label:"صيدليات",test:/صيدل|دواء|ادويه|علاج|حبوب|مستلزمات طبيه/},
     {category:"food",label:"مطاعم ومخابز",test:/مطعم|مطاعم|مخبز|مخابز|وجبات/},
