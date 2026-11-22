@@ -118,8 +118,11 @@ async function syncMerchantFeed(req,res){
  const sourceKey=clean(payload.sourceKey,50).toLowerCase().replace(/[^a-z0-9_-]/g,"");
  const sourceName=clean(payload.sourceName||sourceKey,100);
  const completeSnapshot=payload.completeSnapshot===true;
+ const activeClientRefs=Array.isArray(payload.activeClientRefs)
+  ? [...new Set(payload.activeClientRefs.map(value=>clean(value,100)).filter(value=>value.startsWith("feed:")&&value.length>=10&&value.length<=100))]
+  : [];
  if(!sourceKey||items.length>250||(!items.length&&!completeSnapshot))throw error("INVALID_PRODUCT_FEED","خلاصة المنتجات فارغة أو غير صالحة.");
- const activeRefs=[];
+ if(completeSnapshot&&!activeClientRefs.length)throw error("INVALID_PRODUCT_SNAPSHOT","لا يمكن اعتماد لقطة كاملة من دون قائمة المنتجات النشطة.");
  const db=getPool();await schema(db);const client=await db.connect();
  let inserted=0,updated=0,skipped=0;
  try{
@@ -143,13 +146,13 @@ async function syncMerchantFeed(req,res){
    }catch(_){skipped++;}
   }
   let archived=0;
-  if(completeSnapshot&&skipped===0&&activeRefs.length>0){
-   const stale=await client.query("UPDATE marketplace_listings SET status='archived',expires_at=NOW(),updated_at=NOW() WHERE client_ref LIKE 'feed:%' AND status='approved' AND NOT (client_ref=ANY($1::text[])) RETURNING id",[activeRefs]);
+  if(completeSnapshot&&skipped===0&&activeClientRefs.length>0&&activeRefs.every(ref=>activeClientRefs.includes(ref))){
+   const stale=await client.query("UPDATE marketplace_listings SET status='archived',expires_at=NOW(),updated_at=NOW() WHERE client_ref LIKE 'feed:%' AND status='approved' AND NOT (client_ref=ANY($1::text[])) RETURNING id",[activeClientRefs]);
    archived=stale.rowCount||0;
   }
   await client.query("COMMIT");
   console.info(JSON.stringify({event:"marketplace.feed_sync",source:sourceName,received:items.length,inserted,updated,skipped,archived}));
-  return send(res,200,{ok:true,source:sourceName,received:items.length,inserted,updated,skipped,archived,fetchedAt:new Date().toISOString()});
+  return send(res,200,{ok:true,source:sourceName,received:items.length,inserted,updated,skipped,archived,completeSnapshot,archivedFromSnapshot:completeSnapshot&&archived>0,fetchedAt:new Date().toISOString()});
  }catch(e){await client.query("ROLLBACK");throw e;}
  finally{client.release();}
 }
