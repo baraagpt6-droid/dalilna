@@ -111,7 +111,7 @@ def distance_km(lat1, lon1, lat2, lon2):
 
 
 def load_category_mapping(path=None):
-    mapping_path = Path(path) if path else Path(__file__).with_name("category-mapping.json")
+    mapping_path = Path(path) if path else Path(__file__).resolve().parent.parent / "category-mapping.json"
     data = read_json(mapping_path)
     categories = data.get("categories") if isinstance(data, dict) else None
     if not isinstance(categories, dict) or not categories:
