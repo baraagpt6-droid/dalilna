@@ -915,7 +915,6 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <div class="shared-marketplace-status" id="sharedSouqStatus">الجوالات والساعات والسيارات والأراضي والعقارات وغيرها من المعروضات المعتمدة ستظهر هنا.</div>
       <div class="shared-marketplace-list" id="sharedSouqItems"></div>
     </section>
-    <div class="list" id="sqList"></div>
   </section>
 
   <!-- AI & Feedback View -->
@@ -5070,8 +5069,7 @@ function render(){
     const jobs=applyFilters(S.items.filter(i=>i.cat==="jobs"&&match(i)));
     $("#jobs").innerHTML=jobs.map(cardHTML).join("")||`<div class="empty">لا توجد وظائف متاحة حالياً.</div>`;
   }else if(view==="souq"){
-    const sq=applyFilters(S.items.filter(i=>i.cat==="souq"&&match(i)));
-    $("#sqList").innerHTML=sq.map(cardHTML).join("")||`<div class="empty">لا توجد عروض في السوق حالياً.</div>`;
+    // Product listings come from the shared PostgreSQL marketplace only.
   }
   const showTopSearch=view==="home"&&searchActive;
   const topSection=$("#searchResultsTop"),topList=$("#searchResultList"),homeSlot=$("#homeListSlot");
