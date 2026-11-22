@@ -4405,6 +4405,50 @@ async function loadLiveMarketplaceMatches(query,category,productType,signal,forc
  }catch(error){liveSharedLoadError=String(error&&error.message||"تعذر الاتصال بخدمة الإعلانات.");liveSharedMatches=[];}
  return liveSharedMatches;
 }
+async function searchLiveDirectoryFallback(query,category,context,signal,force){
+ const normalized=normalizeSearchPlace(query);
+ if(normalized.length<3)return [];
+ const key=[normalized,category,context?.gov||"",context?.district||""].join("|");
+ const cached=liveFallbackCache.get(key);
+ if(!force&&cached&&Date.now()-cached.at<90000)return cached.items;
+ const params=new URLSearchParams({q:query,place:context?.place||"اليمن",category:category||"all"});
+ const response=await fetch(LIVE_DIRECTORY_API+"/api/places/search?"+params.toString(),{
+  headers:{Accept:"application/json"},cache:"no-store",signal
+ });
+ const payload=await response.json().catch(()=>({}));
+ if(!response.ok)throw new Error(payload.error||"Live map fallback unavailable");
+ const mapped=(Array.isArray(payload.items)?payload.items:[]).map(item=>({
+  ...item,
+  category:item.category||category||"other",
+  categories:Array.isArray(item.categories)?item.categories:[item.category||category||"other"],
+  governorate:item.governorate||context?.gov||"",
+  district:item.district||context?.district||"",
+  source:item.source||"OpenStreetMap",
+  assignmentQuality:item.assignmentQuality||"live-geocoded"
+ }));
+ liveFallbackCache.set(key,{items:mapped,at:Date.now()});
+ if(liveFallbackCache.size>80)liveFallbackCache.delete(liveFallbackCache.keys().next().value);
+ return mapped;
+}
+function mergeLiveFallbackRows(localRows,remoteRows){
+ const result=[...(localRows||[])];
+ const names=new Set(result.map(item=>normalizeSearchPlace(item.name||"")).filter(Boolean));
+ for(const remote of remoteRows||[]){
+  const remoteName=normalizeSearchPlace(remote.name||"");
+  if(!remoteName)continue;
+  const lat=Number(remote.lat??remote.latitude),lon=Number(remote.lon??remote.lng??remote.longitude);
+  const duplicate=result.some(existing=>{
+   const name=normalizeSearchPlace(existing.name||"");
+   if(name!==remoteName)return false;
+   const aLat=Number(existing.lat??existing.latitude),aLon=Number(existing.lon??existing.lng??existing.longitude);
+   if(!Number.isFinite(lat)||!Number.isFinite(lon)||!Number.isFinite(aLat)||!Number.isFinite(aLon))return true;
+   const dy=(lat-aLat)*111000,dx=(lon-aLon)*111000*Math.cos(lat*Math.PI/180);
+   return Math.hypot(dx,dy)<50;
+  });
+  if(!duplicate){result.push(remote);names.add(remoteName);}
+ }
+ return result;
+}
 async function runLiveDirectorySearch(force){
  const box=$("#liveDirectoryItems"),status=$("#liveDirectoryStatus");
  clearTimeout(liveDirectoryTimer);
@@ -4413,12 +4457,12 @@ async function runLiveDirectorySearch(force){
  if(!box||!status)return;
  const context=regionCurrentContext(),query=liveDirectoryLast.query||"",category=liveDirectoryLast.category||"all",productType=liveDirectoryLast.productType||"",listingType=liveDirectoryLast.listingType||"";
  liveDirectoryVisibleCount=8;liveDirectoryLastData=null;
- status.textContent="جارٍ تحميل فهرس الأماكن المحلي والإعلانات المعتمدة…";
- box.innerHTML='<div class="live-directory-empty">جارٍ فتح سجل المحافظة المحفوظ في الموقع.</div>';
+ status.textContent=liveUnifiedIndexReady?"فهرس اليمن جاهز للبحث…":"جارٍ تجهيز فهرس البحث الموحد…";
+ box.innerHTML='<div class="live-directory-empty">تظهر النتائج المحلية أولاً، ثم تُراجع الخريطة عند الحاجة.</div>';
  liveDirectoryTimer=setTimeout(async()=>{
   const controller=new AbortController();
   liveDirectoryController=controller;
-  const requestTimer=setTimeout(()=>controller.abort(),18000);
+  const requestTimer=setTimeout(()=>controller.abort(),24000);
   try{
    const sharedPromise=loadLiveMarketplaceMatches(query,category,productType,controller.signal,force,listingType);
    const classifiedOnly=["jobs","souq","land","marketplace"].includes(category);
@@ -4431,30 +4475,39 @@ async function runLiveDirectorySearch(force){
    }
    let manifest=null,rows=[];
    if(!classifiedOnly){
-    if(context.gov){
-     const loaded=await loadRegionalCatalog(context.gov,force);
-     manifest=loaded.manifest;
-     rows=regionalCatalogMatches(loaded.data.items,context,query,category,productType);
-    }else{
-     status.textContent="جارٍ البحث في سجلات المحافظات الـ22…";
-     const loaded=await loadAllRegionalCatalog(force);
-     manifest=loaded.manifest;
-     rows=regionalCatalogMatches(loaded.items,context,query,category,productType);
-    }
+    status.textContent=liveUnifiedIndexReady?"البحث في فهرس اليمن الموحد…":"جارٍ تحميل سجلات المحافظات الـ22 في الخلفية…";
+    const loaded=await warmUnifiedSearchIndex(false);
+    manifest=loaded.manifest;
+    rows=regionalCatalogMatches(loaded.items,context,query,category,productType);
    }
    if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
-   const responseData={items:rows,manifest,snapshotDate:manifest?.snapshotDate,regionName:context.gov||"اليمن",context,classifiedOnly,category};
+   const responseData={items:rows,manifest,snapshotDate:manifest?.snapshotDate,regionName:context.gov||"اليمن",context,classifiedOnly,category,liveFallbackCount:0};
    renderLiveDirectoryResponse(responseData);
    sharedPromise.then(()=>{if(seq===liveDirectorySeq&&!controller.signal.aborted)renderLiveDirectoryResponse(responseData);});
+   if(!classifiedOnly&&query.length>=3&&rows.length<5){
+    status.textContent+=" · يجري التحقق من النتائج الجديدة عبر الخرائط المفتوحة…";
+    try{
+     const remote=await searchLiveDirectoryFallback(query,category,context,controller.signal,force);
+     if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
+     if(remote.length){
+      const merged=mergeLiveFallbackRows(responseData.items,remote);
+      responseData.liveFallbackCount=merged.length-responseData.items.length;
+      responseData.items=merged;
+      renderLiveDirectoryResponse(responseData);
+     }
+    }catch(error){
+     if(!controller.signal.aborted)console.info("Dalilna live fallback skipped:",error.message||error);
+    }
+   }
   }catch(error){
    if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
-   status.textContent="تعذر تحميل ملف البيانات المحلي: "+String(error&&error.message||"خطأ غير معروف");
-   box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">لم يصل ملف المحافظة إلى التطبيق. هذا خلل في تحميل البيانات وليس دليلاً على عدم وجود محلات أو خدمات.</div><button type="button" class="live-directory-refresh" id="liveDirectoryRetry">إعادة تحميل السجل</button>';
+   status.textContent="تعذر تحميل الفهرس المحلي: "+String(error&&error.message||"خطأ غير معروف");
+   box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">لم يكتمل تحميل السجل المحلي. يمكنك إعادة المحاولة أو اختيار منطقة أخرى.</div><button type="button" class="live-directory-refresh" id="liveDirectoryRetry">إعادة تحميل السجل</button>';
   }finally{
    clearTimeout(requestTimer);
    if(liveDirectoryController===controller)liveDirectoryController=null;
   }
- },260);
+ },45);
 }
 async function loadLiveCommonsPhotos(button){
  const panel=button.parentElement.querySelector(".live-directory-commons-panel");if(!panel)return;
