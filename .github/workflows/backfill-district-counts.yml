@@ -13,7 +13,7 @@ permissions:
   actions: write
 
 concurrency:
-  group: dalilna-regional-catalog
+  group: dalilna-district-counts
   cancel-in-progress: false
 
 jobs:
