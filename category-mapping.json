@@ -300,6 +300,18 @@
         {
           "key": "emergency",
           "value": "ambulance_station"
+        },
+        {
+          "key": "amenity",
+          "value": "medical_centre"
+        },
+        {
+          "key": "healthcare",
+          "value": "medical_centre"
+        },
+        {
+          "key": "healthcare",
+          "value": "blood_donation"
         }
       ]
     },
@@ -766,10 +778,6 @@
         {
           "key": "building",
           "value": "mosque"
-        },
-        {
-          "key": "amenity",
-          "value": "place_of_worship"
         }
       ]
     },
@@ -932,6 +940,18 @@
         {
           "key": "shop",
           "value": "batteries"
+        },
+        {
+          "key": "product",
+          "value": "solar_panel"
+        },
+        {
+          "key": "product",
+          "value": "battery"
+        },
+        {
+          "key": "product",
+          "value": "inverter"
         },
         {
           "key": "product",
@@ -1255,6 +1275,38 @@
         {
           "key": "courier",
           "value": "yes"
+        },
+        {
+          "key": "amenity",
+          "value": "delivery"
+        },
+        {
+          "key": "amenity",
+          "value": "courier"
+        },
+        {
+          "key": "shop",
+          "value": "courier"
+        },
+        {
+          "key": "shop",
+          "value": "delivery"
+        },
+        {
+          "key": "shop",
+          "value": "parcel_locker"
+        },
+        {
+          "key": "office",
+          "value": "shipping"
+        },
+        {
+          "key": "office",
+          "value": "delivery"
+        },
+        {
+          "key": "amenity",
+          "value": "parcel_pickup"
         }
       ]
     },
@@ -1390,6 +1442,14 @@
         {
           "key": "amenity",
           "value": "car_rental"
+        },
+        {
+          "key": "shop",
+          "value": "car_repair"
+        },
+        {
+          "key": "shop",
+          "value": "motorcycle_repair"
         }
       ]
     }
@@ -1473,7 +1533,8 @@
     "addr:suburb",
     "addr:neighbourhood",
     "addr:city",
-    "addr:district"
+    "addr:district",
+    "product"
   ],
   "primaryCategoryOrder": [
     "pharmacy",
