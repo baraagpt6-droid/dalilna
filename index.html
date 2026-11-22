@@ -835,7 +835,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <section class="panel" id="fxBox">
       <h2>
         <span class="fx-title-group"><svg class="fx-heading-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M15.2 8.3c-.7-.8-1.7-1.2-3.1-1.2-1.5 0-2.5.8-2.5 1.9 0 3.1 5.1 1.1 5.1 4.2 0 1.1-1 2-2.8 2-1.2 0-2.3-.4-3-1.2M12 5.5v13"/></svg><span>أسعار الصرف والذهب اليوم</span></span>
-        <span class="tag" id="fxBadge">محدّث</span>
+        <span class="tag" id="fxBadge">في انتظار المصدر</span><button type="button" class="ghost" id="fxRefresh" style="min-height:30px">تحديث الأسعار</button>
       </h2>
       <div class="fxg" id="fxGrid"></div>
       <div class="fx-calc" id="fxCalcBox">
@@ -2725,11 +2725,7 @@ const DEFAULT_STATE={
   ads:[
     {id:"ad1",title:"أعلن عن محلك أو مشروعك مجاناً",text:"وصل خدماتك لكل أبناء مديرية حبيش والمغتربين",phone:"967777000000"}
   ],
-  fx:{
-    s:{usdB:535,usdS:538,sarB:140,sarS:141,aedB:144,aedS:146,omrB:1380,omrS:1395,g24B:44000,g24S:46000,g21B:38500,g21S:40500,g18B:33000,g18S:34800},
-    a:{usdB:2040,usdS:2055,sarB:535,sarS:540,aedB:550,aedS:556,omrB:5250,omrS:5310,g24B:165000,g24S:173000,g21B:145000,g21S:152000,g18B:124000,g18S:130000},
-    date:"اليوم"
-  },
+  fx:{s:{},a:{},date:""},
   rates:{},
   favs:[],
   recent:[],
@@ -2827,6 +2823,7 @@ function normalizeState(raw){
   const arrayOfObjects=(v)=>Array.isArray(v)?v.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)):[];
   return {
     ...base,...raw,
+    fx:{s:{},a:{},date:""},
     items:safeItems,
     seedCatalogVersion:cleanNumber(raw.seedCatalogVersion,0,0,100),
     pending:arrayOfObjects(raw.pending).map((x,i)=>({
@@ -2924,6 +2921,7 @@ function applyTheme(){
   document.body.classList.toggle("light",S.theme==="light");
 }
 applyTheme();
+let liveFxData=null,liveFxError="",liveFxFetchedAt=0,liveFxPending=null,liveFxController=null;
 function applyLang(){
   curLang=S.lang||"ar";
   $("#langLbl").textContent=curLang==="en"?"EN":"عربي";
@@ -3171,10 +3169,7 @@ function getScopeOptions(){
 }
 function buildScopeSelector(){
   const opts=getScopeOptions();const cur=opts.find(o=>o.val===scope)||opts[0];const stats=catalogStatsForScope();
-  let place="اليمن";
-  if(scope&&scope.startsWith("gov:"))place="محافظة "+scope.slice(4);
-  else if(scope&&scope.startsWith("district:")){const pair=scope.slice(9).split("|");place="مديرية "+(pair[1]||"")+" — "+(pair[0]||"");}
-  const countLabel=stats?place+" • "+regionNumber(stats.count)+" مكان وخدمة":(!liveCatalogManifest?(liveCatalogLoadError?"تعذر تحميل فهرس الأماكن":"جارٍ تحميل فهرس اليمن…"):(cur.count?Number(cur.count).toLocaleString("ar")+" سجل محلي":""));
+  const countLabel=stats?regionNumber(stats.count)+" مكان وخدمة":(!liveCatalogManifest?(liveCatalogLoadError?"تعذر تحميل فهرس الأماكن":"جارٍ تحميل فهرس اليمن…"):(cur.count?Number(cur.count).toLocaleString("ar")+" سجل محلي":""));
   const approximate=Number(stats?.approximateCount||cur.approximateCount||0);
   const qualityLabel=approximate>0?" · "+regionNumber(approximate)+" تقديري":"";
   $("#scopeLbl").textContent=cur.label+(countLabel?" · "+countLabel:"")+qualityLabel;
@@ -3888,73 +3883,147 @@ function renderAds(){
   $("#dots").innerHTML=sl.map((_,i)=>`<i class="${i===0?"on":""}"></i>`).join("");
 }
 
-/* Exchange Rates & Calculator */
-function renderFx(){
-  const n=v=>Number(v||0).toLocaleString("en-US");
-  const isEn=curLang==="en";
-  const currencyIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M15.1 8.2c-.7-.7-1.7-1.1-3-1.1-1.5 0-2.4.7-2.4 1.8 0 3 5 1.1 5 4 0 1.1-1 2-2.8 2-1.2 0-2.2-.4-2.9-1.1M12 5.5v13"/></svg>';
-  const goldIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-2.1 10H6.1L4 9Z"/><path d="m7 9 2-4h6l2 4M8 13h8"/></svg>';
-  const asset=(kind,label)=>'<span class="fx-asset"><span class="fx-asset-icon '+kind+'">'+(kind==="gold"?goldIcon:currencyIcon)+'</span><span>'+label+'</span></span>';
-  const card=(t,o)=>`<div class="fxc"><h3><span>${t}</span><span style="font-size:11px;color:var(--mute)">${T("inYer")}</span></h3>
-    <table class="fx-tbl">
-      <tr><th>${T("currCol")}</th><th>${T("buyCol")}</th><th>${T("sellCol")}</th></tr>
-      <tr><td>${asset("currency",isEn?"US Dollar ($)":"دولار أمريكي ($)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.usdB)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.usdS)}</span></td></tr>
-      <tr><td>${asset("currency",isEn?"Saudi Riyal (SAR)":"ريال سعودي (SAR)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.sarB)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.sarS)}</span></td></tr>
-      <tr><td>${asset("currency",isEn?"UAE Dirham (AED)":"درهم إماراتي (AED)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.aedB||Math.round(o.usdB/3.67))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.aedS||Math.round(o.usdS/3.67))}</span></td></tr>
-      <tr><td>${asset("currency",isEn?"Omani Rial (OMR)":"ريال عماني (OMR)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.omrB||Math.round(o.usdB*2.58))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.omrS||Math.round(o.usdS*2.6))}</span></td></tr>
-      <tr><td>${asset("gold",isEn?"Gold 24K (g)":"ذهب عيار 24 (جرام)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g24B||Math.round(o.g21B*1.14))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g24S||Math.round(o.g21S*1.14))}</span></td></tr>
-      <tr><td>${asset("gold",isEn?"Gold 21K (g)":"ذهب عيار 21 (جرام)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g21B)}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g21S)}</span></td></tr>
-      <tr><td>${asset("gold",isEn?"Gold 18K (g)":"ذهب عيار 18 (جرام)")}</td><td class="num"><span class="rate-pill rate-buy">${n(o.g18B||Math.round(o.g21B*0.857))}</span></td><td class="num"><span class="rate-pill rate-sell">${n(o.g18S||Math.round(o.g21S*0.857))}</span></td></tr>
-    </table></div>`;
-  $("#fxGrid").innerHTML=card(T("sanaaRates"),S.fx.s)+card(T("adenRates"),S.fx.a);
-  $("#fxMeta").textContent=(isEn?"Last updated: ":"آخر تحديث: ")+(S.fx.date||(isEn?"Today":"اليوم"));
-  calcFx();
+/* Live Exchange Rates & Gold — public Yemen market API */
+const LIVE_FX_URL="https://ye-rial.com/api/v1/current/";
+function parseYemenMarketTimestamp(value){
+ const raw=String(value||"").trim();
+ if(!raw)return NaN;
+ const normalized=raw.includes("T")?raw:raw.replace(" ","T");
+ const zoned=/Z$|[+-]\\d\\d:\\d\\d$/.test(normalized)?normalized:normalized+"+03:00";
+ return Date.parse(zoned);
 }
+function cleanMarketNumber(value){
+ const parsed=Number(value);
+ return Number.isFinite(parsed)&&parsed>0?parsed:null;
+}
+function isFreshYemenMarketData(payload){
+ if(!payload||payload.status!=="success")return false;
+ const verifiedAt=parseYemenMarketTimestamp(payload.last_verified_at||payload.last_sync);
+ if(!Number.isFinite(verifiedAt))return false;
+ const age=Date.now()-verifiedAt;
+ if(age< -5*60*1000||age>24*60*60*1000)return false;
+ for(const market of ["sanaa","aden"]){
+  const items=payload.data?.[market]?.items;
+  if(!items)return false;
+  for(const instrument of ["usd","sar","gold_gram_21"]){
+   const row=items[instrument];
+   if(!row||cleanMarketNumber(row.buy)===null||cleanMarketNumber(row.sell)===null)return false;
+  }
+ }
+ return true;
+}
+async function loadLiveFx(force){
+ if(!force&&liveFxPending)return liveFxPending;
+ if(!force&&liveFxData?.fresh&&Date.now()-liveFxFetchedAt<60000)return liveFxData;
+ if(liveFxController)liveFxController.abort();
+ const controller=new AbortController();liveFxController=controller;
+ const timeout=setTimeout(()=>controller.abort(),12000);
+ liveFxPending=(async()=>{
+  try{
+   const response=await fetch(LIVE_FX_URL,{headers:{Accept:"application/json"},cache:"no-store",signal:controller.signal});
+   if(!response.ok)throw new Error("HTTP "+response.status);
+   const payload=await response.json();
+   if(payload?.status!=="success"||!payload?.data?.sanaa?.items||!payload?.data?.aden?.items)throw new Error("صيغة بيانات الأسعار غير صالحة");
+   const fresh=isFreshYemenMarketData(payload);
+   liveFxData={...payload,fresh};
+   liveFxFetchedAt=Date.now();
+   liveFxError=fresh?"":"المصدر لم يؤكد قراءة حديثة خلال آخر 24 ساعة. أخفينا الأسعار حتى تصل قراءة حديثة.";
+   return liveFxData;
+  }catch(error){
+   liveFxData=null;liveFxFetchedAt=0;
+   liveFxError=controller.signal.aborted?"انتهت مهلة الاتصال بمصدر الأسعار.":"تعذر جلب الأسعار الحية: "+String(error?.message||"خطأ اتصال");
+   return null;
+  }finally{
+   clearTimeout(timeout);
+   if(liveFxController===controller)liveFxController=null;
+   liveFxPending=null;
+   renderFx();
+  }
+ })();
+ return liveFxPending;
+}
+function renderFx(){
+ const isEn=curLang==="en";
+ const n=value=>cleanMarketNumber(value)===null?"—":Number(value).toLocaleString("en-US",{maximumFractionDigits:2});
+ const currencyIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M15.1 8.2c-.7-.7-1.7-1.1-3-1.1-1.5 0-2.4.7-2.4 1.8 0 1.1-1 2-2.8 2-1.2 0-2.2-.4-2.9-1.1M12 5.5v13"/></svg>';
+ const goldIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-2.1 10H6.1L4 9Z"/><path d="m7 9 2-4h6l2 4M8 13h8"/></svg>';
+ const asset=(kind,label)=>'<span class="fx-asset"><span class="fx-asset-icon '+kind+'">'+(kind==="gold"?goldIcon:currencyIcon)+'</span><span>'+label+'</span></span>';
+ const row=(kind,label,quote)=>{
+  const buy=quote?n(quote.buy):"—",sell=quote?n(quote.sell):"—";
+  return '<tr><td>'+asset(kind,label)+'</td><td class="num"><span class="rate-pill rate-buy">'+buy+'</span></td><td class="num"><span class="rate-pill rate-sell">'+sell+'</span></td></tr>';
+ };
+ const marketCard=(key,title)=>{
+  const market=liveFxData?.data?.[key],items=market?.items||{};
+  return '<div class="fxc"><h3><span>'+title+'</span><span style="font-size:11px;color:var(--mute)">'+(market?.edition||"")+'</span></h3><table class="fx-tbl"><tr><th>'+T("currCol")+'</th><th>'+T("buyCol")+'</th><th>'+T("sellCol")+'</th></tr>'+
+   row("currency",isEn?"US Dollar (USD)":"الدولار الأمريكي (USD)",items.usd)+
+   row("currency",isEn?"Saudi Riyal (SAR)":"الريال السعودي (SAR)",items.sar)+
+   row("gold",isEn?"21K gold / gram":"جرام ذهب عيار 21",items.gold_gram_21)+
+   row("gold",isEn?"21K gold coin (8g)":"جنيه ذهب عيار 21 (8 جرام)",items.gold_coin_21_8g)+
+   '</table></div>';
+ };
+ if(liveFxData?.fresh){
+  $("#fxGrid").innerHTML=marketCard("sanaa",isEn?"Sana'a":"صنعاء")+marketCard("aden",isEn?"Aden":"عدن");
+  $("#fxBadge").textContent=isEn?"Live source":"مصدر مباشر";
+  const verified=liveFxData.last_verified_at||liveFxData.last_sync||"";
+  $("#fxMeta").innerHTML=(isEn?"Verified: ":"آخر تحقق: ")+esc(verified)+' · '+(isEn?"Indicative market rates, not official. ":"أسعار استرشادية للسوق وليست نشرة رسمية. ")+'<a href="https://ye-rial.com/" target="_blank" rel="noopener noreferrer">الريال اليمني اليوم</a>';
+ }else{
+  $("#fxGrid").innerHTML='<div class="fxc"><p class="where">'+esc(liveFxError||(isEn?"Loading live market data…":"جارٍ تحميل أسعار السوق…"))+'</p></div>';
+  $("#fxBadge").textContent=isEn?"Awaiting source":"في انتظار المصدر";
+  $("#fxMeta").innerHTML='المصدر: <a href="https://ye-rial.com/api/docs/" target="_blank" rel="noopener noreferrer">توثيق الأسعار</a> · لن نعرض قيماً محفوظة من نسخة قديمة.';
+ }
+ calcFx();
+}
+$("#fxRefresh")?.addEventListener("click",()=>loadLiveFx(true));
+setInterval(()=>{if(!document.hidden)loadLiveFx(false);},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadLiveFx(false);});
 let calcFromVal="USD",calcToVal="YER_S";
 const CURR_OPTS=[
-  {val:"USD",label:"دولار أمريكي (USD)",toLabel:"إلى دولار أمريكي (USD)",badge:"$"},
-  {val:"SAR",label:"ريال سعودي (SAR)",toLabel:"إلى ريال سعودي (SAR)",badge:"SAR"},
-  {val:"AED",label:"درهم إماراتي (AED)",toLabel:"إلى درهم إماراتي (AED)",badge:"AED"},
-  {val:"OMR",label:"ريال عماني (OMR)",toLabel:"إلى ريال عماني (OMR)",badge:"OMR"},
-  {val:"YER_S",label:"ريال يمني (صنعاء)",toLabel:"إلى ريال يمني (صنعاء)",badge:"صنعاء"},
-  {val:"YER_A",label:"ريال يمني (عدن)",toLabel:"إلى ريال يمني (عدن)",badge:"عدن"}
+ {val:"USD",label:"دولار أمريكي (USD)",toLabel:"إلى دولار أمريكي (USD)",badge:"USD"},
+ {val:"SAR",label:"ريال سعودي (SAR)",toLabel:"إلى ريال سعودي (SAR)",badge:"SAR"},
+ {val:"YER_S",label:"ريال يمني — صنعاء (الطبعة القديمة)",toLabel:"إلى ريال يمني — صنعاء",badge:"صنعاء"},
+ {val:"YER_A",label:"ريال يمني — عدن (الطبعة الجديدة)",toLabel:"إلى ريال يمني — عدن",badge:"عدن"}
 ];
-$("#calcFromBtn").addEventListener("click",()=>{
-  openCustomPicker({
-    title:"اختر العملة المحوّل منها",
-    searchable:false,
-    options:CURR_OPTS.map(c=>({val:c.val,label:c.label,count:c.badge})),
-    selected:calcFromVal,
-    onSelect:val=>{
-      calcFromVal=val;
-      $("#calcFromLbl").textContent=CURR_OPTS.find(c=>c.val===val).label;
-      calcFx();
-    }
-  });
-});
-$("#calcToBtn").addEventListener("click",()=>{
-  openCustomPicker({
-    title:"اختر العملة المحوّل إليها",
-    searchable:false,
-    options:CURR_OPTS.map(c=>({val:c.val,label:c.toLabel,count:c.badge})),
-    selected:calcToVal,
-    onSelect:val=>{
-      calcToVal=val;
-      $("#calcToLbl").textContent=CURR_OPTS.find(c=>c.val===val).toLabel;
-      calcFx();
-    }
-  });
-});
+$("#calcFromBtn").addEventListener("click",()=>openCustomPicker({
+ title:"اختر العملة المحوّل منها",searchable:false,
+ options:CURR_OPTS.map(item=>({val:item.val,label:item.label,count:item.badge})),
+ selected:calcFromVal,onSelect:value=>{calcFromVal=value;$("#calcFromLbl").textContent=CURR_OPTS.find(item=>item.val===value).label;calcFx();}
+}));
+$("#calcToBtn").addEventListener("click",()=>openCustomPicker({
+ title:"اختر العملة المحوّل إليها",searchable:false,
+ options:CURR_OPTS.map(item=>({val:item.val,label:item.toLabel,count:item.badge})),
+ selected:calcToVal,onSelect:value=>{calcToVal=value;$("#calcToLbl").textContent=CURR_OPTS.find(item=>item.val===value).toLabel;calcFx();}
+}));
 function calcFx(){
-  const amt=parseFloat($("#calcAmt").value)||0;
-  const from=calcFromVal,to=calcToVal;
-  const aedRate=S.fx.s.aedB||Math.round(S.fx.s.usdB/3.67);
-  const omrRate=S.fx.s.omrB||Math.round(S.fx.s.usdB*2.58);
-  const rates={USD:S.fx.s.usdB,SAR:S.fx.s.sarB,AED:aedRate,OMR:omrRate,YER_S:1,YER_A:S.fx.s.usdB/S.fx.a.usdB};
-  const inYerS=amt*(rates[from]||1);
-  const res=inYerS/(rates[to]||1);
-  const labels={USD:"دولار أمريكي",SAR:"ريال سعودي",AED:"درهم إماراتي",OMR:"ريال عماني",YER_S:"ريال يمني (صنعاء)",YER_A:"ريال يمني (عدن)"};
-  $("#calcRes").textContent=res.toLocaleString("en-US",{maximumFractionDigits:2})+" "+labels[to];
+ const amount=Number.parseFloat($("#calcAmt").value)||0,from=calcFromVal,to=calcToVal,output=$("#calcRes");
+ if(!liveFxData?.fresh){output.textContent="تظهر نتيجة التحويل بعد وصول أسعار مؤكدة حديثاً من المصدر.";return;}
+ if(from===to){output.textContent=amount.toLocaleString("en-US",{maximumFractionDigits:2})+" "+CURR_OPTS.find(item=>item.val===to).badge;return;}
+ const oldMarket=liveFxData.data.sanaa.items,newMarket=liveFxData.data.aden.items;
+ const val=(market,currency,side)=>cleanMarketNumber(market?.[currency]?.[side]);
+ let result=null;
+ if(from==="YER_S"&&to==="YER_A"){
+  const oldBuy=val(oldMarket,"usd","buy"),newSell=val(newMarket,"usd","sell");
+  if(oldBuy&&newSell)result=amount/oldBuy*newSell;
+ }else if(from==="YER_A"&&to==="YER_S"){
+  const newBuy=val(newMarket,"usd","buy"),oldSell=val(oldMarket,"usd","sell");
+  if(newBuy&&oldSell)result=amount/newBuy*oldSell;
+ }else if(from==="USD"&&to==="SAR"){
+  const market=to==="SAR"?oldMarket:newMarket,usdBuy=val(market,"usd","buy"),sarSell=val(market,"sar","sell");
+  if(usdBuy&&sarSell)result=amount*usdBuy/sarSell;
+ }else if(from==="SAR"&&to==="USD"){
+  const market=from==="SAR"?oldMarket:newMarket,sarBuy=val(market,"sar","buy"),usdSell=val(market,"usd","sell");
+  if(sarBuy&&usdSell)result=amount*sarBuy/usdSell;
+ }else{
+  const market=(to==="YER_A"||from==="YER_A")?newMarket:oldMarket;
+  if(from==="USD"||from==="SAR"){
+   const source=val(market,from==="USD"?"usd":"sar","buy");
+   if(source!==null)result=amount*source;
+  }else if(to==="USD"||to==="SAR"){
+   const target=val(market,to==="USD"?"usd":"sar","sell");
+   if(target)result=amount/target;
+  }
+ }
+ if(!Number.isFinite(result))output.textContent="تعذر حساب التحويل من الأسعار المتاحة.";
+ else output.textContent=result.toLocaleString("en-US",{maximumFractionDigits:2})+" "+CURR_OPTS.find(item=>item.val===to).badge;
 }
 $("#calcAmt").addEventListener("input",calcFx);
 
@@ -4502,9 +4571,12 @@ function answerAI(q){
     return `لا توجد ${serviceIntent.label} مسجلة في دليلنا حالياً ضمن البيانات المتاحة على هذا الجهاز. هذا لا يعني عدم وجودها في المنطقة. استخدم زر خرائط Google أسفل الإجابة للبحث خارج الدليل.`;
   }
   if(/صرف|دولار|سعودي|عمله|ذهب|ريال/.test(t)){
-    return `أسعار الصرف المدخلة في هذا الجهاز (قد تحتاج إلى تحديث من الإدارة):\nصنعاء: الدولار شراء ${S.fx.s.usdB} / بيع ${S.fx.s.usdS}، السعودي شراء ${S.fx.s.sarB} / بيع ${S.fx.s.sarS}.\nعدن: الدولار شراء ${S.fx.a.usdB} / بيع ${S.fx.a.usdS}، السعودي شراء ${S.fx.a.sarB} / بيع ${S.fx.a.sarS}.\nلا أستطيع تأكيد أنها أسعار السوق اللحظية.`;
+    if(!liveFxData?.fresh)return "لم يصل تأكيد حديث للأسعار من المصدر. استخدم زر تحديث الأسعار، ولن نعرض أرقاماً قديمة.";
+    const item=(market,key)=>liveFxData.data?.[market]?.items?.[key]||{};
+    const fmt=value=>Number.isFinite(Number(value))?Number(value).toLocaleString("ar-YE",{maximumFractionDigits:2}):"غير متاح";
+    return "مؤشرات سوق استرشادية وليست نشرة رسمية.\\nصنعاء: الدولار "+fmt(item("sanaa","usd").buy)+" شراء / "+fmt(item("sanaa","usd").sell)+" بيع، السعودي "+fmt(item("sanaa","sar").buy)+" شراء / "+fmt(item("sanaa","sar").sell)+" بيع، جرام الذهب 21 "+fmt(item("sanaa","gold_gram_21").buy)+" شراء / "+fmt(item("sanaa","gold_gram_21").sell)+" بيع.\\nعدن: الدولار "+fmt(item("aden","usd").buy)+" شراء / "+fmt(item("aden","usd").sell)+" بيع، السعودي "+fmt(item("aden","sar").buy)+" شراء / "+fmt(item("aden","sar").sell)+" بيع، جرام الذهب 21 "+fmt(item("aden","gold_gram_21").buy)+" شراء / "+fmt(item("aden","gold_gram_21").sell)+" بيع.\\nآخر تحقق: "+(liveFxData.last_verified_at||liveFxData.last_sync||"غير متاح")+"\\nالمصدر: https://ye-rial.com/";
   }
-  if(/طوارئ|اسعاف|شرطه|نجده|دفاع|اطفاء/.test(t))return "أرقام الطوارئ المسجلة في نسخة الدليل هذه:\n"+S.emerg+"\nتحقق من الرقم المحلي قبل الاعتماد عليه في الحالات الطارئة.";
+if(/طوارئ|اسعاف|شرطه|نجده|دفاع|اطفاء/.test(t))return "أرقام الطوارئ المسجلة في نسخة الدليل هذه:\n"+S.emerg+"\nتحقق من الرقم المحلي قبل الاعتماد عليه في الحالات الطارئة.";
   if(/شكوى|بلاغ|اقتراح|تحسين|تحديث بيانات|تعديل بيانات/.test(t))return "يمكنك إرسال شكوى أو اقتراح من زر «إرسال رسالة إلى الإدارة» داخل قسم المساعد. ستُحفظ الرسالة في صندوق المشرف على هذا الجهاز فقط حتى ربط التطبيق بخادم مركزي.";
   if(/حظر|احظر|ايقاف|ايقاف متجر|منع حساب/.test(t))return S.session.role==="admin"&&hasPerm("block")?"يمكنك فتح لوحة المشرف ثم تبويب «الحظر والإيقاف». تستطيع إيقاف إدراج منفرد أو حظر رقم صاحب محل أو وظيفة أو إعلان. الحظر في هذه النسخة محلي على هذا الجهاز فقط.":"إدارة الحظر متاحة للمشرف من لوحة التحكم.";
   if(/وظيف|عمل|توظيف|راتب/.test(t)){
@@ -4582,7 +4654,7 @@ function buildAssistantContext(question=""){
     directory:rows.filter(i=>i.categoryId!=="jobs"&&i.categoryId!=="souq"),
     jobs:rows.filter(i=>i.categoryId==="jobs"),
     marketplace:rows.filter(i=>i.categoryId==="souq"),
-    rates:S.fx,
+    rates:liveFxData?.fresh?liveFxData:null,
     emergencyNumbers:S.emerg,
     notice:"All records are locally stored user-generated content and may be unverified. Verified status is provided per record. This context excludes private account and admin data."
   };
@@ -4902,32 +4974,19 @@ function renderAdminPanel(){
     });
   }else if(admTab==="fx"){
     body.innerHTML=`
-      <div class="two">
-        <label>دولار صنعاء (شراء)<input id="fx_su_b" type="number" value="${S.fx.s.usdB}"></label>
-        <label>دولار صنعاء (بيع)<input id="fx_su_s" type="number" value="${S.fx.s.usdS}"></label>
-        <label>سعودي صنعاء (شراء)<input id="fx_ss_b" type="number" value="${S.fx.s.sarB}"></label>
-        <label>سعودي صنعاء (بيع)<input id="fx_ss_s" type="number" value="${S.fx.s.sarS}"></label>
-        <label>دولار عدن (شراء)<input id="fx_au_b" type="number" value="${S.fx.a.usdB}"></label>
-        <label>دولار عدن (بيع)<input id="fx_au_s" type="number" value="${S.fx.a.usdS}"></label>
-        <label>سعودي عدن (شراء)<input id="fx_as_b" type="number" value="${S.fx.a.sarB}"></label>
-        <label>سعودي عدن (بيع)<input id="fx_as_s" type="number" value="${S.fx.a.sarS}"></label>
-      </div>
+      <p class="where">أسعار الصرف والذهب تأتي تلقائياً من مصدر الريال اليمني اليوم. لا تحفظ هذه الشاشة أسعاراً يدوية حتى لا تظهر أرقام قديمة.</p>
+      <p class="where"><a href="https://ye-rial.com/api/docs/" target="_blank" rel="noopener noreferrer">توثيق مصدر الأسعار</a></p>
       <label style="margin-top:8px">رقم واتساب الإدارة مع مفتاح الدولة<input id="admAdminWa" dir="ltr" inputmode="tel" value="${esc(S.adminWhatsApp)}"></label>
       <label style="margin-top:8px">أرقام الطوارئ والخدمات<textarea id="admEm" rows="3">${esc(S.emerg)}</textarea></label>
-      <button type="button" class="add" id="fxSaveBtn" style="margin-top:8px">حفظ الأسعار والأرقام</button>`;
+      <button type="button" class="add" id="fxSaveBtn" style="margin-top:8px">حفظ أرقام الإدارة والخدمات</button>`;
     $("#fxSaveBtn").onclick=()=>{
-      if(!hasPerm("fx")){toast("ليست لديك صلاحية تعديل أسعار الصرف.");return;}
-      S.fx.s.usdB=+$("#fx_su_b").value;S.fx.s.usdS=+$("#fx_su_s").value;
-      S.fx.s.sarB=+$("#fx_ss_b").value;S.fx.s.sarS=+$("#fx_ss_s").value;
-      S.fx.a.usdB=+$("#fx_au_b").value;S.fx.a.usdS=+$("#fx_au_s").value;
-      S.fx.a.sarB=+$("#fx_as_b").value;S.fx.a.sarS=+$("#fx_as_s").value;
-      S.fx.date=new Date().toLocaleDateString("ar");
+      if(!hasPerm("fx")){toast("ليست لديك صلاحية تعديل الإعدادات.");return;}
       S.emerg=$("#admEm").value;
       const adminWa=digits($("#admAdminWa").value);
       if(adminWa.length<10||adminWa.length>15){toast("أدخل رقم واتساب الإدارة بمفتاح الدولة بشكل صحيح.");return;}
       S.adminWhatsApp=adminWa;
-      logAction("تحديث أسعار الصرف وأرقام الطوارئ وواتساب الإدارة");
-      saveState();renderFx();renderEmerg();toast("تم حفظ الأسعار والأرقام");
+      logAction("تحديث أرقام الطوارئ وواتساب الإدارة");
+      saveState();renderEmerg();toast("تم حفظ أرقام الإدارة والخدمات");
     };
   }else if(admTab==="logs"){
     const ticketHtml=S.tickets.filter(t=>t.status!=="closed").map(t=>`<div class="ticket-row"><div class="top"><b>${esc(t.type)} · ${esc(t.name||"زائر")}</b><span class="tag">${new Date(t.at).toLocaleDateString("ar")}</span></div><div class="where">${esc(t.phone||"بدون رقم")}</div><p>${esc(t.text)}</p><div class="fbtn">${t.phone?`<a class="wa" target="_blank" rel="noopener noreferrer" href="${waLink(t.phone)}">رد واتساب</a>`:""}<button type="button" class="ghost" data-ticket-close="${esc(t.id)}">إغلاق البلاغ</button></div></div>`).join("");
@@ -5079,6 +5138,7 @@ if($("#aiCloudConsent")){
   $("#aiModeHint").textContent=S.aiCloudConsent?"المساعد السحابي مفعّل بموافقتك. قد يُرسل سؤالك وبيانات الإدراجات العامة ذات الصلة، ومنها أرقام التواصل، إلى خادم التطبيق ومزود الذكاء الاصطناعي. يمكنك إيقافه في أي وقت.":"المساعد المحلي يبحث في بيانات هذا الجهاز دون إنترنت. المساعد السحابي متوقف ولن تُرسل بيانات الدليل لخدمة خارجية.";
 }
 renderEmerg();
+loadLiveFx(false);
 const sharedItemId=new URLSearchParams(location.search).get("item");
 if(sharedItemId){const sharedItem=S.items.find(item=>item.id===sharedItemId);if(sharedItem)openDetail(sharedItem);}
 
