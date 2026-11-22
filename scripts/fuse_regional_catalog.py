@@ -305,8 +305,8 @@ def deduplicate(features):
         if not point: continue
         lat, lon = point; row, col = cell_key(lat, lon)
         matched = None
-        for dr in (-1, 0, 1):
-            for dc in (-1, 0, 1):
+        for dr in (-2, -1, 0, 1, 2):
+            for dc in (-2, -1, 0, 1, 2):
                 for index in buckets[(row+dr, col+dc)]:
                     existing = merged[index]
                     other = builder.geometry_point(existing.get("geometry"))
@@ -343,15 +343,29 @@ def download_fsq(url, token, output):
             if length > 2_000_000_000: raise ValueError("FSQ export exceeds 2 GB.")
             target.write(chunk)
 
+def load_fsq_category_names(path):
+    if not path or not Path(path).exists(): return {}
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    rows = payload.get("categories", payload) if isinstance(payload, dict) else payload
+    output = {}
+    for row in rows if isinstance(rows, list) else []:
+        if not isinstance(row, dict): continue
+        cid = text(row.get("category_id") or row.get("fsq_category_id") or row.get("id"), 100)
+        name = text(row.get("name") or row.get("category_name") or row.get("label"), 160)
+        if cid and name: output[cid] = name
+    return output
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--osm", required=True)
     parser.add_argument("--overture", required=True)
     parser.add_argument("--fsq", default="")
     parser.add_argument("--fsq-url", default="")
+    parser.add_argument("--fsq-categories", default="")
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     mapping = builder.load_category_mapping()
+    fsq_category_names = load_fsq_category_names(args.fsq_categories)
     groups = [
         ("osm", read_geojson(args.osm)),
         ("overture", read_geojson(args.overture)),
@@ -373,6 +387,10 @@ def main():
     for source, features in groups:
         accepted = 0
         for feature in features:
+            if source == "fsq" and fsq_category_names:
+                props = feature.setdefault("properties", {})
+                ids = props.get("fsq_category_ids") or props.get("category_ids") or []
+                props["fsq_category_names"] = [fsq_category_names[x] for x in ids if x in fsq_category_names]
             item = as_feature(feature, source, mapping)
             if item:
                 if source == "overture":
