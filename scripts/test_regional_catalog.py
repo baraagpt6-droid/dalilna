@@ -149,10 +149,24 @@ class RegionalCatalogTests(unittest.TestCase):
         converted = fusion.as_feature(feature,"overture",mapping)
         self.assertIsNotNone(converted)
         tags = converted["properties"]["tags"]
-        self.assertIn("health",tags["__catalog_categories"])
+        self.assertEqual(tags["__catalog_categories"],["health"])
         self.assertEqual(tags["name:en"],"Test Hospital")
         self.assertEqual(tags["phone"],"+967777123456")
         self.assertEqual(converted["properties"]["__sources"][0]["license"],"CDLA-Permissive-2.0")
+
+    def test_external_taxonomy_matching_is_exact_and_returns_one_primary_category(self):
+        mapping = catalog.load_category_mapping()
+        cases = [
+            (["hospital", "healthcare"], "health"),
+            (["Health and Beauty > Pharmacies"], "pharmacy"),
+            (["Vehicles > Car Repair"], "vehicles"),
+            (["Food and Drink > Restaurants"], "food"),
+            (["Electronics > Computer Stores"], "elec"),
+        ]
+        for values, expected in cases:
+            with self.subTest(values=values):
+                self.assertEqual(fusion.category_for_values(values, mapping), [expected])
+        self.assertEqual(fusion.category_for_values(["general commercial venue"], mapping), ["other"])
 
     def test_foursquare_open_places_records_use_apache_license_and_category_crosswalk(self):
         mapping = catalog.load_category_mapping()
@@ -163,7 +177,7 @@ class RegionalCatalogTests(unittest.TestCase):
         converted = fusion.as_feature(feature,"fsq",mapping)
         self.assertIsNotNone(converted)
         tags = converted["properties"]["tags"]
-        self.assertIn("pharmacy",tags["__catalog_categories"])
+        self.assertEqual(tags["__catalog_categories"],["pharmacy"])
         self.assertEqual(tags["phone"],"+967777123456")
         self.assertEqual(converted["properties"]["__sources"][0]["license"],"Apache-2.0")
 
