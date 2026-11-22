@@ -37,9 +37,9 @@ async function main(){
  const nationwideQuery=new URLSearchParams({q:"pharmacy",category:"pharmacy",lat:"0",lon:"0"});
  const nationwide=await get("/api/places/search?"+nationwideQuery.toString());
  assert.equal(nationwide.response.status,200,"countrywide search with no valid Yemen coordinates must use the Yemen Nominatim fallback");
- assert.equal(nationwide.payload.source,"OpenStreetMap Nominatim");
+ assert.ok(["OpenStreetMap Nominatim","OpenStreetMap Nominatim + Overpass"].includes(nationwide.payload.source));
  assert.ok(Array.isArray(nationwide.payload.items));
- process.stdout.write("PASS nationwide OpenStreetMap Nominatim search returned "+nationwide.payload.count+" Yemen results\\n");
+ process.stdout.write("PASS nationwide hybrid OpenStreetMap search returned "+nationwide.payload.count+" Yemen results\\n");
  const commons=await get("/api/places/photos?q=Sanaa%20mosque&place=Sanaa%20Yemen");assert.equal(commons.response.status,200);assert.equal(commons.payload.source,"Wikimedia Commons");assert.ok(Array.isArray(commons.payload.items));
  const marketplace=await get("/api/marketplace/status");
  assert.equal(marketplace.response.status,200);
