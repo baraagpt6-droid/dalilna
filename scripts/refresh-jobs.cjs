@@ -49,7 +49,7 @@ function isOfficialApplicationUrl(value){
  }catch(_){return false;}
 }
 function firstDirectApplicationLink(markup){
- const re=/<a\b[^>]*href=["']([^"']*\/en\/jobs\/[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+ const re=/<a\b[^>]*href=["'](https:\/\/[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
  for(const match of String(markup||"").matchAll(re)){
   const label=stripHtml(match[2]);
   if(/(?:apply|application|submit|apply now|التقديم|تقديم|قدّم|قدم|استمارة)/i.test(label)&&isOfficialApplicationUrl(match[1]))return match[1];
