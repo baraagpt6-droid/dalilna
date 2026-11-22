@@ -35,12 +35,13 @@ function mapFeedItem(raw){
  const currency=clean(raw.currency||"YER",8).toUpperCase();
  const listingType=clean(raw.listingType||raw.listing_type||"sale",16);
  const condition=clean(raw.condition||"unknown",16);
- if(!title||!id||!sellerName||!phone||!GOVERNORATES.has(governorate)||!district)return null;
+ if(!title||!id||!sellerName||!phone||!governorate||!GOVERNORATES.has(governorate)||!district||raw.price==null||clean(raw.price,80)==="")return null;
  if(!PRODUCT_TYPES.has(productType)||!CURRENCIES.has(currency)||!LISTING_TYPES.has(listingType)||!CONDITIONS.has(condition))return null;
  if(listingType==="rent"&&!["land","property","apartment","house","car","motorcycle"].includes(productType))return null;
  const productUrl=validHttps(raw.productUrl||raw.product_url||raw.url||raw.website);
+ const productGroup=Object.entries(PRODUCT_GROUPS).find(([,types])=>types.includes(productType))?.[0]||"other";
  return {
-  id,title,productType,listingType,condition,sellerName,phone,governorate,district,
+  id,title,productType,productGroup,listingType,condition,sellerName,phone,governorate,district,
   area:clean(raw.neighbourhood||raw.area||"",120),
   description:clean(raw.description||raw.summary||"",1800),
   price:clean(raw.price??"",80),currency,
@@ -94,11 +95,11 @@ async function syncConfiguredFeeds(){
   id:item.id,clientRef:item.clientRef,title:item.title,productType:item.productType,
   listingType:item.listingType,condition:item.condition,governorate:item.governorate,
   district:item.district,area:item.area,description:item.description,phone:item.phone,
-  sellerName:item.sellerName,price:item.price,currency:item.currency,website:item.website
+  sellerName:item.sellerName,price:item.price,currency:item.currency,website:item.website,productGroup:item.productGroup
  }));
  const response=await fetch(BASE+"/api/marketplace/feed-sync",{
   method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,Accept:"application/json"},
-  body:JSON.stringify({sourceKey:"verified-merchant-feeds",sourceName:"Verified merchant product feeds",items})
+  body:JSON.stringify({sourceKey:"verified-merchant-feeds",sourceName:"Verified merchant product feeds",completeSnapshot:failures.length===0,items})
  });
  const result=await response.json().catch(()=>({}));
  if(!response.ok)throw new Error("Marketplace API "+response.status+": "+clean(result.error||"feed sync failed",220));
