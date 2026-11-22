@@ -189,41 +189,40 @@ def categories_for_tags(tags, mapping=None):
         return []
     mapping = mapping or CATEGORY_MAPPING
     definitions = mapping.get("categories", {})
-    matched = []
+
+    # Strict activity tags always take precedence over broad place taxonomy.
+    # A record receives exactly one primary directory category.
+    for rule in mapping.get("strictPrimaryRules", []):
+        if _matches_rule(tags, rule):
+            category = rule.get("category")
+            if category in definitions:
+                return [category]
+
     external = tags.get("__catalog_categories") or []
     if isinstance(external, str):
         external = [external]
+    matched = []
     for category in external:
         if category in definitions and category not in matched:
             matched.append(category)
     for category, definition in definitions.items():
         for rule in definition.get("osmTags", []):
-            if _matches_rule(tags, rule):
+            if _matches_rule(tags, rule) and category not in matched:
                 matched.append(category)
                 break
 
-    for rule in mapping.get("multiCategoryRules", []):
-        if not _matches_rule(tags, rule):
-            continue
-        condition = rule.get("when")
-        if condition and str(tags.get(condition.get("key")) or "").strip().lower() != str(condition.get("value") or "").strip().lower():
-            continue
-        for category in rule.get("categories", []):
-            if category in definitions and category not in matched:
-                matched.append(category)
-
-    # Retain named shops and public amenities even when OSM introduces a
-    # previously unseen value. They appear under "other" and remain searchable.
+    # Retain named commercial and public-service features with unfamiliar tags.
     fallback_keys = ("shop", "amenity", "office", "healthcare", "tourism", "craft",
-                     "leisure", "public_transport", "railway", "emergency", "delivery",
-                     "courier", "service", "government")
+                     "leisure", "public_transport", "railway", "building", "emergency",
+                     "delivery", "courier", "service", "government", "product")
     if not matched and any(str(tags.get(key) or "").strip() for key in fallback_keys):
         if "other" in definitions:
             matched.append("other")
 
-    order = mapping.get("primaryCategoryOrder") or list(definitions)
+    order = mapping.get("externalPrimaryOrder") or mapping.get("primaryCategoryOrder") or list(definitions)
     rank = {category: index for index, category in enumerate(order)}
-    return sorted(set(matched), key=lambda category: rank.get(category, len(rank)))
+    primary = sorted(set(matched), key=lambda category: rank.get(category, len(rank)))
+    return primary[:1]
 
 
 def classify(tags):
