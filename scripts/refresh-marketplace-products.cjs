@@ -1,9 +1,73 @@
 "use strict";
 const crypto=require("node:crypto");
 const {PRODUCT_TYPES,GOVERNORATES,PRODUCT_GROUPS}=require("../marketplace-api");
+const ADMIN_MANIFEST=require("../regional-catalog/manifest.json");
 
 const MAX_FEEDS=20,MAX_ITEMS=200;
 const CURRENCIES=new Set(["YER","SAR","USD","OMR","AED","other"]);
+const ARABIC_REMAP={"أ":"ا","إ":"ا","آ":"ا","ٱ":"ا","ة":"ه","ى":"ي","ؤ":"و","ئ":"ي"};
+function normalizePlace(value){
+ return String(value||"").normalize("NFKC").toLowerCase()
+  .replace(/[\\u064B-\\u065F\\u0670\\u0640]/g,"")
+  .replace(/[أإآٱةىؤئ]/g,char=>ARABIC_REMAP[char]||char)
+  .replace(/[^a-z0-9\\u0600-\\u06FF]+/g," ").trim().split(/\\s+/)
+  .map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
+}
+const governorateAliases=new Map();
+for(const row of ADMIN_MANIFEST.governorates||[]){
+ const canonical=String(row.name||"").trim();
+ for(const value of [canonical,row.nameEn,row.nameLocal]){
+  const key=normalizePlace(value);
+  if(key)governorateAliases.set(key,canonical);
+ }
+}
+const districtAliases=new Map();
+for(const row of ADMIN_MANIFEST.districtCounts||[]){
+ const gov=normalizePlace(row.governorate),canonical=String(row.district||"").trim();
+ for(const value of [canonical,row.districtEn,row.districtLocal]){
+  const key=normalizePlace(value);
+  if(gov&&key)districtAliases.set(gov+"|"+key,canonical);
+ }
+}
+function canonicalLocation(governorate,district){
+ const rawGov=String(governorate||"").trim(),rawDistrict=String(district||"").trim();
+ const gov=governorateAliases.get(normalizePlace(rawGov))||(GOVERNORATES.has(rawGov)?rawGov:"");
+ if(!gov)return null;
+ const govKey=normalizePlace(gov),districtKey=normalizePlace(rawDistrict);
+ const canonicalDistrict=districtAliases.get(govKey+"|"+districtKey);
+ return canonicalDistrict?{governorate:gov,district:canonicalDistrict}:null;
+}
+const PRODUCT_TYPE_ALIASES={
+ phone:["phone","smartphone","mobile","mobile_phone","جوال","هاتف","جوالات","هواتف"],
+ computer:["computer","laptop","notebook","لابتوب","حاسوب","كمبيوتر"],
+ screen:["screen","monitor","display","شاشة","شاشات"],
+ car:["car","automobile","سيارة","سيارات"],
+ motorcycle:["motorcycle","motorbike","دراجة نارية","دباب"],
+ land:["land","plot","plot_of_land","أرض","اراضي","أراضي"],
+ property:["property","real_estate","عقار","عقارات"],
+ apartment:["apartment","flat","شقة"],
+ house:["house","home","بيت","منزل"],
+ solar_panel:["solar_panel","panel","لوح شمسي","ألواح شمسية"],
+ battery:["battery","بطارية","بطاريات"],
+ inverter:["inverter","انفرتر"],
+ furniture:["furniture","اثاث","أثاث"],
+ livestock:["livestock","cattle","sheep","goat","مواشي","أغنام"],
+ agriculture:["agriculture","farm_product","زراعة","محاصيل"],
+ clothing:["clothing","clothes","ملابس"],
+ perfume:["perfume","fragrance","عطور"]
+};
+function canonicalProductType(value){
+ const raw=String(value||"").trim().toLowerCase();
+ if(PRODUCT_TYPES.has(raw))return raw;
+ const key=normalizePlace(raw);
+ for(const [type,aliases] of Object.entries(PRODUCT_TYPE_ALIASES))if(aliases.some(alias=>normalizePlace(alias)===key))return type;
+ return "";
+}
+function canonicalCurrency(value){
+ const raw=String(value||"YER").trim().toUpperCase();
+ const aliases={"ريال":"YER","ريال يمني":"YER","YEMENI RIAL":"YER","YER":"YER","ريال سعودي":"SAR","SAUDI RIYAL":"SAR","SAR":"SAR","دولار":"USD","US DOLLAR":"USD","USD":"USD","OMR":"OMR","AED":"AED","OTHER":"other"};
+ return aliases[raw]||"";
+}
 const LISTING_TYPES=new Set(["sale","wanted","barter","free","rent"]);
 const CONDITIONS=new Set(["new","used","unknown"]);
 const PRODUCT_GROUPS_ALLOWED=new Set(Object.keys(PRODUCT_GROUPS));
@@ -28,19 +92,19 @@ function isInactiveFeedItem(raw){
 function mapFeedItem(raw){
  if(!raw||typeof raw!=="object"||Array.isArray(raw)||isInactiveFeedItem(raw))return null;
  const title=clean(raw.title||raw.name||raw.product_name,120);
- const id=clean(raw.id||raw.sku||raw.product_id||raw.url,100);
- const productType=clean(raw.productType||raw.product_type||raw.type,32);
+ const id=clean(raw.id||raw.sku||raw.product_id||raw.url,70);
+ const productType=canonicalProductType(raw.productType||raw.product_type||raw.type);
  const sellerName=clean(raw.sellerName||raw.seller_name||raw.storeName||raw.store_name||raw.seller,100);
  const phone=phoneNumber(raw.phone||raw.whatsapp||raw.whatsappNumber||raw.whatsapp_number);
- const governorate=clean(raw.governorate||raw.city_governorate,80);
- const district=clean(raw.district||raw.directorate,100);
- const currencyInput=clean(raw.currency||"YER",8).toUpperCase();
- const currency=currencyInput==="OTHER"?"other":currencyInput;
+ const location=canonicalLocation(raw.governorate||raw.city_governorate,raw.district||raw.directorate);
+ const governorate=location?.governorate||"";
+ const district=location?.district||"";
+ const currency=canonicalCurrency(raw.currency||"YER");
  const listingType=clean(raw.listingType||raw.listing_type||"sale",16);
  const condition=clean(raw.condition||"unknown",16);
  const priceText=clean(raw.price??"",80).replace(/,/g,"");
  const priceValue=Number(priceText);
- if(!title||!id||!sellerName||!phone||!GOVERNORATES.has(governorate)||!district||!priceText||
+ if(!title||!id||!sellerName||!phone||!governorate||!district||!priceText||
     !Number.isFinite(priceValue)||priceValue<0||(priceValue===0&&listingType!=="free"))return null;
  if(!PRODUCT_TYPES.has(productType)||!CURRENCIES.has(currency)||!LISTING_TYPES.has(listingType)||!CONDITIONS.has(condition))return null;
  if(listingType==="rent"&&!["land","property","apartment","house","car","motorcycle"].includes(productType))return null;
@@ -123,4 +187,4 @@ async function syncConfiguredFeeds(){
  return summary;
 }
 if(require.main===module)syncConfiguredFeeds().catch(error=>{console.error(JSON.stringify({event:"marketplace.feed_sync.failed",error:clean(error.message,300)}));process.exitCode=1;});
-module.exports={syncConfiguredFeeds,mapFeedItem,phoneNumber};
+module.exports={syncConfiguredFeeds,mapFeedItem,phoneNumber,canonicalLocation,canonicalProductType,canonicalCurrency};
