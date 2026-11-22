@@ -39,12 +39,13 @@ jobs:
           osmium --version
       - name: Install Overture Places downloader
         run: |
-          python3 -m pip install --upgrade overturemaps
-          overturemaps --help
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip overturemaps
+          .venv/bin/overturemaps --help
       - name: Download latest Overture Places for Yemen
         run: |
           # Yemen mainland plus Socotra. Overture's Python client resolves the latest STAC release.
-          overturemaps download --bbox=41.0,11.0,55.5,20.5 -f geojson --type=place -o overture-yemen.geojson
+          .venv/bin/overturemaps download --bbox=41.0,11.0,55.5,20.5 -f geojson --type=place -o overture-yemen.geojson
           test -s overture-yemen.geojson
           python3 - <<'PY'
           import json
