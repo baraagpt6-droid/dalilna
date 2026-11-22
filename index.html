@@ -4275,17 +4275,24 @@ async function loadRegionalCatalog(gov,force){
  liveCatalogFiles.set(region.file,data);buildScopeSelector();renderCategories();renderRegionInfo();
  return {region,manifest,data};
 }
+let liveAllCatalogPromise=null;
 async function loadAllRegionalCatalog(force){
- const manifest=await loadRegionalCatalogManifest(force),regions=manifest.governorates||[],items=[];
- for(let offset=0;offset<regions.length;offset+=4){
-  const group=await Promise.all(regions.slice(offset,offset+4).map(async region=>{
-   const loaded=await loadRegionalCatalog(region.name,force);
-   return loaded.data.items.map(item=>({...item,governorate:item.governorate||region.name}));
-  }));
-  for(const rows of group)items.push(...rows);
- }
- if(items.length!==Number(manifest.totalCount))throw new Error("عدد سجلات المحافظات ("+items.length+") لا يطابق إجمالي الفهرس ("+manifest.totalCount+").");
- return {manifest,items};
+ if(!force&&liveAllCatalogPromise)return liveAllCatalogPromise;
+ const loading=(async()=>{
+  const manifest=await loadRegionalCatalogManifest(force),regions=manifest.governorates||[],items=[];
+  for(let offset=0;offset<regions.length;offset+=4){
+   const group=await Promise.all(regions.slice(offset,offset+4).map(async region=>{
+    const loaded=await loadRegionalCatalog(region.name,force);
+    return loaded.data.items.map(item=>({...item,governorate:item.governorate||region.name}));
+   }));
+   for(const rows of group)items.push(...rows);
+  }
+  if(items.length!==Number(manifest.totalCount))throw new Error("عدد سجلات المحافظات ("+items.length+") لا يطابق إجمالي الفهرس ("+manifest.totalCount+").");
+  return {manifest,items};
+ })();
+ if(!force)liveAllCatalogPromise=loading;
+ try{return await loading;}
+ finally{if(liveAllCatalogPromise===loading)liveAllCatalogPromise=null;}
 }
 function regionalCatalogMatches(items,context,query,category,productType){
  if(category==="jobs"||category==="souq"||category==="land"||category==="marketplace")return [];
@@ -4322,7 +4329,7 @@ function regionalCatalogMatches(items,context,query,category,productType){
   gov:["حكومية","حكومي","مكتب","مكاتب"],
   farm:["زراعة","مزرعة","مزارع","مواشي","أعلاف"]
  };
- const filler=["ابحث","بحث","عن","في","من","اليمن","محل","محلات","خدمة","خدمات","مكان","اماكن"];
+ const filler=["ابحث","بحث","عن","في","من","و","اليمن","محل","محلات","خدمة","خدمات","مكان","اماكن"];
  const ignored=new Set([...(categoryWords[wanted]||[]).map(normalizeSearchPlace),...filler.map(normalizeSearchPlace)].filter(Boolean));
  const tokens=normalizeSearchPlace(query).split(/\\s+/).filter(token=>token&&!ignored.has(token));
  return (items||[]).filter(item=>{
