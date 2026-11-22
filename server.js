@@ -547,35 +547,60 @@ async function searchGeoapifyPlaces(params) {
   return result;
 }
 
-function categoryRuleMatches(tags, rule) {
-  const actual=String(tags&&tags[rule.key]||"").trim().toLowerCase();
-  const expected=String(rule.value||"").trim().toLowerCase();
-  if(!actual||!(expected==="*"||actual===expected))return false;
-  const condition=rule.when;
-  if(condition&&String(tags&&tags[condition.key]||"").trim().toLowerCase()!==String(condition.value||"").trim().toLowerCase())return false;
-  return true;
+function classifyCategory(tags) {
+  const value=(key)=>String(tags&&tags[key]||"").trim().toLowerCase();
+  // Exact activity tags take priority over broad taxonomy aliases.
+  // Resolve malformed mixed-tag records using the same national primary order
+  // as the offline catalogue builder.
+  const strictMatches=new Set();
+  for(const rule of CATEGORY_MAPPING.strictPrimaryRules||[]){
+    if(value(rule.key)===String(rule.value||"").toLowerCase()&&CATEGORY_MAPPING.categories?.[rule.category]){
+      strictMatches.add(rule.category);
+    }
+  }
+  if(strictMatches.size){
+    const order=CATEGORY_MAPPING.primaryCategoryOrder||Object.keys(CATEGORY_MAPPING.categories||{});
+    const rank=new Map(order.map((category,index)=>[category,index]));
+    return [...strictMatches].sort((a,b)=>(rank.get(a)??order.length)-(rank.get(b)??order.length))[0];
+  }
+  const shop=value("shop"),amenity=value("amenity"),healthcare=value("healthcare");
+  const tourism=value("tourism"),office=value("office"),craft=value("craft");
+  if(["hospital","clinic","doctors","dentist","doctors_surgery","health_centre","medical_centre"].includes(amenity)
+    ||["hospital","clinic","doctor","doctors","dentist","health_centre","medical_centre"].includes(healthcare))return "health";
+  if(["convenience","grocery","supermarket","greengrocer","butcher","deli","food","seafood"].includes(shop))return "grocery";
+  if(["restaurant","fast_food","food_court"].includes(amenity)||["bakery","pastry","confectionery"].includes(shop))return "food";
+  if(["cafe","tea","internet_cafe"].includes(amenity))return "cafe";
+  if(["school","college","university","kindergarten","language_school","driving_school"].includes(amenity))return "edu";
+  if(["government","administrative","diplomatic"].includes(office)||value("government"))return "gov";
+  if(["bank","atm","bureau_de_change","money_transfer"].includes(amenity))return "money";
+  if(amenity==="place_of_worship"||value("building")==="mosque")return "mosque";
+  if(["hotel","guest_house","hostel","motel","apartment"].includes(tourism))return "hotel";
+  if(["hairdresser","barber"].includes(shop))return "salon";
+  if(["laundry","dry_cleaning"].includes(shop))return "laundry";
+  if(["building_materials","paint","tiles","doors","flooring","plumbing"].includes(shop))return "build";
+  if(["jewelry","jewellery","watches"].includes(shop)||["goldsmith","watchmaker"].includes(craft))return "gold";
+  if(["clothes","shoes","tailor","fabric","fashion","boutique"].includes(shop))return "clothes";
+  if(["books","stationery","copyshop","print","newspaper"].includes(shop)||amenity==="library")return "books";
+  if(["car","motorcycle","vehicle","car_repair","motorcycle_repair","car_parts","vehicle_parts","motorcycle_parts","tyres","car_rental"].includes(shop)
+    ||amenity==="car_rental"||craft==="mechanic")return "vehicles";
+  if(["furniture","houseware","appliance","kitchen","kitchenware","bed","interior_decoration","curtain","carpet","bathroom_furnishing"].includes(shop))return "home";
+  if(["beauty","cosmetics","perfumery","hairdresser_supply"].includes(shop))return "beauty";
+  if(["electronics","computer","electrical","hifi","radiotechnics","computer_parts"].includes(shop))return "elec";
+  if(["mobile_phone","telecommunication","mobile_phone_accessories"].includes(shop)||office==="telecommunication")return "telecom";
+  if(["agrarian","garden_centre","farm","animal_feed","seeds","agricultural_supplies"].includes(shop)
+    ||["veterinary","animal_boarding"].includes(amenity)||healthcare==="veterinary")return "farm";
+  if(["bus_station","taxi","fuel","ferry_terminal"].includes(amenity)||["station","stop_position","platform"].includes(value("public_transport")))return "transport";
+  if(["post_office","parcel_locker","parcel_pickup","courier","delivery"].includes(amenity)||["parcel","shipping","delivery","courier"].includes(shop)||office==="courier"||office==="logistics")return "delivery";
+  if(["gas","propane","water","water_treatment","fuel"].includes(shop)||["fuel","water_point","drinking_water"].includes(amenity))return "utility";
+  if(["events_venue","community_centre"].includes(amenity)||value("leisure")==="events_venue")return "wedding";
+  if(["car_repair","electrician","plumber","carpenter","blacksmith"].includes(craft))return "craft";
+  return "other";
 }
-function categoriesForTags(tags) {
-  const source=tags&&typeof tags==="object"?tags:{};
-  if(String(source.amenity||"").trim().toLowerCase()==="bench")return [];
-  const definitions=CATEGORY_MAPPING.categories||{},strictMatches=new Set();
-  for(const rule of CATEGORY_MAPPING.strictPrimaryRules||[])if(definitions[rule.category]&&categoryRuleMatches(source,rule))strictMatches.add(rule.category);
-  const order=CATEGORY_MAPPING.primaryCategoryOrder||Object.keys(definitions),rank=new Map(order.map((category,index)=>[category,index]));
-  if(strictMatches.size)return [...strictMatches].sort((a,b)=>(rank.get(a)??order.length)-(rank.get(b)??order.length)).slice(0,1);
-  const matched=[],external=Array.isArray(source.__catalog_categories)?source.__catalog_categories:(typeof source.__catalog_categories==="string"?[source.__catalog_categories]:[]);
-  for(const category of external)if(definitions[category]&&!matched.includes(category))matched.push(category);
-  for(const [category,definition] of Object.entries(definitions))if((definition.osmTags||[]).some(rule=>categoryRuleMatches(source,rule))&&!matched.includes(category))matched.push(category);
-  for(const rule of CATEGORY_MAPPING.multiCategoryRules||[])if(categoryRuleMatches(source,rule))for(const category of rule.categories||[])if(definitions[category]&&!matched.includes(category))matched.push(category);
-  const fallbackKeys=["shop","amenity","office","healthcare","tourism","craft","leisure","public_transport","railway","emergency","delivery","courier","service","government","building","landuse","highway","product"];
-  if(!matched.length&&fallbackKeys.some(key=>String(source[key]||"").trim())&&definitions.other)matched.push("other");
-  return matched.sort((a,b)=>(rank.get(a)??order.length)-(rank.get(b)??order.length)).slice(0,1);
-}
-function classifyCategory(tags) { return categoriesForTags(tags)[0]||"other"; }
 
 function normalizeElement(element, placeLabel) {
   const tags = element.tags || {};
   const name = cleanText(tags["name:ar"] || tags.name || tags.brand || tags.operator, 140);
-  if (!name || !categoriesForTags(tags).length) return null;
+  if (!name) return null;
   const center = element.center || {};
   const lat = Number(element.lat !== undefined ? element.lat : center.lat);
   const lon = Number(element.lon !== undefined ? element.lon : center.lon);
@@ -1214,4 +1239,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, buildYemenOverpassQuery, searchYemenOverpass, inferCategoryFromQuery, categoriesForTags, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyRectFilter, geoapifyCategoryLabel, createIntervalGate, searchCommonsPhotos, server };
+module.exports = { buildOverpassQuery, buildYemenOverpassQuery, searchYemenOverpass, inferCategoryFromQuery, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyRectFilter, geoapifyCategoryLabel, createIntervalGate, searchCommonsPhotos, server };
