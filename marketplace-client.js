@@ -89,6 +89,12 @@
     const title = document.createElement("h3");
     title.textContent = item.title || "إعلان";
     card.appendChild(title);
+    if (item.sellerName) {
+      const seller = document.createElement("p");
+      seller.className = "shared-listing-meta";
+      seller.textContent = "البائع: " + item.sellerName;
+      card.appendChild(seller);
+    }
     const tags = document.createElement("div");
     tags.className = "shared-listing-tags";
     const category = CATS.find(x => x[0] === item.category);
@@ -394,7 +400,6 @@
     const adminButton=$("sharedAdminReviewButton");if(adminButton)adminButton.addEventListener("click",loadAdminQueue);
     const migrateButton=$("sharedMigrateLocalButton");if(migrateButton)migrateButton.addEventListener("click",migrateLocal);
     loadHome();
-    loadSouq();
     loadJobs();
     loadCategoryCounts();
     api("/api/marketplace/status").then(result => {
