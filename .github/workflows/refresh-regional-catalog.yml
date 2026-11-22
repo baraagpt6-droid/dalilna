@@ -58,20 +58,33 @@ jobs:
       - name: Download current open datasets
         run: |
           GEOFABRIK_BASE="https://download.geofabrik.de/asia"
+          OSM_SOURCE="Geofabrik latest Yemen extract"
           if ! curl -fL --retry 4 --retry-delay 3 "$GEOFABRIK_BASE/yemen-latest.osm.pbf" -o yemen-latest.osm.pbf \
             || [[ ! -s yemen-latest.osm.pbf ]] \
             || [[ "$(stat -c%s yemen-latest.osm.pbf)" -lt 1000000 ]]; then
-            echo "Latest Geofabrik Yemen extract is unavailable or invalid; resolving the newest dated snapshot."
-            curl -fL --retry 4 --retry-delay 3 "$GEOFABRIK_BASE/yemen.html" -o yemen-index.html
-            SNAPSHOT="$(python3 scripts/resolve_geofabrik_snapshot.py < yemen-index.html)"
-            test -n "$SNAPSHOT"
-            echo "Using the newest available Geofabrik snapshot: $SNAPSHOT"
-            curl -fL --retry 4 --retry-delay 3 "$GEOFABRIK_BASE/$SNAPSHOT" -o yemen-latest.osm.pbf
+            echo "Latest Geofabrik Yemen extract is unavailable or invalid; trying the latest dated snapshot."
+            rm -f yemen-latest.osm.pbf
+            if curl -fL --retry 2 --retry-delay 2 "$GEOFABRIK_BASE/yemen.html" -o yemen-index.html; then
+              SNAPSHOT="$(python3 scripts/resolve_geofabrik_snapshot.py < yemen-index.html || true)"
+              if [[ -n "$SNAPSHOT" ]]; then
+                echo "Using the newest available Geofabrik snapshot: $SNAPSHOT"
+                curl -fL --retry 3 --retry-delay 2 "$GEOFABRIK_BASE/$SNAPSHOT" -o yemen-latest.osm.pbf || true
+                OSM_SOURCE="Geofabrik dated snapshot: $SNAPSHOT"
+              fi
+            fi
           fi
           if [[ ! -s yemen-latest.osm.pbf ]] || [[ "$(stat -c%s yemen-latest.osm.pbf)" -lt 1000000 ]]; then
-            echo "Geofabrik Yemen extract is missing or smaller than 1 MB; refusing to build from an invalid file."
+            echo "Geofabrik is unreachable; using the independent BBBike Yemen OSM PBF mirror."
+            rm -f yemen-latest.osm.pbf
+            curl -fL --retry 5 --retry-all-errors --retry-delay 3 \
+              "https://data.bbbike.org/osm/pbf/region/asia/yemen.osm.pbf" -o yemen-latest.osm.pbf
+            OSM_SOURCE="BBBike Yemen OSM mirror (fallback)"
+          fi
+          if [[ ! -s yemen-latest.osm.pbf ]] || [[ "$(stat -c%s yemen-latest.osm.pbf)" -lt 1000000 ]]; then
+            echo "All Yemen OSM PBF providers failed or returned an invalid file."
             exit 1
           fi
+          echo "$OSM_SOURCE" | tee osm-source.txt
           download_admin_file() {
             local name="$1"
             local api_url="https://api.github.com/repos/open-admin-data/yemen-administrative-divisions/contents/data/${name}?ref=master"
