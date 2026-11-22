@@ -4161,54 +4161,58 @@ function localDirectorySearch(q,limit=6){
 function directoryMapSearchInfo(q){
   const text=normalizeQuery(q);
   const productIntents=[
-    {category:"books",productType:"stationery",label:"مكتبات وقرطاسيات",test:/(قلم|اقلام|دفتر|دفاتر|كراس[ةه]|قرطاسي|ادوات مدرسيه|ممحاه|مبراة|مسطره)/},
-    {category:"books",productType:"books",label:"مكتبات وكتب",test:/(كتاب|كتب|روايه|روايات|مراجع)/},
+    {category:"books",productType:"stationery",label:"مكتبات وقرطاسيات",test:/(قلم|اقلام|دفتر|دفاتر|كراس[ةه]|قرطاسي|ادوات مدرسيه|ممحاه|مبراة|مسطره|stationery)/},
+    {category:"books",productType:"books",label:"مكتبات وكتب",test:/(كتاب|كتب|روايه|روايات|مراجع|bookshop|book store|books)/},
     {category:"telecom",productType:"phone_accessories",label:"محلات إكسسوارات الجوال",test:/(اكسسوارات الجوال|جراب|كفر جوال|شاحن جوال|سماعه جوال)/},
     {category:"telecom",productType:"phone",label:"محلات الجوالات",test:/(جوال|جوالات|موبايل|موبايلات|هاتف|هواتف|ايفون|سامسونج)/},
     {category:"watches",productType:"watch",label:"محلات الساعات",test:/(ساعه|ساعات|ساعات يد)/},
     {category:"vehicles",productType:"car",label:"معارض السيارات",test:/(سياره|سيارات|معرض سيارات)/},
     {category:"vehicles",productType:"motorcycle",label:"محلات الدراجات النارية",test:/(دراجه ناريه|دراجات ناريه|دباب)/},
-    {category:"vehicles",productType:"vehicle_parts",label:"محلات قطع غيار المركبات",test:/(قطع غيار|قطع سيارات|قطع مركبات)/},
-    {category:"elec",productType:"computer",label:"محلات الكمبيوتر واللابتوب",test:/(كمبيوتر|حاسوب|لابتوب|لاب توب)/},
-    {category:"elec",productType:"camera",label:"محلات الكاميرات",test:/(كاميرا|كاميرات)/},
-    {category:"beauty",productType:"perfume",label:"محلات العطور",test:/(عطر|عطور|بخور)/},
-    {category:"beauty",productType:"cosmetics",label:"محلات التجميل",test:/(تجميل|مكياج|كوزمتك|مستحضرات)/},
-    {category:"gold",productType:"jewelry",label:"محلات الذهب والمجوهرات",test:/(ذهب|مجوهرات|صياغة)/},
-    {category:"real_estate",productType:"apartment",label:"الشقق المعروضة",test:/(شقة|شقق)/},
-    {category:"real_estate",productType:"house",label:"المنازل المعروضة",test:/(منزل|منازل|بيت|بيوت)/},
-    {category:"real_estate",productType:"land",label:"الأراضي المعروضة",test:/(أرض|أراضي|اراضي)/},
-    {category:"grocery",productType:"honey",label:"محلات العسل",test:/(عسل|عسل طبيعي)/},
-    {category:"grocery",productType:"coffee",label:"محلات البن والقهوة",test:/(بن|قهوه|قهوة|حبوب قهوه)/},
-    {category:"grocery",productType:"spices",label:"محلات البهارات",test:/(بهارات|توابل|هيل|فلفل اسود)/},
-    {category:"build",productType:"building_materials",label:"محلات مواد البناء",test:/(مواد بناء|اسمنت|حديد|دهانات|ادوات بناء)/},
-    {category:"home",productType:"furniture",label:"محلات الأثاث",test:/(اثاث|كنب|غرف نوم|طاولات)/},
-    {category:"home",productType:"appliance",label:"محلات الأجهزة المنزلية",test:/(اجهزه منزليه|ثلاجه|غساله|مكيف|فرن)/}
+    {category:"vehicles",productType:"vehicle_parts",label:"محلات قطع غيار المركبات",test:/(قطع غيار|قطع سيارات|قطع مركبات|spare parts|car parts|vehicle parts)/},
+    {category:"vehicles",productType:"car",label:"معارض السيارات",test:/(car dealer|car showroom|auto dealer|cars)/},
+    {category:"vehicles",productType:"motorcycle",label:"محلات الدراجات النارية",test:/(motorcycle|motorbike|bike dealer)/},
+    {category:"elec",productType:"computer",label:"محلات الكمبيوتر واللابتوب",test:/(كمبيوتر|حاسوب|لابتوب|لاب توب|computer|laptop|pc)/},
+    {category:"elec",productType:"camera",label:"محلات الكاميرات",test:/(كاميرا|كاميرات|camera|cameras)/},
+    {category:"beauty",productType:"perfume",label:"محلات العطور",test:/(عطر|عطور|بخور|perfume|perfumery)/},
+    {category:"beauty",productType:"cosmetics",label:"محلات التجميل",test:/(تجميل|مكياج|كوزمتك|مستحضرات|cosmetics|beauty salon)/},
+    {category:"gold",productType:"jewelry",label:"محلات الذهب والمجوهرات",test:/(ذهب|مجوهرات|صياغة|jewelry|jewellery|gold shop)/},
+    {category:"real_estate",productType:"apartment",label:"الشقق المعروضة",test:/(شقة|شقق|apartment)/},
+    {category:"real_estate",productType:"house",label:"المنازل المعروضة",test:/(منزل|منازل|بيت|بيوت|house|home)/},
+    {category:"real_estate",productType:"land",label:"الأراضي المعروضة",test:/(أرض|أراضي|اراضي|land)/},
+    {category:"grocery",productType:"honey",label:"محلات العسل",test:/(عسل|عسل طبيعي|honey)/},
+    {category:"grocery",productType:"coffee",label:"محلات البن والقهوة",test:/(بن|قهوه|قهوة|حبوب قهوه|coffee)/},
+    {category:"grocery",productType:"spices",label:"محلات البهارات",test:/(بهارات|توابل|هيل|فلفل اسود|spices|spice shop)/},
+    {category:"build",productType:"building_materials",label:"محلات مواد البناء",test:/(مواد بناء|اسمنت|حديد|دهانات|ادوات بناء|building materials|cement|hardware store)/},
+    {category:"home",productType:"furniture",label:"محلات الأثاث",test:/(اثاث|كنب|غرف نوم|طاولات|furniture store)/},
+    {category:"home",productType:"appliance",label:"محلات الأجهزة المنزلية",test:/(اجهزه منزليه|ثلاجه|غساله|مكيف|فرن|home appliances)/}
   ];
   const product=productIntents.find(item=>item.test.test(text));
   const services=[
-    {category:"grocery",label:"بقالات ومحلات تموين",test:/بقال|تموين|سوبر\s?ماركت|مواد غذائيه|جمعيه استهلاكيه/},
-    {category:"health",label:"مستشفيات وعيادات ومراكز صحية",test:/مستشف|مستوصف|مركز صحي|مركز طبي|عياده|عيادات|مختبر|طبيب|دكتور|اسنان/},
-    {category:"pharmacy",label:"صيدليات",test:/صيدل|دواء|ادويه|علاج|حبوب|مستلزمات طبيه/},
-    {category:"food",label:"مطاعم ومخابز",test:/مطعم|مطاعم|مخبز|مخابز|وجبات/},
-    {category:"cafe",label:"بوفيات وكافيهات",test:/بوفيه|كافيه|كوفي|قهوه|كافتيريا/},
-    {category:"edu",label:"مدارس ومعاهد وجامعات",test:/مدرس|مدرسه|مدارس|معهد|جامعه|كليه|روضه|حضان/},
-    {category:"mosque",label:"مساجد وجوامع",test:/مسجد|مساجد|جامع|جوامع/},
-    {category:"telecom",label:"محلات الجوالات والاتصالات",test:/جوال|جوالات|موبايل|موبايلات|هاتف|هواتف|اتصالات|شرائح/},
-    {category:"elec",label:"الإلكترونيات والكمبيوتر",test:/الكترونيات|اجهزه كهربائيه|كمبيوتر|حاسوب|لابتوب|طابعات|شاشات/},
-    {category:"craft",label:"فنيون وورش صيانة",test:/سباك|كهربائي|نجار|حداد|ورشه|صيانه|تصليح|فني/},
+    {category:"grocery",label:"بقالات ومحلات تموين",test:/(بقال|تموين|سوبر\s?ماركت|مواد غذائيه|جمعيه استهلاكيه|grocery|groceries|supermarket|convenience store)/},
+    {category:"health",label:"مستشفيات وعيادات ومراكز صحية",test:/(مستشف|مستوصف|مركز صحي|مركز طبي|عياده|عيادات|مختبر|طبيب|دكتور|اسنان|hospital|clinic|medical center|doctor|dentist)/},
+    {category:"pharmacy",label:"صيدليات",test:/(صيدل|دواء|ادويه|علاج|حبوب|مستلزمات طبيه|pharmacy|pharmacies|chemist|drugstore)/},
+    {category:"food",label:"مطاعم ومخابز",test:/(مطعم|مطاعم|مخبز|مخابز|وجبات|restaurant|restaurants|bakery|bakeries|fast food)/},
+    {category:"cafe",label:"بوفيات وكافيهات",test:/(بوفيه|كافيه|كوفي|قهوه|كافتيريا|cafe|coffee shop)/},
+    {category:"edu",label:"مدارس ومعاهد وجامعات",test:/(مدرس|مدرسه|مدارس|معهد|جامعه|كليه|روضه|حضان|school|university|college|kindergarten)/},
+    {category:"mosque",label:"مساجد وجوامع",test:/(مسجد|مساجد|جامع|جوامع|mosque)/},
+    {category:"telecom",label:"محلات الجوالات والاتصالات",test:/(جوال|جوالات|موبايل|موبايلات|هاتف|هواتف|اتصالات|شرائح|mobile phone|cell phone|telecom)/},
+    {category:"elec",label:"الإلكترونيات والكمبيوتر",test:/(الكترونيات|اجهزه كهربائيه|كمبيوتر|حاسوب|لابتوب|طابعات|شاشات|electronics store|computer store|electronics)/},
+    {category:"craft",label:"فنيون وورش صيانة",test:/(سباك|كهربائي|نجار|حداد|ورشه|صيانه|تصليح|فني|plumber|electrician|carpenter|mechanic|repair shop)/},
     {category:"build",label:"مواد بناء",test:/مواد بناء|اسمنت|حديد|دهانات|ادوات بناء/},
-    {category:"money",label:"بنوك وصرافة وتحويلات",test:/بنك|صراف|صرافه|تحويل|حوالات|صرف عمله/},
-    {category:"transport",label:"نقل ومواصلات",test:/مواصلات|تاكسي|باص|نقل/},
-    {category:"hotel",label:"فنادق وشقق",test:/فندق|فنادق|شقق مفروشه|سكن/},
-    {category:"salon",label:"حلاقون وصالونات",test:/حلاق|حلاقه|صالون/},
-    {category:"laundry",label:"مغاسل ملابس",test:/مغسله|مغاسل|غسيل ملابس|كوي/},
-    {category:"market",label:"أسواق ومحلات",test:/سوق مركزي|اسواق|مول|مركز تجاري/},
+    {category:"money",label:"بنوك وصرافة وتحويلات",test:/(بنك|صراف|صرافه|تحويل|حوالات|صرف عمله|bank|atm|money transfer|currency exchange)/},
+    {category:"transport",label:"نقل ومواصلات",test:/(مواصلات|تاكسي|باص|نقل|transport|bus station|taxi)/},
+    {category:"hotel",label:"فنادق وشقق",test:/(فندق|فنادق|شقق مفروشه|سكن|hotel|hostel|guest house)/},
+    {category:"salon",label:"حلاقون وصالونات",test:/(حلاق|حلاقه|صالون|barber|hairdresser)/},
+    {category:"laundry",label:"مغاسل ملابس",test:/(مغسله|مغاسل|غسيل ملابس|كوي|laundry|dry cleaner)/},
+    {category:"market",label:"أسواق ومحلات",test:/(سوق مركزي|اسواق|مول|مركز تجاري|market|shopping mall)/},
     {category:"real_estate",label:"مكاتب عقارية",test:/مكتب عقاري|مكاتب عقاريه|وسيط عقاري/},
-    {category:"jobs",label:"وظائف وإعلانات توظيف",test:/وظيفه|وظائف|توظيف|فرص عمل/}
+    {category:"jobs",label:"وظائف وإعلانات توظيف",test:/(وظيفه|وظائف|توظيف|فرص عمل|job|jobs|employment|vacancy)/}
   ];
   const service=services.find(item=>item.test.test(text));
   if(!product&&!service)return null;
-  const gov=GOVS.find(name=>text.includes(normalizePlace(name)));
+  const GOVS_EN=["Capital Municipality","Sana'a","Aden","Taiz","Ibb","Al Hudaydah","Dhamar","Al Bayda","Lahij","Abyan","Al Dhale'e","Marib","Al Jawf","Sa'dah","Hajjah","Amran","Al Mahwit","Raymah","Hadramaut","Shabwah","Al Mahrah","Socotra"];
+  const govIndex=GOVS.findIndex((name,index)=>text.includes(normalizePlace(name))||text.includes(normalizePlace(GOVS_EN[index])));
+  const gov=govIndex>=0?GOVS[govIndex]:"";
   const districtEntry=Object.entries(YEMEN_DISTRICTS).find(([parent,districts])=>
     districts.some(name=>text.includes(normalizePlace(name)))
   );
@@ -4216,9 +4220,11 @@ function directoryMapSearchInfo(q){
   const place=gov?("محافظة "+gov+"، اليمن")
     :districtEntry?("مديرية "+district+"، محافظة "+districtEntry[0]+"، اليمن")
     :scope?regionScopeLabel(regionCurrentContext()):"اليمن";
-  const category=product?product.category:service.category,label=product?product.label:service.label;
+  const rateIntent=/(سعر الصرف|اسعار الصرف|سعر العملات|exchange rate|currency rate|forex rate)/.test(text);
+  const category=product?product.category:rateIntent?"money":service.category,label=product?product.label:rateIntent?"أسعار الصرف":service.label;
   const mapQuery=label+" "+String(q||"").trim()+" "+place;
-  return {category,productType:product?product.productType:"",label,place,mapQuery,productSearch:!!product};
+  return {category,productType:product?product.productType:"",label,place,mapQuery,productSearch:!!product,
+   rateIntent,governorate:gov||districtEntry?.[0]||"",district:district||""};
 }
 function liveDirectoryPanelHTML(){
  return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>'+(curLang==="en"?"Search Yemen's shops and services":"البحث في دليل المحلات والخدمات اليمني")+'</b><div class="live-directory-sub">'+(curLang==="en"?"Search across all governorates or narrow by category and district.":"ابحث في جميع محافظات اليمن، أو اختر قسماً أو مديرية لتضييق النتائج.")+'</div></div></div><div class="live-directory-status" id="liveDirectoryStatus">'+(curLang==="en"?"Preparing the unified search index…":"جارٍ تجهيز فهرس البحث الموحد…")+'</div><div class="live-directory-list" id="liveDirectoryItems"></div></section>';
