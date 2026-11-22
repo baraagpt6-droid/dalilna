@@ -1,6 +1,6 @@
 "use strict";
 const fs=require("node:fs"),vm=require("node:vm"),assert=require("node:assert/strict"),test=require("node:test");
-const html=fs.readFileSync("index.html","utf8"),client=fs.readFileSync("marketplace-client.js","utf8"),features=fs.readFileSync("features-2.1.js","utf8");
+const html=fs.readFileSync("index.html","utf8"),client=fs.readFileSync("marketplace-client.js","utf8"),features=fs.readFileSync("features-2.1.js","utf8"),quickCss=fs.readFileSync("features-2.1.css","utf8");
 const inline=html.split("<script").slice(1).map(part=>{const start=part.indexOf(">");const end=part.indexOf("</script>");return start>=0&&end>start?part.slice(start+1,end):"";}).filter(code=>code.trim());
 test("all inline JavaScript in PWA parses",()=>{assert.ok(inline.length>=2);inline.forEach((code,i)=>new vm.Script(code,{filename:"index.html:inline-"+i}));});
 test("marketplace client parses",()=>new vm.Script(client,{filename:"marketplace-client.js"}));
@@ -28,8 +28,8 @@ test("marketplace client displays rental labels",()=>{
  assert.ok(client.includes('item.listingType === "rent") labels.push("للإيجار")'));
 });
 
-test("PWA version metadata is 2.1.5",()=>{
- assert.ok(html.includes('content="2.1.5"'));
+test("PWA version metadata is 2.1.6",()=>{
+ assert.ok(html.includes('content="2.1.6"'));
 });
 
 test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});
@@ -80,6 +80,16 @@ test("Dalilna quick jump buttons use SVG icons and native anchor targets",()=>{
  assert.ok(!html.includes('>🚨 أرقام الطوارئ'));
  assert.ok(features.includes('scrollIntoView({behavior:"smooth",block:"start"})'));
 });
+
+test("quick-jump labels wrap inside their own cards on narrow screens",()=>{
+ assert.ok(quickCss.includes("grid-template-columns:repeat(3,minmax(0,1fr))"));
+ assert.ok(quickCss.includes(".quick-jump-btn > span:last-child"));
+ assert.ok(quickCss.includes("white-space:normal"));
+ assert.ok(quickCss.includes("overflow-wrap:break-word"));
+ assert.ok(quickCss.includes("@media(max-width:380px)"));
+ assert.ok(quickCss.includes("min-height:56px"));
+});
+
 test("approved listing cards use compact empty-image fallbacks",()=>{
  assert.ok(html.includes('shared-listing-image-fallback no-image'));
  assert.ok(client.includes('shared-listing-image-fallback no-image'));
