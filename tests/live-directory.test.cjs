@@ -160,3 +160,10 @@ test("Geoapify status endpoint is public and confirms free provider setup",async
   assert.equal(details.status,404);
  }finally{await new Promise(resolve=>server.close(resolve));}
 });
+
+test("live Render workflow checks the API version against package metadata",()=>{
+ const source=fs.readFileSync(".github/workflows/places-proxy-verification.yml","utf8");
+ assert.ok(source.includes('const { version: expectedApiVersion } = JSON.parse(await readFile("package.json", "utf8"));'));
+ assert.ok(source.includes("health.version !== expectedApiVersion"));
+ assert.equal(source.includes("2.6.1"),false);
+});
