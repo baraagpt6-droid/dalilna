@@ -158,7 +158,7 @@ class RegionalCatalogTests(unittest.TestCase):
              "properties":{"tags":{"name:ar":"صيدلية النور","amenity":"pharmacy"},"id":"node/10"}},
              "osm",mapping)
         b = fusion.as_feature({"type":"Feature","geometry":{"type":"Point","coordinates":[44.0001,14.0001]},
-             "properties":{"id":"gers-pharmacy","names":{"primary":"Al Noor Pharmacy"},
+             "properties":{"id":"gers-pharmacy","names":{"primary":"صيدلية النور","common":["Al Noor Pharmacy"]},
                            "basic_category":"pharmacy","phones":["+967777123456"],
                            "addresses":[{"freeform":"شارع الاختبار"}],
                            "sources":[{"dataset":"meta","license":"CDLA-Permissive-2.0"}]}},
