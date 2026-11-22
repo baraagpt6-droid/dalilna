@@ -23,9 +23,15 @@ OVERTURE_LICENSES = {
     "foursquare": "Apache-2.0",
     "meta": "CDLA-Permissive-2.0",
     "microsoft": "CDLA-Permissive-2.0",
+    "pinmeto": "CDLA-Permissive-2.0",
+    "krick": "CDLA-Permissive-2.0",
+    "renderseo": "CDLA-Permissive-2.0",
+    "dac": "CDLA-Permissive-2.0",
+    "brightquery": "CDLA-Permissive-2.0",
+    "birdeye": "CDLA-Permissive-2.0",
+    "uberall": "CDLA-Permissive-2.0",
     "alltheplaces": "CC0-1.0",
     "opentravel": "CDLA-Permissive-2.0",
-    "brightquery": "CDLA-Permissive-2.0",
     "birdeye": "CDLA-Permissive-2.0",
     "dac": "CDLA-Permissive-2.0",
     "pinmeto": "CDLA-Permissive-2.0",
@@ -155,7 +161,7 @@ def source_metadata(props, source, source_id):
                 "url": ("https://www.openstreetmap.org/" + source_id.replace("/", "/", 1)) if "/" in source_id else ""}
     if source == "fsq":
         return {"name": "Foursquare Open Places", "id": source_id, "license": FSQ_LICENSE,
-                "url": "https://places.foursquare.com/"}
+                "url": "https://foursquare.com/placemakers/review-place/" + source_id if source_id else "https://docs.foursquare.com/data-products/docs/fsq-places-open-source"}
     sources = props.get("sources") or []
     result = []
     for item in sources:
@@ -346,6 +352,13 @@ def deduplicate(features):
     stats["unique"] = len(merged)
     return merged, stats
 
+def country_contains(feature, geometries):
+    point = builder.geometry_point(feature.get("geometry"))
+    if not point:
+        return False
+    return any(builder.point_in_geometry(point[0], point[1], geometry) for geometry in geometries)
+
+
 def read_geojson(path):
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
     if isinstance(payload, dict) and payload.get("type") == "FeatureCollection":
@@ -427,7 +440,7 @@ def main():
             item = as_feature(feature, source, mapping)
             if item and country_geometries:
                 point = builder.geometry_point(item.get("geometry"))
-                if not point or not any(builder.point_in_geometry(point[0], point[1], geometry) for geometry in country_geometries):
+                if not country_contains(item, country_geometries):
                     item = None
             if item:
                 if source == "overture":
