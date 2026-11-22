@@ -437,43 +437,6 @@
         }
       ]
     },
-    "land": {
-      "labelAr": "أراضٍ وعقارات",
-      "labelEn": "Real estate and land",
-      "aliases": [
-        "أرض",
-        "أراضي",
-        "عقار",
-        "عقارات",
-        "شقة",
-        "منزل",
-        "بيت",
-        "مكتب عقاري",
-        "إيجار",
-        "property",
-        "real estate",
-        "land",
-        "estate agent"
-      ],
-      "osmTags": [
-        {
-          "key": "office",
-          "value": "estate_agent"
-        },
-        {
-          "key": "office",
-          "value": "property_management"
-        },
-        {
-          "key": "shop",
-          "value": "estate_agent"
-        },
-        {
-          "key": "shop",
-          "value": "property"
-        }
-      ]
-    },
     "build": {
       "labelAr": "مواد بناء",
       "labelEn": "Building materials",
@@ -1364,14 +1327,82 @@
         "خدمات أخرى",
         "other"
       ],
+      "osmTags": []
+    },
+    "real_estate": {
+      "labelAr": "أراضٍ وعقارات",
+      "labelEn": "Real estate and land",
+      "aliases": [
+        "أرض",
+        "أراضي",
+        "عقار",
+        "عقارات",
+        "شقة",
+        "منزل",
+        "بيت",
+        "مكتب عقاري",
+        "إيجار",
+        "property",
+        "real estate",
+        "land",
+        "estate agent"
+      ],
+      "osmTags": [
+        {
+          "key": "office",
+          "value": "estate_agent"
+        },
+        {
+          "key": "office",
+          "value": "property_management"
+        },
+        {
+          "key": "shop",
+          "value": "estate_agent"
+        },
+        {
+          "key": "shop",
+          "value": "property"
+        }
+      ]
+    },
+    "vehicles": {
+      "labelAr": "سيارات وورش مركبات",
+      "labelEn": "Vehicles and vehicle services",
+      "aliases": [
+        "سيارة",
+        "سيارات",
+        "دراجة نارية",
+        "دراجات",
+        "معرض سيارات",
+        "ورشة سيارات",
+        "مركبات",
+        "car",
+        "cars",
+        "motorcycle",
+        "vehicle",
+        "vehicle repair"
+      ],
       "osmTags": [
         {
           "key": "shop",
-          "value": "*"
+          "value": "car"
+        },
+        {
+          "key": "shop",
+          "value": "motorcycle"
+        },
+        {
+          "key": "shop",
+          "value": "car_repair"
+        },
+        {
+          "key": "shop",
+          "value": "vehicle"
         },
         {
           "key": "amenity",
-          "value": "*"
+          "value": "car_rental"
         }
       ]
     }
@@ -1480,5 +1511,39 @@
     "addr:neighbourhood",
     "addr:city",
     "addr:district"
+  ],
+  "primaryCategoryOrder": [
+    "pharmacy",
+    "health",
+    "market",
+    "grocery",
+    "food",
+    "cafe",
+    "edu",
+    "gov",
+    "money",
+    "real_estate",
+    "vehicles",
+    "parts",
+    "build",
+    "craft",
+    "transport",
+    "telecom",
+    "utility",
+    "farm",
+    "mosque",
+    "gold",
+    "wedding",
+    "hotel",
+    "solar",
+    "elec",
+    "clothes",
+    "home",
+    "books",
+    "beauty",
+    "delivery",
+    "salon",
+    "laundry",
+    "other"
   ]
 }
