@@ -10,7 +10,7 @@ test("the country catalogue exposes governorate choices and counts",()=>{
  assert.ok(html.includes('const directoryGov=event.target.closest("#liveDirectoryItems [data-region-gov]")'));
 });
 test("the local directory retains attribution and explains incomplete coverage",()=>{
- for(const token of ["OpenStreetMap contributors","Open Admin Data","هذا لا يعني أن المكان غير موجود","تقدير تقريبي من أقرب مركز إداري"])assert.ok(html.includes(token),token);
+ for(const token of ["OpenStreetMap contributors","Open Admin Data","هذا لا يعني أن المكان غير موجود","توزيع المديرية تقديري من أقرب مركز إداري"])assert.ok(html.includes(token),token);
 });
 test("regional profiles open local directory category shortcuts",()=>{
  for(const token of ["data-region-category=","تصفح المحلات والخدمات في هذه المنطقة","مكاتب عقارية","ساعات","جوالات واتصالات","طاقة شمسية","حرف وصيانة"])assert.ok(html.includes(token),token);
@@ -45,5 +45,5 @@ test("approved market ads map directory sections to their product types",()=>{
 test("local-service categories do not fetch unrelated marketplace ads",()=>{
  assert.ok(html.includes('marketplaceCategories=["all","jobs","souq","land","marketplace"]'));
  assert.ok(html.includes('if(!productType&&!categoryProductTypes&&!marketplaceCategories.includes(category))'));
- assert.ok(html.includes('context.type==="subdistrict"'));
+ assert.ok(html.includes('ctx.type==="subdistrict"'));
 });
