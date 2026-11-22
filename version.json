@@ -6,19 +6,19 @@
   "androidVersionCode": 270,
   "catalogSchemaVersion": 2,
   "catalogSnapshotDate": "2026-11-22",
-  "catalogTotalCount": 24564,
+  "catalogTotalCount": 24563,
   "sources": [
     "OpenStreetMap",
     "Overture Maps",
     "Foursquare Open Places (optional portal export)"
   ],
   "generatedAt": "2026-11-23T00:00:00Z",
-  "catalogGeneratedAt": "2026-11-22T20:40:09.367958+00:00",
+  "catalogGeneratedAt": "2026-11-22T22:54:50.645816+00:00",
   "sourceCounts": {
-    "OpenStreetMap": 17042,
+    "OpenStreetMap": 17041,
     "Overture Maps": 15386,
     "Foursquare Open Places (via Overture)": 4
   },
   "osmDatasetSource": "Geofabrik latest Yemen extract",
-  "updatedAt": "2026-11-22T22:42:42.804Z"
+  "updatedAt": "2026-11-22T22:54:51.560352+00:00"
 }
