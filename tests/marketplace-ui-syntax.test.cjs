@@ -157,7 +157,7 @@ test("Android 2.6.0 cache and version metadata remain synchronized",()=>{
  assert.ok(sw.includes('CACHE_PREFIX + "v2.6.0"'));
  assert.ok(html.includes('content="2.6.0"'));
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
- assert.ok(gradle.includes("versionCode = 240"));
+ assert.ok(gradle.includes("versionCode = 260"));
  assert.ok(gradle.includes('versionName = "2.6.0"'));
 });
 
