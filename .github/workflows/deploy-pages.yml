@@ -14,6 +14,7 @@ on:
       - 'privacy.html'
       - 'terms.html'
       - 'manifest.json'
+      - 'version.json'
       - 'sw.js'
       - 'regions-yemen.js'
       - 'regions-profiles.js'
@@ -86,16 +87,19 @@ jobs:
             }
             throw lastError;
           }
-          const [page, css, js, swResponse, manifestResponse] = await Promise.all([
+          const [page, css, js, swResponse, manifestResponse, versionResponse] = await Promise.all([
             get("./index.html"),
             get("./features-2.1.css?v=2.6.0"),
             get("./features-2.1.js?v=2.6.0"),
             get("./sw.js"),
-            get("./regional-catalog/manifest.json?v=2.6.0")
+            get("./regional-catalog/manifest.json?v=2.6.0"),
+            get("./version.json")
           ]);
           const html = await page.text();
           const manifest = await manifestResponse.json();
-          if (!html.includes('content="2.6.0"')) throw new Error("Deployed homepage version is not 2.4.0.");
+          const version = await versionResponse.json();
+          if (version.webVersion !== "2.6.0" || version.versionCode !== 260) throw new Error("version.json does not describe Dalilna 2.6.0.");
+          if (!html.includes('content="2.6.0"')) throw new Error("Deployed homepage version is not 2.6.0.");
           if (!(await css.text()).includes(".quick-jump-btn")) throw new Error("Quick-access stylesheet was not published.");
           if (!(await js.text()).includes("officialApplicationUrl")) throw new Error("Feature JavaScript is incomplete.");
           if (!(await swResponse.text()).includes("v2.6.0")) throw new Error("Updated service worker was not published.");
