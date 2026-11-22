@@ -87,6 +87,16 @@ class RegionalCatalogTests(unittest.TestCase):
         self.assertEqual(rows[0]["nameEn"], "Test Pharmacy")
         self.assertIn("pharmacy", rows[0]["searchText"].lower())
         self.assertIn("صيدليات", rows[0]["searchText"])
+    def test_category_mapping_loads_from_repository_root_and_contains_core_tags(self):
+        mapping = catalog.load_category_mapping()
+        self.assertIn("health", mapping["categories"])
+        self.assertIn("delivery", mapping["categories"])
+        self.assertIn("real_estate", mapping["categories"])
+        self.assertIn({"key": "amenity", "value": "hospital"},
+                      mapping["categories"]["health"]["osmTags"])
+        self.assertIn({"key": "office", "value": "courier"},
+                      mapping["categories"]["delivery"]["osmTags"])
+
     def test_classifies_markets_jewellery_and_rail_stations(self):
         self.assertEqual(catalog.classify({"amenity": "marketplace"}), "market")
         self.assertEqual(catalog.classify({"shop": "jewelry"}), "gold")
