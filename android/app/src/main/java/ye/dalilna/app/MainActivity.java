@@ -55,7 +55,20 @@ public class MainActivity extends Activity {
         settings.setJavaScriptCanOpenWindowsAutomatically(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         settings.setMediaPlaybackRequiresUserGesture(true);
+        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) settings.setSafeBrowsingEnabled(true);
+
+        // Clear only the WebView HTTP resource cache when the installed APK version changes.
+        // Keep DOM storage/localStorage intact so user-created records and preferences survive upgrades.
+        int currentVersionCode = BuildConfig.VERSION_CODE;
+        android.content.SharedPreferences appPreferences =
+                getSharedPreferences("dalilna_app_version", MODE_PRIVATE);
+        int previousVersionCode = appPreferences.getInt("installed_version_code", -1);
+        if (previousVersionCode != currentVersionCode) {
+            webView.clearCache(true);
+            webView.clearHistory();
+            appPreferences.edit().putInt("installed_version_code", currentVersionCode).apply();
+        }
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
