@@ -97,6 +97,26 @@ class RegionalCatalogTests(unittest.TestCase):
         self.assertIn({"key": "office", "value": "courier"},
                       mapping["categories"]["delivery"]["osmTags"])
 
+
+    def test_polygon_centroid_is_area_weighted_not_bbox_midpoint(self):
+        triangle = {"type": "Polygon", "coordinates": [[[0, 0], [6, 0], [0, 3], [0, 0]]]}
+        # Centroid of the triangle is (lon=2, lat=1); bbox centre would be (3, 1.5).
+        self.assertEqual(catalog.geometry_point(triangle), (1.0, 2.0))
+
+    def test_duplicate_district_names_resolve_using_polygon_centroid(self):
+        governors = [
+            {"name": "محافظة أ", "nameEn": "Gov A", "nameLocal": "محافظة أ", "lat": 1, "lon": 2},
+            {"name": "محافظة ب", "nameEn": "Gov B", "nameLocal": "محافظة ب", "lat": 8, "lon": 8},
+        ]
+        districts = [
+            {"governorate": "محافظة أ", "name": "الصفا", "nameEn": "Al Safa", "nameLocal": "الصفا", "lat": 1, "lon": 2},
+            {"governorate": "محافظة ب", "name": "الصفا", "nameEn": "Al Safa", "nameLocal": "الصفا", "lat": 8, "lon": 8},
+        ]
+        feature = {"type": "Feature", "properties": {"shapeName": "Al Safa", "shapeType": "ADM2"},
+                   "geometry": {"type": "Polygon", "coordinates": [[[0, 0], [6, 0], [0, 3], [0, 0]]]}}
+        boundaries = catalog.prepare_boundaries([feature], governors, districts)
+        self.assertEqual(boundaries[0]["target"]["governorate"], "محافظة أ")
+
     def test_classifies_markets_jewellery_and_rail_stations(self):
         self.assertEqual(catalog.classify({"amenity": "marketplace"}), "market")
         self.assertEqual(catalog.classify({"shop": "jewelry"}), "gold")
