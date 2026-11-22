@@ -455,7 +455,7 @@ def build_items(features, governors, districts, boundaries):
             object_type, raw_id = raw_id.split("/", 1)
         if not raw_id:
             raw_id = f"coord-{lat:.6f}-{lon:.6f}"
-        id_prefix = "osm" if (feature.get("properties") or {}).get("__source") == "OpenStreetMap" else "place"
+        id_prefix = "osm" if (feature.get("properties") or {}).get("__source", "OpenStreetMap") == "OpenStreetMap" else "place"
         item_id = id_prefix + "-" + re.sub(r"[^a-zA-Z0-9_-]", "-", object_type + "-" + raw_id)
         key = (normalize(name_ar), normalize(name_en), round(lat, 4), round(lon, 4))
         if key in seen:
