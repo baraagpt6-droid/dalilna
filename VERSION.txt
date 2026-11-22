@@ -1,7 +1,7 @@
-Dalilna 1.9.1
+Dalilna 2.1.5
 Application release: PWA + Android WebView
-Android versionCode: 181
-Web app version: 1.9.1
+Android versionCode: 215
+Web app version: 2.1.5
 Primary place discovery: a static per-governorate OpenStreetMap catalogue, refreshed weekly from Geofabrik extracts.
 OpenStreetMap data license: ODbL-1.0; attribution: © OpenStreetMap contributors.
 Administrative names and district centroids: Open Admin Data Yemen, CC BY 4.0.

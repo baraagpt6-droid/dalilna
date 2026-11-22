@@ -1,5 +1,5 @@
 // Dalilna cloud assistant for Vercel Node serverless functions.
-// Store GEMINI_API_KEY only in Vercel Environment Variables. Never expose it in browser code or Git.
+// Store GEMINI_API_KEY only in server environment variables. Never expose it in browser code or Git.
 const WINDOW_MS = 60_000;
 const RATE_LIMIT = 12;
 const MAX_QUESTION = 1200;
@@ -18,6 +18,7 @@ const IBB_DISTRICTS = [
 ];
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-oavk.vercel.app",
+  "https://dalilna-roan.vercel.app",
   "https://dalilna-yemen.vercel.app",
   "https://baraagpt6-droid.github.io",
   "https://dalilna-yemen.onrender.com",
@@ -39,7 +40,7 @@ function applyCors(req, res) {
   if (!ALLOWED_ORIGINS.has(origin)) return false;
   res.setHeader("Access-Control-Allow-Origin", origin);
   res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   res.setHeader("Access-Control-Max-Age", "600");
   return true;
@@ -74,8 +75,15 @@ async function handler(req, res) {
     res.setHeader("Cache-Control", "no-store");
     return res.end("");
   }
+  if (req.method === "GET") {
+    return send(res, 200, {
+      provider: "Gemini",
+      configured: Boolean(process.env.GEMINI_API_KEY),
+      model: String(process.env.GEMINI_MODEL || "gemini-3.8-flash").slice(0, 80)
+    });
+  }
   if (req.method !== "POST") {
-    res.setHeader("Allow", "POST, OPTIONS");
+    res.setHeader("Allow", "GET, POST, OPTIONS");
     return send(res, 405, { error: "method_not_allowed" });
   }
 

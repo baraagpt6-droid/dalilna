@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.1.4">
+<meta name="app-version" content="2.1.5">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -4467,6 +4467,9 @@ $("#aiCloudConsent").addEventListener("change",e=>{
 function assistantApiUrl(){
   return "https://dalilna-live.onrender.com/api/assistant";
 }
+function assistantFallbackApiUrl(){
+  return "https://dalilna-oavk.vercel.app/api/assistant";
+}
 async function askAssistant(q){
  const serviceIntent=directoryMapSearchInfo(q);
  if(serviceIntent){
@@ -4494,10 +4497,22 @@ async function askAssistant(q){
  }
  if(asksHubaishSubdistricts(q))return {answer:hubaishSubdistrictAnswer(),mode:"reference"};
  if(S.aiCloudConsent===true&&navigator.onLine){
-  try{
-   const response=await fetch(assistantApiUrl(),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:String(q).slice(0,1200),context:buildAssistantContext(q)})});
-   if(response.ok){const data=await response.json();if(data&&typeof data.answer==="string"&&data.answer.trim())return {answer:data.answer.trim(),mode:data.mode==="gemini"?"gemini":"reference"};}
-  }catch(err){/* Local catalogue and reviewed listings remain available without cloud AI. */}
+  const payload=JSON.stringify({question:String(q).slice(0,1200),context:buildAssistantContext(q)});
+  const endpoints=[assistantApiUrl(),assistantFallbackApiUrl()];
+  for(const endpoint of endpoints){
+   try{
+    const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:payload});
+    const data=await response.json().catch(()=>({}));
+    if(response.ok&&data&&typeof data.answer==="string"&&data.answer.trim()){
+     return {answer:data.answer.trim(),mode:data.mode==="gemini"?"gemini":"reference"};
+    }
+    const canFallback=response.status===404||response.status===502||
+      (response.status===503&&data.error==="cloud_ai_not_configured");
+    if(!canFallback)break;
+   }catch(err){
+    // Try the second server-side endpoint before using the local catalogue.
+   }
+  }
   return {answer:answerAI(q),mode:"local-fallback"};
  }
  return {answer:answerAI(q),mode:navigator.onLine?"local":"offline"};

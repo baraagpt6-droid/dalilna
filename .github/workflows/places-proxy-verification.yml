@@ -85,7 +85,14 @@ jobs:
           if (!Array.isArray(seekers.items)) throw new Error("Job-seeker endpoint did not return an items array.");
           const assistant = await get("/api/assistant/status");
           if (assistant.provider !== "Gemini" || typeof assistant.configured !== "boolean") {
-            throw new Error("Gemini assistant status endpoint returned an invalid response.");
+            throw new Error("Render Gemini assistant status endpoint returned an invalid response.");
+          }
+          const vercelResponse = await fetch("https://dalilna-oavk.vercel.app/api/assistant", {
+            headers: { Accept: "application/json" }
+          });
+          const vercelAssistant = await vercelResponse.json().catch(() => ({}));
+          if (!vercelResponse.ok || vercelAssistant.provider !== "Gemini" || typeof vercelAssistant.configured !== "boolean") {
+            throw new Error("Vercel Gemini assistant status endpoint returned an invalid response: HTTP " + vercelResponse.status);
           }
           console.log(JSON.stringify({
             apiVersion: health.version,
@@ -93,7 +100,8 @@ jobs:
             jobsReturned: jobs.items.length,
             jobSeekersReturned: seekers.items.length,
             geminiProvider: assistant.provider,
-            geminiKeyConfigured: assistant.configured,
+            geminiRenderKeyConfigured: assistant.configured,
+            geminiVercelKeyConfigured: vercelAssistant.configured,
             geminiModel: assistant.model,
             jobsFeedUpdatedAt: jobs.fetchedAt
           }, null, 2));

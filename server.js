@@ -13,6 +13,7 @@ const ALLOWED_ORIGINS = new Set([
   "https://dalilna-live.onrender.com",
   "https://dalilna-yemen.vercel.app",
   "https://dalilna-oavk.vercel.app",
+  "https://dalilna-roan.vercel.app",
   "https://baraagpt6-droid.github.io",
   "https://appassets.androidplatform.net",
   "http://localhost:3000",
@@ -84,7 +85,7 @@ function setCors(req, res) {
     if (origin && ALLOWED_ORIGINS.has(origin)) {
       res.setHeader("Access-Control-Allow-Origin", origin);
       res.setHeader("Vary", "Origin");
-      res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+      res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
       res.setHeader("Access-Control-Allow-Headers", "Content-Type");
       res.setHeader("Access-Control-Max-Age", "600");
     }
