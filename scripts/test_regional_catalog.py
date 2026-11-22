@@ -159,7 +159,7 @@ class RegionalCatalogTests(unittest.TestCase):
              "osm",mapping)
         b = fusion.as_feature({"type":"Feature","geometry":{"type":"Point","coordinates":[44.0001,14.0001]},
              "properties":{"id":"gers-pharmacy","names":{"primary":"صيدلية النور","common":["Al Noor Pharmacy"]},
-                           "basic_category":"pharmacy","phones":["+967777123456"],
+                           "basic_category":"pharmacy","confidence":0.95,"phones":["+967777123456"],
                            "addresses":[{"freeform":"شارع الاختبار"}],
                            "sources":[{"dataset":"meta","license":"CDLA-Permissive-2.0"}]}},
              "overture",mapping)
@@ -173,6 +173,8 @@ class RegionalCatalogTests(unittest.TestCase):
         self.assertIn("health",tags["__catalog_categories"])
         self.assertIn("pharmacy",tags["__catalog_categories"])
         self.assertEqual(len(merged[0]["properties"]["__sources"]),2)
+        self.assertEqual(merged[0]["geometry"]["coordinates"],[44.0001,14.0001])
+        self.assertEqual(merged[0]["properties"]["__confidence"],0.95)
 
     def test_places_more_than_50m_apart_are_not_deduplicated(self):
         a={"type":"Feature","id":"a","geometry":{"type":"Point","coordinates":[44.0,14.0]},
