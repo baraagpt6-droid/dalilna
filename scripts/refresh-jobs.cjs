@@ -42,10 +42,19 @@ function fieldValue(text,label){
 function isOfficialApplicationUrl(value){
  try{
   const url=new URL(String(value||""));
-  if(url.protocol!=="https:")return false;
-  const host=url.hostname.toLowerCase();
-  return ["yemenhr.com","reliefweb.int","bayt.com","careers.un.org","careers.sa"].some(root=>host===root||host.endsWith("."+root));
+  if(url.protocol!=="https:"||url.username||url.password||url.pathname==="/")return false;
+  const host=url.hostname.toLowerCase().replace(/^www\\./,"");
+  const blocked=["t.me","telegram.me","telegra.ph","reliefweb.int","linkedin.com","facebook.com","instagram.com","x.com","twitter.com","t.co","bit.ly","tinyurl.com","linktr.ee","wa.me","whatsapp.com","forms.gle"];
+  return !blocked.some(root=>host===root||host.endsWith("."+root));
  }catch(_){return false;}
+}
+function firstDirectApplicationLink(markup){
+ const re=/<a\\b[^>]*href=["'](https:\\/\\/[^"']+)["'][^>]*>([\\s\\S]*?)<\\/a>/gi;
+ for(const match of String(markup||"").matchAll(re)){
+  const label=stripHtml(match[2]);
+  if(/(?:apply|application|submit|apply now|التقديم|تقديم|قدّم|قدم|استمارة)/i.test(label)&&isOfficialApplicationUrl(match[1]))return match[1];
+ }
+ return "";
 }
 function parseYemenHrJobs(html){
  const source=String(html||""),marks=[...source.matchAll(/data-post="hr_yemen\/(\d+)"/g)],out=[];
@@ -66,6 +75,7 @@ function parseYemenHrJobs(html){
   if(deadlineAt&&Date.parse(deadlineAt)<now)continue;
   const links=[...block.matchAll(/href=["'](https:\/\/[^"']+)["']/gi)].map(match=>match[1]).filter(link=>!/^https:\/\/(?:www\.)?telegra\.ph\//i.test(link));
   const applicationUrl=links.find(isOfficialApplicationUrl)||"";
+  if(!applicationUrl)continue;
   const postId=marks[i][1];
   const summaryMatch=plain.match(/(?:المؤهلات المطلوبة|المؤهلات|المتطلبات|الشروط|المهام والمسؤوليات|وصف الوظيفة)\s*[:：]\s*([\s\S]{1,800}?)(?=\n(?:آخر موعد للتقديم|طريقة التقديم|رابط التقديم|الموقع|تاريخ النشر|المسمى الوظيفي)\s*[:：]|$)/i);
   const summaryAr=String(summaryMatch?.[1]||"").replace(/\s+/g," ").trim().slice(0,700);
@@ -75,7 +85,7 @@ function parseYemenHrJobs(html){
    location:decode(location)+", Yemen",city:decode(location),
    country:"Yemen",countryCode:"YE",publishedAt,
    deadline:deadline?decode(deadline):"",source:"YemenHR public jobs channel",
-   url:applicationUrl||("https://t.me/hr_yemen/"+postId),
+   url:applicationUrl,
    applicationUrl,sourceUrl:"https://t.me/hr_yemen/"+postId,summaryAr,
    expiresAt:deadlineAt||new Date(now+30*86400000).toISOString()
   });
@@ -106,10 +116,12 @@ function parseCareersSaJob(html,url,fallbackTitle){
  const firstFound=(dateLine.match(/First found\s*(\d{1,2}\s+[A-Za-z]+\s+\d{4})/i)||[])[1];
  const publishedAt=firstFound?parseDateLabel(firstFound):new Date(now).toISOString();
  const eligibility=/Targeting Saudi nationals/i.test(lines.join(" "))?"Saudi nationals":"";
+ const applicationUrl=firstDirectApplicationLink(html)||(isOfficialApplicationUrl(url)?url:"");
+ if(!applicationUrl)return null;
  return {
   id:"careers-sa:"+url.split("/").pop(),title:title.slice(0,180),organization,
   location,city:location.split(",")[0],country:"Saudi Arabia",countryCode:"SA",
-  publishedAt,source:"Careers.sa employer listing",url,applicationUrl:url,eligibility,summary:lines.slice(1,7).join(" · ").slice(0,700),
+  publishedAt,source:"Careers.sa employer listing",url:applicationUrl,applicationUrl,sourceUrl:url,eligibility,summary:lines.slice(1,7).join(" · ").slice(0,700),
   expiresAt:new Date(now+14*86400000).toISOString()
  };
 }
@@ -128,9 +140,33 @@ async function fetchCareersSaJobs(){
  return items;
 }
 
-function parseRss(xml,source){const blocks=[...String(xml||"").matchAll(/<(item|entry)\b[\s\S]*?<\/\1>/gi)].map(x=>x[0]),out=[];for(const block of blocks){const title=tag(block,"title"),url=linkFrom(block),description=tag(block,"description")||tag(block,"summary")||tag(block,"content"),m=(description+" "+block).match(/(?:Duty Station|Location|Duty station|الموقع)\s*[:：]\s*([^<\n\r;|]{2,100})/i),location=m?decode(m[1]):"",place=inferCountry(location+" "+description.slice(0,1200));if(!title||!url||!/^https?:\/\//i.test(url)||!place)continue;const published=tag(block,"pubDate")||tag(block,"published")||tag(block,"updated")||tag(block,"dc:date"),deadline=(description+" "+block).match(/(?:Deadline|Closing Date|Application deadline|آخر موعد)\s*[:：]\s*([^<\n\r;|]{4,50})/i);out.push({id:tag(block,"guid")||url,title:title.slice(0,180),organization:source,location:location||place.country,city:location||"",country:place.country,countryCode:place.countryCode,publishedAt:isoDate(published),deadline:deadline?decode(deadline[1]):"",source,url,applicationUrl:isOfficialApplicationUrl(url)?url:"",summary:stripHtml(description).slice(0,700),sourceUrl:url,expiresAt:new Date(now+30*86400000).toISOString()});}return out;}
+function parseRss(xml,source){
+ const blocks=[...String(xml||"").matchAll(/<(item|entry)\\b[\\s\\S]*?<\\/\\1>/gi)].map(match=>match[0]),out=[];
+ for(const block of blocks){
+  const title=tag(block,"title"),sourceUrl=linkFrom(block),url=isOfficialApplicationUrl(sourceUrl)?sourceUrl:"";
+  const description=tag(block,"description")||tag(block,"summary")||tag(block,"content");
+  const locationMatch=(description+" "+block).match(/(?:Duty Station|Location|Duty station|الموقع)\\s*[:：]\\s*([^<\\n\\r;|]{2,100})/i);
+  const location=locationMatch?decode(locationMatch[1]):"",place=inferCountry(location+" "+description.slice(0,1200));
+  if(!title||!url||!place)continue;
+  const published=tag(block,"pubDate")||tag(block,"published")||tag(block,"updated")||tag(block,"dc:date");
+  const deadline=(description+" "+block).match(/(?:Deadline|Closing Date|Application deadline|آخر موعد)\\s*[:：]\\s*([^<\\n\\r;|]{4,50})/i);
+  out.push({id:tag(block,"guid")||url,title:title.slice(0,180),organization:source,location:location||place.country,city:location||"",country:place.country,countryCode:place.countryCode,publishedAt:isoDate(published),deadline:deadline?decode(deadline[1]):"",source,url,applicationUrl:url,summary:stripHtml(description).slice(0,700),sourceUrl,expiresAt:new Date(now+30*86400000).toISOString()});
+ }
+ return out;
+}
 async function getText(url){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);try{const r=await fetch(url,{signal:controller.signal,headers:{Accept:"application/rss+xml, application/atom+xml, application/xml, text/xml, application/json;q=0.9, */*;q=0.8","User-Agent":"DalilnaJobFeed/2.1 (+https://github.com/baraagpt6-droid/dalilna)"}});if(!r.ok)throw new Error("HTTP "+r.status);return await r.text();}finally{clearTimeout(timer);}}
-async function reliefWeb(app){const url="https://api.reliefweb.int/v2/jobs?appname="+encodeURIComponent(app)+"&preset=latest&profile=list&limit=100&fields[include]=date.created,country.name,city,source.name,date.closing",data=JSON.parse(await getText(url));return (data.data||[]).map(row=>{const f=row.fields||{},c=Array.isArray(f.country)?f.country[0]?.name:f.country?.name,place=inferCountry(c+" "+(f.city||""));if(!place||!f.url||!f.title)return null;return {id:"reliefweb:"+row.id,title:f.title,organization:f.source?.name||"ReliefWeb",location:[f.city,c].filter(Boolean).join(", "),city:f.city||"",country:place.country,countryCode:place.countryCode,publishedAt:isoDate(f.date?.created),deadline:f.date?.closing||"",source:"ReliefWeb",url:f.url,applicationUrl:f.url,summary:stripHtml(f.body||f.description||"").slice(0,700),expiresAt:new Date(now+30*86400000).toISOString()};}).filter(Boolean);}
-async function main(){let prev={items:[]};try{prev=JSON.parse(fs.readFileSync(OUT,"utf8"));}catch(_){}const fresh=[],sources=[],feeds=[["UN Careers RSS","https://careers.un.org/jobfeed?isPage=true"]];String(process.env.DALILNA_JOB_RSS_FEEDS||"").split(/[\r\n,]+/).map(x=>x.trim()).filter(Boolean).forEach((url,i)=>feeds.push(["Configured RSS "+(i+1),url]));for(const [name,url] of feeds){try{const items=parseRss(await getText(url),name);fresh.push(...items);sources.push({name,url,status:"ok",count:items.length});}catch(e){sources.push({name,url,status:"unavailable",message:String(e.message||e).slice(0,160),count:0});}}for(const [name,loader,url] of [["YemenHR public channel",fetchYemenHrJobs,"https://t.me/s/hr_yemen"],["Careers.sa Saudi listings",fetchCareersSaJobs,"https://www.careers.sa/en"]]){try{const items=await loader();fresh.push(...items);sources.push({name,url,status:"ok",count:items.length});}catch(e){sources.push({name,url,status:"unavailable",message:String(e.message||e).slice(0,160),count:0});}}const app=String(process.env.RELIEFWEB_APPNAME||"").trim();if(app){try{const items=await reliefWeb(app);fresh.push(...items);sources.push({name:"ReliefWeb Jobs API",url:"https://api.reliefweb.int/v2/jobs",status:"ok",count:items.length});}catch(e){sources.push({name:"ReliefWeb Jobs API",url:"https://api.reliefweb.int/v2/jobs",status:"unavailable",message:String(e.message||e).slice(0,160),count:0});}}else sources.push({name:"ReliefWeb Jobs API",url:"https://api.reliefweb.int/v2/jobs",status:"skipped",message:"RELIEFWEB_APPNAME is not configured.",count:0});const old=(Array.isArray(prev.items)?prev.items:[]).filter(x=>x&&x.url&&Date.parse(x.expiresAt||"")>now&&!/\/en\/jobs\/company(?:\/|$)/i.test(String(x.url))),map=new Map();[...old,...fresh].forEach(item=>{const key=String(item.url).split("#")[0];if(key)map.set(key,item);});const items=[...map.values()].sort((a,b)=>Date.parse(b.publishedAt||0)-Date.parse(a.publishedAt||0)).slice(0,300);if(!fresh.length&&!old.length){console.log("No jobs received; keeping the current index.");console.log(JSON.stringify(sources));return;}if(JSON.stringify(items)===JSON.stringify(old)&&JSON.stringify(sources)===JSON.stringify(prev.sources||[])){console.log("No job-feed content or source-status changes; no commit needed.");return;}fs.writeFileSync(OUT,JSON.stringify({schemaVersion:1,fetchedAt:new Date(now).toISOString(),refreshedBy:"GitHub Actions daily job-feed refresh",sources,items},null,2)+"\n");console.log("Refreshed job index: "+fresh.length+" fresh, "+items.length+" retained.");console.log(JSON.stringify(sources));}
+async function reliefWeb(app){
+ const url="https://api.reliefweb.int/v2/jobs?appname="+encodeURIComponent(app)+"&preset=latest&profile=list&limit=100&fields[include]=date.created,country.name,city,source.name,date.closing,body";
+ const data=JSON.parse(await getText(url)),items=[];
+ for(const row of data.data||[]){
+  const fields=row.fields||{},country=Array.isArray(fields.country)?fields.country[0]?.name:fields.country?.name;
+  const place=inferCountry(country+" "+(fields.city||"")),body=String(fields["body-html"]||fields.body||fields.description||"");
+  const applicationUrl=firstDirectApplicationLink(body);
+  if(!place||!fields.url||!fields.title||!applicationUrl)continue;
+  items.push({id:"reliefweb:"+row.id,title:fields.title,organization:fields.source?.name||"ReliefWeb",location:[fields.city,country].filter(Boolean).join(", "),city:fields.city||"",country:place.country,countryCode:place.countryCode,publishedAt:isoDate(fields.date?.created),deadline:fields.date?.closing||"",source:"ReliefWeb direct employer application",url:applicationUrl,applicationUrl,sourceUrl:fields.url,summary:stripHtml(body).slice(0,700),expiresAt:new Date(now+30*86400000).toISOString()});
+ }
+ return items;
+}
+async function main(){let prev={items:[]};try{prev=JSON.parse(fs.readFileSync(OUT,"utf8"));}catch(_){}const fresh=[],sources=[],feeds=[["UN Careers RSS","https://careers.un.org/jobfeed?isPage=true"]];String(process.env.DALILNA_JOB_RSS_FEEDS||"").split(/[\r\n,]+/).map(x=>x.trim()).filter(Boolean).forEach((url,i)=>feeds.push(["Configured RSS "+(i+1),url]));for(const [name,url] of feeds){try{const items=parseRss(await getText(url),name);fresh.push(...items);sources.push({name,url,status:"ok",count:items.length});}catch(e){sources.push({name,url,status:"unavailable",message:String(e.message||e).slice(0,160),count:0});}}for(const [name,loader,url] of [["YemenHR public channel",fetchYemenHrJobs,"https://t.me/s/hr_yemen"],["Careers.sa Saudi listings",fetchCareersSaJobs,"https://www.careers.sa/en"]]){try{const items=await loader();fresh.push(...items);sources.push({name,url,status:"ok",count:items.length});}catch(e){sources.push({name,url,status:"unavailable",message:String(e.message||e).slice(0,160),count:0});}}const app=String(process.env.RELIEFWEB_APPNAME||"").trim();if(app){try{const items=await reliefWeb(app);fresh.push(...items);sources.push({name:"ReliefWeb Jobs API",url:"https://api.reliefweb.int/v2/jobs",status:"ok",count:items.length});}catch(e){sources.push({name:"ReliefWeb Jobs API",url:"https://api.reliefweb.int/v2/jobs",status:"unavailable",message:String(e.message||e).slice(0,160),count:0});}}else sources.push({name:"ReliefWeb Jobs API",url:"https://api.reliefweb.int/v2/jobs",status:"skipped",message:"RELIEFWEB_APPNAME is not configured.",count:0});const old=(Array.isArray(prev.items)?prev.items:[]).filter(x=>x&&x.applicationUrl&&isOfficialApplicationUrl(x.applicationUrl)&&x.url===x.applicationUrl&&Date.parse(x.expiresAt||"")>now&&!/\/en\/jobs\/company(?:\/|$)/i.test(String(x.url))),map=new Map();[...old,...fresh].forEach(item=>{const key=String(item.url).split("#")[0];if(key)map.set(key,item);});const items=[...map.values()].sort((a,b)=>Date.parse(b.publishedAt||0)-Date.parse(a.publishedAt||0)).slice(0,300);if(!fresh.length&&!old.length){console.log("No jobs received; keeping the current index.");console.log(JSON.stringify(sources));return;}if(JSON.stringify(items)===JSON.stringify(old)&&JSON.stringify(sources)===JSON.stringify(prev.sources||[])){console.log("No job-feed content or source-status changes; no commit needed.");return;}fs.writeFileSync(OUT,JSON.stringify({schemaVersion:1,fetchedAt:new Date(now).toISOString(),refreshedBy:"GitHub Actions daily job-feed refresh",sources,items},null,2)+"\n");console.log("Refreshed job index: "+fresh.length+" fresh, "+items.length+" retained.");console.log(JSON.stringify(sources));}
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={parseRss,parseDateLabel,parseYemenHrJobs,parseCareersSaIndex,parseCareersSaJob};
