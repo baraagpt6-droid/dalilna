@@ -52,7 +52,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p android/app/src/main/assets/icons android/app/src/main/assets/regional-catalog
-          cp index.html regional-catalog-runtime.js marketplace-client.js features-2.1.js features-2.1.css jobs-feed.json manifest.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html android/app/src/main/assets/
+          cp index.html regional-catalog-runtime.js marketplace-client.js features-2.1.js features-2.1.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html android/app/src/main/assets/
           cp icons/* android/app/src/main/assets/icons/
           cp regional-catalog/*.json android/app/src/main/assets/regional-catalog/
           cmp -s index.html android/app/src/main/assets/index.html
