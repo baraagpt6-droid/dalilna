@@ -228,7 +228,7 @@ def categories_for_tags(tags, mapping=None):
 
     fallback_keys = ("shop", "amenity", "office", "healthcare", "tourism", "craft",
                      "leisure", "public_transport", "railway", "emergency", "delivery",
-                     "courier", "service", "government")
+                     "courier", "service", "government", "building")
     if not matched and any(str(tags.get(key) or "").strip() for key in fallback_keys):
         if "other" in definitions:
             matched.append("other")
