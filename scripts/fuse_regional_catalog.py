@@ -157,11 +157,11 @@ def category_for_values(values, mapping):
 
 def source_metadata(props, source, source_id):
     if source == "osm":
-        return {"name": "OpenStreetMap", "id": source_id, "license": OSM_LICENSE,
-                "url": ("https://www.openstreetmap.org/" + source_id) if source_id else "https://www.openstreetmap.org/copyright"}
+        return [{"name": "OpenStreetMap", "id": source_id, "license": OSM_LICENSE,
+                 "url": ("https://www.openstreetmap.org/" + source_id) if source_id else "https://www.openstreetmap.org/copyright"}]
     if source == "fsq":
-        return {"name": "Foursquare Open Places", "id": source_id, "license": FSQ_LICENSE,
-                "url": "https://foursquare.com/placemakers/review-place/" + source_id if source_id else "https://docs.foursquare.com/data-products/docs/fsq-places-open-source"}
+        return [{"name": "Foursquare Open Places", "id": source_id, "license": FSQ_LICENSE,
+                 "url": "https://foursquare.com/placemakers/review-place/" + source_id if source_id else "https://docs.foursquare.com/data-products/docs/fsq-places-open-source"}]
     sources = props.get("sources") or []
     result = []
     for item in sources:
@@ -204,8 +204,7 @@ def as_feature(feature, source, mapping):
     if source == "osm":
         clone = dict(feature)
         clone["properties"] = dict(props)
-        clone["properties"]["__sources"] = [{"name": "OpenStreetMap", "id": text(feature.get("id") or tags.get("@id"), 120),
-            "license": OSM_LICENSE, "url": source_metadata(props, "osm", text(feature.get("id") or tags.get("@id")))["url"]}]
+        clone["properties"]["__sources"] = source_metadata(props, "osm", text(feature.get("id") or tags.get("@id")))
         clone["properties"]["__source"] = "OpenStreetMap"
         return clone
 
