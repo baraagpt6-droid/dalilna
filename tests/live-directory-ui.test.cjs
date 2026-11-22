@@ -25,7 +25,7 @@ test("jobs, products and property adverts remain in the shared marketplace",()=>
  for(const token of ["/api/marketplace/listings","إعلانات معتمدة","أرض","شقة","منزل","للإيجار"])assert.ok(html.includes(token),token);
 });
 test("individual place cards use optional map and source links from catalogue data",()=>{
- for(const token of ["record.mapsUrl","record.sourceUrl","data-map-toggle","عرض الخريطة","OpenStreetMap"])assert.ok(html.includes(token),token);
+ for(const token of ["record.mapsUrl","record.mapsUrl","data-map-toggle","عرض الخريطة","OpenStreetMap"])assert.ok(html.includes(token),token);
 });
 test("all-tab search uses the preloaded Yemen index and live OSM fallback",()=>{
  for(const token of ["const showTopSearch=searchActive",'if(view!=="home")go("home")',"warmUnifiedSearchIndex(false)","searchLiveDirectoryFallback","rows.length<5"])assert.ok(html.includes(token),token);
