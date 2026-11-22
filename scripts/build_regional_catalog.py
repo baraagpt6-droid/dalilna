@@ -620,6 +620,16 @@ def main():
     args = parser.parse_args()
     governors, districts = load_admin(args.governorates, args.districts, args.regions)
     boundaries = prepare_boundaries(geojson_features(args.boundaries), governors, districts)
+    geoboundary_districts = {
+        (normalize(item["target"]["governorate"]), normalize(item["target"]["district"]))
+        for item in boundaries
+        if item.get("source") == "geoBoundaries" and item.get("target", {}).get("district")
+    }
+    if len(geoboundary_districts) != 335:
+        raise ValueError(
+            f"geoBoundaries ADM2 crosswalk is incomplete: matched {len(geoboundary_districts)} of 335 districts. "
+            "Refusing to publish district counts based only on approximate centroids."
+        )
     items = build_items(geojson_features(args.places), governors, districts, boundaries)
     manifest = write_catalog(items, governors, districts, args.output)
     print(json.dumps({
