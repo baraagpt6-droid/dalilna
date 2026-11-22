@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "fetchedAt": "2026-11-21T22:44:44.482Z",
+  "fetchedAt": "2026-11-22T03:15:43.768Z",
   "refreshedBy": "GitHub Actions daily job-feed refresh",
   "sources": [
     {
@@ -38,11 +38,11 @@
       "city": "Jeddah ",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-21T22:44:44.482Z",
+      "publishedAt": "2026-11-22T03:15:43.768Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/professional-onboarding-engagement-pipeline-bupa-arabia-5b4bd86d",
       "eligibility": "",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:senior-specialist-transport-and-distribution-red-sea-global-f303385a",
@@ -52,11 +52,11 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-21T22:44:44.482Z",
+      "publishedAt": "2026-11-22T03:15:43.768Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/senior-specialist-transport-and-distribution-red-sea-global-f303385a",
       "eligibility": "",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:vts-operator-boskalis-4a36a7da",
@@ -66,11 +66,11 @@
       "city": "Saudi Arabia",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-21T22:44:44.482Z",
+      "publishedAt": "2026-11-22T03:15:43.768Z",
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/vts-operator-boskalis-4a36a7da",
       "eligibility": "",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:low-current-engineer-audio-video-lighting-show-content-parsons-corpora-2bed74ea",
@@ -84,7 +84,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/low-current-engineer-audio-video-lighting-show-content-parsons-corpora-2bed74ea",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:site-inspector-architectural-id-saudi-national-parsons-corporation-aa4c75cd",
@@ -98,7 +98,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/site-inspector-architectural-id-saudi-national-parsons-corporation-aa4c75cd",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:its-engineer-parsons-corporation-544679bc",
@@ -112,7 +112,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/its-engineer-parsons-corporation-544679bc",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:hse-manager-parsons-corporation-747a506e",
@@ -126,7 +126,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/hse-manager-parsons-corporation-747a506e",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:riyadh-material-master-data-specialist-alfanar-2532da07",
@@ -140,7 +140,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/riyadh-material-master-data-specialist-alfanar-2532da07",
       "eligibility": "",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:senior-engineer-elv-ict-parsons-corporation-be60100e",
@@ -154,7 +154,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/senior-engineer-elv-ict-parsons-corporation-be60100e",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:project-coordinator-saudi-national-parsons-corporation-e9db24a2",
@@ -168,7 +168,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/project-coordinator-saudi-national-parsons-corporation-e9db24a2",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "yemenhr:5052",
@@ -212,7 +212,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/construction-manager-fa-ade-parsons-corporation-fe0f3f65",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:contracts-and-claims-specialist-parsons-corporation-1d1e1f9d",
@@ -226,7 +226,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/contracts-and-claims-specialist-parsons-corporation-1d1e1f9d",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:project-controls-specialist-integrated-controls-parsons-corporation-e8b3a2b8",
@@ -240,7 +240,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/project-controls-specialist-integrated-controls-parsons-corporation-e8b3a2b8",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:project-manager-procurement-and-packaging-lead-parsons-corporation-6a60ba8f",
@@ -254,7 +254,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/project-manager-procurement-and-packaging-lead-parsons-corporation-6a60ba8f",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:p1-7727554-0-marriott-ksa-64c82ce4",
@@ -268,7 +268,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/p1-7727554-0-marriott-ksa-64c82ce4",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:p1-7737596-0-marriott-ksa-144564aa",
@@ -282,7 +282,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/p1-7737596-0-marriott-ksa-144564aa",
       "eligibility": "Saudi nationals",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:a427-esg-intern-halliburton-677a6df1",
@@ -296,7 +296,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/a427-esg-intern-halliburton-677a6df1",
       "eligibility": "",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:external-funding-mgt-section-manager-stc-51b2752e",
@@ -310,7 +310,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/external-funding-mgt-section-manager-stc-51b2752e",
       "eligibility": "",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:infrastructure-operations-budgeting-assistant-manager-stc-1b5baf87",
@@ -324,7 +324,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/infrastructure-operations-budgeting-assistant-manager-stc-1b5baf87",
       "eligibility": "",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "careers-sa:senior-wbu-national-services-analyst-stc-9f316450",
@@ -338,7 +338,7 @@
       "source": "Careers.sa employer listing",
       "url": "https://www.careers.sa/en/jobs/senior-wbu-national-services-analyst-stc-9f316450",
       "eligibility": "",
-      "expiresAt": "2026-12-05T22:44:44.482Z"
+      "expiresAt": "2026-12-06T03:15:43.768Z"
     },
     {
       "id": "yemenhr:5042",
