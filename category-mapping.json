@@ -49,19 +49,7 @@
         },
         {
           "key": "shop",
-          "value": "farm"
-        },
-        {
-          "key": "shop",
           "value": "seafood"
-        },
-        {
-          "key": "shop",
-          "value": "bakery"
-        },
-        {
-          "key": "amenity",
-          "value": "marketplace"
         }
       ]
     },
@@ -205,7 +193,6 @@
         "doctors",
         "dentist",
         "healthcare",
-        "pharmacy",
         "ambulance"
       ],
       "osmTags": [
@@ -232,10 +219,6 @@
         {
           "key": "amenity",
           "value": "health_centre"
-        },
-        {
-          "key": "amenity",
-          "value": "pharmacy"
         },
         {
           "key": "healthcare",
@@ -267,10 +250,6 @@
         },
         {
           "key": "healthcare",
-          "value": "pharmacy"
-        },
-        {
-          "key": "healthcare",
           "value": "nurse"
         },
         {
@@ -292,10 +271,6 @@
         {
           "key": "healthcare",
           "value": "birthing_centre"
-        },
-        {
-          "key": "healthcare",
-          "value": "veterinary"
         },
         {
           "key": "emergency",
@@ -347,6 +322,10 @@
         {
           "key": "shop",
           "value": "medical_supply"
+        },
+        {
+          "key": "healthcare",
+          "value": "pharmacy"
         }
       ]
     },
@@ -580,10 +559,6 @@
         },
         {
           "key": "amenity",
-          "value": "car_rental"
-        },
-        {
-          "key": "amenity",
           "value": "ferry_terminal"
         },
         {
@@ -758,6 +733,10 @@
         },
         {
           "key": "amenity",
+          "value": "veterinary"
+        },
+        {
+          "key": "healthcare",
           "value": "veterinary"
         }
       ]
@@ -1007,10 +986,6 @@
         {
           "key": "shop",
           "value": "computer_parts"
-        },
-        {
-          "key": "shop",
-          "value": "appliance"
         }
       ]
     },
@@ -1372,7 +1347,16 @@
         "خدمات أخرى",
         "other"
       ],
-      "osmTags": []
+      "osmTags": [
+        {
+          "key": "building",
+          "value": "commercial"
+        },
+        {
+          "key": "building",
+          "value": "retail"
+        }
+      ]
     },
     "real_estate": {
       "labelAr": "أراضٍ وعقارات",
@@ -1450,45 +1434,41 @@
           "value": "car_repair"
         },
         {
-          "key": "amenity",
-          "value": "car_rental"
-        },
-        {
           "key": "shop",
           "value": "car_repair"
         },
         {
           "key": "shop",
           "value": "motorcycle_repair"
+        },
+        {
+          "key": "shop",
+          "value": "car_parts"
+        },
+        {
+          "key": "shop",
+          "value": "vehicle_parts"
+        },
+        {
+          "key": "shop",
+          "value": "motorcycle_parts"
+        },
+        {
+          "key": "shop",
+          "value": "tyres"
+        },
+        {
+          "key": "shop",
+          "value": "car_rental"
+        },
+        {
+          "key": "amenity",
+          "value": "car_rental"
         }
       ]
     }
   },
   "multiCategoryRules": [
-    {
-      "key": "amenity",
-      "value": "pharmacy",
-      "categories": [
-        "health",
-        "pharmacy"
-      ]
-    },
-    {
-      "key": "healthcare",
-      "value": "pharmacy",
-      "categories": [
-        "health",
-        "pharmacy"
-      ]
-    },
-    {
-      "key": "shop",
-      "value": "pharmacy",
-      "categories": [
-        "health",
-        "pharmacy"
-      ]
-    },
     {
       "key": "amenity",
       "value": "place_of_worship",
@@ -1505,14 +1485,6 @@
       "value": "mosque",
       "categories": [
         "mosque"
-      ]
-    },
-    {
-      "key": "shop",
-      "value": "car_parts",
-      "categories": [
-        "parts",
-        "vehicles"
       ]
     }
   ],
@@ -1840,5 +1812,182 @@
       "مكتب عقاري",
       "وسيط عقاري"
     ]
-  }
+  },
+  "strictPrimaryRules": [
+    {
+      "key": "amenity",
+      "value": "pharmacy",
+      "category": "pharmacy"
+    },
+    {
+      "key": "healthcare",
+      "value": "pharmacy",
+      "category": "pharmacy"
+    },
+    {
+      "key": "shop",
+      "value": "pharmacy",
+      "category": "pharmacy"
+    },
+    {
+      "key": "shop",
+      "value": "chemist",
+      "category": "pharmacy"
+    },
+    {
+      "key": "shop",
+      "value": "medical_supply",
+      "category": "pharmacy"
+    },
+    {
+      "key": "shop",
+      "value": "car",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "motorcycle",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "vehicle",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "car_repair",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "motorcycle_repair",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "car_parts",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "vehicle_parts",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "motorcycle_parts",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "tyres",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "car_rental",
+      "category": "vehicles"
+    },
+    {
+      "key": "amenity",
+      "value": "car_rental",
+      "category": "vehicles"
+    },
+    {
+      "key": "shop",
+      "value": "bakery",
+      "category": "food"
+    },
+    {
+      "key": "shop",
+      "value": "pastry",
+      "category": "food"
+    },
+    {
+      "key": "shop",
+      "value": "confectionery",
+      "category": "food"
+    },
+    {
+      "key": "shop",
+      "value": "farm",
+      "category": "farm"
+    },
+    {
+      "key": "amenity",
+      "value": "marketplace",
+      "category": "market"
+    },
+    {
+      "key": "shop",
+      "value": "market",
+      "category": "market"
+    },
+    {
+      "key": "shop",
+      "value": "appliance",
+      "category": "home"
+    },
+    {
+      "key": "craft",
+      "value": "goldsmith",
+      "category": "gold"
+    },
+    {
+      "key": "craft",
+      "value": "watchmaker",
+      "category": "gold"
+    },
+    {
+      "key": "craft",
+      "value": "mechanic",
+      "category": "vehicles"
+    },
+    {
+      "key": "building",
+      "value": "commercial",
+      "category": "other"
+    },
+    {
+      "key": "building",
+      "value": "retail",
+      "category": "other"
+    }
+  ],
+  "externalPrimaryOrder": [
+    "pharmacy",
+    "health",
+    "vehicles",
+    "parts",
+    "food",
+    "grocery",
+    "market",
+    "farm",
+    "money",
+    "edu",
+    "telecom",
+    "elec",
+    "solar",
+    "real_estate",
+    "build",
+    "clothes",
+    "home",
+    "gold",
+    "beauty",
+    "salon",
+    "laundry",
+    "delivery",
+    "transport",
+    "hotel",
+    "cafe",
+    "mosque",
+    "gov",
+    "craft",
+    "wedding",
+    "books",
+    "utility",
+    "tourism",
+    "other"
+  ]
 }
