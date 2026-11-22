@@ -121,7 +121,7 @@ async function syncMerchantFeed(req,res){
  const sourceName=clean(payload.sourceName||sourceKey,100);
  const completeSnapshot=payload.completeSnapshot===true;
  if(!sourceKey||items.length>250||(!items.length&&!completeSnapshot))throw error("INVALID_PRODUCT_FEED","خلاصة المنتجات فارغة أو غير صالحة.");
- const activeRefs=items.map(raw=>clean(raw?.clientRef,100)).filter(ref=>ref.startsWith("feed:"));
+ const activeRefs=[];
  const db=getPool();await schema(db);const client=await db.connect();
  let inserted=0,updated=0,skipped=0;
  try{
@@ -133,12 +133,15 @@ async function syncMerchantFeed(req,res){
     if(clientRef.length<10||clientRef.length>100||!raw.phone||!raw.sellerName)throw new Error("seller contact missing");
     const item=validate({...raw,category:"souq",clientRef,country:"اليمن",listingType:raw.listingType||"sale",condition:raw.condition||"unknown"});
     if(!item.governorate||!item.district)throw new Error("location missing");
-    const sql="INSERT INTO marketplace_listings (id,client_ref,title,category,product_type,listing_type,condition,governorate,district,area,village,country,description,phone,opening_hours,website,seller_name,price,currency,image_data,latitude,longitude,deadline,status,approved_at,review_note,expires_at) VALUES ($1,$2,$3,'souq',$4,$5,$6,$7,$8,$9,$10,'اليمن',$11,$12,'',$13,$14,$15,$16,$17,$18,NULL,'approved',NOW(),$20,NOW()+INTERVAL '60 days') ON CONFLICT(client_ref) DO UPDATE SET title=EXCLUDED.title,product_type=EXCLUDED.product_type,listing_type=EXCLUDED.listing_type,condition=EXCLUDED.condition,governorate=EXCLUDED.governorate,district=EXCLUDED.district,area=EXCLUDED.area,village=EXCLUDED.village,description=EXCLUDED.description,phone=EXCLUDED.phone,website=EXCLUDED.website,seller_name=EXCLUDED.seller_name,price=EXCLUDED.price,currency=EXCLUDED.currency,image_data=EXCLUDED.image_data,latitude=EXCLUDED.latitude,longitude=EXCLUDED.longitude,review_note=EXCLUDED.review_note,updated_at=NOW(),expires_at=NOW()+INTERVAL '60 days' WHERE marketplace_listings.client_ref LIKE 'feed:%' AND marketplace_listings.status='approved' RETURNING (xmax=0) AS inserted";
+    const sql="INSERT INTO marketplace_listings (id,client_ref,title,category,product_type,listing_type,condition,governorate,district,area,village,country,description,phone,opening_hours,website,seller_name,price,currency,image_data,latitude,longitude,deadline,status,approved_at,review_note,expires_at) VALUES ($1,$2,$3,'souq',$4,$5,$6,$7,$8,$9,$10,'اليمن',$11,$12,'',$13,$14,$15,$16,$17,$18,NULL,'approved',NOW(),$20,NOW()+INTERVAL '60 days') ON CONFLICT(client_ref) DO UPDATE SET title=EXCLUDED.title,product_type=EXCLUDED.product_type,listing_type=EXCLUDED.listing_type,condition=EXCLUDED.condition,governorate=EXCLUDED.governorate,district=EXCLUDED.district,area=EXCLUDED.area,village=EXCLUDED.village,description=EXCLUDED.description,phone=EXCLUDED.phone,website=EXCLUDED.website,seller_name=EXCLUDED.seller_name,price=EXCLUDED.price,currency=EXCLUDED.currency,image_data=EXCLUDED.image_data,latitude=EXCLUDED.latitude,longitude=EXCLUDED.longitude,review_note=EXCLUDED.review_note,status='approved',approved_at=NOW(),updated_at=NOW(),expires_at=NOW()+INTERVAL '60 days' WHERE marketplace_listings.client_ref LIKE 'feed:%' AND marketplace_listings.status IN ('approved','archived') RETURNING (xmax=0) AS inserted";
     const values=[item.id,item.clientRef,item.title,item.productType,item.listingType,item.condition,item.governorate,item.district,item.area,item.village,item.description,item.phone,item.website,item.sellerName,item.price,item.currency,item.image,item.latitude,item.longitude,"merchant_feed:"+sourceName];
     const result=await client.query(sql,values);
     if(!result.rows.length)skipped++;
-    else if(result.rows[0].inserted)inserted++;
-    else updated++;
+    else{
+     activeRefs.push(item.clientRef);
+     if(result.rows[0].inserted)inserted++;
+     else updated++;
+    }
    }catch(_){skipped++;}
   }
   let archived=0;
