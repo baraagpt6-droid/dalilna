@@ -21,7 +21,7 @@ test("global fallback searches Nominatim by query with countrycodes=ye",async()=
   }]),{status:200,headers:{"content-type":"application/json"}});
  };
  try{
-  const result=await searchPlaces({q:unique,place:"اليمن",lat:null,lon:null,category:"pharmacy"});
+  const result=await searchPlaces({q:unique,place:"اليمن",lat:0,lon:0,category:"pharmacy"});
   assert.ok(requestedUrl);
   assert.equal(requestedUrl.hostname,"nominatim.openstreetmap.org");
   assert.equal(requestedUrl.searchParams.get("countrycodes"),"ye");
