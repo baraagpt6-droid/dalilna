@@ -65,7 +65,7 @@ test("main directory search loads all 22 governorate files without requiring a s
 });
 test("Souq store directory is loaded on demand and kept separate from approved sale listings",()=>{
  assert.ok(html.includes('id="souqStoresPanel"'));
- assert.ok(html.includes('id="souqStoresGovernorate"')===false);
+ assert.ok(html.includes('id="souqStoreCategory"'));
  assert.ok(html.includes("async function runSouqStores(force)"));
  assert.ok(html.includes("OpenStreetMap"));
  assert.ok(html.includes("لا يؤكد توفر سلعة"));
