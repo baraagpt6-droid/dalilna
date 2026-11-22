@@ -217,17 +217,17 @@ function buildYemenOverpassQuery(query,category="all"){
   if(categoryOnly&&selected!=="all"){
     filters=FILTERS[selected]||[];
   }else{
-    const pattern=String(query||"").trim().replace(/[^\u0600-\u06FFa-zA-Z0-9\\s_-]/g," ").replace(/\\s+/g," ").trim();
+    const pattern=String(query||"").trim().replace(/[^\u0600-\u06FFa-zA-Z0-9\\s_-]/g," ").replace(/\s+/g," ").trim();
     const qlValue=pattern.replace(/\\/g,"\\\\").replace(/"/g,'\\"');
     if(!qlValue)return "";
     filters=["name","name:ar","name:en","brand","operator"].map(key=>'["'+key+'"~"'+qlValue+'",i]');
   }
   if(!filters.length)return "";
-  const union=filters.map(filter=>"nwr"+filter+"(area.yemen);").join("\\n");
-  return '[out:json][timeout:25][maxsize:134217728];\\narea["ISO3166-1"="YE"][admin_level=2]->.yemen;\\n(\\n'+union+'\\n);\\nout center tags 80;';
+  const union=filters.map(filter=>"nwr"+filter+"(area.yemen);").join("\n");
+  return '[out:json][timeout:25][maxsize:134217728];\narea["ISO3166-1"="YE"][admin_level=2]->.yemen;\n(\n'+union+'\n);\nout center tags 80;';
 }
 function normalizeCategorySearch(value) {
-  return normalizeText(value).replace(/ة/g,"ه").replace(/ى/g,"ي").split(/\\s+/)
+  return normalizeText(value).replace(/ة/g,"ه").replace(/ى/g,"ي").split(/\s+/)
     .filter(Boolean).map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
 }
 function inferCategoryFromQuery(query) {
