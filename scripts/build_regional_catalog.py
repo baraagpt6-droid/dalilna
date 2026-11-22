@@ -44,16 +44,56 @@ def tags_of(feature):
     return tags if isinstance(tags, dict) else props
 
 
-def geometry_point(geometry):
+def ring_centroid(ring):
+    if not isinstance(ring, (list, tuple)) or len(ring) < 4:
+        return None
+    area2 = cx = cy = 0.0
+    pairs = list(zip(ring, ring[1:]))
+    for first, second in pairs:
+        if len(first) < 2 or len(second) < 2:
+            continue
+        cross = float(first[0]) * float(second[1]) - float(second[0]) * float(first[1])
+        area2 += cross
+        cx += (float(first[0]) + float(second[0])) * cross
+        cy += (float(first[1]) + float(second[1])) * cross
+    if abs(area2) < 1e-12:
+        return None
+    return cx / (3.0 * area2), cy / (3.0 * area2), abs(area2) / 2.0
+
+
+def geometry_centroid(geometry):
     if not isinstance(geometry, dict):
         return None
-    if geometry.get("type") == "Point":
-        coords = geometry.get("coordinates") or []
-        if len(coords) >= 2:
-            lon, lat = float(coords[0]), float(coords[1])
-            if -180 <= lon <= 180 and -90 <= lat <= 90:
-                return lat, lon
-        return None
+    kind = geometry.get("type")
+    coordinates = geometry.get("coordinates") or []
+    polygons = [coordinates] if kind == "Polygon" else coordinates if kind == "MultiPolygon" else []
+    weighted_x = weighted_y = total_area = 0.0
+    for polygon in polygons:
+        if not polygon:
+            continue
+        outer = ring_centroid(polygon[0])
+        if not outer:
+            continue
+        ox, oy, outer_area = outer
+        area = outer_area
+        mx, my = ox * outer_area, oy * outer_area
+        # Holes subtract their area and centroid from the outer ring.
+        for hole in polygon[1:]:
+            inner = ring_centroid(hole)
+            if not inner:
+                continue
+            hx, hy, inner_area = inner
+            area -= inner_area
+            mx -= hx * inner_area
+            my -= hy * inner_area
+        if area > 1e-12:
+            cx, cy = mx / area, my / area
+            weighted_x += cx * area
+            weighted_y += cy * area
+            total_area += area
+    if total_area > 1e-12:
+        return weighted_y / total_area, weighted_x / total_area
+    # Degenerate geometries fall back to a representative bounding-box centre.
     values = []
     def walk(node):
         if isinstance(node, (list, tuple)):
@@ -64,12 +104,25 @@ def geometry_point(geometry):
             else:
                 for child in node:
                     walk(child)
-    walk(geometry.get("coordinates") or [])
+    walk(coordinates)
     if not values:
         return None
-    lons = [p[0] for p in values]
-    lats = [p[1] for p in values]
-    return (min(lats) + max(lats)) / 2, (min(lons) + max(lons)) / 2
+    lons = [point[0] for point in values]
+    lats = [point[1] for point in values]
+    return (min(lats) + max(lats)) / 2.0, (min(lons) + max(lons)) / 2.0
+
+
+def geometry_point(geometry):
+    if not isinstance(geometry, dict):
+        return None
+    if geometry.get("type") == "Point":
+        coords = geometry.get("coordinates") or []
+        if len(coords) >= 2:
+            lon, lat = float(coords[0]), float(coords[1])
+            if -180 <= lon <= 180 and -90 <= lat <= 90:
+                return lat, lon
+        return None
+    return geometry_centroid(geometry)
 
 
 def point_in_ring(lon, lat, ring):
@@ -498,7 +551,7 @@ def write_catalog(items, governors, districts, output):
                    "attribution": "© OpenStreetMap contributors",
                    "administrativeSource": "Open Admin Data Yemen (CC BY 4.0)", "items": rows}
         (output / filename).write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
-        manifest_rows.append({"name": gov["name"], "slug": gov["slug"], "file": filename,
+        manifest_rows.append({"name": gov["name"], "nameEn": gov.get("nameEn", ""), "slug": gov["slug"], "file": filename,
                               "count": len(rows), "categories": dict(counts)})
     district_buckets = {
         (district["governorate"], district["name"]): {
@@ -528,6 +581,7 @@ def write_catalog(items, governors, districts, output):
         {
             "governorate": governorate,
             "district": district_name,
+            "districtEn": next((item.get("nameEn", "") for item in districts if item["governorate"] == governorate and item["name"] == district_name), ""),
             "count": bucket["count"],
             "boundaryCount": bucket["boundaryCount"],
             "approximateCount": bucket["approximateCount"],
@@ -545,6 +599,7 @@ def write_catalog(items, governors, districts, output):
                 "attribution": "© OpenStreetMap contributors",
                 "administrativeSource": "Open Admin Data Yemen (CC BY 4.0)",
                 "assignmentNote": "District counts include polygon matches (OSM administrative boundaries or geoBoundaries Yemen ADM2) and explicitly marked nearest-centroid estimates. Use boundaryCount for polygon-derived assignments and approximateCount for estimates.",
+                "districtCountMethod": "Point-in-Polygon for matched ADM2/OSM polygons; nearest published district-centroid fallback is flagged approximate.",
                 "boundarySources": [
                     {"name": "geoBoundaries Yemen ADM2", "level": "ADM2", "source": "Central Statistical Organization (CSO), OCHA Yemen", "license": "CC BY 3.0 IGO", "url": "https://www.geoboundaries.org/api/current/gbOpen/YEM/ADM2/"},
                     {"name": "OpenStreetMap administrative boundaries", "license": "ODbL-1.0", "url": "https://www.openstreetmap.org/copyright"}
