@@ -8,11 +8,12 @@ const CURRENCIES=new Set(["YER","SAR","USD","OMR","AED","other"]);
 const ARABIC_REMAP={"أ":"ا","إ":"ا","آ":"ا","ٱ":"ا","ة":"ه","ى":"ي","ؤ":"و","ئ":"ي"};
 function normalizePlace(value){
  return String(value||"").normalize("NFKC").toLowerCase()
-  .replace(/[\\u064B-\\u065F\\u0670\\u0640]/g,"")
+  .replace(/[\u064B-\u065F\u0670\u0640]/g,"")
   .replace(/[أإآٱةىؤئ]/g,char=>ARABIC_REMAP[char]||char)
-  .replace(/[^a-z0-9\\u0600-\\u06FF]+/g," ").trim().split(/\\s+/)
+  .replace(/[^a-z0-9\u0600-\u06FF]+/g," ").trim().split(/\s+/)
   .map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
 }
+
 const governorateAliases=new Map();
 for(const row of ADMIN_MANIFEST.governorates||[]){
  const canonical=String(row.name||"").trim();
