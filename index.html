@@ -3221,7 +3221,7 @@ $("#accountBtn").addEventListener("click",()=>{
   const mp=S.session.merchant||S.merchantProfile||{};
   $("#merchName").value=mp.name||"";
   $("#merchPhone").value=mp.phone||"";
-  renderProfilePanel();
+  if(typeof renderProfilePanel==="function")renderProfilePanel();
   showDlg("#accountDlg");
 });
 $("#accClose").addEventListener("click",()=>{S.onboarded=true;saveState();closeDlg("#accountDlg");});
