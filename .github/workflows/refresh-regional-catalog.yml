@@ -105,6 +105,30 @@ jobs:
             -o places.osm.pbf
           osmium export places.osm.pbf -o places.geojson
           test -s places.geojson
+      - name: Download and validate Yemen country boundary for strict clipping
+        shell: bash
+        run: |
+          META_URL="https://www.geoboundaries.org/api/current/gbOpen/YEM/ADM0/"
+          curl -fL --retry 4 --retry-delay 3 "$META_URL" -o geoboundaries-yemen-adm0-metadata.json
+          GEOJSON_URL="$(python3 - <<'PY'
+          import json
+          data=json.load(open("geoboundaries-yemen-adm0-metadata.json",encoding="utf-8"))
+          if data.get("boundaryType")!="ADM0" or data.get("boundaryISO")!="YEM" or int(data.get("admUnitCount",0))!=1:
+              raise SystemExit("Expected exactly one Yemen ADM0 boundary")
+          url=data.get("gjDownloadURL")
+          if not url or not url.startswith("https://"): raise SystemExit("No secure ADM0 GeoJSON URL")
+          print(url)
+          PY
+          )"
+          curl -fL --retry 4 --retry-delay 3 "$GEOJSON_URL" -o yemen-country.geojson
+          python3 - <<'PY'
+          import json
+          data=json.load(open("yemen-country.geojson",encoding="utf-8"))
+          features=data.get("features",[])
+          if len(features)!=1 or (features[0].get("geometry") or {}).get("type") not in {"Polygon","MultiPolygon"}:
+              raise SystemExit("Invalid Yemen ADM0 clipping polygon")
+          print("Validated Yemen country polygon")
+          PY
       - name: Fuse OSM, Overture and optional Foursquare Places
         env:
           FSQ_OS_PLACES_EXPORT_URL: ${{ secrets.FSQ_OS_PLACES_EXPORT_URL }}
@@ -156,30 +180,6 @@ jobs:
           if not all((feature.get("geometry") or {}).get("type") in {"Polygon", "MultiPolygon"} for feature in features):
               raise SystemExit("ADM2 source contains invalid polygon geometry")
           print("geoBoundaries Yemen ADM2 polygons:", len(features))
-          PY
-      - name: Download and validate Yemen country boundary for strict clipping
-        shell: bash
-        run: |
-          META_URL="https://www.geoboundaries.org/api/current/gbOpen/YEM/ADM0/"
-          curl -fL --retry 4 --retry-delay 3 "$META_URL" -o geoboundaries-yemen-adm0-metadata.json
-          GEOJSON_URL="$(python3 - <<'PY'
-          import json
-          data=json.load(open("geoboundaries-yemen-adm0-metadata.json",encoding="utf-8"))
-          if data.get("boundaryType")!="ADM0" or data.get("boundaryISO")!="YEM" or int(data.get("admUnitCount",0))!=1:
-              raise SystemExit("Expected exactly one Yemen ADM0 boundary")
-          url=data.get("gjDownloadURL")
-          if not url or not url.startswith("https://"): raise SystemExit("No secure ADM0 GeoJSON URL")
-          print(url)
-          PY
-          )"
-          curl -fL --retry 4 --retry-delay 3 "$GEOJSON_URL" -o yemen-country.geojson
-          python3 - <<'PY'
-          import json
-          data=json.load(open("yemen-country.geojson",encoding="utf-8"))
-          features=data.get("features",[])
-          if len(features)!=1 or (features[0].get("geometry") or {}).get("type") not in {"Polygon","MultiPolygon"}:
-              raise SystemExit("Invalid Yemen ADM0 clipping polygon")
-          print("Validated Yemen country polygon")
           PY
       - name: Merge OSM and geoBoundaries administrative polygons
         run: |
