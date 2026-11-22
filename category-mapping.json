@@ -770,10 +770,6 @@
         {
           "key": "amenity",
           "value": "place_of_worship"
-        },
-        {
-          "key": "religion",
-          "value": "muslim"
         }
       ]
     },
@@ -1367,21 +1363,25 @@
       ]
     },
     "vehicles": {
-      "labelAr": "سيارات وورش مركبات",
-      "labelEn": "Vehicles and vehicle services",
+      "labelAr": "سيارات ودراجات ومركبات",
+      "labelEn": "Cars, motorcycles and vehicles",
       "aliases": [
         "سيارة",
         "سيارات",
         "دراجة نارية",
-        "دراجات",
-        "معرض سيارات",
-        "ورشة سيارات",
+        "دراجات نارية",
+        "دباب",
         "مركبات",
+        "معرض سيارات",
         "car",
         "cars",
         "motorcycle",
+        "motorcycles",
         "vehicle",
-        "vehicle repair"
+        "vehicles",
+        "car dealer",
+        "car rental",
+        "car repair"
       ],
       "osmTags": [
         {
@@ -1394,11 +1394,11 @@
         },
         {
           "key": "shop",
-          "value": "car_repair"
+          "value": "vehicle"
         },
         {
           "key": "shop",
-          "value": "vehicle"
+          "value": "car_repair"
         },
         {
           "key": "amenity",
@@ -1448,30 +1448,6 @@
       "value": "mosque",
       "categories": [
         "mosque"
-      ]
-    },
-    {
-      "key": "shop",
-      "value": "hardware",
-      "categories": [
-        "build",
-        "solar"
-      ]
-    },
-    {
-      "key": "shop",
-      "value": "electronics",
-      "categories": [
-        "elec",
-        "solar"
-      ]
-    },
-    {
-      "key": "shop",
-      "value": "electrical",
-      "categories": [
-        "elec",
-        "solar"
       ]
     },
     {
