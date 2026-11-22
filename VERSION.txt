@@ -1,34 +1,20 @@
 Dalilna 2.4.0
-Web application version: 2.4.0
+Web/PWA version: 2.4.0
 Android versionName: 2.4.0
 Android versionCode: 240
 
-Directory:
-- One shared category-mapping.json is used by the regional catalogue builder and the live Overpass query filters.
-- OSM objects can belong to more than one matching section (including pharmacy in both health and pharmacy).
-- Searchable records retain Arabic/English names, aliases, activities/tags, district, governorate and neighbourhood fields.
-- Search normalizes Alif variants, taa marbuta/ha, ya/alif maqsura and removes the definite article from query tokens.
-- Yemen national catalogue remains built from named OSM records; counts are data-driven.
-- Yemen ADM2 polygons from geoBoundaries (335 polygons; CSO/OCHA Yemen; CC BY 3.0 IGO) are combined with OSM boundaries. Polygon assignments and nearest-centroid estimates are counted separately.
+Core changes:
+- Dictionary-driven OpenStreetMap taxonomy from category-mapping.json; categories can be multi-assigned (e.g. pharmacy belongs to health and pharmacy).
+- Every place record retains Arabic/English names, category memberships, activity tags, address/neighbourhood and district/governorate search text.
+- Global search spans all 22 governorate catalogues; Arabic normalization folds Alif variants, taa marbuta/ha, ya/alif maqsura, diacritics and the definite article.
+- Yemen ADM2 polygons from geoBoundaries (335 district polygons) are combined with OSM administrative polygons. District assignments distinguish polygon matches from centroid estimates.
+- Souq shows PostgreSQL product listings only; map directory cards/restaurant records are not used as products. Seven product groups are exposed.
+- Merchant-feed sync uses authenticated, idempotent PostgreSQL upserts. Empty/partial/invalid snapshots do not archive existing products.
+- PWA cache namespace is v2.4.0. Android upgrades clear WebView HTTP cache once per new version while retaining localStorage.
+- Daily schedules cover places, jobs, service/FX checks and any configured merchant product feeds.
 
-Souq:
-- Product marketplace uses the shared PostgreSQL listing service, not OSM place cards.
-- The visible product filters are seven groups: electronics, vehicles, property, solar, home, agriculture and clothing.
-- Merchant feeds use the authenticated POST /api/marketplace/feed-sync route. Source feeds must be HTTPS JSON arrays or { items: [] }, with real price, currency, seller contact, governorate and district.
-- Incomplete or malformed snapshots do not archive previously active products.
-- No merchant feed URLs or sync token are embedded in source code. Configure DALILNA_PRODUCT_FEED_URLS and DALILNA_PRODUCT_SYNC_TOKEN in GitHub Secrets/Variables and Render Environment before live merchant products can be ingested.
-- Product cards show seller, category, price/currency, location, description, WhatsApp and sharing when supplied.
-- User marketplace listings are free and expire after 60 days from listing creation. The application currently has no user registration/account identity model to calculate a 60-day free period from account registration.
-- Store/business listing lifetime policy is not a billing workflow in the current schema.
-- The requested 60-day free period from account registration and lifetime-free merchant-store plan are not implemented because the current product has no user account/registration or merchant subscription model. Existing user classifieds expire 60 days after the listing is created.
-
-Daily sync:
-- Regional places/catalogue: GitHub Actions daily, plus run on mapping/builder commits.
-- Jobs: GitHub Actions daily. YemenHR links are filtered to avoid Telegraph intermediaries; a direct official application URL is shown only when a verified direct source is available.
-- Merchant product feed: GitHub Actions and Render cron entry point; actual products require merchant JSON feed URLs and shared sync token.
-- FX/gold: live ye-rial.com API on app load, refreshes periodically, and hides readings older than 24 hours.
-
-Release:
-- PWA cache namespace v2.4.0 deletes previous Dalilna cache versions on service-worker activation.
-- Android versionCode 240/versionName 2.4.0. On upgrade Android clears WebView HTTP cache, not localStorage; user-created local data is retained.
-- APK remains a debug-signed test build; not a production Play Store signature.
+Sources/licenses:
+- OpenStreetMap contributors, ODbL-1.0.
+- Open Admin Data Yemen for administrative names/centres, CC BY 4.0.
+- geoBoundaries Yemen ADM2, sourced from Central Statistical Organization (CSO), OCHA Yemen, CC BY 3.0 IGO.
+- Yemen exchange quote provider: https://ye-rial.com/ (market indicators, not official central-bank rates).
