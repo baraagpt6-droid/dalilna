@@ -4231,7 +4231,7 @@ function catalogStatsForScope(){
  return {count:rows.length,categories,boundaryCount:Number(summary?.boundaryCount||0),approximateCount:Number(summary?.approximateCount||0),snapshotDate:cached.snapshotDate||manifest.snapshotDate||""};
 }
 function getMarketplaceCount(category){const ctx=regionCurrentContext(),counts=ctx.gov?liveMarketplaceCounts.governorates?.[ctx.gov]:liveMarketplaceCounts.all;return Number(counts?.[category]||0);}
-function getDirectoryCategoryCount(category){const stats=catalogStatsForScope(),categories=stats?.categories||{};const aliases=category==="land"?["real_estate"]:category==="parts"?["vehicles"]:[];return Number(categories?.[category]||0)+aliases.reduce((sum,key)=>sum+Number(categories?.[key]||0),0)+getMarketplaceCount(category);}
+function getDirectoryCategoryCount(category){const stats=catalogStatsForScope(),categories=stats?.categories||{};const aliases=category==="land"?["real_estate"]:[];return Number(categories?.[category]||0)+aliases.reduce((sum,key)=>sum+Number(categories?.[key]||0),0)+getMarketplaceCount(category);}
 async function loadRegionalCatalogManifest(force){
  if(!force&&liveCatalogManifestPromise)return liveCatalogManifestPromise;
  const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=2.3.0";
@@ -4368,7 +4368,7 @@ function regionalCatalogCardHTML(item){
  let card=liveDirectoryCardHTML(item);
  const label=labels[item.category];
  if(label)card=card.replace('<span class="tag">خدمة</span>','<span class="tag">'+esc(label)+'</span>');
- const note=item.assignmentQuality==="osm-boundary"
+ const note=["osm-boundary","geoboundaries-polygon"].includes(item.assignmentQuality)
   ?"التصنيف الإداري مستند إلى مضلع حدود منشور في OpenStreetMap."
   :"المحافظة والمديرية تقدير تقريبي من أقرب مركز إداري؛ تحقق من الموقع قبل الاعتماد عليه.";
  return card.replace("</article>",'<small class="live-directory-local-note">'+esc(note)+'</small></article>');
@@ -4397,7 +4397,7 @@ function renderLiveDirectoryResponse(data){
   return;
  }
  const visible=items.slice(0,liveDirectoryVisibleCount);
- let cards=visible.map(regionalCatalogCardHTML).join("");
+ let cards=visible.map(item=>regionalCatalogCardHTML(item,data.category)).join("");
  if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">عرض المزيد ('+(items.length-visible.length)+')</button>';
  box.innerHTML=shared+cards;
 }
@@ -4405,7 +4405,7 @@ function liveDirectoryLocationPrompt(manifest){
  const box=$("#liveDirectoryItems");if(!box)return;
  const rows=manifest&&manifest.governorates||[];
  const total=rows.reduce((sum,row)=>sum+Number(row.count||0),0);
- $("#liveDirectoryStatus").textContent="فهرس اليمن المحلي: "+Number(total).toLocaleString("ar")+" مكاناً مسجلاً موزعة على "+rows.length+" محافظة. اكتب اسم المكان للبحث في اليمن كله، أو اختر محافظة لتصفية النتائج.";
+ $("#liveDirectoryStatus").textContent="فهرس اليمن المحلي: "+Number(total).toLocaleString("ar")+" مكاناً مسجلاً موزعة على "+rows.length+" محافظة. اكتب اسم المحل أو النشاط للبحث في اليمن كله، أو اختر محافظة أو مديرية لتضييق النتائج.";
  const buttons=rows.map(row=>'<button type="button" class="region-governorate-pill" data-region-gov="'+esc(row.name)+'">'+esc(row.name)+' <small>'+Number(row.count||0).toLocaleString("ar")+'</small></button>').join("");
  box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">اختر المحافظة لعرض المحلات والخدمات والمدارس والمرافق المسجلة فيها. السجل لا يحصر كل نشاط موجود في الواقع.</div><div class="region-governorate-pills">'+buttons+'</div>';
 }
@@ -4471,7 +4471,7 @@ async function runLiveDirectorySearch(force){
     }
    }
    if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
-   const responseData={items:rows,manifest,snapshotDate:manifest?.snapshotDate,regionName:context.gov||"اليمن",context,classifiedOnly};
+   const responseData={items:rows,manifest,snapshotDate:manifest?.snapshotDate,regionName:context.gov||"اليمن",context,classifiedOnly,category};
    renderLiveDirectoryResponse(responseData);
    sharedPromise.then(()=>{if(seq===liveDirectorySeq&&!controller.signal.aborted)renderLiveDirectoryResponse(responseData);});
   }catch(error){
