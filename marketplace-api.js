@@ -2,19 +2,17 @@
 const crypto=require("node:crypto");
 const {URL}=require("node:url");
 const CATEGORIES=new Set(["grocery","food","cafe","edu","health","pharmacy","gov","money","jobs","land","build","parts","craft","transport","telecom","utility","farm","mosque","gold","wedding","hotel","market","solar","elec","clothes","home","books","beauty","delivery","salon","laundry","souq","other","marketplace"]);
-const PRODUCT_TYPES=new Set(["phone","phone_accessories","watch","computer","computer_accessories","tablet","camera","car","motorcycle","vehicle_parts","land","property","apartment","house","electronics","appliance","furniture","clothing","shoes","jewelry","honey","coffee","spices","food","livestock","agriculture","building_materials","books","stationery","perfume","cosmetics","solar_equipment","tools","household_items","kitchenware","baby_products","games","sports_equipment","animal_feed","seeds","construction_equipment","other"]);
+const PRODUCT_TYPES=new Set(["phone","phone_accessories","watch","computer","computer_accessories","tablet","camera","screen","monitor","charger","audio_accessories","car","motorcycle","vehicle_parts","land","property","apartment","house","electronics","appliance","furniture","clothing","shoes","jewelry","honey","coffee","spices","livestock","agriculture","building_materials","books","stationery","perfume","cosmetics","solar_equipment","solar_panel","battery","inverter","power_system","tools","household_items","kitchenware","baby_products","games","sports_equipment","animal_feed","seeds","construction_equipment","other"]);
 const LISTING_TYPES=new Set(["sale","wanted","barter","free","rent"]);
-const PRODUCT_GROUPS = {
-  electronics:["phone","phone_accessories","watch","computer","computer_accessories","tablet","camera","electronics","appliance"],
+const PRODUCT_GROUPS = Object.freeze({
+  electronics:["phone","phone_accessories","computer","computer_accessories","tablet","camera","electronics","watch","screen","monitor","charger","audio_accessories"],
   vehicles:["car","motorcycle","vehicle_parts"],
-  solar:["solar_equipment"],
-  home:["furniture","appliance","household_items","kitchenware","baby_products"],
   property:["land","property","apartment","house"],
-  agriculture:["livestock","agriculture","animal_feed","seeds"],
-  tools:["tools","building_materials","construction_equipment"],
-  clothing:["clothing","shoes","perfume","cosmetics","jewelry"],
-  other:["other","games","sports_equipment","honey","coffee","spices","food","books","stationery"]
-};
+  solar:["solar_equipment","solar_panel","battery","inverter","power_system"],
+  home:["furniture","appliance","household_items","kitchenware","baby_products"],
+  agriculture:["livestock","agriculture","animal_feed","seeds","honey","coffee","spices","tools","building_materials","construction_equipment"],
+  clothing:["clothing","shoes","perfume","cosmetics","jewelry","books","stationery","games","sports_equipment","other"]
+});
 
 const CONDITIONS=new Set(["new","used","unknown"]);
 const CURRENCIES=new Set(["YER","SAR","USD","OMR","AED","other"]);
@@ -108,5 +106,55 @@ async function submit(req,res){if(!limit(req,"submit",60,3600000))return send(re
 }
 async function pending(req,res){admin(req);if(!limit(req,"admin",60,60000))return send(res,429,{ok:false,error:"طلبات مراجعة كثيرة."});const db=getPool();await schema(db);const r=await db.query("SELECT id,client_ref,title,category,product_type,listing_type,condition,governorate,district,area,village,country,description,phone,opening_hours,website,seller_name,price,currency,image_data,latitude,longitude,deadline,status,created_at,approved_at,updated_at FROM marketplace_listings WHERE status='pending' ORDER BY created_at ASC LIMIT 100");return send(res,200,{ok:true,items:r.rows.map(x=>map(x,true)),count:r.rows.length});}
 async function review(req,res){admin(req);const b=await body(req,12000),id=clean(b.id,50),decision=clean(b.decision,16),note=clean(b.note,500);if(!/^[0-9a-f-]{36}$/i.test(id)||!["approve","reject"].includes(decision))throw error("INVALID_REVIEW","قرار المراجعة غير صالح.");const db=getPool();await schema(db);const c=await db.connect();try{await c.query("BEGIN");const status=decision==="approve"?"approved":"rejected";const r=await c.query("UPDATE marketplace_listings SET status=$2,review_note=$3,approved_at=CASE WHEN $2='approved' THEN NOW() ELSE NULL END,updated_at=NOW() WHERE id=$1 AND status='pending' RETURNING id,title,category,status",[id,status,note]);if(!r.rows.length){await c.query("ROLLBACK");return send(res,404,{ok:false,error:"الإعلان غير موجود أو تمت مراجعته."});}await c.query("INSERT INTO marketplace_moderation_log(listing_id,action,note) VALUES($1,$2,$3)",[id,status,note]);await c.query("COMMIT");return send(res,200,{ok:true,item:r.rows[0]});}catch(e){try{await c.query("ROLLBACK");}catch(_){}throw e;}finally{c.release();}}
-async function handleMarketplaceRequest(req,res,url){if(!url.pathname.startsWith("/api/marketplace/"))return false;try{const r=url.pathname.slice("/api/marketplace/".length);if(r==="status"&&req.method==="GET")await status(res);else if(r==="counts"&&req.method==="GET")await counts(req,res);else if(r==="listings"&&req.method==="GET")await list(req,res,url);else if(r==="listings"&&req.method==="POST")await submit(req,res);else if(r==="admin/pending"&&req.method==="GET")await pending(req,res);else if(r==="admin/review"&&req.method==="POST")await review(req,res);else send(res,404,{ok:false,error:"المسار غير موجود."});}catch(e){send(res,e.statusCode||500,{ok:false,code:e.code||"INTERNAL_ERROR",error:clean(e.message,240)||"تعذر تنفيذ الطلب."});}return true;}
+async function syncMerchantFeed(req,res){
+ const expected=String(process.env.DALILNA_PRODUCT_SYNC_TOKEN||"");
+ const authorization=String(req.headers.authorization||"");
+ const supplied=authorization.startsWith("Bearer ")?authorization.slice(7).trim():"";
+ if(expected.length<32)throw error("PRODUCT_SYNC_NOT_CONFIGURED","مزامنة منتجات التجار غير مهيأة على الخادم.",503);
+ const expectedBytes=Buffer.from(expected),suppliedBytes=Buffer.from(supplied);
+ if(expectedBytes.length!==suppliedBytes.length||!crypto.timingSafeEqual(expectedBytes,suppliedBytes))throw error("PRODUCT_SYNC_AUTH_FAILED","رمز مزامنة المنتجات غير صحيح.",403);
+ if(!limit(req,"product-feed-sync",30,3600000))throw error("PRODUCT_SYNC_RATE_LIMIT","طلبات مزامنة كثيرة.",429);
+ const payload=await body(req,2500000),items=Array.isArray(payload.items)?payload.items:[];
+ const sourceKey=clean(payload.sourceKey,50).toLowerCase().replace(/[^a-z0-9_-]/g,"");
+ const sourceName=clean(payload.sourceName||sourceKey,100);
+ const completeSnapshot=payload.completeSnapshot===true;
+ const activeClientRefs=Array.isArray(payload.activeClientRefs)
+  ? [...new Set(payload.activeClientRefs.map(value=>clean(value,100)).filter(value=>value.startsWith("feed:")&&value.length>=10&&value.length<=100))]
+  : [];
+ if(!sourceKey||items.length===0||items.length>250)throw error("INVALID_PRODUCT_FEED","خلاصة المنتجات فارغة أو غير صالحة.");
+ if(completeSnapshot&&!activeClientRefs.length)throw error("INVALID_PRODUCT_SNAPSHOT","لا يمكن اعتماد لقطة كاملة من دون قائمة المنتجات النشطة.");
+ const db=getPool();await schema(db);const client=await db.connect();
+ let inserted=0,updated=0,skipped=0;const activeRefs=[];
+ try{
+  await client.query("BEGIN");
+  for(const raw of items){
+   try{
+    const suppliedRef=clean(raw.clientRef,100);
+    const clientRef=suppliedRef.startsWith("feed:")?suppliedRef:"feed:"+sourceKey+":"+clean(raw.id,80).replace(/[^a-zA-Z0-9._:-]/g,"-");
+    if(clientRef.length<10||clientRef.length>100||!raw.phone||!raw.sellerName)throw new Error("seller contact missing");
+    const item=validate({...raw,category:"souq",clientRef,country:"اليمن",listingType:raw.listingType||"sale",condition:raw.condition||"unknown"});
+    if(!item.governorate||!item.district)throw new Error("location missing");
+    const sql="INSERT INTO marketplace_listings (id,client_ref,title,category,product_type,listing_type,condition,governorate,district,area,village,country,description,phone,opening_hours,website,seller_name,price,currency,image_data,latitude,longitude,deadline,status,approved_at,review_note,expires_at) VALUES ($1,$2,$3,'souq',$4,$5,$6,$7,$8,$9,$10,'اليمن',$11,$12,'',$13,$14,$15,$16,$17,$18,$19,NULL,'approved',NOW(),$20,NOW()+INTERVAL '60 days') ON CONFLICT(client_ref) DO UPDATE SET title=EXCLUDED.title,product_type=EXCLUDED.product_type,listing_type=EXCLUDED.listing_type,condition=EXCLUDED.condition,governorate=EXCLUDED.governorate,district=EXCLUDED.district,area=EXCLUDED.area,village=EXCLUDED.village,description=EXCLUDED.description,phone=EXCLUDED.phone,website=EXCLUDED.website,seller_name=EXCLUDED.seller_name,price=EXCLUDED.price,currency=EXCLUDED.currency,image_data=EXCLUDED.image_data,latitude=EXCLUDED.latitude,longitude=EXCLUDED.longitude,review_note=EXCLUDED.review_note,status='approved',approved_at=NOW(),updated_at=NOW(),expires_at=CASE WHEN marketplace_listings.status='archived' AND marketplace_listings.review_note LIKE 'merchant_feed:%' THEN NOW()+INTERVAL '60 days' ELSE marketplace_listings.expires_at END WHERE marketplace_listings.client_ref LIKE 'feed:%' AND marketplace_listings.status IN ('approved','archived') RETURNING (xmax=0) AS inserted";
+    const values=[item.id,item.clientRef,item.title,item.productType,item.listingType,item.condition,item.governorate,item.district,item.area,item.village,item.description,item.phone,item.website,item.sellerName,item.price,item.currency,item.image,item.latitude,item.longitude,"merchant_feed:"+sourceName];
+    const result=await client.query(sql,values);
+    if(!result.rows.length)skipped++;
+    else{
+     activeRefs.push(item.clientRef);
+     if(result.rows[0].inserted)inserted++;
+     else updated++;
+    }
+   }catch(_){skipped++;}
+  }
+  let archived=0;
+  if(completeSnapshot&&skipped===0&&activeClientRefs.length>0&&activeRefs.length===activeClientRefs.length&&activeRefs.every(ref=>activeClientRefs.includes(ref))){
+   const stale=await client.query("UPDATE marketplace_listings SET status='archived',expires_at=NOW(),updated_at=NOW() WHERE client_ref LIKE 'feed:%' AND status='approved' AND NOT (client_ref=ANY($1::text[])) RETURNING id",[activeClientRefs]);
+   archived=stale.rowCount||0;
+  }
+  await client.query("COMMIT");
+  console.info(JSON.stringify({event:"marketplace.feed_sync",source:sourceName,received:items.length,inserted,updated,skipped,archived}));
+  return send(res,200,{ok:true,source:sourceName,received:items.length,inserted,updated,skipped,archived,completeSnapshot,archivedFromSnapshot:completeSnapshot&&archived>0,fetchedAt:new Date().toISOString()});
+ }catch(e){await client.query("ROLLBACK");throw e;}
+ finally{client.release();}
+}
+async function handleMarketplaceRequest(req,res,url){if(!url.pathname.startsWith("/api/marketplace/"))return false;try{const r=url.pathname.slice("/api/marketplace/".length);if(r==="status"&&req.method==="GET")await status(res);else if(r==="counts"&&req.method==="GET")await counts(req,res);else if(r==="listings"&&req.method==="GET")await list(req,res,url);else if(r==="listings"&&req.method==="POST")await submit(req,res);else if(r==="feed-sync"&&req.method==="POST")await syncMerchantFeed(req,res);else if(r==="admin/pending"&&req.method==="GET")await pending(req,res);else if(r==="admin/review"&&req.method==="POST")await review(req,res);else send(res,404,{ok:false,error:"المسار غير موجود."});}catch(e){send(res,e.statusCode||500,{ok:false,code:e.code||"INTERNAL_ERROR",error:clean(e.message,240)||"تعذر تنفيذ الطلب."});}return true;}
 module.exports={handleMarketplaceRequest,validate,CATEGORIES,PRODUCT_TYPES,GOVERNORATES,PRODUCT_GROUPS};

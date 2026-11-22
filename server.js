@@ -7,7 +7,7 @@ const { handleJobsRequest } = require("./jobs-api");
 const geminiAssistantHandler = require("./api/assistant");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "2.1.0";
+const VERSION = "2.4.0";
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -29,44 +29,29 @@ let lastGeocodeAt = 0;
 let lastOverpassAt = 0;
 
 
-const FILTERS = {
-  all: [
-    '["shop"]',
-    '["amenity"~"^(pharmacy|hospital|clinic|doctors|dentist|restaurant|fast_food|cafe|school|college|university|kindergarten|marketplace|bank|atm|fuel|bus_station|taxi|place_of_worship|post_office|events_venue)$"]',
-    '["tourism"~"^(hotel|guest_house|hostel)$"]',
-    '["office"="government"]',
-    '["craft"]'
-  ],
-  grocery: ['["shop"~"^(convenience|grocery|supermarket|general)$"]', '["amenity"="marketplace"]'],
-  food: ['["amenity"~"^(restaurant|fast_food)$"]', '["shop"="bakery"]'],
-  cafe: ['["amenity"="cafe"]'],
-  pharmacy: ['["amenity"="pharmacy"]'],
-  health: ['["amenity"~"^(hospital|clinic|doctors|dentist)$"]'],
-  edu: ['["amenity"~"^(school|college|university|kindergarten)$"]'],
-  gov: ['["office"="government"]'],
-  money: ['["amenity"~"^(bank|atm|bureau_de_change)$"]'],
-  craft: ['["craft"]', '["shop"="hardware"]'],
-  transport: ['["amenity"~"^(bus_station|taxi)$"]', '["public_transport"="station"]'],
-  mosque: ['["amenity"="place_of_worship"]["religion"="muslim"]', '["building"="mosque"]'],
-  hotel: ['["tourism"~"^(hotel|guest_house|hostel)$"]'],
-  market: ['["amenity"="marketplace"]'],
-  solar: ['["shop"~"^(electronics|electrical|hardware)$"]'],
-  parts: ['["shop"="car_parts"]'],
-  build: ['["shop"="building_materials"]'],
-  clothes: ['["shop"~"^(clothes|shoes)$"]'],
-  home: ['["shop"~"^(furniture|houseware|appliance)$"]'],
-  books: ['["shop"~"^(books|stationery)$"]'],
-  vehicles: ['["shop"~"^(car|motorcycle|car_repair|car_parts|vehicle)$"]'],
-  watches: ['["shop"="watches"]', '["craft"="watchmaker"]'],
-  beauty: ['["shop"~"^(beauty|cosmetics|perfumery)$"]'],
-  salon: ['["shop"="hairdresser"]'],
-  laundry: ['["shop"="laundry"]'],
-  delivery: ['["amenity"="post_office"]', '["shop"="parcel"]'],
-  utility: ['["shop"~"^(gas|propane)$"]'],
-  gold: ['["shop"="jewelry"]'],
-  wedding: ['["amenity"="events_venue"]'],
-  farm: ['["shop"~"^(agrarian|garden_centre|farm)$"]']
-};
+const CATEGORY_MAPPING = require("./category-mapping.json");
+const ALL_OSM_KEYS = [
+  "shop","amenity","healthcare","tourism","office","craft","leisure",
+  "public_transport","landuse","railway","building","emergency",
+  "delivery","courier","service"
+];
+const ALL_FILTERS = [...new Set(ALL_OSM_KEYS.map(key => '[ "'+key+'" ]'.replace(/ /g,"")))];
+const CATEGORY_ALIASES = {land:"real_estate",watches:"gold"};
+function osmFilter(rule) {
+  const key=String(rule.key||"").replace(/[^a-zA-Z0-9:_-]/g,"");
+  const value=String(rule.value||"");
+  if(!key)return "";
+  if(value==="*")return '["'+key+'"]';
+  if(!/^[a-zA-Z0-9:_-]+$/.test(value))return "";
+  return '["'+key+'"="'+value+'"]';
+}
+const FILTERS = Object.fromEntries(Object.entries(CATEGORY_MAPPING.categories||{}).map(([category,definition])=>{
+  const rules=(definition.osmTags||[]).map(osmFilter).filter(Boolean);
+  return [category,rules.length?rules:ALL_FILTERS];
+}));
+FILTERS.all=ALL_FILTERS;
+FILTERS.land=FILTERS.real_estate||ALL_FILTERS;
+FILTERS.watches=FILTERS.gold||ALL_FILTERS;
 
 function json(res, status, payload, extraHeaders = {}) {
   const body = JSON.stringify(payload);
@@ -210,41 +195,28 @@ function buildOverpassQuery(bbox, category) {
   return "[out:json][timeout:12][maxsize:134217728];\n(\n" + union + "\n);\nout center tags 80;";
 }
 
+function normalizeCategorySearch(value) {
+  return normalizeText(value).replace(/ة/g,"ه").replace(/ى/g,"ي").split(/\\s+/)
+    .filter(Boolean).map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
+}
 function inferCategoryFromQuery(query) {
-  const text = normalizeText(query);
-  if (!text) return "";
-  const rules = [
-    ["books", /(قلم|اقلام|دفتر|دفاتر|كراس[ةه]|قرطاسي|مكتبه|مكتبات|كتاب|كتب|ادوات\s*مدرسي|مدرسي|ممحاه|مبراة|مسطره)/u],
-    ["vehicles", /(سياره|سيارات|مركبه|مركبات|معرض سيارات|دراجه ناريه|دراجات ناريه)/u],
-    ["watches", /(ساعه|ساعات|ساعات يد|ساعه يد)/u],
-    ["grocery", /(بقال|تموين|سوبر\s?ماركت|مواد\s?غذائي|ميني\s?ماركت|جمعيه استهلاكيه)/u],
-    ["pharmacy", /(صيدل|دواء|ادويه|علاج|حبوب|مستلزمات طبيه)/u],
-    ["health", /(مستشف|مستوصف|مركز صحي|عياده|عيادات|مختبر|طبيب|اطباء|اسنان)/u],
-    ["food", /(مطعم|مطاعم|مخبز|مخابز|وجبات|فطور|غداء|عشاء)/u],
-    ["cafe", /(بوفيه|كافيه|كوفي|قهوه|كافتيريا)/u],
-    ["edu", /(مدرس|مدارس|معهد|جامعه|كليه|روضه|حضان)/u],
-    ["mosque", /(مسجد|مساجد|جامع|جوامع)/u],
-    ["money", /(بنك|صراف|صرافه|تحويل|صرف عمله|حوالات)/u],
-    ["telecom", /(جوال|جوالات|موبايل|موبايلات|هاتف|هواتف|اتصالات|شرائح|اكسسوارات الجوال)/u],
-    ["elec", /(الكترونيات|اجهزه كهربائيه|كمبيوتر|حاسوب|لابتوب|طابعات|شاشات)/u],
-    ["craft", /(سباك|سباكه|كهربائي|نجار|حداد|ميكانيكي|تصليح|صيان[ةه]|فني)/u],
-    ["build", /(مواد بناء|اسمنت|حديد|دهانات|ادوات بناء)/u],
-    ["clothes", /(ملابس|احذيه|ثياب|فساتين|عبايات)/u],
-    ["home", /(اثاث|ادوات منزليه|اجهزه منزليه|مفروشات)/u],
-    ["books", /(مكتبه|قرطاسيه|كتب|ادوات مدرسيه)/u],
-    ["beauty", /(عطور|تجميل|مكياج|كوزمتك|مستحضرات)/u],
-    ["transport", /(تاكسي|باص|مواصلات|نقل)/u],
-    ["hotel", /(فندق|فنادق|نزل|شقق مفروشه)/u],
-    ["market", /(سوق مركزي|اسواق|مول|مركز تجاري)/u],
-    ["gold", /(ذهب|مجوهرات|صياغه)/u],
-    ["salon", /(حلاق|حلاقه|صالون)/u],
-    ["laundry", /(مغسله|مغاسل|غسيل ملابس|كوي)/u],
-    ["delivery", /(توصيل|مندوب|شحن|بريد)/u],
-    ["jobs", /(وظائف|وظيفه|توظيف|شاغر|فرص عمل)/u],
-    ["souq", /(للبيع|بيع وشراء|سوق البيع|منتجات للبيع|مستعمل للبيع)/u]
-  ];
-  const match = rules.find(([, pattern]) => pattern.test(text));
-  return match ? match[0] : "";
+  const text=normalizeCategorySearch(query);
+  if(!text)return "";
+  const queryTokens=new Set(text.split(" "));
+  const ordered=CATEGORY_MAPPING.primaryCategoryOrder||Object.keys(CATEGORY_MAPPING.categories||{});
+  for(const [category,definition] of ordered.map(key=>[key,CATEGORY_MAPPING.categories[key]]).filter(([,definition])=>definition)){
+    const aliases=[definition.labelAr,definition.labelEn,...(definition.aliases||[])].filter(Boolean);
+    for(const alias of aliases){
+      const normalized=normalizeCategorySearch(alias);
+      const tokens=normalized.split(" ").filter(Boolean);
+      const matches=normalized&&(text===normalized||text.includes(normalized)||(text.length>=3&&normalized.includes(text))||tokens.every(token=>queryTokens.has(token)));
+      if(matches){
+        if(category==="real_estate")return "land";
+        return category;
+      }
+    }
+  }
+  return "";
 }
 const GEOAPIFY_CATEGORY_MAP = {
   grocery: ["commercial.supermarket", "commercial.convenience", "commercial.marketplace"],
@@ -414,8 +386,8 @@ async function searchGeoapifyPlaces(params) {
   const lat = Number(params.lat), lon = Number(params.lon);
   const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
   const radius = Math.min(15000, Math.max(1000, Number(params.radius) || 7000));
-  if ((!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen") && !hasCoordinates) {
-    const error = new Error("اختر محافظة أو مديرية أولاً، أو فعّل البحث حول موقعك.");
+  if ((!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen") && !hasCoordinates && !query) {
+    const error = new Error("أدخل اسم مكان أو نشاط للبحث في اليمن، أو اختر محافظة أو مديرية لتضييق النطاق.");
     error.statusCode = 400;
     throw error;
   }
@@ -817,8 +789,8 @@ async function searchPlaces(params) {
   const lon = Number(params.lon);
   const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
   const radius = Math.min(15000, Math.max(1000, Number(params.radius) || 7000));
-  if ((!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen") && !hasCoordinates) {
-    const error = new Error("اختر محافظة أو مديرية أولاً، أو فعّل البحث حول موقعك.");
+  if ((!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen") && !hasCoordinates && !query) {
+    const error = new Error("أدخل اسم مكان أو نشاط للبحث في اليمن، أو اختر محافظة أو مديرية لتضييق النطاق.");
     error.statusCode = 400;
     throw error;
   }

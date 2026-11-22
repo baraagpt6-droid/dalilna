@@ -1,34 +1,20 @@
-Dalilna 2.3.0
-Application release: PWA + Android WebView
-Android versionCode: 230
-Web app version: 2.3.0
+Dalilna 2.4.0
+Web/PWA version: 2.4.0
+Android versionName: 2.4.0
+Android versionCode: 240
 
-Directory search:
-- A non-empty main search loads and searches all 22 governorate catalogue files, without requiring a governorate filter.
-- Selecting a category searches that category across Yemen; governorate and district scope filters remain optional.
-- Arabic search normalization folds Alif variants, ta marbuta/ha, ya/alif maqsura, removes diacritics and strips the leading definite article from search tokens.
-- The national catalogue is the 2026-11-22 OpenStreetMap snapshot: 14,886 records across 22 governorates and 335 districts.
-- Catalogue coverage is limited to mapped and named records. A missing result does not prove that a business exists nowhere.
+Core changes:
+- Dictionary-driven OpenStreetMap taxonomy from category-mapping.json; categories can be multi-assigned (e.g. pharmacy belongs to health and pharmacy).
+- Every place record retains Arabic/English names, category memberships, activity tags, address/neighbourhood and district/governorate search text.
+- Global search spans all 22 governorate catalogues; Arabic normalization folds Alif variants, taa marbuta/ha, ya/alif maqsura, diacritics and the definite article.
+- Yemen ADM2 polygons from geoBoundaries (335 district polygons) are combined with OSM administrative polygons. District assignments distinguish polygon matches from centroid estimates.
+- Souq shows PostgreSQL product listings only; map directory cards/restaurant records are not used as products. Seven product groups are exposed.
+- Merchant-feed sync uses authenticated, idempotent PostgreSQL upserts. Empty/partial/invalid snapshots do not archive existing products.
+- PWA cache namespace is v2.4.0. Android upgrades clear WebView HTTP cache once per new version while retaining localStorage.
+- Daily schedules cover places, jobs, service/FX checks and any configured merchant product feeds.
 
-Marketplace:
-- Approved user-submitted sale, wanted, barter, free and rental listings continue to come from the shared PostgreSQL marketplace.
-- The Souq screen also shows a separate directory of commercial locations recorded in the OpenStreetMap catalogue, filterable by governorate and business category.
-- A mapped business is not a claim that a product is currently in stock or available at a given price. Verified product inventory must come from a merchant feed or an approved listing.
-- New listings remain pending until server-side admin approval. Shared marketplace API secrets remain server-only.
-
-Exchange rates and gold:
-- Current buy/sell indicators load from the public ye-rial.com REST API.
-- Sana'a and Aden markets are shown separately because they use different Yemeni banknote editions.
-- The app displays rates only when the source's last_verified_at or last_sync is within 24 hours and the required USD, SAR and 21K gold readings are present.
-- If the source cannot confirm a recent reading, values are hidden rather than reusing device-stored numbers.
-- Source attribution: https://ye-rial.com/ and API documentation: https://ye-rial.com/api/docs/.
-- Rates are indicative market data, not an official central-bank notice or a guaranteed exchange quote.
-
-Caching and Android:
-- PWA service-worker cache name is versioned to 2.3.0; old Dalilna PWA caches are deleted on activation.
-- Android version upgrades clear the WebView HTTP cache once per new version. User localStorage and user-created listings are preserved.
-- Android assets are synchronized from the PWA files during CI before the APK build.
-- Android APK is a debug-signed testing build, not a Google Play production release.
-
-OpenStreetMap data license: ODbL-1.0; attribution: © OpenStreetMap contributors.
-Administrative reference data: Open Admin Data Yemen, CC BY 4.0.
+Sources/licenses:
+- OpenStreetMap contributors, ODbL-1.0.
+- Open Admin Data Yemen for administrative names/centres, CC BY 4.0.
+- geoBoundaries Yemen ADM2, sourced from Central Statistical Organization (CSO), OCHA Yemen, CC BY 3.0 IGO.
+- Yemen exchange quote provider: https://ye-rial.com/ (market indicators, not official central-bank rates).

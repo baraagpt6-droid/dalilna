@@ -72,7 +72,7 @@ jobs:
         env:
           LIVE_API_BASE_URL: https://dalilna-live.onrender.com
         run: node scripts/live-places-smoke.cjs
-      - name: Verify Dalilna 2.1 live API, marketplace database and jobs endpoints
+      - name: Verify Dalilna 2.4 live API, marketplace database and jobs endpoints
         if: github.event_name == 'push'
         env:
           LIVE_API_BASE_URL: https://dalilna-live.onrender.com
@@ -86,7 +86,7 @@ jobs:
             return body;
           }
           const health = await get("/health");
-          if (health.version !== "2.1.0") throw new Error("Expected API version 2.1.0, got " + health.version);
+          if (health.version !== "2.4.0") throw new Error("Expected API version 2.4.0, got " + health.version);
           const market = await get("/api/marketplace/status");
           if (market.ready !== true || market.databaseConfigured !== true) {
             throw new Error("Marketplace database is not ready: " + JSON.stringify(market));

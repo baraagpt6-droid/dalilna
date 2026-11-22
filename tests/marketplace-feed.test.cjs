@@ -25,3 +25,21 @@ test("merchant WhatsApp phone numbers are normalized and checked",()=>{
  assert.equal(phoneNumber("0777123456"),"967777123456");
  assert.equal(phoneNumber("123"),"");
 });
+
+test("all commercial product groups map through the supported OSM marketplace taxonomy",()=>{
+ const base={id:"sku",title:"عرض",sellerName:"متجر",phone:"777123456",governorate:"إب",district:"حبيش",price:"100",currency:"YER"};
+ for(const [productType,group] of [
+  ["phone","electronics"],["computer","electronics"],["motorcycle","vehicles"],
+  ["vehicle_parts","vehicles"],["house","property"],["solar_panel","solar"],
+  ["battery","solar"],["furniture","home"],["livestock","agriculture"],
+  ["tools","agriculture"],["clothing","clothing"],["perfume","clothing"]
+ ]){
+  const item=mapFeedItem({...base,id:productType,productType});
+  assert.equal(item?.productGroup,group,productType);
+ }
+});
+test("sold and unavailable products never re-enter the published feed snapshot",()=>{
+ const base={id:"sku",title:"عرض",productType:"phone",sellerName:"متجر",phone:"777123456",governorate:"إب",district:"حبيش",price:"100",currency:"YER"};
+ for(const status of ["sold","deleted","expired","inactive","unavailable","out_of_stock"])assert.equal(mapFeedItem({...base,status}),null,status);
+ assert.equal(mapFeedItem({...base,active:false}),null);
+});

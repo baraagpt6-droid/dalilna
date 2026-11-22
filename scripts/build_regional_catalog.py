@@ -44,16 +44,56 @@ def tags_of(feature):
     return tags if isinstance(tags, dict) else props
 
 
-def geometry_point(geometry):
+def ring_centroid(ring):
+    if not isinstance(ring, (list, tuple)) or len(ring) < 4:
+        return None
+    area2 = cx = cy = 0.0
+    pairs = list(zip(ring, ring[1:]))
+    for first, second in pairs:
+        if len(first) < 2 or len(second) < 2:
+            continue
+        cross = float(first[0]) * float(second[1]) - float(second[0]) * float(first[1])
+        area2 += cross
+        cx += (float(first[0]) + float(second[0])) * cross
+        cy += (float(first[1]) + float(second[1])) * cross
+    if abs(area2) < 1e-12:
+        return None
+    return cx / (3.0 * area2), cy / (3.0 * area2), abs(area2) / 2.0
+
+
+def geometry_centroid(geometry):
     if not isinstance(geometry, dict):
         return None
-    if geometry.get("type") == "Point":
-        coords = geometry.get("coordinates") or []
-        if len(coords) >= 2:
-            lon, lat = float(coords[0]), float(coords[1])
-            if -180 <= lon <= 180 and -90 <= lat <= 90:
-                return lat, lon
-        return None
+    kind = geometry.get("type")
+    coordinates = geometry.get("coordinates") or []
+    polygons = [coordinates] if kind == "Polygon" else coordinates if kind == "MultiPolygon" else []
+    weighted_x = weighted_y = total_area = 0.0
+    for polygon in polygons:
+        if not polygon:
+            continue
+        outer = ring_centroid(polygon[0])
+        if not outer:
+            continue
+        ox, oy, outer_area = outer
+        area = outer_area
+        mx, my = ox * outer_area, oy * outer_area
+        # Holes subtract their area and centroid from the outer ring.
+        for hole in polygon[1:]:
+            inner = ring_centroid(hole)
+            if not inner:
+                continue
+            hx, hy, inner_area = inner
+            area -= inner_area
+            mx -= hx * inner_area
+            my -= hy * inner_area
+        if area > 1e-12:
+            cx, cy = mx / area, my / area
+            weighted_x += cx * area
+            weighted_y += cy * area
+            total_area += area
+    if total_area > 1e-12:
+        return weighted_y / total_area, weighted_x / total_area
+    # Degenerate geometries fall back to a representative bounding-box centre.
     values = []
     def walk(node):
         if isinstance(node, (list, tuple)):
@@ -64,12 +104,25 @@ def geometry_point(geometry):
             else:
                 for child in node:
                     walk(child)
-    walk(geometry.get("coordinates") or [])
+    walk(coordinates)
     if not values:
         return None
-    lons = [p[0] for p in values]
-    lats = [p[1] for p in values]
-    return (min(lats) + max(lats)) / 2, (min(lons) + max(lons)) / 2
+    lons = [point[0] for point in values]
+    lats = [point[1] for point in values]
+    return (min(lats) + max(lats)) / 2.0, (min(lons) + max(lons)) / 2.0
+
+
+def geometry_point(geometry):
+    if not isinstance(geometry, dict):
+        return None
+    if geometry.get("type") == "Point":
+        coords = geometry.get("coordinates") or []
+        if len(coords) >= 2:
+            lon, lat = float(coords[0]), float(coords[1])
+            if -180 <= lon <= 180 and -90 <= lat <= 90:
+                return lat, lon
+        return None
+    return geometry_centroid(geometry)
 
 
 def point_in_ring(lon, lat, ring):
@@ -110,78 +163,62 @@ def distance_km(lat1, lon1, lat2, lon2):
     return 2 * radius * math.asin(math.sqrt(min(1.0, a)))
 
 
-def classify(tags):
-    shop = str(tags.get("shop") or "").lower()
-    amenity = str(tags.get("amenity") or "").lower()
-    healthcare = str(tags.get("healthcare") or "").lower()
-    tourism = str(tags.get("tourism") or "").lower()
-    office = str(tags.get("office") or "").lower()
-    craft = str(tags.get("craft") or "").lower()
-    leisure = str(tags.get("leisure") or "").lower()
-    transport = str(tags.get("public_transport") or "").lower()
-    landuse = str(tags.get("landuse") or "").lower()
+def load_category_mapping(path=None):
+    mapping_path = Path(path) if path else Path(__file__).resolve().parent.parent / "category-mapping.json"
+    data = read_json(mapping_path)
+    categories = data.get("categories") if isinstance(data, dict) else None
+    if not isinstance(categories, dict) or not categories:
+        raise ValueError("category-mapping.json is missing its categories dictionary")
+    return data
 
-    if amenity == "marketplace":
-        return "market"
-    if shop in {"supermarket", "convenience", "grocery", "general", "greengrocer", "butcher"}:
-        return "grocery"
-    if amenity in {"restaurant", "fast_food", "food_court"} or shop == "bakery":
-        return "food"
-    if amenity == "cafe":
-        return "cafe"
-    if shop in {"books", "stationery"} or amenity == "library":
-        return "books"
-    if shop in {"pharmacy", "chemist"} or amenity == "pharmacy" or healthcare == "pharmacy":
-        return "pharmacy"
-    if amenity in {"hospital", "clinic", "doctors", "dentist"} or healthcare in {"hospital", "clinic", "doctor", "dentist"}:
-        return "health"
-    if amenity in {"school", "college", "university", "kindergarten"}:
-        return "edu"
-    if office in {"government", "administrative"}:
-        return "gov"
-    if office == "estate_agent" or shop == "estate_agent":
-        return "real_estate"
-    if shop in {"jewelry", "jewellery"}:
-        return "gold"
-    if amenity in {"bank", "atm", "bureau_de_change"}:
-        return "money"
-    if amenity == "place_of_worship" or tags.get("building") == "mosque":
-        return "mosque"
-    if tourism in {"hotel", "guest_house", "hostel", "motel", "apartment", "camp_site"}:
-        return "hotel"
-    if shop in {"car", "motorcycle", "car_repair", "car_parts", "tyres", "vehicle"}:
-        return "vehicles"
-    if shop == "watches" or craft == "watchmaker":
-        return "watches"
-    if shop in {"clothes", "shoes", "tailor"}:
-        return "clothes"
-    if shop in {"furniture", "houseware", "appliance"}:
-        return "home"
-    if shop in {"beauty", "cosmetics", "perfumery"}:
-        return "beauty"
-    if shop == "hairdresser":
-        return "salon"
-    if shop == "mobile_phone":
-        return "telecom"
-    if shop in {"electronics", "electrical", "computer"}:
-        return "elec"
-    if shop == "building_materials" or shop == "hardware":
-        return "build"
-    if craft:
-        return "craft"
-    if amenity in {"bus_station", "taxi", "fuel"} or transport in {"station", "stop_position", "platform"} or tags.get("railway") == "station":
-        return "transport"
-    if amenity == "post_office" or shop in {"parcel", "travel_agency"}:
-        return "delivery"
-    if shop in {"gas", "propane"}:
-        return "utility"
-    if amenity == "events_venue" or leisure == "amusement_arcade":
-        return "wedding"
-    if shop in {"agrarian", "garden_centre", "farm"} or landuse == "farmyard":
-        return "farm"
-    if tags.get("emergency") in {"fire_station", "ambulance_station"}:
-        return "health"
-    return None
+
+CATEGORY_MAPPING = load_category_mapping()
+
+
+def _matches_rule(tags, rule):
+    key = str(rule.get("key") or "")
+    value = str(tags.get(key) or "").strip().lower()
+    expected = str(rule.get("value") or "").strip().lower()
+    return bool(value) and (expected == "*" or value == expected)
+
+
+def categories_for_tags(tags, mapping=None):
+    mapping = mapping or CATEGORY_MAPPING
+    definitions = mapping.get("categories", {})
+    matched = []
+    for category, definition in definitions.items():
+        for rule in definition.get("osmTags", []):
+            if _matches_rule(tags, rule):
+                matched.append(category)
+                break
+
+    for rule in mapping.get("multiCategoryRules", []):
+        if not _matches_rule(tags, rule):
+            continue
+        condition = rule.get("when")
+        if condition and str(tags.get(condition.get("key")) or "").strip().lower() != str(condition.get("value") or "").strip().lower():
+            continue
+        for category in rule.get("categories", []):
+            if category in definitions and category not in matched:
+                matched.append(category)
+
+    # Retain named shops and public amenities even when OSM introduces a
+    # previously unseen value. They appear under "other" and remain searchable.
+    fallback_keys = ("shop", "amenity", "office", "healthcare", "tourism", "craft",
+                     "leisure", "public_transport", "railway", "emergency", "delivery",
+                     "courier", "service", "government")
+    if not matched and any(str(tags.get(key) or "").strip() for key in fallback_keys):
+        if "other" in definitions:
+            matched.append("other")
+
+    order = mapping.get("primaryCategoryOrder") or list(definitions)
+    rank = {category: index for index, category in enumerate(order)}
+    return sorted(set(matched), key=lambda category: rank.get(category, len(rank)))
+
+
+def classify(tags):
+    matched = categories_for_tags(tags)
+    return matched[0] if matched else None
 
 
 def load_admin(governorate_file, district_file, regions_file):
@@ -237,7 +274,8 @@ def load_admin(governorate_file, district_file, regions_file):
 
 
 def prepare_boundaries(features, governors, districts):
-    gov_names, district_names = {}, {}
+    gov_names = {}
+    district_names = defaultdict(list)
     for gov in governors:
         for value in (gov["name"], gov["nameLocal"], gov["nameEn"]):
             if value:
@@ -245,28 +283,72 @@ def prepare_boundaries(features, governors, districts):
     for district in districts:
         for value in (district["name"], district["nameLocal"], district["nameEn"]):
             if value:
-                district_names[normalize(value)] = (district["governorate"], district["name"])
+                key = normalize(value)
+                candidate = (district["governorate"], district["name"])
+                if candidate not in district_names[key]:
+                    district_names[key].append(candidate)
+
     output = []
     for feature in features:
         tags = tags_of(feature)
-        if tags.get("boundary") != "administrative":
+        props = feature.get("properties") or {}
+        geometry = feature.get("geometry") or {}
+        if geometry.get("type") not in {"Polygon", "MultiPolygon"}:
             continue
-        level = str(tags.get("admin_level") or "")
-        candidates = (tags.get("name:ar"), tags.get("name"), tags.get("name:en"), tags.get("official_name"))
-        target, kind = None, None
+
+        # Native OSM relations use boundary=administrative/admin_level.
+        # geoBoundaries GeoJSON uses shapeName/shapeType and carries explicit
+        # source/license metadata. Support both so we no longer depend on
+        # Yemen's incomplete OSM district boundary coverage.
+        is_osm = tags.get("boundary") == "administrative"
+        level = str(tags.get("admin_level") or props.get("shapeType") or "").upper()
+        candidates = (
+            tags.get("name:ar"), tags.get("name:en"), tags.get("name"),
+            tags.get("official_name"), props.get("shapeName"),
+            props.get("shapeNameLocal"), props.get("shapeNameEn")
+        )
+        target = None
+        source = "OpenStreetMap"
+        license_name = "ODbL-1.0"
+        quality = "osm-boundary"
+
         for name in candidates:
             key = normalize(name)
             if not key:
                 continue
-            if level in {"6", "7"} and key in district_names:
-                gov, district = district_names[key]
-                target, kind = {"governorate": gov, "district": district}, "district"
+            if (level in {"6", "7", "ADM2", "ADM3"} or not is_osm) and key in district_names:
+                matches = district_names[key]
+                if len(matches) == 1:
+                    governorate, district = matches[0]
+                else:
+                    # Same district name may exist in more than one governorate.
+                    # Resolve duplicate names using distance to the published
+                    # Open Admin Data district centre, not a name-only guess.
+                    centre = geometry_point(geometry)
+                    if centre:
+                        lat, lon = centre
+                        selected = min(
+                            (item for item in districts if (item["governorate"], item["name"]) in matches),
+                            key=lambda item: distance_km(lat, lon, item["lat"], item["lon"])
+                        )
+                        governorate, district = selected["governorate"], selected["name"]
+                    else:
+                        continue
+                target = {"governorate": governorate, "district": district}
+                if props.get("shapeName"):
+                    source = "geoBoundaries"
+                    license_name = clean(props.get("boundaryLicense") or props.get("license") or "CC BY 3.0 IGO", 120)
+                    quality = "geoboundaries-polygon"
                 break
-            if level in {"4", "5"} and key in gov_names:
-                target, kind = {"governorate": gov_names[key], "district": ""}, "governorate"
+            if (level in {"4", "5", "ADM1"} or not is_osm) and key in gov_names:
+                target = {"governorate": gov_names[key], "district": ""}
+                if props.get("shapeName"):
+                    source = "geoBoundaries"
+                    license_name = clean(props.get("boundaryLicense") or props.get("license") or "CC BY 3.0 IGO", 120)
+                    quality = "geoboundaries-governorate-polygon"
                 break
-        geometry = feature.get("geometry") or {}
-        if not target or geometry.get("type") not in {"Polygon", "MultiPolygon"}:
+
+        if not target:
             continue
         coords = geometry.get("coordinates") or []
         points = []
@@ -280,11 +362,19 @@ def prepare_boundaries(features, governors, districts):
         walk(coords)
         if not points:
             continue
-        bbox = (min(p[0] for p in points), min(p[1] for p in points),
-                max(p[0] for p in points), max(p[1] for p in points))
-        output.append({"target": target, "geometry": geometry, "bbox": bbox})
-    return output
-
+        bbox = (min(point[0] for point in points), min(point[1] for point in points),
+                max(point[0] for point in points), max(point[1] for point in points))
+        output.append({
+            "target": target,
+            "geometry": geometry,
+            "bbox": bbox,
+            "quality": quality,
+            "source": source,
+            "license": license_name,
+            "sourceId": clean(props.get("shapeID") or tags.get("id") or feature.get("id"), 120)
+        })
+    # More specific district polygons are checked before governorate polygons.
+    return sorted(output, key=lambda item: 0 if item["target"].get("district") else 1)
 
 def assign_region(lat, lon, governors, districts, boundaries):
     matched_governorate = None
@@ -295,7 +385,7 @@ def assign_region(lat, lon, governors, districts, boundaries):
             # A district polygon is more specific than a governorate polygon.
             # Do not stop at a governorate boundary when no district polygon matched.
             if target.get("district"):
-                return target["governorate"], target["district"], "osm-boundary"
+                return target["governorate"], target["district"], boundary.get("quality", "osm-boundary")
             matched_governorate = target.get("governorate") or matched_governorate
 
     if matched_governorate:
@@ -321,19 +411,34 @@ def clean(value, limit=220):
 
 def build_items(features, governors, districts, boundaries):
     output, seen = [], set()
+    district_lookup = {
+        (normalize(item["governorate"]), normalize(item["name"])): item
+        for item in districts
+    }
+    governor_lookup = {normalize(item["name"]): item for item in governors}
+    search_keys = CATEGORY_MAPPING.get("osmSearchKeys", [])
+
     for feature in features:
         tags = tags_of(feature)
-        category = classify(tags)
-        if not category:
+        categories = categories_for_tags(tags)
+        if not categories:
             continue
-        name = clean(tags.get("name:ar") or tags.get("name") or tags.get("brand") or tags.get("operator"), 160)
+        primary_category = categories[0]
+        name_ar = clean(tags.get("name:ar") or tags.get("name") or tags.get("brand") or tags.get("operator"), 160)
+        name_en = clean(tags.get("name:en") or tags.get("int_name") or tags.get("official_name:en") or "", 160)
+        if not name_ar:
+            name_ar = name_en
         point = geometry_point(feature.get("geometry"))
-        if not name or not point:
+        if not name_ar or not point:
             continue
+
         lat, lon = point
         governorate, district, quality = assign_region(lat, lon, governors, districts, boundaries)
         if not governorate:
             continue
+        gov_info = governor_lookup.get(normalize(governorate), {})
+        dist_info = district_lookup.get((normalize(governorate), normalize(district)), {})
+
         raw_id = str(feature.get("id") or tags.get("@id") or tags.get("osm_id") or "")
         object_type = str(tags.get("@type") or tags.get("osm_type") or "node").lower()
         if "/" in raw_id:
@@ -341,13 +446,18 @@ def build_items(features, governors, districts, boundaries):
         if not raw_id:
             raw_id = f"coord-{lat:.6f}-{lon:.6f}"
         item_id = "osm-" + re.sub(r"[^a-zA-Z0-9_-]", "-", object_type + "-" + raw_id)
-        key = (normalize(name), round(lat, 4), round(lon, 4))
+        key = (normalize(name_ar), normalize(name_en), round(lat, 4), round(lon, 4))
         if key in seen:
             continue
         seen.add(key)
-        addr = [tags.get("addr:full"), tags.get("addr:street"), tags.get("addr:suburb"),
-                tags.get("addr:neighbourhood"), tags.get("addr:city"), tags.get("addr:district")]
+
+        addr = [
+            tags.get("addr:full"), tags.get("addr:street"), tags.get("addr:suburb"),
+            tags.get("addr:neighbourhood"), tags.get("addr:city"), tags.get("addr:district")
+        ]
         address = clean("، ".join(clean(v, 70) for v in addr if clean(v)), 240)
+        neighbourhood = clean(tags.get("addr:neighbourhood") or tags.get("addr:suburb") or tags.get("addr:quarter") or "", 120)
+        street = clean(tags.get("addr:street") or "", 120)
         phone = clean(tags.get("contact:phone") or tags.get("phone") or tags.get("telephone") or tags.get("mobile"), 60)
         website = clean(tags.get("contact:website") or tags.get("website") or tags.get("url"), 320)
         if website and not re.match(r"^https?://", website, re.I):
@@ -357,6 +467,7 @@ def build_items(features, governors, districts, boundaries):
         opening = clean(tags.get("opening_hours") or tags.get("service_times"), 120)
         description = clean(tags.get("description:ar") or tags.get("description") or tags.get("note"), 280)
         maps = f"https://www.openstreetmap.org/?mlat={lat:.6f}&mlon={lon:.6f}#map=18/{lat:.6f}/{lon:.6f}"
+
         source_id = str(feature.get("id") or tags.get("@id") or "")
         source_type = "node"
         if "/" in source_id:
@@ -366,12 +477,55 @@ def build_items(features, governors, districts, boundaries):
             source_type = object_type
         source_url = (f"https://www.openstreetmap.org/{source_type}/{source_number}"
                       if source_number.isdigit() and source_type in {"node", "way", "relation"} else maps)
+
+        osm_tags = {
+            key: clean(tags.get(key), 80).lower()
+            for key in search_keys if clean(tags.get(key), 80)
+        }
+        searchable_values = [
+            name_ar, name_en, tags.get("alt_name"), tags.get("official_name"),
+            tags.get("brand"), tags.get("operator"), description, address, neighbourhood, street,
+            governorate, gov_info.get("nameEn"), district, dist_info.get("nameEn"),
+            " ".join(str(tags.get(key) or "") for key in search_keys)
+        ]
+        # Include Arabic and English category aliases in the record so a user
+        # can search by activity (e.g. "مستشفيات", "hospital", "courier")
+        # even when a shop has no translated name.
+        for category in categories:
+            definition = CATEGORY_MAPPING["categories"].get(category, {})
+            searchable_values.extend(definition.get("aliases", []))
+            searchable_values.extend([definition.get("labelAr", ""), definition.get("labelEn", "")])
+        search_text = clean(" ".join(str(value) for value in searchable_values if value), 2400)
+
         output.append({
-            "id": item_id, "name": name, "category": category,
-            "governorate": governorate, "district": district, "address": address,
-            "phone": phone, "website": website, "openingHours": opening,
-            "description": description, "lat": round(lat, 6), "lon": round(lon, 6),
-            "mapsUrl": maps, "sourceUrl": source_url, "source": "OpenStreetMap",
+            "id": item_id,
+            "name": name_ar,
+            "nameEn": name_en,
+            "altNames": clean(" | ".join(
+                clean(tags.get(key), 120) for key in ("alt_name", "official_name", "short_name", "brand")
+                if clean(tags.get(key), 120)
+            ), 500),
+            "category": primary_category,
+            "categories": categories,
+            "osmTags": osm_tags,
+            "searchText": search_text,
+            "activity": clean(" ".join(str(tags.get(key) or "") for key in ("shop", "amenity", "healthcare", "office", "craft", "tourism", "service", "delivery", "courier") if tags.get(key)), 240),
+            "governorate": governorate,
+            "governorateEn": clean(gov_info.get("nameEn"), 100),
+            "district": district,
+            "districtEn": clean(dist_info.get("nameEn"), 100),
+            "neighbourhood": neighbourhood,
+            "street": street,
+            "address": address,
+            "phone": phone,
+            "website": website,
+            "openingHours": opening,
+            "description": description,
+            "lat": round(lat, 6),
+            "lon": round(lon, 6),
+            "mapsUrl": maps,
+            "sourceUrl": source_url,
+            "source": "OpenStreetMap",
             "assignmentQuality": quality
         })
     return output
@@ -390,14 +544,14 @@ def write_catalog(items, governors, districts, output):
     for gov in governors:
         rows = grouped.get(gov["name"], [])
         rows.sort(key=lambda item: (item["district"], item["category"], normalize(item["name"])))
-        counts = Counter(item["category"] for item in rows)
+        counts = Counter(category for item in rows for category in item.get("categories", [item["category"]]))
         filename = gov["slug"] + ".json"
         payload = {"schemaVersion": 1, "governorate": gov["name"], "snapshotDate": snapshot,
                    "source": "OpenStreetMap contributors", "license": "ODbL-1.0",
                    "attribution": "© OpenStreetMap contributors",
                    "administrativeSource": "Open Admin Data Yemen (CC BY 4.0)", "items": rows}
         (output / filename).write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
-        manifest_rows.append({"name": gov["name"], "slug": gov["slug"], "file": filename,
+        manifest_rows.append({"name": gov["name"], "nameEn": gov.get("nameEn", ""), "slug": gov["slug"], "file": filename,
                               "count": len(rows), "categories": dict(counts)})
     district_buckets = {
         (district["governorate"], district["name"]): {
@@ -414,18 +568,20 @@ def write_catalog(items, governors, districts, output):
         if bucket is None:
             continue
         bucket["count"] += 1
-        if item.get("assignmentQuality") == "osm-boundary":
+        if item.get("assignmentQuality") in {"osm-boundary", "geoboundaries-polygon"}:
             bucket["boundaryCount"] += 1
         else:
             bucket["approximateCount"] += 1
-        category = clean(item.get("category"), 40)
-        if category:
-            bucket["categories"][category] += 1
+        for category in item.get("categories", [item.get("category")]):
+            category = clean(category, 40)
+            if category:
+                bucket["categories"][category] += 1
 
     district_manifest = [
         {
             "governorate": governorate,
             "district": district_name,
+            "districtEn": next((item.get("nameEn", "") for item in districts if item["governorate"] == governorate and item["name"] == district_name), ""),
             "count": bucket["count"],
             "boundaryCount": bucket["boundaryCount"],
             "approximateCount": bucket["approximateCount"],
@@ -442,7 +598,12 @@ def write_catalog(items, governors, districts, output):
                 "source": "OpenStreetMap contributors", "license": "ODbL-1.0",
                 "attribution": "© OpenStreetMap contributors",
                 "administrativeSource": "Open Admin Data Yemen (CC BY 4.0)",
-                "assignmentNote": "District counts include boundary matches and centroid estimates. boundaryCount is matched to an OSM administrative polygon; approximateCount uses the nearest district centroid and must be treated as an estimate.",
+                "assignmentNote": "District counts include polygon matches (OSM administrative boundaries or geoBoundaries Yemen ADM2) and explicitly marked nearest-centroid estimates. Use boundaryCount for polygon-derived assignments and approximateCount for estimates.",
+                "districtCountMethod": "Point-in-Polygon for matched ADM2/OSM polygons; nearest published district-centroid fallback is flagged approximate.",
+                "boundarySources": [
+                    {"name": "geoBoundaries Yemen ADM2", "level": "ADM2", "source": "Central Statistical Organization (CSO), OCHA Yemen", "license": "CC BY 3.0 IGO", "url": "https://www.geoboundaries.org/api/current/gbOpen/YEM/ADM2/"},
+                    {"name": "OpenStreetMap administrative boundaries", "license": "ODbL-1.0", "url": "https://www.openstreetmap.org/copyright"}
+                ],
                 "governorates": manifest_rows}
     (output / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
     return manifest
@@ -459,14 +620,24 @@ def main():
     args = parser.parse_args()
     governors, districts = load_admin(args.governorates, args.districts, args.regions)
     boundaries = prepare_boundaries(geojson_features(args.boundaries), governors, districts)
+    geoboundary_districts = {
+        (normalize(item["target"]["governorate"]), normalize(item["target"]["district"]))
+        for item in boundaries
+        if item.get("source") == "geoBoundaries" and item.get("target", {}).get("district")
+    }
+    if len(geoboundary_districts) != 335:
+        raise ValueError(
+            f"geoBoundaries ADM2 crosswalk is incomplete: matched {len(geoboundary_districts)} of 335 districts. "
+            "Refusing to publish district counts based only on approximate centroids."
+        )
     items = build_items(geojson_features(args.places), governors, districts, boundaries)
     manifest = write_catalog(items, governors, districts, args.output)
     print(json.dumps({
         "snapshotDate": manifest["snapshotDate"], "totalCount": manifest["totalCount"],
         "governorates": len(manifest["governorates"]),
         "withPlaces": sum(1 for row in manifest["governorates"] if row["count"]),
-        "boundaryAssignments": sum(1 for item in items if item["assignmentQuality"] == "osm-boundary"),
-        "approximateAssignments": sum(1 for item in items if item["assignmentQuality"] != "osm-boundary")
+        "boundaryAssignments": sum(1 for item in items if item["assignmentQuality"] in {"osm-boundary", "geoboundaries-polygon"}),
+        "approximateAssignments": sum(1 for item in items if item["assignmentQuality"] == "approximate-district-centroid")
     }, ensure_ascii=False))
 
 

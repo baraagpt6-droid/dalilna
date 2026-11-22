@@ -51,6 +51,72 @@ class RegionalCatalogTests(unittest.TestCase):
         self.assertEqual(catalog.assign_region(14, 44, gov, districts, []),
                          ("إب", "حبيش", "approximate-district-centroid"))
 
+
+    def test_mapping_dictionary_covers_english_osm_tags_and_multicategory_health(self):
+        self.assertEqual(set(catalog.categories_for_tags({"amenity": "hospital"})), {"health"})
+        self.assertEqual(set(catalog.categories_for_tags({"amenity": "clinic"})), {"health"})
+        self.assertEqual(set(catalog.categories_for_tags({"amenity": "doctors"})), {"health"})
+        self.assertEqual(set(catalog.categories_for_tags({"amenity": "pharmacy"})), {"health", "pharmacy"})
+        self.assertIn("delivery", catalog.categories_for_tags({"office": "courier"}))
+        self.assertIn("delivery", catalog.categories_for_tags({"shop": "parcel"}))
+        self.assertIn("vehicles", catalog.categories_for_tags({"shop": "car"}))
+        self.assertIn("elec", catalog.categories_for_tags({"shop": "electronics"}))
+        self.assertIn("solar", catalog.categories_for_tags({"shop": "solar"}))
+
+    def test_geoboundaries_adm2_polygon_matches_english_district_name(self):
+        governors = [{"name": "إب", "nameEn": "Ibb", "nameLocal": "اب", "lat": 13.9, "lon": 44.1}]
+        districts = [{"governorate": "إب", "name": "الظهار", "nameEn": "Adh Dhihar",
+                      "lat": 13.976, "lon": 44.161, "nameLocal": "الظهار"}]
+        feature = {"type": "Feature", "properties": {"shapeName": "Adh Dhihar", "shapeType": "ADM2"},
+                   "geometry": {"type": "Polygon", "coordinates": [[[44.0, 13.8], [44.3, 13.8],
+                     [44.3, 14.1], [44.0, 14.1], [44.0, 13.8]]]}}
+        boundaries = catalog.prepare_boundaries([feature], governors, districts)
+        self.assertEqual(len(boundaries), 1)
+        self.assertEqual(boundaries[0]["target"]["district"], "الظهار")
+        self.assertEqual(boundaries[0]["quality"], "geoboundaries-polygon")
+        self.assertEqual(catalog.assign_region(13.9, 44.1, governors, districts, boundaries),
+                         ("إب", "الظهار", "geoboundaries-polygon"))
+
+    def test_records_include_all_matched_categories_and_bilingual_search_text(self):
+        gov = [{"name": "إب", "nameEn": "Ibb", "lat": 14, "lon": 44}]
+        districts = [{"governorate": "إب", "name": "حبيش", "nameEn": "Hubaysh", "lat": 14, "lon": 44}]
+        feature = {"type": "Feature", "id": "node/234", "geometry": {"type": "Point", "coordinates": [44, 14]},
+                   "properties": {"name:ar": "صيدلية الاختبار", "name:en": "Test Pharmacy", "amenity": "pharmacy"}}
+        rows = catalog.build_items([feature], gov, districts, [])
+        self.assertEqual(set(rows[0]["categories"]), {"health", "pharmacy"})
+        self.assertEqual(rows[0]["nameEn"], "Test Pharmacy")
+        self.assertIn("pharmacy", rows[0]["searchText"].lower())
+        self.assertIn("صيدليات", rows[0]["searchText"])
+    def test_category_mapping_loads_from_repository_root_and_contains_core_tags(self):
+        mapping = catalog.load_category_mapping()
+        self.assertIn("health", mapping["categories"])
+        self.assertIn("delivery", mapping["categories"])
+        self.assertIn("real_estate", mapping["categories"])
+        self.assertIn({"key": "amenity", "value": "hospital"},
+                      mapping["categories"]["health"]["osmTags"])
+        self.assertIn({"key": "office", "value": "courier"},
+                      mapping["categories"]["delivery"]["osmTags"])
+
+
+    def test_polygon_centroid_is_area_weighted_not_bbox_midpoint(self):
+        triangle = {"type": "Polygon", "coordinates": [[[0, 0], [6, 0], [0, 3], [0, 0]]]}
+        # Centroid of the triangle is (lon=2, lat=1); bbox centre would be (3, 1.5).
+        self.assertEqual(catalog.geometry_point(triangle), (1.0, 2.0))
+
+    def test_duplicate_district_names_resolve_using_polygon_centroid(self):
+        governors = [
+            {"name": "محافظة أ", "nameEn": "Gov A", "nameLocal": "محافظة أ", "lat": 1, "lon": 2},
+            {"name": "محافظة ب", "nameEn": "Gov B", "nameLocal": "محافظة ب", "lat": 8, "lon": 8},
+        ]
+        districts = [
+            {"governorate": "محافظة أ", "name": "الصفا", "nameEn": "Al Safa", "nameLocal": "الصفا", "lat": 1, "lon": 2},
+            {"governorate": "محافظة ب", "name": "الصفا", "nameEn": "Al Safa", "nameLocal": "الصفا", "lat": 8, "lon": 8},
+        ]
+        feature = {"type": "Feature", "properties": {"shapeName": "Al Safa", "shapeType": "ADM2"},
+                   "geometry": {"type": "Polygon", "coordinates": [[[0, 0], [6, 0], [0, 3], [0, 0]]]}}
+        boundaries = catalog.prepare_boundaries([feature], governors, districts)
+        self.assertEqual(boundaries[0]["target"]["governorate"], "محافظة أ")
+
     def test_classifies_markets_jewellery_and_rail_stations(self):
         self.assertEqual(catalog.classify({"amenity": "marketplace"}), "market")
         self.assertEqual(catalog.classify({"shop": "jewelry"}), "gold")

@@ -1,8 +1,8 @@
 "use strict";
 const test=require("node:test"),assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {validate,PRODUCT_TYPES,CATEGORIES,GOVERNORATES}=require("../marketplace-api");
-test("taxonomy covers Yemen service categories and product types",()=>{assert.equal(GOVERNORATES.size,22);for(const x of ["phone","phone_accessories","watch","car","motorcycle","land","property","apartment","house","honey","coffee","stationery","perfume","cosmetics","solar_equipment","tools","baby_products","construction_equipment"])assert.ok(PRODUCT_TYPES.has(x));for(const x of ["jobs","souq","grocery","health","pharmacy"])assert.ok(CATEGORIES.has(x));});
+const {validate,PRODUCT_TYPES,CATEGORIES,GOVERNORATES,PRODUCT_GROUPS}=require("../marketplace-api");
+test("taxonomy covers Yemen service categories and product types",()=>{assert.equal(GOVERNORATES.size,22);for(const x of ["phone","phone_accessories","watch","car","motorcycle","land","property","apartment","house","honey","coffee","stationery","perfume","cosmetics","solar_equipment","solar_panel","battery","inverter","power_system","screen","monitor","charger","audio_accessories","tools","baby_products","construction_equipment"])assert.ok(PRODUCT_TYPES.has(x));for(const x of ["jobs","souq","grocery","health","pharmacy"])assert.ok(CATEGORIES.has(x));});
 test("normalizes a used phone listing",()=>{const x=validate({title:"هاتف",category:"souq",productType:"phone",condition:"used",governorate:"إب",district:"حبيش",area:"ربع ظلمة",clientRef:"local-1"});assert.equal(x.productType,"phone");assert.equal(x.condition,"used");assert.equal(x.governorate,"إب");assert.equal(x.clientRef,"local-1");});
 test("accepts land and property as classified marketplace listings",()=>{
  const land=validate({title:"أرض للبيع",category:"land",productType:"land",listingType:"sale",governorate:"إب",district:"حبيش"});
@@ -46,6 +46,10 @@ test("supports apartment and house rentals in the land and property category",()
 });
 
 
+test("marketplace exposes exactly seven browseable product groups",()=>{
+ const keys=Object.keys(PRODUCT_GROUPS);
+ assert.deepEqual(keys,["electronics","vehicles","property","solar","home","agriculture","clothing"]);
+});
 test("rent is restricted to homes, land and vehicles",()=>{
  const valid=validate({title:"سيارة للإيجار",category:"souq",productType:"car",listingType:"rent"});
  assert.equal(valid.listingType,"rent");
@@ -66,6 +70,10 @@ test("shared marketplace exposes grouped approved listing counts",()=>{
  assert.match(source,/async function counts\(req,res\)/);
  assert.match(source,/GROUP BY governorate,category/);
  assert.ok(source.includes('r==="counts"'));
+ assert.ok(source.includes('r==="feed-sync"'));
+ assert.ok(source.includes("DALILNA_PRODUCT_SYNC_TOKEN"));
+ assert.ok(source.includes("completeSnapshot"));
+ assert.ok(source.includes("ON CONFLICT(client_ref) DO UPDATE"));
 });
 
 
@@ -82,4 +90,36 @@ test("marketplace list query selects expiry timestamp for the 60-day card label"
 test("marketplace public records return their expiry timestamp",()=>{
  const source=fs.readFileSync("marketplace-api.js","utf8");
  assert.match(source,/expiresAt:row\.expires_at/);
+});
+
+test("daily merchant feed endpoint is authenticated, idempotent and retires missing feed products only on a complete snapshot",()=>{
+ const source=fs.readFileSync("marketplace-api.js","utf8");
+ assert.ok(source.includes('r==="feed-sync"&&req.method==="POST"'));
+ assert.ok(source.includes("DALILNA_PRODUCT_SYNC_TOKEN"));
+ assert.ok(source.includes("crypto.timingSafeEqual"));
+ assert.ok(source.includes("ON CONFLICT(client_ref) DO UPDATE"));
+ assert.ok(source.includes("completeSnapshot"));
+ assert.ok(source.includes("client_ref=ANY($1::text[])"));
+ assert.ok(source.includes("status='archived'"));
+});
+test("merchant product feed is processed in batches and only the last batch may retire stale products",()=>{
+ const feed=fs.readFileSync("scripts/refresh-marketplace-products.cjs","utf8");
+ const api=fs.readFileSync("marketplace-api.js","utf8");
+ assert.ok(feed.includes("MAX_ITEMS=5000,MAX_BATCH=200"));
+ assert.ok(feed.includes("for(let offset=0;offset<items.length;offset+=MAX_BATCH)"));
+ assert.ok(feed.includes("activeClientRefs:completeSnapshotForBatch?activeClientRefs:[]"));
+ assert.ok(api.includes("activeRefs.every(ref=>activeClientRefs.includes(ref))"));
+ assert.ok(api.includes("NOT (client_ref=ANY($1::text[]))"));
+});
+test("merchant product feed rejects unsafe URLs and never prunes on an empty snapshot",()=>{
+ const feed=fs.readFileSync("scripts/refresh-marketplace-products.cjs","utf8");
+ assert.ok(feed.includes("validatePublicFeedUrl"));
+ assert.ok(feed.includes('url.protocol!=="https:"'));
+ assert.ok(feed.includes('redirect:"error"'));
+ assert.ok(feed.includes("Empty feed snapshot is not allowed"));
+});
+test("solar, screen, battery and inverter products are valid marketplace items",()=>{
+ for(const productType of ["solar_equipment","solar_panel","battery","inverter","power_system","screen","monitor","charger","audio_accessories"]) {
+  assert.ok(PRODUCT_TYPES.has(productType),productType);
+ }
 });

@@ -19,7 +19,7 @@
     ["camera","كاميرا"],["car","سيارة"],["motorcycle","دراجة نارية"],["vehicle_parts","قطع غيار مركبات"],
     ["land","أرض"],["property","عقار"],["apartment","شقة"],["house","منزل"],["electronics","إلكترونيات"],["appliance","أجهزة منزلية"],
     ["furniture","أثاث"],["clothing","ملابس"],["shoes","أحذية"],["jewelry","ذهب ومجوهرات"],
-    ["honey","عسل"],["coffee","بن وقهوة"],["spices","بهارات"],["food","مواد غذائية"],
+    ["honey","عسل"],["coffee","بن وقهوة"],["spices","بهارات"],
     ["livestock","مواشٍ"],["agriculture","منتجات زراعية"],["building_materials","مواد بناء"],
     ["books","كتب"],["stationery","قرطاسية وأدوات مدرسية"],["perfume","عطور"],["cosmetics","مستحضرات تجميل"],
     ["solar_equipment","معدات طاقة شمسية"],["tools","أدوات ومعدات"],["household_items","مستلزمات منزلية"],
@@ -89,6 +89,12 @@
     const title = document.createElement("h3");
     title.textContent = item.title || "إعلان";
     card.appendChild(title);
+    if (item.sellerName) {
+      const seller = document.createElement("p");
+      seller.className = "shared-listing-meta";
+      seller.textContent = "البائع: " + item.sellerName;
+      card.appendChild(seller);
+    }
     const tags = document.createElement("div");
     tags.className = "shared-listing-tags";
     const category = CATS.find(x => x[0] === item.category);
@@ -204,11 +210,13 @@
       status.textContent = result.count
         ? "يعرض " + result.items.length + " من " + result.count + " إعلاناً منشوراً · آخر تحديث " + new Date(result.fetchedAt).toLocaleTimeString("ar")
         : "";
+      return result;
     } catch (e) {
       list.replaceChildren();
       status.textContent = e.status === 503
         ? "خدمة البيانات المشتركة لم تُفعّل بعد. سيظهر المحتوى هنا بعد ربط قاعدة البيانات."
         : "تعذر تحميل الإعلانات المشتركة. " + e.message;
+      return null;
     }
   }
   function loadHome() {
@@ -219,7 +227,7 @@
       district: $("sharedDirectoryDistrict") && $("sharedDirectoryDistrict").value.trim()
     }, "sharedDirectoryStatus", "sharedDirectoryItems");
   }
-  function loadSouq() {
+  async function loadSouq() {
     const selectedType = document.querySelector("#souqTransactionTabs [aria-pressed=true]");
     const selectedGroup = document.querySelector("#souqCategoryTabs [aria-pressed=true]");
     return loadList({
@@ -394,7 +402,6 @@
     const adminButton=$("sharedAdminReviewButton");if(adminButton)adminButton.addEventListener("click",loadAdminQueue);
     const migrateButton=$("sharedMigrateLocalButton");if(migrateButton)migrateButton.addEventListener("click",migrateLocal);
     loadHome();
-    loadSouq();
     loadJobs();
     loadCategoryCounts();
     api("/api/marketplace/status").then(result => {

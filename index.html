@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.3.0">
+<meta name="app-version" content="2.4.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -18,7 +18,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23181411'/%3E%3Cpath d='M18 54 A32 32 0 0 1 82 54 Z' fill='none' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M22 54 L36 54 A14 14 0 0 1 42 42 L29 33 A28 28 0 0 0 22 54 Z' fill='%233A7EC2'/%3E%3Cpath d='M29 33 L42 42 A14 14 0 0 1 50 40 L50 26 A28 28 0 0 0 29 33 Z' fill='%23E8A025'/%3E%3Cpath d='M50 26 L50 40 A14 14 0 0 1 58 42 L71 33 A28 28 0 0 0 50 26 Z' fill='%23D6455D'/%3E%3Cpath d='M71 33 L58 42 A14 14 0 0 1 64 54 L78 54 A28 28 0 0 0 71 33 Z' fill='%23E8A025'/%3E%3Ccircle cx='50' cy='54' r='11' fill='%23F2B949' stroke='%23F4EFE6' stroke-width='3'/%3E%3Crect x='18' y='54' width='64' height='24' rx='4' fill='%23181411' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M50 54 v24 M18 66 h64' stroke='%23F4EFE6' stroke-width='3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./features-2.1.css?v=2.3.0">
+<link rel="stylesheet" href="./features-2.1.css?v=2.4.0">
 <style>
 :root{
   color-scheme:dark;
@@ -584,7 +584,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 @media(max-width:420px){.shared-marketplace-controls{grid-template-columns:1fr}.shared-marketplace-controls .wide{grid-column:auto}}
 .add-lifetime-intro{display:grid;gap:7px;margin:0 0 12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card2);font-size:13px;line-height:1.7}.add-lifetime-intro ol{margin:0;padding-inline-start:22px;display:grid;gap:3px}.dalilna-map{height:230px;min-height:230px;margin:8px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card2)}[data-map-toggle]{min-height:34px;padding:7px 12px;border:1px solid var(--line);border-radius:9px;background:var(--card2);color:var(--ink);font:inherit;cursor:pointer}.region-sources summary{cursor:pointer;font-weight:700}
 
-/* 2.3.0 critical quick-access fallback. */
+/* 2.4.0 critical quick-access fallback. */
 .quick-jump-bar{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:7px;padding:9px 14px 7px;max-width:1160px;margin:0 auto}
 .quick-jump-btn{display:flex;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:6px;padding:6px 5px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--ink);font:600 11.5px 'Readex Pro',Tahoma,sans-serif;text-decoration:none;white-space:normal;text-align:center;overflow:hidden}
 .quick-jump-icon{display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:8px;background:var(--chip);color:var(--acc)}
@@ -907,24 +907,6 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <button class="add" id="sqSell">+ اعرض غرضاً للبيع</button>
       <button class="ghost" id="sqBuy">+ اطلب غرضاً</button>
     </div>
-    <section class="shared-marketplace-panel" id="souqStoresPanel">
-      <div class="shared-marketplace-head"><h3>دليل المتاجر والمحلات المرتبطة بالسوق</h3><button type="button" class="ghost" id="souqStoresRefresh">تحديث المتاجر</button></div>
-      <p class="shared-marketplace-status">أسماء ومواقع متاجر من فهرس OpenStreetMap. وجود المتجر لا يؤكد توفر سلعة أو مخزون أو سعر.</p>
-      <div class="shared-marketplace-controls">
-        <select id="souqStoreCategory">
-          <option value="all">جميع المتاجر المسجلة</option>
-          <option value="telecom">جوالات واتصالات</option><option value="elec">إلكترونيات وكمبيوتر</option>
-          <option value="vehicles">سيارات ومركبات</option><option value="home">أثاث وأجهزة منزلية</option>
-          <option value="solar">طاقة شمسية</option><option value="gold">ذهب ومجوهرات</option>
-          <option value="grocery">بقالات ومواد غذائية</option><option value="food">مطاعم ومخابز</option>
-          <option value="books">مكتبات وقرطاسية</option><option value="build">مواد بناء</option>
-          <option value="real_estate">مكاتب عقارية</option>
-        </select>
-      </div>
-      <div class="shared-marketplace-status" id="souqStoresStatus">جارٍ تحميل دليل المتاجر من فهرس الأماكن.</div>
-      <div class="shared-marketplace-list" id="souqStoresItems"></div>
-      <div id="souqStoresMoreRow" hidden><button type="button" class="ghost" id="souqStoresMore">عرض المزيد</button></div>
-    </section>
     <section class="shared-marketplace-panel" id="sharedSouqPanel">
       <div class="shared-marketplace-head"><h3>المعروضات المعتمدة في كل اليمن</h3><button type="button" class="ghost" id="sharedSouqRefresh">تحديث السوق</button></div>
       <div class="shared-marketplace-controls">
@@ -933,7 +915,6 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <div class="shared-marketplace-status" id="sharedSouqStatus">الجوالات والساعات والسيارات والأراضي والعقارات وغيرها من المعروضات المعتمدة ستظهر هنا.</div>
       <div class="shared-marketplace-list" id="sharedSouqItems"></div>
     </section>
-    <div class="list" id="sqList"></div>
   </section>
 
   <!-- AI & Feedback View -->
@@ -1149,9 +1130,10 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <label id="priceLbl">السعر / الراتب<input name="price" placeholder="اختياري"></label>
       <label id="countryLbl">البلد<input name="country" value="اليمن"></label>
     </div>
-    <label>صورة المحل أو المنتج (اختيارية)
-      <input type="file" id="imgInput" accept="image/*">
-    </label>
+    <div class="product-image-control">
+      <button type="button" class="ghost" id="imgChooseBtn">إضافة صورة للمنتج (اختياري)</button>
+      <input type="file" id="imgInput" accept="image/*" hidden>
+    </div>
     <div id="imgPreviewBox" hidden style="display:flex;align-items:center;gap:10px">
       <img id="imgPreview" alt="" style="width:72px;height:54px;object-fit:cover;border-radius:10px;border:1px solid var(--line)">
       <button type="button" class="ghost" id="imgClearBtn" style="min-height:34px;font-size:12.5px">إزالة الصورة</button>
@@ -2452,7 +2434,7 @@ const APP_VERSION="2.0.0";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
-  ["jobs","وظائف"],["land","أراضٍ وعقارات"],["build","مواد بناء"],["parts","قطع غيار"],
+  ["jobs","وظائف"],["land","أراضٍ وعقارات"],["vehicles","سيارات ودراجات"],["build","مواد بناء"],["parts","قطع غيار"],
   ["craft","حرفيون وصيانة"],["transport","نقل ومواصلات"],["telecom","جوالات واتصالات"],["utility","مياه وغاز"],
   ["farm","زراعة ومواشي"],["mosque","مساجد"],["gold","ذهب ومجوهرات"],["wedding","قاعات أعراس"],
   ["hotel","فنادق وشقق"],["market","أسواق"],["solar","طاقة شمسية"],["elec","إلكترونيات"],
@@ -2464,7 +2446,7 @@ const CAT_KEYS=new Set(CATS.map(([k])=>k));
 const CN_EN={
   grocery:"Groceries",food:"Restaurants & Bakeries",cafe:"Cafes & Coffee",edu:"Schools & Education",
   health:"Hospitals & Centers",pharmacy:"Pharmacies & Clinics",gov:"Government Offices",money:"Exchange & Transfers",
-  jobs:"Jobs",land:"Real Estate & Land",build:"Building Materials",parts:"Spare Parts",
+  jobs:"Jobs",land:"Real Estate & Land",vehicles:"Cars & Motorcycles",build:"Building Materials",parts:"Spare Parts",
   craft:"Craftsmen & Repair",transport:"Transport",telecom:"Mobiles & Telecom",utility:"Water & Gas",
   farm:"Agriculture & Livestock",mosque:"Mosques",gold:"Gold & Jewelry",wedding:"Wedding Halls",
   hotel:"Hotels & Apartments",market:"Markets",solar:"Solar Energy",elec:"Electronics",
@@ -3087,7 +3069,6 @@ function go(v,c){
   if(v==="cat"){$("#catT").textContent=catLabel(c);$("#area").value="";$("#areaLbl").textContent=curLang==="en"?"All Areas":"كل المناطق";}
   window.scrollTo(0,0);
   render();
-  if(v==="souq")runSouqStores(false);
 }
 $("#logoHome").addEventListener("click",e=>{
   e.preventDefault();
@@ -3724,6 +3705,7 @@ async function compressImage(file){
     r.onerror=rej;r.readAsDataURL(file);
   });
 }
+$("#imgChooseBtn").addEventListener("click",()=>$("#imgInput").click());
 $("#imgInput").addEventListener("change",async e=>{
   const file=e.target.files[0];if(!file)return;
   try{
@@ -4250,10 +4232,10 @@ function catalogStatsForScope(){
  return {count:rows.length,categories,boundaryCount:Number(summary?.boundaryCount||0),approximateCount:Number(summary?.approximateCount||0),snapshotDate:cached.snapshotDate||manifest.snapshotDate||""};
 }
 function getMarketplaceCount(category){const ctx=regionCurrentContext(),counts=ctx.gov?liveMarketplaceCounts.governorates?.[ctx.gov]:liveMarketplaceCounts.all;return Number(counts?.[category]||0);}
-function getDirectoryCategoryCount(category){const stats=catalogStatsForScope(),categories=stats?.categories||{};const aliases=category==="land"?["real_estate"]:category==="parts"?["vehicles"]:[];return Number(categories?.[category]||0)+aliases.reduce((sum,key)=>sum+Number(categories?.[key]||0),0)+getMarketplaceCount(category);}
+function getDirectoryCategoryCount(category){const stats=catalogStatsForScope(),categories=stats?.categories||{};const aliases=category==="land"?["real_estate"]:[];return Number(categories?.[category]||0)+aliases.reduce((sum,key)=>sum+Number(categories?.[key]||0),0)+getMarketplaceCount(category);}
 async function loadRegionalCatalogManifest(force){
  if(!force&&liveCatalogManifestPromise)return liveCatalogManifestPromise;
- const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=2.3.0";
+ const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=2.4.0";
  liveCatalogManifestPromise=fetch(manifestUrl,{headers:{Accept:"application/json"},cache:"no-store"}).then(async response=>{
   if(!response.ok)throw new Error("ملف فهرس المحافظات غير متاح حالياً (HTTP "+response.status+").");
   const data=await response.json();if(!data||!Array.isArray(data.governorates))throw new Error("صيغة فهرس المحافظات غير صالحة.");
@@ -4266,7 +4248,7 @@ async function loadRegionalCatalog(gov,force){
  const manifest=await loadRegionalCatalogManifest(force),key=normalizePlace(gov),region=(manifest.governorates||[]).find(item=>normalizePlace(item?.name)===key);
  if(!region||!region.file)throw new Error("لا توجد قائمة بيانات لهذه المحافظة في ملف الفهرس.");
  const cached=liveCatalogFiles.get(region.file);if(!force&&cached)return {region,manifest,data:cached};
- const response=await fetch(LIVE_CATALOG_BASE+encodeURIComponent(region.file)+"?v=2.3.0",{headers:{Accept:"application/json"},cache:"no-store"});
+ const response=await fetch(LIVE_CATALOG_BASE+encodeURIComponent(region.file)+"?v=2.4.0",{headers:{Accept:"application/json"},cache:"no-store"});
  if(!response.ok)throw new Error("تعذر تحميل سجل المحافظة.");
  const payload=await response.json(),items=normalizeRegionalCatalogItems(payload);
  if(!items.length&&Number(region.count||0)>0)throw new Error("ملف المحافظة لا يحتوي سجلات قابلة للقراءة.");
@@ -4295,60 +4277,53 @@ async function loadAllRegionalCatalog(force){
  finally{if(liveAllCatalogPromise===loading)liveAllCatalogPromise=null;}
 }
 function regionalCatalogMatches(items,context,query,category,productType){
- if(category==="jobs"||category==="souq"||category==="land"||category==="marketplace")return [];
+ if(category==="jobs"||category==="souq"||category==="marketplace")return [];
  const wanted=String(category||"all");
- const categoryWords={
-  grocery:["بقالة","بقاله","بقالات","بقال","تموين","تموينات","سوبرماركت"],
-  food:["مطعم","مطاعم","مخبز","مخابز","مأكولات"],
-  cafe:["مقهى","مقاهي","كافيه","بوفيه","بوفيات"],
-  pharmacy:["صيدلية","صيدليات"],
-  health:["مستشفى","مستشفيات","عيادة","عيادات","مركز","مراكز","صحي","صحية"],
-  edu:["مدرسة","مدارس","معهد","معاهد","جامعة","جامعات","كلية","كليات"],
-  mosque:["مسجد","مساجد","جامع","جوامع"],
-  books:["مكتبة","مكتبات","قرطاسية","قرطاسيات"],
-  vehicles:["سيارة","سيارات","معرض","معارض","ورشة","ورش"],
-  transport:["نقل","مواصلات","باص","باصات","تاكسي"],
-  hotel:["فندق","فنادق","نزل","سكن"],
-  money:["بنك","بنوك","صراف","صرافة","صرافات"],
-  craft:["حرفي","حرفيون","صيانة","إصلاح","ورشة","ورش"],
-  real_estate:["عقار","عقارات","مكتب","مكاتب","عقاري","عقارية"],
-  gold:["ذهب","مجوهرات","صياغة"],
-  market:["سوق","أسواق","سوق مركزي","سوق محلي"],
-  watches:["ساعة","ساعات","ساعاتي"],
-  telecom:["جوال","جوالات","هواتف","اتصالات"],
-  elec:["إلكترونيات","الكترونيات","كهربائيات","كمبيوتر"],
-  build:["مواد","بناء","حديد","اسمنت","أسمنت","سباكة"],
-  gold:["ذهب","مجوهرات","صياغة"],
-  clothes:["ملابس","أحذية","خياط","خياطة"],
-  home:["أثاث","أدوات","منزلية","أجهزة"],
-  beauty:["عطور","تجميل","تجميلية","مكياج"],
-  salon:["صالون","صالونات","حلاقة","حلاق"],
-  laundry:["مغسلة","مغاسل","غسيل"],
-  solar:["طاقة","شمسية","ألواح"],
-  delivery:["توصيل","بريد","شحن"],
-  gov:["حكومية","حكومي","مكتب","مكاتب"],
-  farm:["زراعة","مزرعة","مزارع","مواشي","أعلاف"]
+ const categoryAliases={land:["real_estate"]};
+ const hasCategory=(item,key)=>{
+  if(!key||key==="all")return true;
+  const values=Array.isArray(item.categories)?item.categories:[item.category];
+  return values.includes(key)||(categoryAliases[key]||[]).some(alias=>values.includes(alias));
  };
- const filler=["ابحث","بحث","عن","في","من","و","اليمن","محل","محلات","خدمة","خدمات","مكان","اماكن"];
- const ignored=new Set([...(categoryWords[wanted]||[]).map(normalizeSearchPlace),...filler.map(normalizeSearchPlace)].filter(Boolean));
- const tokens=normalizeSearchPlace(query).split(/\s+/).filter(token=>token&&!ignored.has(token));
+ const searchable=item=>normalizeSearchPlace([
+  item.name,item.nameEn,item.altNames,item.searchText,item.activity,item.address,
+  item.neighbourhood,item.street,item.description,item.governorate,item.governorateEn,
+  item.district,item.districtEn,item.category,
+  ...(Array.isArray(item.categories)?item.categories:[]),
+  ...Object.entries(item.osmTags||{}).flatMap(([key,value])=>[key,value])
+ ].filter(Boolean).join(" "));
+ const tokens=normalizeSearchPlace(query).split(/\s+/).filter(Boolean);
  return (items||[]).filter(item=>{
-  if(wanted!=="all"&&item.category!==wanted)return false;
-  if(context&&(context.type==="district"||context.type==="subdistrict")&&context.district&&normalizePlace(item.district)!==normalizePlace(context.district))return false;
-  const hay=normalizeSearchPlace([item.name,item.address,item.description,item.governorate,item.district,item.category].filter(Boolean).join(" "));
+  if(!hasCategory(item,wanted))return false;
+  if(context&&context.gov&&normalizePlace(item.governorate)!==normalizePlace(context.gov))return false;
+  if(context&&context.district&&normalizePlace(item.district)!==normalizePlace(context.district))return false;
+  const hay=searchable(item);
   return tokens.every(token=>hay.includes(token));
  });
 }
-function regionalCatalogCardHTML(item){
- const labels={market:"أسواق",vehicles:"معارض وورش سيارات",watches:"ساعات",real_estate:"مكاتب عقارية",telecom:"جوالات واتصالات",elec:"إلكترونيات",build:"مواد بناء",gold:"ذهب ومجوهرات",clothes:"ملابس وأحذية",home:"أدوات منزلية",beauty:"عطور وتجميل",salon:"صالونات",laundry:"مغاسل",solar:"طاقة شمسية",delivery:"توصيل وبريد",farm:"زراعة ومواشٍ",gov:"جهات حكومية"};
- let card=liveDirectoryCardHTML(item);
- const label=labels[item.category];
- if(label)card=card.replace('<span class="tag">خدمة</span>','<span class="tag">'+esc(label)+'</span>');
- const note=item.assignmentQuality==="osm-boundary"
-  ?"التصنيف الإداري مستند إلى مضلع حدود منشور في OpenStreetMap."
-  :"المحافظة والمديرية تقدير تقريبي من أقرب مركز إداري؛ تحقق من الموقع قبل الاعتماد عليه.";
+function regionalCatalogCardHTML(item,requestedCategory){
+ const displayCategory=requestedCategory&&requestedCategory!=="all"&&((item.categories||[item.category]).includes(requestedCategory)||requestedCategory==="land"&&(item.categories||[]).includes("real_estate"))?requestedCategory:item.category;
+ const labels={
+  grocery:"بقالات وتموينات",food:"مطاعم ومخابز",cafe:"بوفيات ومقاهي",edu:"مدارس وتعليم",
+  health:"مستشفيات ومراكز",pharmacy:"صيدليات",gov:"جهات حكومية",money:"بنوك وصرافة",
+  real_estate:"أراضٍ وعقارات",vehicles:"سيارات وورش مركبات",parts:"قطع غيار",build:"مواد بناء",
+  craft:"حرفيون وصيانة",transport:"نقل ومواصلات",telecom:"جوالات واتصالات",utility:"مياه وغاز",
+  farm:"زراعة ومواشٍ",mosque:"مساجد وجوامع",gold:"ذهب ومجوهرات",wedding:"قاعات أعراس",
+  hotel:"فنادق وشقق",market:"أسواق",solar:"طاقة شمسية",elec:"إلكترونيات وكمبيوتر",
+  clothes:"ملابس وأحذية",home:"أثاث وأجهزة منزلية",books:"مكتبات وقرطاسية",
+  beauty:"عطور وتجميل",delivery:"توصيل وشحن",salon:"صالونات وحلاقة",laundry:"مغاسل"
+ };
+ let card=liveDirectoryCardHTML({...item,category:displayCategory});
+ const label=labels[displayCategory]||catLabel(displayCategory)||item.category;
+ card=card.replace('<span class="tag">خدمة</span>','<span class="tag">'+esc(label)+'</span>');
+ const exact=["osm-boundary","geoboundaries-polygon"].includes(item.assignmentQuality);
+ const note=exact
+  ?"توزيع المديرية مستند إلى مضلع حدود إداري."
+  :"توزيع المديرية تقديري من أقرب مركز إداري؛ راجع الموقع قبل الاعتماد عليه.";
  return card.replace("</article>",'<small class="live-directory-local-note">'+esc(note)+'</small></article>');
 }
+
+
 function renderLiveDirectoryResponse(data){
  const status=$("#liveDirectoryStatus"),box=$("#liveDirectoryItems"),attribution=$("#liveDirectoryAttribution");
  if(!status||!box)return;
@@ -4360,7 +4335,7 @@ function renderLiveDirectoryResponse(data){
  liveDirectoryLastData=data;
  const shared=liveDirectorySharedMatchesHTML();
  box.classList.remove("live-google-results");
- if(attribution)attribution.innerHTML='المصدر: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · التقسيم الإداري: <a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.';
+ if(attribution)attribution.innerHTML='الأماكن: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · الحدود: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">geoBoundaries</a> (CSO/OCHA Yemen، CC BY 3.0 IGO) و<a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a> (CC BY 4.0).';
  const date=data.snapshotDate||data.manifest&&data.manifest.snapshotDate||"غير محدد";
  const regionLabel=data.context?.type==="country"?"جميع المحافظات · ":(data.regionName?"محافظة "+data.regionName+" · ":"");
  status.textContent=regionLabel+Number(items.length).toLocaleString("ar")+" نتيجة من فهرس الأماكن · آخر تحديث: "+date+(liveSharedMatches.length?" · إعلانات معتمدة: "+liveSharedMatches.length:"")+(liveSharedLoadError?" · تعذر تحديث الإعلانات المشتركة":"");
@@ -4373,7 +4348,7 @@ function renderLiveDirectoryResponse(data){
   return;
  }
  const visible=items.slice(0,liveDirectoryVisibleCount);
- let cards=visible.map(regionalCatalogCardHTML).join("");
+ let cards=visible.map(item=>regionalCatalogCardHTML(item,data.category)).join("");
  if(items.length>visible.length)cards+='<button type="button" class="live-directory-refresh" id="liveDirectoryMore">عرض المزيد ('+(items.length-visible.length)+')</button>';
  box.innerHTML=shared+cards;
 }
@@ -4381,7 +4356,7 @@ function liveDirectoryLocationPrompt(manifest){
  const box=$("#liveDirectoryItems");if(!box)return;
  const rows=manifest&&manifest.governorates||[];
  const total=rows.reduce((sum,row)=>sum+Number(row.count||0),0);
- $("#liveDirectoryStatus").textContent="فهرس اليمن المحلي: "+Number(total).toLocaleString("ar")+" مكاناً مسجلاً موزعة على "+rows.length+" محافظة. اكتب اسم المكان للبحث في اليمن كله، أو اختر محافظة لتصفية النتائج.";
+ $("#liveDirectoryStatus").textContent="فهرس اليمن المحلي: "+Number(total).toLocaleString("ar")+" مكاناً مسجلاً موزعة على "+rows.length+" محافظة. اكتب اسم المحل أو النشاط للبحث في اليمن كله، أو اختر محافظة أو مديرية لتضييق النتائج.";
  const buttons=rows.map(row=>'<button type="button" class="region-governorate-pill" data-region-gov="'+esc(row.name)+'">'+esc(row.name)+' <small>'+Number(row.count||0).toLocaleString("ar")+'</small></button>').join("");
  box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">اختر المحافظة لعرض المحلات والخدمات والمدارس والمرافق المسجلة فيها. السجل لا يحصر كل نشاط موجود في الواقع.</div><div class="region-governorate-pills">'+buttons+'</div>';
 }
@@ -4447,7 +4422,7 @@ async function runLiveDirectorySearch(force){
     }
    }
    if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
-   const responseData={items:rows,manifest,snapshotDate:manifest?.snapshotDate,regionName:context.gov||"اليمن",context,classifiedOnly};
+   const responseData={items:rows,manifest,snapshotDate:manifest?.snapshotDate,regionName:context.gov||"اليمن",context,classifiedOnly,category};
    renderLiveDirectoryResponse(responseData);
    sharedPromise.then(()=>{if(seq===liveDirectorySeq&&!controller.signal.aborted)renderLiveDirectoryResponse(responseData);});
   }catch(error){
@@ -4460,40 +4435,6 @@ async function runLiveDirectorySearch(force){
   }
  },260);
 }
-let souqStoresSeq=0,souqStoresVisibleCount=12;
-async function runSouqStores(force){
- const box=$("#souqStoresItems"),status=$("#souqStoresStatus");
- if(!box||!status)return;
- const seq=++souqStoresSeq,gov=$("#sharedSouqGovernorate")?.value||"all",category=$("#souqStoreCategory")?.value||"all";
- status.textContent="جارٍ تحميل دليل المتاجر من فهرس الأماكن المفتوح…";
- box.innerHTML='<p class="where">جارٍ تحميل المتاجر المسجلة…</p>';
- try{
-  let items=[],manifest;
-  if(gov!=="all"){
-   const loaded=await loadRegionalCatalog(gov,force);manifest=loaded.manifest;items=loaded.data.items;
-  }else{
-   const loaded=await loadAllRegionalCatalog(force);manifest=loaded.manifest;items=loaded.items;
-  }
-  if(seq!==souqStoresSeq)return;
-  const storeCategories=new Set(["grocery","food","cafe","telecom","elec","vehicles","real_estate","build","craft","parts","transport","money","utility","market","solar","wedding","hotel","clothes","home","books","beauty","salon","laundry","delivery","gold","watches","farm"]);
-  if(category==="all")items=items.filter(item=>storeCategories.has(item.category));
-  else items=items.filter(item=>item.category===category);
-  const visible=items.slice(0,souqStoresVisibleCount);
-  status.textContent=Number(items.length).toLocaleString("ar")+" متجراً/موقعاً تجارياً مسجلاً · "+(gov==="all"?"كل المحافظات":gov)+" · فهرس "+(manifest.snapshotDate||"");
-  box.innerHTML=visible.map(regionalCatalogCardHTML).join("")||'<div class="live-directory-empty">لا توجد أماكن مسجلة في هذه الفئة ضمن بيانات المصدر لهذه المنطقة. هذا لا يؤكد عدم وجود متاجر على أرض الواقع.</div>';
-  if($("#souqStoresMoreRow"))$("#souqStoresMoreRow").hidden=items.length<=visible.length;
-  if($("#souqStoresMore"))$("#souqStoresMore").textContent="عرض المزيد ("+(items.length-visible.length)+")";
- }catch(error){
-  if(seq!==souqStoresSeq)return;
-  status.textContent="تعذر تحميل دليل المتاجر: "+String(error?.message||"خطأ غير معروف");
-  box.innerHTML='<div class="live-directory-empty">تعذر تحميل بيانات المتاجر. حاول التحديث مرة أخرى.</div>';
- }
-}
-$("#souqStoresRefresh")?.addEventListener("click",()=>{souqStoresVisibleCount=12;runSouqStores(true);});
-$("#souqStoresMore")?.addEventListener("click",()=>{souqStoresVisibleCount+=12;runSouqStores(false);});
-document.addEventListener("change",event=>{
- if(event.target.closest("#sharedSouqGovernorate,#souqStoreCategory")){souqStoresVisibleCount=12;runSouqStores(false);}
-});
 async function loadLiveCommonsPhotos(button){
  const panel=button.parentElement.querySelector(".live-directory-commons-panel");if(!panel)return;
  if(!panel.hidden){panel.hidden=true;button.textContent="البحث عن صور مرخصة";return;}
@@ -5051,7 +4992,7 @@ function render(){
   const q=$("#q").value.trim().toLowerCase();
   const liveWanted=view==="home"||view==="cat";
   const liveInfo=directoryMapSearchInfo(q);
-  liveDirectoryLast={query:q||(view==="cat"?(CN[curCat]||curCat):""),category:liveDirectoryCategoryOverride||(liveInfo?liveInfo.category:(view==="cat"?curCat:"all")),productType:liveDirectoryCategoryOverride?"":(liveInfo?liveInfo.productType:""),listingType:liveDirectoryListingTypeOverride};
+  liveDirectoryLast={query:q,category:liveDirectoryCategoryOverride||(view==="cat"?curCat:(liveInfo?liveInfo.category:"all")),productType:liveInfo?liveInfo.productType:"",listingType:liveDirectoryListingTypeOverride};
   const searchActive=!!q||Object.values(flt).some(Boolean);
   const liveTop=$("#liveDirectoryTop"),liveAnchor=view==="cat"?$("#catFltRow"):$("#fltRow"),searchLiveMount=$("#searchLiveMount");
   if(liveTop&&view==="home"&&searchActive&&searchLiveMount)searchLiveMount.appendChild(liveTop);
@@ -5080,8 +5021,7 @@ function render(){
     const jobs=applyFilters(S.items.filter(i=>i.cat==="jobs"&&match(i)));
     $("#jobs").innerHTML=jobs.map(cardHTML).join("")||`<div class="empty">لا توجد وظائف متاحة حالياً.</div>`;
   }else if(view==="souq"){
-    const sq=applyFilters(S.items.filter(i=>i.cat==="souq"&&match(i)));
-    $("#sqList").innerHTML=sq.map(cardHTML).join("")||`<div class="empty">لا توجد عروض في السوق حالياً.</div>`;
+    // Product listings come from the shared PostgreSQL marketplace only.
   }
   const showTopSearch=view==="home"&&searchActive;
   const topSection=$("#searchResultsTop"),topList=$("#searchResultList"),homeSlot=$("#homeListSlot");
@@ -5216,6 +5156,6 @@ window.DalilnaMarketplaceBridge={
 })();
 </script>
 <script src="./marketplace-client.js"></script>
-<script src="./features-2.1.js?v=2.3.0" defer></script>
+<script src="./features-2.1.js?v=2.4.0" defer></script>
 </body>
 </html>

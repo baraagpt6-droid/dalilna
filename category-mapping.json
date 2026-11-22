@@ -1,0 +1,1583 @@
+{
+  "schemaVersion": 1,
+  "source": "OpenStreetMap tagging taxonomy",
+  "categories": {
+    "grocery": {
+      "labelAr": "بقالات وتموينات",
+      "labelEn": "Groceries",
+      "aliases": [
+        "بقالة",
+        "بقالات",
+        "تموينات",
+        "سوبرماركت",
+        "grocery",
+        "supermarket",
+        "convenience"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "supermarket"
+        },
+        {
+          "key": "shop",
+          "value": "convenience"
+        },
+        {
+          "key": "shop",
+          "value": "grocery"
+        },
+        {
+          "key": "shop",
+          "value": "general"
+        },
+        {
+          "key": "shop",
+          "value": "greengrocer"
+        },
+        {
+          "key": "shop",
+          "value": "butcher"
+        },
+        {
+          "key": "shop",
+          "value": "deli"
+        },
+        {
+          "key": "shop",
+          "value": "food"
+        },
+        {
+          "key": "shop",
+          "value": "farm"
+        },
+        {
+          "key": "shop",
+          "value": "seafood"
+        },
+        {
+          "key": "shop",
+          "value": "bakery"
+        },
+        {
+          "key": "amenity",
+          "value": "marketplace"
+        }
+      ]
+    },
+    "food": {
+      "labelAr": "مطاعم ومخابز",
+      "labelEn": "Restaurants and bakeries",
+      "aliases": [
+        "مطعم",
+        "مطاعم",
+        "مخبز",
+        "مخابز",
+        "restaurant",
+        "fast food",
+        "food court",
+        "bakery"
+      ],
+      "osmTags": [
+        {
+          "key": "amenity",
+          "value": "restaurant"
+        },
+        {
+          "key": "amenity",
+          "value": "fast_food"
+        },
+        {
+          "key": "amenity",
+          "value": "food_court"
+        },
+        {
+          "key": "amenity",
+          "value": "ice_cream"
+        },
+        {
+          "key": "shop",
+          "value": "bakery"
+        },
+        {
+          "key": "shop",
+          "value": "pastry"
+        },
+        {
+          "key": "shop",
+          "value": "confectionery"
+        }
+      ]
+    },
+    "cafe": {
+      "labelAr": "بوفيات ومقاهي",
+      "labelEn": "Cafes",
+      "aliases": [
+        "مقهى",
+        "كافيه",
+        "بوفيه",
+        "قهوة",
+        "cafe",
+        "coffee"
+      ],
+      "osmTags": [
+        {
+          "key": "amenity",
+          "value": "cafe"
+        },
+        {
+          "key": "amenity",
+          "value": "tea"
+        },
+        {
+          "key": "amenity",
+          "value": "internet_cafe"
+        }
+      ]
+    },
+    "edu": {
+      "labelAr": "مدارس وتعليم",
+      "labelEn": "Education",
+      "aliases": [
+        "مدرسة",
+        "مدارس",
+        "معهد",
+        "جامعة",
+        "كلية",
+        "روضة",
+        "school",
+        "college",
+        "university",
+        "kindergarten"
+      ],
+      "osmTags": [
+        {
+          "key": "amenity",
+          "value": "school"
+        },
+        {
+          "key": "amenity",
+          "value": "college"
+        },
+        {
+          "key": "amenity",
+          "value": "university"
+        },
+        {
+          "key": "amenity",
+          "value": "kindergarten"
+        },
+        {
+          "key": "amenity",
+          "value": "language_school"
+        },
+        {
+          "key": "amenity",
+          "value": "driving_school"
+        },
+        {
+          "key": "amenity",
+          "value": "music_school"
+        },
+        {
+          "key": "office",
+          "value": "educational_institution"
+        }
+      ]
+    },
+    "health": {
+      "labelAr": "مستشفيات ومراكز وعيادات",
+      "labelEn": "Hospitals and health centres",
+      "aliases": [
+        "مستشفى",
+        "مستشفيات",
+        "عيادة",
+        "عيادات",
+        "مركز صحي",
+        "مستوصف",
+        "طبيب",
+        "أطباء",
+        "أسنان",
+        "طوارئ",
+        "hospital",
+        "clinic",
+        "doctor",
+        "doctors",
+        "dentist",
+        "healthcare",
+        "pharmacy",
+        "ambulance"
+      ],
+      "osmTags": [
+        {
+          "key": "amenity",
+          "value": "hospital"
+        },
+        {
+          "key": "amenity",
+          "value": "clinic"
+        },
+        {
+          "key": "amenity",
+          "value": "doctors"
+        },
+        {
+          "key": "amenity",
+          "value": "dentist"
+        },
+        {
+          "key": "amenity",
+          "value": "doctors_surgery"
+        },
+        {
+          "key": "amenity",
+          "value": "health_centre"
+        },
+        {
+          "key": "amenity",
+          "value": "pharmacy"
+        },
+        {
+          "key": "healthcare",
+          "value": "hospital"
+        },
+        {
+          "key": "healthcare",
+          "value": "clinic"
+        },
+        {
+          "key": "healthcare",
+          "value": "doctor"
+        },
+        {
+          "key": "healthcare",
+          "value": "doctors"
+        },
+        {
+          "key": "healthcare",
+          "value": "dentist"
+        },
+        {
+          "key": "healthcare",
+          "value": "health_centre"
+        },
+        {
+          "key": "healthcare",
+          "value": "centre"
+        },
+        {
+          "key": "healthcare",
+          "value": "pharmacy"
+        },
+        {
+          "key": "healthcare",
+          "value": "nurse"
+        },
+        {
+          "key": "healthcare",
+          "value": "physiotherapist"
+        },
+        {
+          "key": "healthcare",
+          "value": "laboratory"
+        },
+        {
+          "key": "healthcare",
+          "value": "blood_donation"
+        },
+        {
+          "key": "healthcare",
+          "value": "rehabilitation"
+        },
+        {
+          "key": "healthcare",
+          "value": "birthing_centre"
+        },
+        {
+          "key": "healthcare",
+          "value": "veterinary"
+        },
+        {
+          "key": "emergency",
+          "value": "ambulance_station"
+        },
+        {
+          "key": "amenity",
+          "value": "medical_centre"
+        },
+        {
+          "key": "healthcare",
+          "value": "medical_centre"
+        },
+        {
+          "key": "healthcare",
+          "value": "blood_donation"
+        }
+      ]
+    },
+    "pharmacy": {
+      "labelAr": "صيدليات",
+      "labelEn": "Pharmacies",
+      "aliases": [
+        "صيدلية",
+        "صيدليات",
+        "دواء",
+        "أدوية",
+        "pharmacy",
+        "chemist",
+        "drugstore"
+      ],
+      "osmTags": [
+        {
+          "key": "amenity",
+          "value": "pharmacy"
+        },
+        {
+          "key": "healthcare",
+          "value": "pharmacy"
+        },
+        {
+          "key": "shop",
+          "value": "pharmacy"
+        },
+        {
+          "key": "shop",
+          "value": "chemist"
+        },
+        {
+          "key": "shop",
+          "value": "medical_supply"
+        }
+      ]
+    },
+    "gov": {
+      "labelAr": "جهات حكومية",
+      "labelEn": "Government services",
+      "aliases": [
+        "حكومي",
+        "حكومة",
+        "محكمة",
+        "شرطة",
+        "بلدية",
+        "government",
+        "town hall",
+        "courthouse",
+        "police"
+      ],
+      "osmTags": [
+        {
+          "key": "office",
+          "value": "government"
+        },
+        {
+          "key": "office",
+          "value": "administrative"
+        },
+        {
+          "key": "office",
+          "value": "diplomatic"
+        },
+        {
+          "key": "amenity",
+          "value": "townhall"
+        },
+        {
+          "key": "amenity",
+          "value": "courthouse"
+        },
+        {
+          "key": "amenity",
+          "value": "police"
+        },
+        {
+          "key": "amenity",
+          "value": "fire_station"
+        },
+        {
+          "key": "government",
+          "value": "administrative"
+        },
+        {
+          "key": "government",
+          "value": "register_office"
+        },
+        {
+          "key": "government",
+          "value": "tax"
+        }
+      ]
+    },
+    "money": {
+      "labelAr": "بنوك وصرافة وتحويلات",
+      "labelEn": "Banks and exchange",
+      "aliases": [
+        "بنك",
+        "بنوك",
+        "صراف",
+        "صرافة",
+        "تحويلات",
+        "حوالات",
+        "مصرف",
+        "bank",
+        "atm",
+        "money transfer"
+      ],
+      "osmTags": [
+        {
+          "key": "amenity",
+          "value": "bank"
+        },
+        {
+          "key": "amenity",
+          "value": "atm"
+        },
+        {
+          "key": "amenity",
+          "value": "bureau_de_change"
+        },
+        {
+          "key": "amenity",
+          "value": "money_transfer"
+        },
+        {
+          "key": "shop",
+          "value": "money_lender"
+        },
+        {
+          "key": "shop",
+          "value": "pawnbroker"
+        }
+      ]
+    },
+    "build": {
+      "labelAr": "مواد بناء",
+      "labelEn": "Building materials",
+      "aliases": [
+        "مواد بناء",
+        "حديد",
+        "أسمنت",
+        "سباكة",
+        "building materials",
+        "hardware",
+        "paint",
+        "plumbing"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "building_materials"
+        },
+        {
+          "key": "shop",
+          "value": "hardware"
+        },
+        {
+          "key": "shop",
+          "value": "paint"
+        },
+        {
+          "key": "shop",
+          "value": "trade"
+        },
+        {
+          "key": "shop",
+          "value": "tiles"
+        },
+        {
+          "key": "shop",
+          "value": "doors"
+        },
+        {
+          "key": "shop",
+          "value": "flooring"
+        },
+        {
+          "key": "shop",
+          "value": "plumbing"
+        }
+      ]
+    },
+    "parts": {
+      "labelAr": "قطع غيار",
+      "labelEn": "Vehicle parts",
+      "aliases": [
+        "قطع غيار",
+        "إطارات",
+        "بطاريات سيارات",
+        "spare parts",
+        "car parts",
+        "vehicle parts",
+        "tyres"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "car_parts"
+        },
+        {
+          "key": "shop",
+          "value": "tyres"
+        },
+        {
+          "key": "shop",
+          "value": "vehicle_parts"
+        },
+        {
+          "key": "shop",
+          "value": "motorcycle_parts"
+        }
+      ]
+    },
+    "craft": {
+      "labelAr": "حرفيون وصيانة",
+      "labelEn": "Crafts and repair",
+      "aliases": [
+        "حرفي",
+        "صيانة",
+        "إصلاح",
+        "ورشة",
+        "سباك",
+        "كهربائي",
+        "نجار",
+        "حداد",
+        "craft",
+        "repair",
+        "plumber"
+      ],
+      "osmTags": [
+        {
+          "key": "craft",
+          "value": "*"
+        }
+      ]
+    },
+    "transport": {
+      "labelAr": "نقل ومواصلات",
+      "labelEn": "Transport",
+      "aliases": [
+        "نقل",
+        "مواصلات",
+        "باص",
+        "تاكسي",
+        "محطة",
+        "transport",
+        "bus station",
+        "taxi",
+        "fuel station"
+      ],
+      "osmTags": [
+        {
+          "key": "amenity",
+          "value": "bus_station"
+        },
+        {
+          "key": "amenity",
+          "value": "taxi"
+        },
+        {
+          "key": "amenity",
+          "value": "fuel"
+        },
+        {
+          "key": "amenity",
+          "value": "car_rental"
+        },
+        {
+          "key": "amenity",
+          "value": "ferry_terminal"
+        },
+        {
+          "key": "public_transport",
+          "value": "station"
+        },
+        {
+          "key": "public_transport",
+          "value": "stop_position"
+        },
+        {
+          "key": "public_transport",
+          "value": "platform"
+        },
+        {
+          "key": "public_transport",
+          "value": "stop_area"
+        },
+        {
+          "key": "railway",
+          "value": "station"
+        },
+        {
+          "key": "railway",
+          "value": "halt"
+        },
+        {
+          "key": "highway",
+          "value": "bus_stop"
+        }
+      ]
+    },
+    "telecom": {
+      "labelAr": "جوالات واتصالات",
+      "labelEn": "Mobile phones and telecom",
+      "aliases": [
+        "جوال",
+        "جوالات",
+        "هاتف",
+        "هواتف",
+        "اتصالات",
+        "شرائح",
+        "mobile phone",
+        "telecom",
+        "telephone"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "mobile_phone"
+        },
+        {
+          "key": "shop",
+          "value": "telecommunication"
+        },
+        {
+          "key": "shop",
+          "value": "mobile_phone_accessories"
+        },
+        {
+          "key": "office",
+          "value": "telecommunication"
+        }
+      ]
+    },
+    "utility": {
+      "labelAr": "مياه وغاز وخدمات",
+      "labelEn": "Utilities",
+      "aliases": [
+        "مياه",
+        "غاز",
+        "تعبئة غاز",
+        "اسطوانات غاز",
+        "water",
+        "gas",
+        "propane"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "gas"
+        },
+        {
+          "key": "shop",
+          "value": "propane"
+        },
+        {
+          "key": "shop",
+          "value": "water"
+        },
+        {
+          "key": "shop",
+          "value": "water_treatment"
+        },
+        {
+          "key": "shop",
+          "value": "fuel"
+        },
+        {
+          "key": "amenity",
+          "value": "water_point"
+        },
+        {
+          "key": "amenity",
+          "value": "drinking_water"
+        },
+        {
+          "key": "amenity",
+          "value": "water_works"
+        }
+      ]
+    },
+    "farm": {
+      "labelAr": "زراعة ومواشٍ",
+      "labelEn": "Agriculture and livestock",
+      "aliases": [
+        "زراعة",
+        "مزرعة",
+        "مواشي",
+        "أعلاف",
+        "بذور",
+        "agriculture",
+        "farm",
+        "livestock",
+        "animal feed",
+        "seeds"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "agrarian"
+        },
+        {
+          "key": "shop",
+          "value": "garden_centre"
+        },
+        {
+          "key": "shop",
+          "value": "farm"
+        },
+        {
+          "key": "shop",
+          "value": "animal_feed"
+        },
+        {
+          "key": "shop",
+          "value": "seeds"
+        },
+        {
+          "key": "shop",
+          "value": "agricultural_supplies"
+        },
+        {
+          "key": "landuse",
+          "value": "farmyard"
+        },
+        {
+          "key": "landuse",
+          "value": "orchard"
+        },
+        {
+          "key": "landuse",
+          "value": "vineyard"
+        },
+        {
+          "key": "landuse",
+          "value": "plant_nursery"
+        },
+        {
+          "key": "amenity",
+          "value": "animal_boarding"
+        },
+        {
+          "key": "amenity",
+          "value": "veterinary"
+        }
+      ]
+    },
+    "mosque": {
+      "labelAr": "مساجد وجوامع",
+      "labelEn": "Mosques",
+      "aliases": [
+        "مسجد",
+        "مساجد",
+        "جامع",
+        "جوامع",
+        "مصلى",
+        "mosque",
+        "place of worship"
+      ],
+      "osmTags": [
+        {
+          "key": "building",
+          "value": "mosque"
+        }
+      ]
+    },
+    "gold": {
+      "labelAr": "ذهب ومجوهرات وساعات",
+      "labelEn": "Gold and jewellery",
+      "aliases": [
+        "ذهب",
+        "مجوهرات",
+        "صياغة",
+        "ساعات",
+        "gold",
+        "jewellery",
+        "jewelry",
+        "watchmaker"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "jewelry"
+        },
+        {
+          "key": "shop",
+          "value": "jewellery"
+        },
+        {
+          "key": "shop",
+          "value": "watches"
+        },
+        {
+          "key": "craft",
+          "value": "goldsmith"
+        },
+        {
+          "key": "craft",
+          "value": "watchmaker"
+        }
+      ]
+    },
+    "wedding": {
+      "labelAr": "قاعات أعراس ومناسبات",
+      "labelEn": "Wedding and event venues",
+      "aliases": [
+        "قاعات",
+        "قاعة",
+        "أعراس",
+        "أفراح",
+        "مناسبات",
+        "wedding hall",
+        "events venue"
+      ],
+      "osmTags": [
+        {
+          "key": "amenity",
+          "value": "events_venue"
+        },
+        {
+          "key": "amenity",
+          "value": "community_centre"
+        },
+        {
+          "key": "leisure",
+          "value": "events_venue"
+        }
+      ]
+    },
+    "hotel": {
+      "labelAr": "فنادق وشقق فندقية",
+      "labelEn": "Hotels and apartments",
+      "aliases": [
+        "فندق",
+        "فنادق",
+        "نزل",
+        "سكن",
+        "شقق فندقية",
+        "hotel",
+        "guest house",
+        "hostel",
+        "motel"
+      ],
+      "osmTags": [
+        {
+          "key": "tourism",
+          "value": "hotel"
+        },
+        {
+          "key": "tourism",
+          "value": "guest_house"
+        },
+        {
+          "key": "tourism",
+          "value": "hostel"
+        },
+        {
+          "key": "tourism",
+          "value": "motel"
+        },
+        {
+          "key": "tourism",
+          "value": "apartment"
+        },
+        {
+          "key": "tourism",
+          "value": "camp_site"
+        },
+        {
+          "key": "tourism",
+          "value": "chalet"
+        },
+        {
+          "key": "tourism",
+          "value": "alpine_hut"
+        },
+        {
+          "key": "building",
+          "value": "hotel"
+        }
+      ]
+    },
+    "market": {
+      "labelAr": "أسواق",
+      "labelEn": "Markets",
+      "aliases": [
+        "سوق",
+        "أسواق",
+        "سوق مركزي",
+        "market",
+        "marketplace"
+      ],
+      "osmTags": [
+        {
+          "key": "amenity",
+          "value": "marketplace"
+        },
+        {
+          "key": "shop",
+          "value": "market"
+        }
+      ]
+    },
+    "solar": {
+      "labelAr": "طاقة شمسية وبطاريات",
+      "labelEn": "Solar power and batteries",
+      "aliases": [
+        "طاقة شمسية",
+        "ألواح",
+        "منظومة",
+        "بطارية",
+        "بطاريات",
+        "انفرتر",
+        "solar energy equipment",
+        "solar panel shop",
+        "solar batteries"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "solar"
+        },
+        {
+          "key": "shop",
+          "value": "batteries"
+        },
+        {
+          "key": "product",
+          "value": "solar_panel"
+        },
+        {
+          "key": "product",
+          "value": "battery"
+        },
+        {
+          "key": "product",
+          "value": "inverter"
+        },
+        {
+          "key": "product",
+          "value": "solar_panel"
+        },
+        {
+          "key": "product",
+          "value": "battery"
+        },
+        {
+          "key": "product",
+          "value": "inverter"
+        }
+      ]
+    },
+    "elec": {
+      "labelAr": "إلكترونيات وكمبيوتر",
+      "labelEn": "Electronics and computers",
+      "aliases": [
+        "إلكترونيات",
+        "كهربائيات",
+        "كمبيوتر",
+        "حاسوب",
+        "لابتوب",
+        "شاشة",
+        "شاشات",
+        "electronics",
+        "computer",
+        "laptop",
+        "electrical"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "electronics"
+        },
+        {
+          "key": "shop",
+          "value": "electrical"
+        },
+        {
+          "key": "shop",
+          "value": "computer"
+        },
+        {
+          "key": "shop",
+          "value": "hifi"
+        },
+        {
+          "key": "shop",
+          "value": "radiotechnics"
+        },
+        {
+          "key": "shop",
+          "value": "computer_parts"
+        },
+        {
+          "key": "shop",
+          "value": "appliance"
+        }
+      ]
+    },
+    "clothes": {
+      "labelAr": "ملابس وأحذية",
+      "labelEn": "Clothing and shoes",
+      "aliases": [
+        "ملابس",
+        "أحذية",
+        "خياط",
+        "خياطة",
+        "clothes",
+        "clothing",
+        "shoes",
+        "tailor",
+        "fashion"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "clothes"
+        },
+        {
+          "key": "shop",
+          "value": "shoes"
+        },
+        {
+          "key": "shop",
+          "value": "tailor"
+        },
+        {
+          "key": "shop",
+          "value": "fabric"
+        },
+        {
+          "key": "shop",
+          "value": "fashion"
+        },
+        {
+          "key": "shop",
+          "value": "boutique"
+        },
+        {
+          "key": "shop",
+          "value": "underwear"
+        },
+        {
+          "key": "shop",
+          "value": "bag"
+        },
+        {
+          "key": "shop",
+          "value": "leather"
+        }
+      ]
+    },
+    "home": {
+      "labelAr": "أثاث وأجهزة منزلية",
+      "labelEn": "Furniture and home appliances",
+      "aliases": [
+        "أثاث",
+        "أدوات منزلية",
+        "أجهزة منزلية",
+        "مطبخ",
+        "مفروشات",
+        "furniture",
+        "houseware",
+        "appliance",
+        "kitchenware"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "furniture"
+        },
+        {
+          "key": "shop",
+          "value": "houseware"
+        },
+        {
+          "key": "shop",
+          "value": "appliance"
+        },
+        {
+          "key": "shop",
+          "value": "kitchen"
+        },
+        {
+          "key": "shop",
+          "value": "kitchenware"
+        },
+        {
+          "key": "shop",
+          "value": "bed"
+        },
+        {
+          "key": "shop",
+          "value": "interior_decoration"
+        },
+        {
+          "key": "shop",
+          "value": "curtain"
+        },
+        {
+          "key": "shop",
+          "value": "carpet"
+        },
+        {
+          "key": "shop",
+          "value": "bathroom_furnishing"
+        }
+      ]
+    },
+    "books": {
+      "labelAr": "مكتبات وقرطاسية",
+      "labelEn": "Books and stationery",
+      "aliases": [
+        "مكتبة",
+        "مكتبات",
+        "قرطاسية",
+        "كتب",
+        "لوازم مدرسية",
+        "bookstore",
+        "books",
+        "stationery",
+        "library",
+        "قلم",
+        "أقلام",
+        "دفتر",
+        "دفاتر",
+        "أدوات مدرسية",
+        "مستلزمات مدرسية"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "books"
+        },
+        {
+          "key": "shop",
+          "value": "stationery"
+        },
+        {
+          "key": "shop",
+          "value": "copyshop"
+        },
+        {
+          "key": "shop",
+          "value": "print"
+        },
+        {
+          "key": "shop",
+          "value": "newspaper"
+        },
+        {
+          "key": "amenity",
+          "value": "library"
+        }
+      ]
+    },
+    "beauty": {
+      "labelAr": "عطور وتجميل",
+      "labelEn": "Perfumes and beauty",
+      "aliases": [
+        "عطور",
+        "عطر",
+        "تجميل",
+        "مكياج",
+        "مستحضرات",
+        "perfume",
+        "perfumery",
+        "beauty",
+        "cosmetics"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "beauty"
+        },
+        {
+          "key": "shop",
+          "value": "cosmetics"
+        },
+        {
+          "key": "shop",
+          "value": "perfumery"
+        },
+        {
+          "key": "shop",
+          "value": "hairdresser_supply"
+        }
+      ]
+    },
+    "delivery": {
+      "labelAr": "توصيل وطلبات وشحن",
+      "labelEn": "Delivery and courier services",
+      "aliases": [
+        "توصيل",
+        "طلبات",
+        "شحن",
+        "بريد",
+        "مندوب",
+        "مندوب توصيل",
+        "courier",
+        "delivery",
+        "parcel",
+        "post office",
+        "shipping",
+        "logistics"
+      ],
+      "osmTags": [
+        {
+          "key": "office",
+          "value": "courier"
+        },
+        {
+          "key": "office",
+          "value": "logistics"
+        },
+        {
+          "key": "office",
+          "value": "delivery"
+        },
+        {
+          "key": "amenity",
+          "value": "post_office"
+        },
+        {
+          "key": "amenity",
+          "value": "parcel_locker"
+        },
+        {
+          "key": "amenity",
+          "value": "parcel_pickup"
+        },
+        {
+          "key": "shop",
+          "value": "parcel"
+        },
+        {
+          "key": "shop",
+          "value": "shipping"
+        },
+        {
+          "key": "shop",
+          "value": "delivery"
+        },
+        {
+          "key": "service",
+          "value": "delivery"
+        },
+        {
+          "key": "service",
+          "value": "courier"
+        },
+        {
+          "key": "delivery",
+          "value": "yes"
+        },
+        {
+          "key": "delivery",
+          "value": "only"
+        },
+        {
+          "key": "delivery",
+          "value": "designated"
+        },
+        {
+          "key": "courier",
+          "value": "yes"
+        },
+        {
+          "key": "amenity",
+          "value": "delivery"
+        },
+        {
+          "key": "amenity",
+          "value": "courier"
+        },
+        {
+          "key": "shop",
+          "value": "courier"
+        },
+        {
+          "key": "shop",
+          "value": "delivery"
+        },
+        {
+          "key": "shop",
+          "value": "parcel_locker"
+        },
+        {
+          "key": "office",
+          "value": "shipping"
+        },
+        {
+          "key": "office",
+          "value": "delivery"
+        },
+        {
+          "key": "amenity",
+          "value": "parcel_pickup"
+        },
+        {
+          "key": "delivery",
+          "value": "*"
+        }
+      ]
+    },
+    "salon": {
+      "labelAr": "صالونات وحلاقة",
+      "labelEn": "Hairdressers and salons",
+      "aliases": [
+        "صالون",
+        "حلاقة",
+        "حلاق",
+        "كوافير",
+        "hairdresser",
+        "barber"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "hairdresser"
+        },
+        {
+          "key": "shop",
+          "value": "barber"
+        }
+      ]
+    },
+    "laundry": {
+      "labelAr": "مغاسل وكوي",
+      "labelEn": "Laundry",
+      "aliases": [
+        "مغسلة",
+        "مغاسل",
+        "غسيل",
+        "كوي",
+        "laundry",
+        "dry cleaning"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "laundry"
+        },
+        {
+          "key": "shop",
+          "value": "dry_cleaning"
+        }
+      ]
+    },
+    "other": {
+      "labelAr": "أخرى",
+      "labelEn": "Other mapped places",
+      "aliases": [
+        "أخرى",
+        "خدمات أخرى",
+        "other"
+      ],
+      "osmTags": []
+    },
+    "real_estate": {
+      "labelAr": "أراضٍ وعقارات",
+      "labelEn": "Real estate and land",
+      "aliases": [
+        "أرض",
+        "أراضي",
+        "عقار",
+        "عقارات",
+        "شقة",
+        "منزل",
+        "بيت",
+        "مكتب عقاري",
+        "إيجار",
+        "property",
+        "real estate",
+        "land",
+        "estate agent"
+      ],
+      "osmTags": [
+        {
+          "key": "office",
+          "value": "estate_agent"
+        },
+        {
+          "key": "office",
+          "value": "property_management"
+        },
+        {
+          "key": "shop",
+          "value": "estate_agent"
+        },
+        {
+          "key": "shop",
+          "value": "property"
+        }
+      ]
+    },
+    "vehicles": {
+      "labelAr": "سيارات ودراجات ومركبات",
+      "labelEn": "Cars, motorcycles and vehicles",
+      "aliases": [
+        "سيارة",
+        "سيارات",
+        "دراجة نارية",
+        "دراجات نارية",
+        "دباب",
+        "مركبات",
+        "معرض سيارات",
+        "car",
+        "cars",
+        "motorcycle",
+        "motorcycles",
+        "vehicle",
+        "vehicles",
+        "car dealer",
+        "car rental",
+        "car repair"
+      ],
+      "osmTags": [
+        {
+          "key": "shop",
+          "value": "car"
+        },
+        {
+          "key": "shop",
+          "value": "motorcycle"
+        },
+        {
+          "key": "shop",
+          "value": "vehicle"
+        },
+        {
+          "key": "shop",
+          "value": "car_repair"
+        },
+        {
+          "key": "amenity",
+          "value": "car_rental"
+        },
+        {
+          "key": "shop",
+          "value": "car_repair"
+        },
+        {
+          "key": "shop",
+          "value": "motorcycle_repair"
+        }
+      ]
+    }
+  },
+  "multiCategoryRules": [
+    {
+      "key": "amenity",
+      "value": "pharmacy",
+      "categories": [
+        "health",
+        "pharmacy"
+      ]
+    },
+    {
+      "key": "healthcare",
+      "value": "pharmacy",
+      "categories": [
+        "health",
+        "pharmacy"
+      ]
+    },
+    {
+      "key": "shop",
+      "value": "pharmacy",
+      "categories": [
+        "health",
+        "pharmacy"
+      ]
+    },
+    {
+      "key": "amenity",
+      "value": "place_of_worship",
+      "when": {
+        "key": "religion",
+        "value": "muslim"
+      },
+      "categories": [
+        "mosque"
+      ]
+    },
+    {
+      "key": "building",
+      "value": "mosque",
+      "categories": [
+        "mosque"
+      ]
+    },
+    {
+      "key": "shop",
+      "value": "car_parts",
+      "categories": [
+        "parts",
+        "vehicles"
+      ]
+    }
+  ],
+  "osmSearchKeys": [
+    "name",
+    "name:ar",
+    "name:en",
+    "alt_name",
+    "official_name",
+    "brand",
+    "operator",
+    "shop",
+    "amenity",
+    "healthcare",
+    "tourism",
+    "office",
+    "craft",
+    "leisure",
+    "public_transport",
+    "landuse",
+    "railway",
+    "building",
+    "emergency",
+    "delivery",
+    "courier",
+    "service",
+    "addr:street",
+    "addr:suburb",
+    "addr:neighbourhood",
+    "addr:city",
+    "addr:district",
+    "product"
+  ],
+  "primaryCategoryOrder": [
+    "pharmacy",
+    "health",
+    "market",
+    "grocery",
+    "food",
+    "cafe",
+    "edu",
+    "gov",
+    "money",
+    "real_estate",
+    "vehicles",
+    "parts",
+    "build",
+    "craft",
+    "transport",
+    "telecom",
+    "utility",
+    "farm",
+    "mosque",
+    "gold",
+    "wedding",
+    "hotel",
+    "solar",
+    "elec",
+    "clothes",
+    "home",
+    "books",
+    "beauty",
+    "delivery",
+    "salon",
+    "laundry",
+    "other"
+  ]
+}

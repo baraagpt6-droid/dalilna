@@ -1,34 +1,26 @@
-Dalilna 2.3.0 — Build and deployment status
-=============================================
+Dalilna 2.4.0 — Release readiness
 
-Release target: 2.3.0
-Android versionCode: 230
-Web version: 2.3.0
+Version identifiers:
+- PWA: 2.4.0
+- Android versionName: 2.4.0
+- Android versionCode: 240
+- Service worker cache: dalilna-pwa-v2.4.0
 
-Changes prepared in branch feat/dalilna-global-search-market-fx-v2.3.0:
-- Global search across all 22 Yemen governorate catalogue files without a required governorate selection.
-- Arabic search normalization for Alif variants, taa marbuta/ha, alif maqsura/ya, diacritics and the definite article.
-- Category selection displays matching regional-catalogue locations without requiring a governorate filter.
-- Souq has a distinct commercial-place directory sourced from OpenStreetMap. It is filtered by governorate/category and loads only when the Souq screen opens.
-- Approved user-submitted marketplace adverts remain separate from map directory records. Map records do not claim product stock, a current selling price or a verified seller.
-- Exchange rates and gold are read from the public ye-rial.com current API. Readings older than 24 hours or missing required USD/SAR/21K gold values are hidden; no hard-coded device values are displayed.
-- The governorate/district scope label no longer repeats the same governorate name.
-- PWA cache namespace and asset versions are updated to 2.3.0.
-- Android versionCode/versionName are 230/2.3.0. WebView HTTP cache is cleared once on app-version upgrades while local user data is preserved.
-- Android CI synchronizes current PWA and regional-catalogue assets before building the debug APK.
+Code changes prepared on feat/dalilna-root-fix-v2.4.0:
+- Dictionary-driven OSM category classification and multi-category memberships.
+- Search all 22 governorate catalogue shards by Arabic/English name, activity tags, address/neighbourhood and administrative names.
+- Search/category matching uses normalized Arabic tokens and explicit category membership rather than Arabic label-only matching.
+- Refresh and point-in-polygon assignment use Yemen geoBoundaries ADM2 polygons (335 districts), with centroid assignments explicitly marked approximate.
+- Souq is separated from the OSM place directory and contains seven product groups only.
+- Daily merchant JSON feed import is authenticated, idempotent and snapshot-safe.
+- Daily workflow checks live exchange quotes, marketplace DB and jobs endpoints; regional and jobs workflows run separately every 24 hours.
+- Android WebView cache invalidates once per installed APK version and preserves user localStorage.
 
-Current source catalogue snapshot:
-- 14,886 OpenStreetMap place records.
-- 22 governorates.
-- 335 districts.
-- Snapshot date: 2026-11-22.
+Known data/configuration constraints:
+- No merchant JSON feed URL was configured when this code was prepared. Product feed automation remains dormant until merchant endpoints and the shared sync token are configured in Render and GitHub Actions.
+- OpenStreetMap contains mapped and named records, not every real business. A category can still have zero matches where the source has no corresponding mapped records.
+- District counts report polygon-derived assignments separately from nearest-centroid estimates. Empty districts are not filled with fabricated records.
+- Job feeds retain source links; application buttons are only rendered for approved official provider hosts.
+- The Android artifact is a debug/testing APK, not a Play Store production-signed package.
 
-Validation and release status:
-- CI, PWA deployment and Android APK build have not yet run for this branch.
-- Product-stock feeds are not connected. Live inventory and merchant prices must be supplied by a verified merchant integration or approved listings.
-- Android APK remains a debug testing package, not a Play Store production-signed release.
-
-Sources and attribution:
-- OpenStreetMap contributors, ODbL-1.0.
-- Open Admin Data Yemen, CC BY 4.0.
-- Exchange indicators: https://ye-rial.com/ (API documentation: https://ye-rial.com/api/docs/).
+The PR and its CI/build/deployment results must be checked before calling this release deployed.

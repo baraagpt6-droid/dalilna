@@ -25,9 +25,18 @@ test("YemenHR parser keeps an official application URL separate from the source 
  assert.equal(job.deadline,"30 نوفمبر 2026");
 });
 
-test("Telegram and Telegraph links are not exposed as official application URLs",()=>{
- const [job]=parseYemenHrJobs(fixture(""));
+test("Telegram, Telegraph and reserved test domains never become published job links",()=>{
+ const items=parseYemenHrJobs(fixture(""));
+ assert.equal(items.length,0);
+ assert.equal(parseYemenHrJobs(fixture("https://telegra.ph/temporary-application-link")).length,0);
+ assert.equal(parseYemenHrJobs(fixture("https://example.invalid/apply")).length,0);
+});
+
+test("YemenHR parser publishes only a direct application URL supplied by the source",()=>{
+ const [job]=parseYemenHrJobs(fixture("https://yemenhr.com/apply/12345"));
  assert.ok(job);
- assert.equal(job.applicationUrl,"");
- assert.match(job.url,/t\.me\/hr_yemen/);
+ assert.equal(job.applicationUrl,"https://yemenhr.com/apply/12345");
+ assert.equal(job.url,job.applicationUrl);
+ assert.equal(job.sourceUrl,"https://t.me/hr_yemen/12345");
+ assert.doesNotMatch(job.url,/telegra\\.ph|t\\.me/i);
 });

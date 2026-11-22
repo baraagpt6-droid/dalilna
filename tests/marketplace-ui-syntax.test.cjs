@@ -1,6 +1,7 @@
 "use strict";
-const fs=require("node:fs"),vm=require("node:vm"),assert=require("node:assert/strict"),test=require("node:test");
+const fs=require("node:fs"),path=require("node:path"),vm=require("node:vm"),assert=require("node:assert/strict"),test=require("node:test");
 const html=fs.readFileSync("index.html","utf8"),client=fs.readFileSync("marketplace-client.js","utf8"),features=fs.readFileSync("features-2.1.js","utf8"),quickCss=fs.readFileSync("features-2.1.css","utf8"),jobs=fs.readFileSync("scripts/refresh-jobs.cjs","utf8"),sw=fs.readFileSync("sw.js","utf8");
+const workflow=fs.readFileSync(".github/workflows/refresh-regional-catalog.yml","utf8");
 const inline=html.split("<script").slice(1).map(part=>{const start=part.indexOf(">");const end=part.indexOf("</script>");return start>=0&&end>start?part.slice(start+1,end):"";}).filter(code=>code.trim());
 test("all inline JavaScript in PWA parses",()=>{assert.ok(inline.length>=2);inline.forEach((code,i)=>new vm.Script(code,{filename:"index.html:inline-"+i}));});
 test("marketplace client parses",()=>new vm.Script(client,{filename:"marketplace-client.js"}));
@@ -51,11 +52,11 @@ test("job cards only render apply buttons from approved official provider hosts"
  assert.ok(jobs.includes('function isOfficialApplicationUrl'));
 });
 
-test("PWA version metadata and asset cache tags are 2.3.0",()=>{
- assert.ok(html.includes('content="2.3.0"'));
- assert.ok(html.includes('features-2.1.css?v=2.3.0'));
- assert.ok(html.includes('features-2.1.js?v=2.3.0'));
- assert.ok(sw.includes('CACHE_PREFIX + "v2.3.0"'));
+test("PWA version metadata and asset cache tags are 2.4.0",()=>{
+ assert.ok(html.includes('content="2.4.0"'));
+ assert.ok(html.includes('features-2.1.css?v=2.4.0'));
+ assert.ok(html.includes('features-2.1.js?v=2.4.0'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.4.0"'));
 });
 test("main directory search loads all 22 governorate files without requiring a selected governorate",()=>{
  assert.ok(html.includes("async function loadAllRegionalCatalog(force)"));
@@ -63,13 +64,30 @@ test("main directory search loads all 22 governorate files without requiring a s
  assert.ok(html.includes("جارٍ البحث في سجلات المحافظات الـ22"));
  assert.ok(html.includes("normalizeSearchPlace"));
 });
-test("Souq store directory is loaded on demand and kept separate from approved sale listings",()=>{
- assert.ok(html.includes('id="souqStoresPanel"'));
- assert.ok(html.includes('id="souqStoreCategory"'));
- assert.ok(html.includes("async function runSouqStores(force)"));
- assert.ok(html.includes("OpenStreetMap"));
- assert.ok(html.includes("لا يؤكد توفر سلعة"));
+test("Souq renders only shared PostgreSQL product listings and excludes map restaurants and local ratings",()=>{
+ assert.ok(!html.includes('id="souqStoresPanel"'));
+ assert.ok(!html.includes("runSouqStores"));
+ assert.ok(!html.includes('id="sqList"'));
+ assert.ok(!html.includes("Restaurant directory"));
  assert.ok(html.includes('id="sharedSouqPanel"'));
+ assert.ok(features.includes("souqCategoryTabs"));
+ assert.equal((html.match(/function regionalCatalogCardHTML/g)||[]).length,1);
+});
+test("Souq exposes exactly seven product groups",()=>{
+ const groups=features.slice(features.indexOf("const GROUPS=["),features.indexOf("let country="));
+ for(const label of ["جوالات وإلكترونيات","سيارات ودراجات وقطع غيار","عقارات وأراضٍ","طاقة شمسية وبطاريات","أثاث وأجهزة منزلية","مواشي وزراعة ومعدات","ملابس وعطور ومستلزمات"])assert.ok(groups.includes(label),label);
+ assert.ok(!groups.includes('["tools"'));
+ assert.ok(!groups.includes('["other"'));
+});
+test("Souq's optional product image input does not show the browser-native Choose file control",()=>{
+ assert.ok(html.includes('id="imgChooseBtn"'));
+ assert.ok(html.includes('id="imgInput" accept="image/*" hidden'));
+ assert.ok(!html.includes('صورة المحل أو المنتج (اختيارية)'));
+});
+test("Global directory matcher uses normalized whitespace tokens and has no orphaned legacy matcher",()=>{
+ assert.ok(html.includes('split(/\\s+/).filter(Boolean)'));
+ assert.ok(!html.includes('watches:["ساعة","ساعات","ساعاتي"]'));
+ assert.equal((html.match(/function regionalCatalogCardHTML/g)||[]).length,1);
 });
 test("exchange rates use fresh public quotes and do not display saved device prices",()=>{
  assert.ok(html.includes('https://ye-rial.com/api/v1/current/'));
@@ -79,16 +97,84 @@ test("exchange rates use fresh public quotes and do not display saved device pri
  assert.ok(!html.includes("S.fx.s.usdB"));
  assert.ok(!html.includes("S.fx.a.usdB"));
 });
-test("Android 2.3.0 updates app version and clears only the WebView HTTP cache",()=>{
+test("Android 2.4.0 updates app version and clears only the WebView HTTP cache",()=>{
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
  const activity=fs.readFileSync("android/app/src/main/java/ye/dalilna/app/MainActivity.java","utf8");
- assert.ok(gradle.includes("versionCode = 230"));
- assert.ok(gradle.includes('versionName = "2.3.0"'));
+ assert.ok(gradle.includes("versionCode = 240"));
+ assert.ok(gradle.includes('versionName = "2.4.0"'));
  assert.ok(activity.includes("webView.clearCache(true)"));
  assert.ok(activity.includes("installed_version_code"));
  assert.ok(activity.includes("Keep DOM storage/localStorage intact"));
 });
 
+
+test("category mapping includes English OSM tags for health and delivery",()=>{
+ const mapping=JSON.parse(fs.readFileSync(path.join(__dirname,"../category-mapping.json"),"utf8"));
+ for(const key of ["grocery","health","pharmacy","edu","money","delivery","solar","vehicles","real_estate"])assert.ok(mapping.categories[key],key);
+ const tags=JSON.stringify(mapping);
+ for(const token of ['"hospital"','"clinic"','"doctors"','"courier"','"delivery"','"parcel"'])assert.ok(tags.includes(token),token);
+});
+test("catalogue category filters use multi-category memberships and searchable English tags",()=>{
+ assert.ok(html.includes("item.categories"));
+ assert.ok(html.includes("item.searchText"));
+ assert.ok(html.includes("item.nameEn"));
+ assert.ok(html.includes("item.governorateEn"));
+ assert.ok(html.includes("item.districtEn"));
+ assert.ok(html.includes('requestedCategory&&requestedCategory!=="all"'));
+});
+test("Souq displays shared product listings only and has no OSM restaurant directory",()=>{
+ assert.ok(!html.includes('id="souqStoresPanel"'));
+ assert.ok(!html.includes("runSouqStores"));
+ assert.ok(!html.includes('id="sqList"'));
+ assert.ok(!html.includes('id="souqStoreCategory"'));
+ assert.ok(html.includes('id="sharedSouqPanel"'));
+ assert.ok(features.includes("souqCategoryTabs"));
+});
+test("Souq renders shared product cards with seller, WhatsApp and share actions",()=>{
+ assert.ok(client.includes('category: "marketplace"'));
+ assert.ok(client.includes('item.sellerName'));
+ assert.ok(client.includes("wa.me/"));
+ assert.ok(client.includes("share.dataset.shareId"));
+});
+test("daily catalogue workflow fetches Yemen ADM2 polygon boundaries",()=>{
+ assert.ok(workflow.includes('cron: "20 2 * * *"'));
+ assert.ok(workflow.includes("YEM/ADM2"));
+ assert.ok(workflow.includes("geoBoundaries"));
+});
+
+test("merchant feed SQL maps latitude, longitude and source metadata to distinct parameters",()=>{
+ const api=fs.readFileSync(path.join(__dirname,"../marketplace-api.js"),"utf8");
+ const feed=api.slice(api.indexOf("async function syncMerchantFeed"),api.indexOf("async function handleMarketplaceRequest"));
+ assert.ok(feed.includes("$18,$19,NULL,'approved',NOW(),$20"));
+ assert.ok(feed.includes("item.latitude,item.longitude"));
+ assert.ok(feed.includes("ON CONFLICT(client_ref) DO UPDATE"));
+ assert.ok(feed.includes("completeSnapshot&&skipped===0"));
+});
+test("Android 2.4.0 cache and version metadata remain synchronized",()=>{
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.4.0"'));
+ assert.ok(html.includes('content="2.4.0"'));
+ const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
+ assert.ok(gradle.includes("versionCode = 240"));
+ assert.ok(gradle.includes('versionName = "2.4.0"'));
+});
+
+test("daily sync workflow checks jobs, marketplace, exchange and configured merchant feeds",()=>{
+ const daily=fs.readFileSync(path.join(__dirname,"../scripts/daily-sync.cjs"),"utf8");
+ const workflow=fs.readFileSync(path.join(__dirname,"../.github/workflows/daily-sync.yml"),"utf8");
+ assert.ok(daily.includes("checkServices()"));
+ assert.ok(daily.includes("checkExchange()"));
+ assert.ok(daily.includes("syncConfiguredFeeds"));
+ assert.ok(daily.includes("country=YE"));
+ assert.ok(workflow.includes("DALILNA_PRODUCT_FEED_URLS"));
+ assert.ok(workflow.includes("DALILNA_PRODUCT_SYNC_TOKEN"));
+});
+test("empty merchant snapshots never archive existing feed listings",()=>{
+ const feed=fs.readFileSync(path.join(__dirname,"../scripts/refresh-marketplace-products.cjs"),"utf8");
+ const api=fs.readFileSync(path.join(__dirname,"../marketplace-api.js"),"utf8");
+ assert.ok(feed.includes("items.length>0&&items.length<=MAX_BATCH"));
+ assert.ok(api.includes("items.length===0"));
+ assert.ok(api.includes("activeRefs.length===activeClientRefs.length"));
+});
 test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black shapes",()=>{
  const start=html.indexOf('<nav class="quick-jump-bar"'),end=html.indexOf('</nav>',start);
  const bar=html.slice(start,end);
@@ -100,15 +186,15 @@ test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black 
 test("regional catalogue manifest loads at first visit and does not show a local-only count as the national total",()=>{
  assert.ok(html.includes('loadRegionalCatalogManifest(false).catch'));
  assert.ok(html.includes('جارٍ تحميل فهرس اليمن'));
- assert.ok(html.includes('manifest.json?v=2.3.0'));
+ assert.ok(html.includes('manifest.json?v=2.4.0'));
  assert.ok(html.includes('cache:"no-store"'));
  assert.ok(html.includes('districtCounts.length!==335'));
 });
 test("service worker refreshes regional data and critical CSS/JS from the network",()=>{
- assert.ok(sw.includes('CACHE_PREFIX + "v2.3.0"'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.4.0"'));
  assert.ok(sw.includes('url.pathname.includes("/regional-catalog/")'));
  assert.ok(sw.includes('fetch(request, { cache: "no-store" })'));
- assert.ok(sw.includes('features-2.1.css?v=2.3.0'));
+ assert.ok(sw.includes('features-2.1.css?v=2.4.0'));
 });
 
 test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});
