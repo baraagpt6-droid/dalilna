@@ -853,9 +853,12 @@ async function searchPlaces(params) {
   const category = requestedCategory === "all"
     ? (inferCategoryFromQuery(query) || "all")
     : requestedCategory;
-  const lat = Number(params.lat);
-  const lon = Number(params.lon);
-  const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
+  const hasLat = params.lat !== null && params.lat !== undefined && String(params.lat).trim() !== "";
+  const hasLon = params.lon !== null && params.lon !== undefined && String(params.lon).trim() !== "";
+  const lat = hasLat ? Number(params.lat) : NaN;
+  const lon = hasLon ? Number(params.lon) : NaN;
+  const hasCoordinates = hasLat && hasLon && Number.isFinite(lat) && Number.isFinite(lon)
+    && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
   const radius = Math.min(15000, Math.max(1000, Number(params.radius) || 7000));
   const countrywideSearch = !hasCoordinates && (!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen");
   if (countrywideSearch && query) return searchYemenNominatim(query, category);
