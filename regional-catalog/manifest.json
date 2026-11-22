@@ -1,1 +1,5285 @@
-{"schemaVersion":1,"snapshotDate":"2026-11-21","totalCount":14883,"source":"OpenStreetMap contributors","license":"ODbL-1.0","attribution":"© OpenStreetMap contributors","administrativeSource":"Open Admin Data Yemen (CC BY 4.0)","assignmentNote":"OpenStreetMap administrative polygon when available; otherwise nearest district or governorate centroid. Centroid assignments are approximate, not official boundary verification.","governorates":[{"name":"أبين","slug":"abyan-ye12","file":"abyan-ye12.json","count":134,"categories":{"food":3,"health":97,"money":7,"mosque":8,"transport":7,"edu":5,"gov":1,"grocery":2,"home":1,"vehicles":1,"hotel":2}},{"name":"الضالع","slug":"ad-dali-ye30","file":"ad-dali-ye30.json","count":259,"categories":{"health":86,"mosque":22,"edu":20,"gov":5,"grocery":40,"hotel":9,"transport":20,"beauty":1,"books":2,"clothes":6,"craft":1,"delivery":1,"elec":3,"food":12,"gold":2,"home":2,"money":6,"pharmacy":7,"telecom":4,"vehicles":10}},{"name":"عدن","slug":"aden-ye24","file":"aden-ye24.json","count":944,"categories":{"beauty":6,"build":9,"edu":73,"food":74,"grocery":66,"health":58,"home":7,"mosque":134,"pharmacy":27,"transport":61,"vehicles":34,"clothes":18,"craft":7,"delivery":25,"elec":15,"gov":30,"hotel":136,"market":13,"money":71,"books":5,"cafe":13,"telecom":45,"wedding":12,"real_estate":4,"gold":1}},{"name":"البيضاء","slug":"al-bayda-ye14","file":"al-bayda-ye14.json","count":138,"categories":{"health":92,"transport":7,"food":1,"grocery":1,"mosque":28,"beauty":1,"edu":4,"money":2,"utility":1,"market":1}},{"name":"الحديدة","slug":"al-hodeidah-ye18","file":"al-hodeidah-ye18.json","count":711,"categories":{"edu":79,"health":222,"hotel":87,"food":49,"books":7,"build":3,"cafe":5,"clothes":4,"craft":1,"delivery":8,"elec":7,"farm":2,"gov":27,"grocery":25,"home":4,"market":7,"money":34,"mosque":55,"pharmacy":28,"salon":1,"telecom":1,"transport":36,"vehicles":12,"wedding":4,"real_estate":3}},{"name":"الجوف","slug":"al-jawf-ye16","file":"al-jawf-ye16.json","count":109,"categories":{"farm":1,"food":1,"gov":5,"grocery":2,"health":84,"hotel":4,"transport":5,"money":1,"telecom":1,"market":3,"mosque":1,"edu":1}},{"name":"المهرة","slug":"al-maharah-ye28","file":"al-maharah-ye28.json","count":124,"categories":{"health":45,"transport":12,"edu":1,"elec":1,"food":6,"gov":4,"hotel":18,"market":4,"money":14,"mosque":11,"pharmacy":2,"grocery":3,"vehicles":1,"clothes":1,"books":1}},{"name":"المحويت","slug":"al-mahwit-ye27","file":"al-mahwit-ye27.json","count":91,"categories":{"edu":2,"grocery":1,"health":77,"market":2,"mosque":2,"money":1,"hotel":5,"food":1}},{"name":"عمران","slug":"amran-ye29","file":"amran-ye29.json","count":336,"categories":{"health":219,"mosque":38,"grocery":4,"edu":17,"transport":14,"real_estate":2,"wedding":8,"hotel":9,"food":3,"vehicles":6,"market":4,"elec":1,"gov":5,"pharmacy":4,"telecom":2}},{"name":"ذمار","slug":"dhamar-ye20","file":"dhamar-ye20.json","count":612,"categories":{"edu":42,"grocery":32,"health":201,"hotel":28,"mosque":154,"transport":32,"books":4,"clothes":6,"delivery":2,"food":27,"money":12,"pharmacy":21,"telecom":4,"vehicles":13,"market":12,"build":1,"craft":2,"elec":5,"gov":12,"wedding":1,"utility":1}},{"name":"حضرموت","slug":"hadramawt-ye19","file":"hadramawt-ye19.json","count":2014,"categories":{"health":241,"edu":109,"gov":19,"grocery":147,"hotel":128,"money":143,"mosque":519,"transport":152,"pharmacy":35,"vehicles":73,"books":32,"build":70,"cafe":27,"delivery":34,"elec":44,"food":107,"gold":1,"home":50,"market":14,"telecom":24,"wedding":3,"beauty":18,"clothes":17,"craft":2,"farm":3,"watches":2}},{"name":"حجة","slug":"hajjah-ye17","file":"hajjah-ye17.json","count":216,"categories":{"health":156,"edu":5,"farm":2,"hotel":9,"mosque":9,"transport":5,"vehicles":2,"grocery":3,"food":5,"market":7,"home":1,"gov":5,"money":2,"pharmacy":2,"telecom":2,"delivery":1}},{"name":"إب","slug":"ibb-ye11","file":"ibb-ye11.json","count":508,"categories":{"grocery":32,"health":227,"transport":21,"edu":29,"gov":4,"hotel":46,"mosque":39,"vehicles":13,"real_estate":2,"beauty":3,"build":3,"clothes":9,"delivery":4,"elec":8,"food":34,"home":2,"money":12,"pharmacy":9,"salon":1,"telecom":5,"craft":1,"books":1,"farm":1,"market":1,"wedding":1}},{"name":"لحج","slug":"lahj-ye25","file":"lahj-ye25.json","count":261,"categories":{"health":146,"delivery":1,"edu":16,"food":9,"gov":3,"grocery":19,"money":8,"mosque":26,"pharmacy":1,"transport":18,"vehicles":6,"hotel":7,"market":1}},{"name":"مأرب","slug":"marib-ye26","file":"marib-ye26.json","count":232,"categories":{"health":111,"mosque":17,"edu":11,"transport":20,"food":3,"hotel":22,"vehicles":15,"build":1,"clothes":2,"elec":3,"farm":2,"gov":2,"grocery":10,"home":2,"market":1,"money":5,"pharmacy":2,"real_estate":1,"telecom":2}},{"name":"ريمة","slug":"raymah-ye31","file":"raymah-ye31.json","count":101,"categories":{"delivery":1,"edu":7,"gov":1,"grocery":3,"health":83,"money":1,"mosque":3,"transport":2}},{"name":"صعدة","slug":"sadah-ye22","file":"sadah-ye22.json","count":168,"categories":{"health":129,"market":14,"gov":1,"mosque":4,"vehicles":5,"elec":2,"farm":1,"telecom":1,"edu":6,"grocery":2,"hotel":2,"transport":1}},{"name":"صنعاء","slug":"sanaa-ye23","file":"sanaa-ye23.json","count":185,"categories":{"health":125,"mosque":11,"books":1,"cafe":1,"edu":16,"food":5,"hotel":3,"transport":12,"elec":1,"grocery":5,"craft":1,"market":2,"vehicles":1,"gov":1}},{"name":"أمانة العاصمة","slug":"sanaa-city-ye13","file":"sanaa-city-ye13.json","count":6690,"categories":{"beauty":75,"books":123,"build":55,"cafe":69,"clothes":392,"craft":44,"delivery":63,"edu":429,"elec":154,"farm":4,"food":763,"gold":40,"gov":138,"grocery":1056,"health":464,"home":145,"hotel":255,"market":33,"money":240,"mosque":410,"pharmacy":592,"real_estate":15,"salon":47,"telecom":217,"transport":369,"vehicles":298,"watches":2,"wedding":198}},{"name":"شبوة","slug":"shabwah-ye21","file":"shabwah-ye21.json","count":211,"categories":{"grocery":2,"health":152,"mosque":20,"transport":13,"hotel":9,"craft":3,"edu":5,"gov":1,"build":1,"money":3,"market":1,"food":1}},{"name":"سقطرى","slug":"socotra-ye32","file":"socotra-ye32.json","count":21,"categories":{"edu":3,"food":3,"grocery":1,"health":5,"hotel":6,"money":1,"mosque":1,"transport":1}},{"name":"تعز","slug":"taiz-ye15","file":"taiz-ye15.json","count":818,"categories":{"beauty":2,"books":6,"clothes":13,"delivery":10,"edu":97,"elec":11,"food":35,"gov":10,"grocery":57,"health":284,"hotel":63,"market":10,"money":56,"mosque":61,"transport":37,"vehicles":8,"cafe":6,"craft":7,"gold":2,"pharmacy":12,"telecom":10,"wedding":6,"real_estate":2,"home":2,"salon":2,"build":8,"farm":1}}]}
+{
+  "schemaVersion": 1,
+  "snapshotDate": "2026-11-21",
+  "totalCount": 14883,
+  "source": "OpenStreetMap contributors",
+  "license": "ODbL-1.0",
+  "attribution": "© OpenStreetMap contributors",
+  "administrativeSource": "Open Admin Data Yemen (CC BY 4.0)",
+  "assignmentNote": "District counts use OpenStreetMap district polygons when available; otherwise the nearest district centroid within 70 km. boundaryCount indicates a district polygon match. approximateCount indicates a centroid estimate. Records outside this range remain governorate-only and are included in unassignedCount.",
+  "governorates": [
+    {
+      "name": "أبين",
+      "slug": "abyan-ye12",
+      "file": "abyan-ye12.json",
+      "count": 134,
+      "categories": {
+        "food": 3,
+        "health": 97,
+        "money": 7,
+        "mosque": 8,
+        "transport": 7,
+        "edu": 5,
+        "gov": 1,
+        "grocery": 2,
+        "home": 1,
+        "vehicles": 1,
+        "hotel": 2
+      }
+    },
+    {
+      "name": "الضالع",
+      "slug": "ad-dali-ye30",
+      "file": "ad-dali-ye30.json",
+      "count": 259,
+      "categories": {
+        "health": 86,
+        "mosque": 22,
+        "edu": 20,
+        "gov": 5,
+        "grocery": 40,
+        "hotel": 9,
+        "transport": 20,
+        "beauty": 1,
+        "books": 2,
+        "clothes": 6,
+        "craft": 1,
+        "delivery": 1,
+        "elec": 3,
+        "food": 12,
+        "gold": 2,
+        "home": 2,
+        "money": 6,
+        "pharmacy": 7,
+        "telecom": 4,
+        "vehicles": 10
+      }
+    },
+    {
+      "name": "عدن",
+      "slug": "aden-ye24",
+      "file": "aden-ye24.json",
+      "count": 944,
+      "categories": {
+        "beauty": 6,
+        "build": 9,
+        "edu": 73,
+        "food": 74,
+        "grocery": 66,
+        "health": 58,
+        "home": 7,
+        "mosque": 134,
+        "pharmacy": 27,
+        "transport": 61,
+        "vehicles": 34,
+        "clothes": 18,
+        "craft": 7,
+        "delivery": 25,
+        "elec": 15,
+        "gov": 30,
+        "hotel": 136,
+        "market": 13,
+        "money": 71,
+        "books": 5,
+        "cafe": 13,
+        "telecom": 45,
+        "wedding": 12,
+        "real_estate": 4,
+        "gold": 1
+      }
+    },
+    {
+      "name": "البيضاء",
+      "slug": "al-bayda-ye14",
+      "file": "al-bayda-ye14.json",
+      "count": 138,
+      "categories": {
+        "health": 92,
+        "transport": 7,
+        "food": 1,
+        "grocery": 1,
+        "mosque": 28,
+        "beauty": 1,
+        "edu": 4,
+        "money": 2,
+        "utility": 1,
+        "market": 1
+      }
+    },
+    {
+      "name": "الحديدة",
+      "slug": "al-hodeidah-ye18",
+      "file": "al-hodeidah-ye18.json",
+      "count": 711,
+      "categories": {
+        "edu": 79,
+        "health": 222,
+        "hotel": 87,
+        "food": 49,
+        "books": 7,
+        "build": 3,
+        "cafe": 5,
+        "clothes": 4,
+        "craft": 1,
+        "delivery": 8,
+        "elec": 7,
+        "farm": 2,
+        "gov": 27,
+        "grocery": 25,
+        "home": 4,
+        "market": 7,
+        "money": 34,
+        "mosque": 55,
+        "pharmacy": 28,
+        "salon": 1,
+        "telecom": 1,
+        "transport": 36,
+        "vehicles": 12,
+        "wedding": 4,
+        "real_estate": 3
+      }
+    },
+    {
+      "name": "الجوف",
+      "slug": "al-jawf-ye16",
+      "file": "al-jawf-ye16.json",
+      "count": 109,
+      "categories": {
+        "farm": 1,
+        "food": 1,
+        "gov": 5,
+        "grocery": 2,
+        "health": 84,
+        "hotel": 4,
+        "transport": 5,
+        "money": 1,
+        "telecom": 1,
+        "market": 3,
+        "mosque": 1,
+        "edu": 1
+      }
+    },
+    {
+      "name": "المهرة",
+      "slug": "al-maharah-ye28",
+      "file": "al-maharah-ye28.json",
+      "count": 124,
+      "categories": {
+        "health": 45,
+        "transport": 12,
+        "edu": 1,
+        "elec": 1,
+        "food": 6,
+        "gov": 4,
+        "hotel": 18,
+        "market": 4,
+        "money": 14,
+        "mosque": 11,
+        "pharmacy": 2,
+        "grocery": 3,
+        "vehicles": 1,
+        "clothes": 1,
+        "books": 1
+      }
+    },
+    {
+      "name": "المحويت",
+      "slug": "al-mahwit-ye27",
+      "file": "al-mahwit-ye27.json",
+      "count": 91,
+      "categories": {
+        "edu": 2,
+        "grocery": 1,
+        "health": 77,
+        "market": 2,
+        "mosque": 2,
+        "money": 1,
+        "hotel": 5,
+        "food": 1
+      }
+    },
+    {
+      "name": "عمران",
+      "slug": "amran-ye29",
+      "file": "amran-ye29.json",
+      "count": 336,
+      "categories": {
+        "health": 219,
+        "mosque": 38,
+        "grocery": 4,
+        "edu": 17,
+        "transport": 14,
+        "real_estate": 2,
+        "wedding": 8,
+        "hotel": 9,
+        "food": 3,
+        "vehicles": 6,
+        "market": 4,
+        "elec": 1,
+        "gov": 5,
+        "pharmacy": 4,
+        "telecom": 2
+      }
+    },
+    {
+      "name": "ذمار",
+      "slug": "dhamar-ye20",
+      "file": "dhamar-ye20.json",
+      "count": 612,
+      "categories": {
+        "edu": 42,
+        "grocery": 32,
+        "health": 201,
+        "hotel": 28,
+        "mosque": 154,
+        "transport": 32,
+        "books": 4,
+        "clothes": 6,
+        "delivery": 2,
+        "food": 27,
+        "money": 12,
+        "pharmacy": 21,
+        "telecom": 4,
+        "vehicles": 13,
+        "market": 12,
+        "build": 1,
+        "craft": 2,
+        "elec": 5,
+        "gov": 12,
+        "wedding": 1,
+        "utility": 1
+      }
+    },
+    {
+      "name": "حضرموت",
+      "slug": "hadramawt-ye19",
+      "file": "hadramawt-ye19.json",
+      "count": 2014,
+      "categories": {
+        "health": 241,
+        "edu": 109,
+        "gov": 19,
+        "grocery": 147,
+        "hotel": 128,
+        "money": 143,
+        "mosque": 519,
+        "transport": 152,
+        "pharmacy": 35,
+        "vehicles": 73,
+        "books": 32,
+        "build": 70,
+        "cafe": 27,
+        "delivery": 34,
+        "elec": 44,
+        "food": 107,
+        "gold": 1,
+        "home": 50,
+        "market": 14,
+        "telecom": 24,
+        "wedding": 3,
+        "beauty": 18,
+        "clothes": 17,
+        "craft": 2,
+        "farm": 3,
+        "watches": 2
+      }
+    },
+    {
+      "name": "حجة",
+      "slug": "hajjah-ye17",
+      "file": "hajjah-ye17.json",
+      "count": 216,
+      "categories": {
+        "health": 156,
+        "edu": 5,
+        "farm": 2,
+        "hotel": 9,
+        "mosque": 9,
+        "transport": 5,
+        "vehicles": 2,
+        "grocery": 3,
+        "food": 5,
+        "market": 7,
+        "home": 1,
+        "gov": 5,
+        "money": 2,
+        "pharmacy": 2,
+        "telecom": 2,
+        "delivery": 1
+      }
+    },
+    {
+      "name": "إب",
+      "slug": "ibb-ye11",
+      "file": "ibb-ye11.json",
+      "count": 508,
+      "categories": {
+        "grocery": 32,
+        "health": 227,
+        "transport": 21,
+        "edu": 29,
+        "gov": 4,
+        "hotel": 46,
+        "mosque": 39,
+        "vehicles": 13,
+        "real_estate": 2,
+        "beauty": 3,
+        "build": 3,
+        "clothes": 9,
+        "delivery": 4,
+        "elec": 8,
+        "food": 34,
+        "home": 2,
+        "money": 12,
+        "pharmacy": 9,
+        "salon": 1,
+        "telecom": 5,
+        "craft": 1,
+        "books": 1,
+        "farm": 1,
+        "market": 1,
+        "wedding": 1
+      }
+    },
+    {
+      "name": "لحج",
+      "slug": "lahj-ye25",
+      "file": "lahj-ye25.json",
+      "count": 261,
+      "categories": {
+        "health": 146,
+        "delivery": 1,
+        "edu": 16,
+        "food": 9,
+        "gov": 3,
+        "grocery": 19,
+        "money": 8,
+        "mosque": 26,
+        "pharmacy": 1,
+        "transport": 18,
+        "vehicles": 6,
+        "hotel": 7,
+        "market": 1
+      }
+    },
+    {
+      "name": "مأرب",
+      "slug": "marib-ye26",
+      "file": "marib-ye26.json",
+      "count": 232,
+      "categories": {
+        "health": 111,
+        "mosque": 17,
+        "edu": 11,
+        "transport": 20,
+        "food": 3,
+        "hotel": 22,
+        "vehicles": 15,
+        "build": 1,
+        "clothes": 2,
+        "elec": 3,
+        "farm": 2,
+        "gov": 2,
+        "grocery": 10,
+        "home": 2,
+        "market": 1,
+        "money": 5,
+        "pharmacy": 2,
+        "real_estate": 1,
+        "telecom": 2
+      }
+    },
+    {
+      "name": "ريمة",
+      "slug": "raymah-ye31",
+      "file": "raymah-ye31.json",
+      "count": 101,
+      "categories": {
+        "delivery": 1,
+        "edu": 7,
+        "gov": 1,
+        "grocery": 3,
+        "health": 83,
+        "money": 1,
+        "mosque": 3,
+        "transport": 2
+      }
+    },
+    {
+      "name": "صعدة",
+      "slug": "sadah-ye22",
+      "file": "sadah-ye22.json",
+      "count": 168,
+      "categories": {
+        "health": 129,
+        "market": 14,
+        "gov": 1,
+        "mosque": 4,
+        "vehicles": 5,
+        "elec": 2,
+        "farm": 1,
+        "telecom": 1,
+        "edu": 6,
+        "grocery": 2,
+        "hotel": 2,
+        "transport": 1
+      }
+    },
+    {
+      "name": "صنعاء",
+      "slug": "sanaa-ye23",
+      "file": "sanaa-ye23.json",
+      "count": 185,
+      "categories": {
+        "health": 125,
+        "mosque": 11,
+        "books": 1,
+        "cafe": 1,
+        "edu": 16,
+        "food": 5,
+        "hotel": 3,
+        "transport": 12,
+        "elec": 1,
+        "grocery": 5,
+        "craft": 1,
+        "market": 2,
+        "vehicles": 1,
+        "gov": 1
+      }
+    },
+    {
+      "name": "أمانة العاصمة",
+      "slug": "sanaa-city-ye13",
+      "file": "sanaa-city-ye13.json",
+      "count": 6690,
+      "categories": {
+        "beauty": 75,
+        "books": 123,
+        "build": 55,
+        "cafe": 69,
+        "clothes": 392,
+        "craft": 44,
+        "delivery": 63,
+        "edu": 429,
+        "elec": 154,
+        "farm": 4,
+        "food": 763,
+        "gold": 40,
+        "gov": 138,
+        "grocery": 1056,
+        "health": 464,
+        "home": 145,
+        "hotel": 255,
+        "market": 33,
+        "money": 240,
+        "mosque": 410,
+        "pharmacy": 592,
+        "real_estate": 15,
+        "salon": 47,
+        "telecom": 217,
+        "transport": 369,
+        "vehicles": 298,
+        "watches": 2,
+        "wedding": 198
+      }
+    },
+    {
+      "name": "شبوة",
+      "slug": "shabwah-ye21",
+      "file": "shabwah-ye21.json",
+      "count": 211,
+      "categories": {
+        "grocery": 2,
+        "health": 152,
+        "mosque": 20,
+        "transport": 13,
+        "hotel": 9,
+        "craft": 3,
+        "edu": 5,
+        "gov": 1,
+        "build": 1,
+        "money": 3,
+        "market": 1,
+        "food": 1
+      }
+    },
+    {
+      "name": "سقطرى",
+      "slug": "socotra-ye32",
+      "file": "socotra-ye32.json",
+      "count": 21,
+      "categories": {
+        "edu": 3,
+        "food": 3,
+        "grocery": 1,
+        "health": 5,
+        "hotel": 6,
+        "money": 1,
+        "mosque": 1,
+        "transport": 1
+      }
+    },
+    {
+      "name": "تعز",
+      "slug": "taiz-ye15",
+      "file": "taiz-ye15.json",
+      "count": 818,
+      "categories": {
+        "beauty": 2,
+        "books": 6,
+        "clothes": 13,
+        "delivery": 10,
+        "edu": 97,
+        "elec": 11,
+        "food": 35,
+        "gov": 10,
+        "grocery": 57,
+        "health": 284,
+        "hotel": 63,
+        "market": 10,
+        "money": 56,
+        "mosque": 61,
+        "transport": 37,
+        "vehicles": 8,
+        "cafe": 6,
+        "craft": 7,
+        "gold": 2,
+        "pharmacy": 12,
+        "telecom": 10,
+        "wedding": 6,
+        "real_estate": 2,
+        "home": 2,
+        "salon": 2,
+        "build": 8,
+        "farm": 1
+      }
+    }
+  ],
+  "districtCountSchemaVersion": 1,
+  "districtCountTotal": 14868,
+  "unassignedCount": 15,
+  "districtCounts": [
+    {
+      "governorate": "حجة",
+      "district": "عبس",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "edu": 1,
+        "farm": 1,
+        "food": 2,
+        "health": 5,
+        "market": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "الضالع",
+      "district": "الضالع",
+      "count": 139,
+      "boundaryCount": 0,
+      "approximateCount": 139,
+      "categories": {
+        "beauty": 1,
+        "books": 2,
+        "clothes": 6,
+        "craft": 1,
+        "delivery": 1,
+        "edu": 7,
+        "elec": 3,
+        "food": 10,
+        "gold": 2,
+        "gov": 1,
+        "grocery": 35,
+        "health": 18,
+        "home": 2,
+        "hotel": 4,
+        "money": 4,
+        "mosque": 10,
+        "pharmacy": 7,
+        "telecom": 4,
+        "transport": 12,
+        "vehicles": 9
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "الديس",
+      "count": 48,
+      "boundaryCount": 0,
+      "approximateCount": 48,
+      "categories": {
+        "edu": 6,
+        "gov": 1,
+        "grocery": 2,
+        "health": 3,
+        "hotel": 2,
+        "money": 2,
+        "mosque": 29,
+        "transport": 3
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "الضحى",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 7
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "الضليعه",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "health": 5,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "الدريهمي",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 8
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "الظاهر",
+      "count": 12,
+      "boundaryCount": 0,
+      "approximateCount": 12,
+      "categories": {
+        "gov": 1,
+        "health": 7,
+        "market": 4
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "الظهار",
+      "count": 145,
+      "boundaryCount": 0,
+      "approximateCount": 145,
+      "categories": {
+        "beauty": 1,
+        "build": 1,
+        "clothes": 5,
+        "delivery": 2,
+        "edu": 9,
+        "elec": 7,
+        "food": 14,
+        "gov": 2,
+        "grocery": 13,
+        "health": 21,
+        "home": 2,
+        "hotel": 27,
+        "money": 3,
+        "mosque": 16,
+        "pharmacy": 3,
+        "real_estate": 1,
+        "salon": 1,
+        "telecom": 4,
+        "transport": 9,
+        "vehicles": 4
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "افلح اليمن",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "edu": 2,
+        "farm": 1,
+        "health": 9,
+        "hotel": 1,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "افلح الشام",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 7
+      }
+    },
+    {
+      "governorate": "أبين",
+      "district": "احور",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "food": 2,
+        "health": 7,
+        "money": 1,
+        "mosque": 1,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "العبديه",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 7
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "العبر",
+      "count": 12,
+      "boundaryCount": 0,
+      "approximateCount": 12,
+      "categories": {
+        "food": 2,
+        "health": 1,
+        "hotel": 2,
+        "money": 1,
+        "transport": 6
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "العرش",
+      "count": 29,
+      "boundaryCount": 0,
+      "approximateCount": 29,
+      "categories": {
+        "food": 1,
+        "grocery": 1,
+        "health": 8,
+        "mosque": 18,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "العشه",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "grocery": 1,
+        "health": 5
+      }
+    },
+    {
+      "governorate": "الضالع",
+      "district": "الازارق",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "health": 6,
+        "mosque": 7
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "البيضاء",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "مدينة البيضاء",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "edu": 2,
+        "health": 7,
+        "money": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "عدن",
+      "district": "البريقه",
+      "count": 23,
+      "boundaryCount": 0,
+      "approximateCount": 23,
+      "categories": {
+        "beauty": 1,
+        "build": 2,
+        "edu": 2,
+        "food": 1,
+        "grocery": 6,
+        "health": 2,
+        "home": 1,
+        "mosque": 3,
+        "pharmacy": 1,
+        "transport": 2,
+        "vehicles": 2
+      }
+    },
+    {
+      "governorate": "المهرة",
+      "district": "الغيظه",
+      "count": 52,
+      "boundaryCount": 0,
+      "approximateCount": 52,
+      "categories": {
+        "edu": 1,
+        "elec": 1,
+        "food": 3,
+        "gov": 4,
+        "health": 7,
+        "hotel": 14,
+        "market": 3,
+        "money": 7,
+        "mosque": 7,
+        "pharmacy": 1,
+        "transport": 4
+      }
+    },
+    {
+      "governorate": "الجوف",
+      "district": "الغيل",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "gov": 2,
+        "health": 6
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "الحد",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "health": 10
+      }
+    },
+    {
+      "governorate": "ذمار",
+      "district": "الحداء",
+      "count": 28,
+      "boundaryCount": 0,
+      "approximateCount": 28,
+      "categories": {
+        "edu": 4,
+        "grocery": 1,
+        "health": 14,
+        "hotel": 1,
+        "mosque": 8
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "الحالي",
+      "count": 332,
+      "boundaryCount": 0,
+      "approximateCount": 332,
+      "categories": {
+        "books": 2,
+        "build": 1,
+        "cafe": 4,
+        "clothes": 4,
+        "craft": 1,
+        "delivery": 7,
+        "edu": 33,
+        "elec": 5,
+        "farm": 1,
+        "food": 32,
+        "gov": 17,
+        "grocery": 20,
+        "health": 30,
+        "home": 2,
+        "hotel": 58,
+        "market": 5,
+        "money": 27,
+        "mosque": 33,
+        "pharmacy": 21,
+        "salon": 1,
+        "telecom": 1,
+        "transport": 15,
+        "vehicles": 9,
+        "wedding": 3
+      }
+    },
+    {
+      "governorate": "الضالع",
+      "district": "الحصين",
+      "count": 34,
+      "boundaryCount": 0,
+      "approximateCount": 34,
+      "categories": {
+        "edu": 7,
+        "gov": 3,
+        "grocery": 3,
+        "health": 13,
+        "hotel": 2,
+        "mosque": 1,
+        "transport": 5
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "الحشوه",
+      "count": 17,
+      "boundaryCount": 0,
+      "approximateCount": 17,
+      "categories": {
+        "health": 15,
+        "market": 2
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "الحوك",
+      "count": 106,
+      "boundaryCount": 99,
+      "approximateCount": 7,
+      "categories": {
+        "books": 2,
+        "build": 1,
+        "delivery": 1,
+        "edu": 14,
+        "food": 8,
+        "gov": 4,
+        "grocery": 2,
+        "health": 19,
+        "home": 2,
+        "hotel": 17,
+        "money": 5,
+        "mosque": 15,
+        "pharmacy": 7,
+        "transport": 8,
+        "wedding": 1
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "الحوطه",
+      "count": 57,
+      "boundaryCount": 0,
+      "approximateCount": 57,
+      "categories": {
+        "delivery": 1,
+        "edu": 4,
+        "food": 1,
+        "gov": 3,
+        "grocery": 8,
+        "health": 16,
+        "money": 4,
+        "mosque": 8,
+        "pharmacy": 1,
+        "transport": 10,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "الحيمة الداخليه",
+      "count": 27,
+      "boundaryCount": 0,
+      "approximateCount": 27,
+      "categories": {
+        "edu": 3,
+        "health": 23,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "الحيمة الخارجيه",
+      "count": 15,
+      "boundaryCount": 0,
+      "approximateCount": 15,
+      "categories": {
+        "books": 1,
+        "cafe": 1,
+        "health": 13
+      }
+    },
+    {
+      "governorate": "الجوف",
+      "district": "الحزم",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "grocery": 1,
+        "health": 6,
+        "hotel": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "الحصن",
+      "count": 12,
+      "boundaryCount": 0,
+      "approximateCount": 12,
+      "categories": {
+        "health": 12
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "الحجيله",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "cafe": 1,
+        "health": 2
+      }
+    },
+    {
+      "governorate": "الجوف",
+      "district": "الحميدات",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "الضالع",
+      "district": "الحشاء",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 8
+      }
+    },
+    {
+      "governorate": "ريمة",
+      "district": "الجعفريه",
+      "count": 18,
+      "boundaryCount": 0,
+      "approximateCount": 18,
+      "categories": {
+        "health": 18
+      }
+    },
+    {
+      "governorate": "ريمة",
+      "district": "الجبين",
+      "count": 41,
+      "boundaryCount": 0,
+      "approximateCount": 41,
+      "categories": {
+        "delivery": 1,
+        "edu": 2,
+        "gov": 1,
+        "grocery": 2,
+        "health": 32,
+        "money": 1,
+        "mosque": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "الجميمه",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "الجراحي",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "food": 1,
+        "health": 12
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "الجوبه",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 6,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "المحويت",
+      "district": "الخبت",
+      "count": 19,
+      "boundaryCount": 0,
+      "approximateCount": 19,
+      "categories": {
+        "edu": 2,
+        "grocery": 1,
+        "health": 14,
+        "market": 1,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "الجوف",
+      "district": "الخلق",
+      "count": 12,
+      "boundaryCount": 0,
+      "approximateCount": 12,
+      "categories": {
+        "health": 8,
+        "hotel": 1,
+        "money": 1,
+        "telecom": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "الخوخه",
+      "count": 24,
+      "boundaryCount": 0,
+      "approximateCount": 24,
+      "categories": {
+        "edu": 12,
+        "food": 3,
+        "health": 7,
+        "hotel": 1,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "المعافر",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "health": 12,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "المدان",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "health": 14
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "المضاربة و العاره",
+      "count": 27,
+      "boundaryCount": 0,
+      "approximateCount": 27,
+      "categories": {
+        "edu": 2,
+        "food": 3,
+        "health": 10,
+        "hotel": 1,
+        "money": 1,
+        "mosque": 6,
+        "transport": 3,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "المفلحي",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "health": 9,
+        "hotel": 2,
+        "market": 1,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "المغربه",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 6,
+        "hotel": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "المحابشه",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "أبين",
+      "district": "المحفد",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "edu": 1,
+        "health": 5
+      }
+    },
+    {
+      "governorate": "المحويت",
+      "district": "المحويت",
+      "count": 2,
+      "boundaryCount": 0,
+      "approximateCount": 2,
+      "categories": {
+        "health": 1,
+        "market": 1
+      }
+    },
+    {
+      "governorate": "المحويت",
+      "district": "مدينة المحويت",
+      "count": 16,
+      "boundaryCount": 0,
+      "approximateCount": 16,
+      "categories": {
+        "health": 11,
+        "hotel": 4,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "المخاء",
+      "count": 67,
+      "boundaryCount": 0,
+      "approximateCount": 67,
+      "categories": {
+        "books": 1,
+        "craft": 2,
+        "delivery": 1,
+        "edu": 25,
+        "elec": 1,
+        "food": 6,
+        "gov": 1,
+        "grocery": 1,
+        "health": 13,
+        "hotel": 8,
+        "market": 1,
+        "money": 2,
+        "mosque": 1,
+        "transport": 4
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "المخادر",
+      "count": 21,
+      "boundaryCount": 0,
+      "approximateCount": 21,
+      "categories": {
+        "food": 2,
+        "health": 17,
+        "mosque": 1,
+        "telecom": 1
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "الملاح",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 7
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "الملاجم",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "health": 6
+      }
+    },
+    {
+      "governorate": "ذمار",
+      "district": "المنار",
+      "count": 17,
+      "boundaryCount": 0,
+      "approximateCount": 17,
+      "categories": {
+        "health": 17
+      }
+    },
+    {
+      "governorate": "عدن",
+      "district": "المنصوره",
+      "count": 237,
+      "boundaryCount": 0,
+      "approximateCount": 237,
+      "categories": {
+        "beauty": 2,
+        "books": 1,
+        "build": 2,
+        "cafe": 3,
+        "clothes": 3,
+        "craft": 3,
+        "delivery": 6,
+        "edu": 19,
+        "elec": 4,
+        "food": 16,
+        "gov": 5,
+        "grocery": 23,
+        "health": 20,
+        "home": 3,
+        "hotel": 33,
+        "market": 2,
+        "money": 17,
+        "mosque": 31,
+        "pharmacy": 8,
+        "telecom": 18,
+        "transport": 10,
+        "vehicles": 4,
+        "wedding": 4
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "المنصوريه",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "health": 10,
+        "mosque": 1,
+        "transport": 3
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "المقاطره",
+      "count": 26,
+      "boundaryCount": 0,
+      "approximateCount": 26,
+      "categories": {
+        "edu": 2,
+        "health": 23,
+        "hotel": 1
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "المراوعه",
+      "count": 16,
+      "boundaryCount": 0,
+      "approximateCount": 16,
+      "categories": {
+        "edu": 5,
+        "food": 1,
+        "health": 8,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "المشنه",
+      "count": 51,
+      "boundaryCount": 0,
+      "approximateCount": 51,
+      "categories": {
+        "books": 1,
+        "clothes": 3,
+        "delivery": 1,
+        "edu": 4,
+        "food": 9,
+        "grocery": 4,
+        "health": 10,
+        "hotel": 6,
+        "money": 2,
+        "mosque": 3,
+        "pharmacy": 1,
+        "transport": 2,
+        "vehicles": 5
+      }
+    },
+    {
+      "governorate": "المهرة",
+      "district": "المسيله",
+      "count": 2,
+      "boundaryCount": 0,
+      "approximateCount": 2,
+      "categories": {
+        "health": 2
+      }
+    },
+    {
+      "governorate": "الجوف",
+      "district": "المصلوب",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "الجوف",
+      "district": "المطمه",
+      "count": 1,
+      "boundaryCount": 0,
+      "approximateCount": 1,
+      "categories": {
+        "health": 1
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "المواسط",
+      "count": 30,
+      "boundaryCount": 0,
+      "approximateCount": 30,
+      "categories": {
+        "beauty": 1,
+        "books": 1,
+        "edu": 1,
+        "gov": 1,
+        "grocery": 2,
+        "health": 17,
+        "hotel": 2,
+        "market": 2,
+        "money": 1,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "المفتاح",
+      "count": 1,
+      "boundaryCount": 0,
+      "approximateCount": 1,
+      "categories": {
+        "health": 1
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "المغلاف",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 7,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "الميناء",
+      "count": 2,
+      "boundaryCount": 0,
+      "approximateCount": 2,
+      "categories": {
+        "health": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "المسراخ",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "health": 7,
+        "hotel": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "عدن",
+      "district": "المعلا",
+      "count": 170,
+      "boundaryCount": 0,
+      "approximateCount": 170,
+      "categories": {
+        "cafe": 3,
+        "clothes": 1,
+        "delivery": 12,
+        "edu": 16,
+        "elec": 5,
+        "food": 16,
+        "gov": 14,
+        "grocery": 6,
+        "health": 6,
+        "hotel": 36,
+        "market": 2,
+        "money": 12,
+        "mosque": 20,
+        "pharmacy": 5,
+        "telecom": 2,
+        "transport": 5,
+        "vehicles": 6,
+        "wedding": 3
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "المظفر",
+      "count": 30,
+      "boundaryCount": 0,
+      "approximateCount": 30,
+      "categories": {
+        "clothes": 1,
+        "craft": 1,
+        "delivery": 1,
+        "edu": 2,
+        "food": 1,
+        "gov": 2,
+        "grocery": 3,
+        "health": 8,
+        "hotel": 2,
+        "money": 3,
+        "mosque": 1,
+        "real_estate": 1,
+        "transport": 2,
+        "vehicles": 2
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "المكلا",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "food": 1,
+        "health": 6,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "مدينة المكلا",
+      "count": 612,
+      "boundaryCount": 0,
+      "approximateCount": 612,
+      "categories": {
+        "beauty": 15,
+        "books": 15,
+        "build": 42,
+        "cafe": 11,
+        "clothes": 7,
+        "delivery": 18,
+        "edu": 34,
+        "elec": 20,
+        "food": 43,
+        "gov": 10,
+        "grocery": 51,
+        "health": 21,
+        "home": 22,
+        "hotel": 79,
+        "market": 2,
+        "money": 50,
+        "mosque": 95,
+        "pharmacy": 9,
+        "telecom": 17,
+        "transport": 32,
+        "vehicles": 16,
+        "watches": 2,
+        "wedding": 1
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "المنيره",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 8
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "المسيمير",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "food": 2,
+        "health": 6,
+        "transport": 1,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "الجوف",
+      "district": "المتون",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 6,
+        "market": 1,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "العدين",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "clothes": 1,
+        "craft": 1,
+        "health": 12
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "القف",
+      "count": 1,
+      "boundaryCount": 0,
+      "approximateCount": 1,
+      "categories": {
+        "health": 1
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "القفر",
+      "count": 24,
+      "boundaryCount": 0,
+      "approximateCount": 24,
+      "categories": {
+        "health": 24
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "القاهره",
+      "count": 117,
+      "boundaryCount": 0,
+      "approximateCount": 117,
+      "categories": {
+        "books": 1,
+        "cafe": 2,
+        "clothes": 2,
+        "craft": 2,
+        "delivery": 2,
+        "edu": 10,
+        "elec": 2,
+        "food": 5,
+        "gold": 1,
+        "gov": 2,
+        "grocery": 6,
+        "health": 16,
+        "hotel": 15,
+        "money": 23,
+        "mosque": 16,
+        "pharmacy": 4,
+        "telecom": 2,
+        "transport": 4,
+        "wedding": 2
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "القناوص",
+      "count": 17,
+      "boundaryCount": 0,
+      "approximateCount": 17,
+      "categories": {
+        "grocery": 1,
+        "health": 14,
+        "mosque": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "القطن",
+      "count": 121,
+      "boundaryCount": 0,
+      "approximateCount": 121,
+      "categories": {
+        "beauty": 2,
+        "books": 2,
+        "build": 3,
+        "cafe": 3,
+        "clothes": 5,
+        "delivery": 4,
+        "edu": 9,
+        "elec": 2,
+        "food": 3,
+        "grocery": 21,
+        "health": 17,
+        "home": 2,
+        "hotel": 3,
+        "market": 1,
+        "money": 12,
+        "mosque": 5,
+        "pharmacy": 1,
+        "telecom": 2,
+        "transport": 16,
+        "vehicles": 8
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "القبيطه",
+      "count": 30,
+      "boundaryCount": 0,
+      "approximateCount": 30,
+      "categories": {
+        "edu": 4,
+        "grocery": 3,
+        "health": 16,
+        "mosque": 6,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "القريشيه",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 8
+      }
+    },
+    {
+      "governorate": "أبين",
+      "district": "الوضيع",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "health": 10,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "الوازعيه",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "grocery": 1,
+        "health": 7
+      }
+    },
+    {
+      "governorate": "أمانة العاصمة",
+      "district": "الوحده",
+      "count": 1070,
+      "boundaryCount": 0,
+      "approximateCount": 1070,
+      "categories": {
+        "beauty": 17,
+        "books": 19,
+        "build": 9,
+        "cafe": 27,
+        "clothes": 58,
+        "craft": 9,
+        "delivery": 12,
+        "edu": 64,
+        "elec": 79,
+        "farm": 1,
+        "food": 157,
+        "gold": 4,
+        "gov": 25,
+        "grocery": 135,
+        "health": 88,
+        "home": 24,
+        "hotel": 20,
+        "market": 4,
+        "money": 48,
+        "mosque": 37,
+        "pharmacy": 87,
+        "real_estate": 2,
+        "salon": 7,
+        "telecom": 20,
+        "transport": 35,
+        "vehicles": 60,
+        "wedding": 22
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "اللحيه",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "build": 1,
+        "grocery": 1,
+        "health": 7,
+        "mosque": 2
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "عمد",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "edu": 1,
+        "farm": 2,
+        "health": 6,
+        "money": 2
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "عمران",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "edu": 1,
+        "health": 11,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "النادره",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "edu": 1,
+        "health": 10,
+        "hotel": 2
+      }
+    },
+    {
+      "governorate": "ذمار",
+      "district": "عنس",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "health": 5,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "الرضمه",
+      "count": 33,
+      "boundaryCount": 0,
+      "approximateCount": 33,
+      "categories": {
+        "edu": 3,
+        "gov": 1,
+        "grocery": 4,
+        "health": 15,
+        "hotel": 1,
+        "mosque": 5,
+        "transport": 2,
+        "vehicles": 2
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "الروضه",
+      "count": 19,
+      "boundaryCount": 0,
+      "approximateCount": 19,
+      "categories": {
+        "grocery": 1,
+        "health": 16,
+        "mosque": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "الريدة وقصيعر",
+      "count": 35,
+      "boundaryCount": 0,
+      "approximateCount": 35,
+      "categories": {
+        "edu": 1,
+        "grocery": 4,
+        "health": 14,
+        "money": 4,
+        "mosque": 7,
+        "pharmacy": 1,
+        "transport": 3,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "المحويت",
+      "district": "الرجم",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "health": 9
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "الرياشيه",
+      "count": 0,
+      "boundaryCount": 0,
+      "approximateCount": 0,
+      "categories": {}
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "ارحب",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "health": 3,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "عرماء",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 3,
+        "hotel": 2,
+        "mosque": 1,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "الصعيد",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "health": 10
+      }
+    },
+    {
+      "governorate": "أمانة العاصمة",
+      "district": "السبعين",
+      "count": 1084,
+      "boundaryCount": 0,
+      "approximateCount": 1084,
+      "categories": {
+        "beauty": 12,
+        "books": 18,
+        "build": 3,
+        "cafe": 19,
+        "clothes": 87,
+        "craft": 5,
+        "delivery": 23,
+        "edu": 81,
+        "elec": 10,
+        "food": 171,
+        "gold": 8,
+        "gov": 13,
+        "grocery": 154,
+        "health": 59,
+        "home": 31,
+        "hotel": 55,
+        "market": 2,
+        "money": 44,
+        "mosque": 44,
+        "pharmacy": 80,
+        "real_estate": 3,
+        "salon": 6,
+        "telecom": 15,
+        "transport": 50,
+        "vehicles": 50,
+        "wedding": 41
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "السبره",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 5,
+        "hotel": 1,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "السده",
+      "count": 12,
+      "boundaryCount": 0,
+      "approximateCount": 12,
+      "categories": {
+        "edu": 1,
+        "grocery": 1,
+        "health": 10
+      }
+    },
+    {
+      "governorate": "أمانة العاصمة",
+      "district": "الصافيه",
+      "count": 239,
+      "boundaryCount": 0,
+      "approximateCount": 239,
+      "categories": {
+        "books": 2,
+        "build": 5,
+        "clothes": 3,
+        "craft": 1,
+        "delivery": 1,
+        "edu": 10,
+        "food": 21,
+        "gov": 3,
+        "grocery": 38,
+        "health": 17,
+        "home": 3,
+        "hotel": 30,
+        "money": 18,
+        "mosque": 17,
+        "pharmacy": 33,
+        "real_estate": 1,
+        "salon": 1,
+        "telecom": 4,
+        "transport": 8,
+        "vehicles": 19,
+        "wedding": 4
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "الصفراء",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 6,
+        "market": 1
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "السياني",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "edu": 1,
+        "grocery": 1,
+        "health": 3,
+        "real_estate": 1,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "ريمة",
+      "district": "السلفيه",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 7,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "الصليف",
+      "count": 2,
+      "boundaryCount": 0,
+      "approximateCount": 2,
+      "categories": {
+        "health": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "السواديه",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "health": 6
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "السود",
+      "count": 15,
+      "boundaryCount": 0,
+      "approximateCount": 15,
+      "categories": {
+        "health": 9,
+        "mosque": 6
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "السوم",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 6,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "الصومعه",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "health": 3,
+        "transport": 3
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "الصلو",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "edu": 1,
+        "health": 10
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "السوده",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "health": 11
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "السخنه",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "health": 10,
+        "market": 1,
+        "real_estate": 3
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "الشعر",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "grocery": 1,
+        "health": 9,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "الشغادره",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "health": 6
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "الشاهل",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "الشمايتين",
+      "count": 34,
+      "boundaryCount": 0,
+      "approximateCount": 34,
+      "categories": {
+        "food": 1,
+        "health": 28,
+        "hotel": 1,
+        "money": 1,
+        "mosque": 1,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "الشريه",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 6,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "عدن",
+      "district": "الشيخ عثمان",
+      "count": 200,
+      "boundaryCount": 0,
+      "approximateCount": 200,
+      "categories": {
+        "beauty": 1,
+        "books": 1,
+        "build": 3,
+        "cafe": 3,
+        "clothes": 6,
+        "craft": 3,
+        "delivery": 3,
+        "edu": 20,
+        "elec": 3,
+        "food": 15,
+        "gov": 2,
+        "grocery": 9,
+        "health": 11,
+        "home": 2,
+        "hotel": 17,
+        "market": 2,
+        "money": 18,
+        "mosque": 20,
+        "pharmacy": 7,
+        "telecom": 23,
+        "transport": 18,
+        "vehicles": 12,
+        "wedding": 1
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "الشحر",
+      "count": 313,
+      "boundaryCount": 0,
+      "approximateCount": 313,
+      "categories": {
+        "books": 3,
+        "build": 4,
+        "cafe": 2,
+        "delivery": 1,
+        "edu": 17,
+        "elec": 6,
+        "food": 18,
+        "gold": 1,
+        "gov": 1,
+        "grocery": 26,
+        "health": 24,
+        "home": 4,
+        "hotel": 3,
+        "market": 5,
+        "money": 16,
+        "mosque": 150,
+        "pharmacy": 8,
+        "telecom": 1,
+        "transport": 17,
+        "vehicles": 4,
+        "wedding": 2
+      }
+    },
+    {
+      "governorate": "الضالع",
+      "district": "الشعيب",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "health": 8,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "اسلم",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "health": 6
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "التعزيه",
+      "count": 33,
+      "boundaryCount": 0,
+      "approximateCount": 33,
+      "categories": {
+        "beauty": 1,
+        "books": 1,
+        "clothes": 1,
+        "delivery": 1,
+        "edu": 2,
+        "elec": 1,
+        "food": 1,
+        "gov": 1,
+        "grocery": 1,
+        "health": 6,
+        "hotel": 5,
+        "market": 2,
+        "money": 1,
+        "mosque": 1,
+        "transport": 5,
+        "vehicles": 3
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "الطفه",
+      "count": 2,
+      "boundaryCount": 0,
+      "approximateCount": 2,
+      "categories": {
+        "health": 2
+      }
+    },
+    {
+      "governorate": "أمانة العاصمة",
+      "district": "التحرير",
+      "count": 1095,
+      "boundaryCount": 0,
+      "approximateCount": 1095,
+      "categories": {
+        "beauty": 21,
+        "books": 31,
+        "build": 3,
+        "cafe": 8,
+        "clothes": 137,
+        "craft": 4,
+        "delivery": 10,
+        "edu": 60,
+        "elec": 19,
+        "food": 126,
+        "gold": 18,
+        "gov": 28,
+        "grocery": 118,
+        "health": 63,
+        "home": 26,
+        "hotel": 34,
+        "market": 1,
+        "money": 47,
+        "mosque": 47,
+        "pharmacy": 128,
+        "salon": 6,
+        "telecom": 77,
+        "transport": 29,
+        "vehicles": 31,
+        "watches": 1,
+        "wedding": 22
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "الطلح",
+      "count": 17,
+      "boundaryCount": 0,
+      "approximateCount": 17,
+      "categories": {
+        "health": 15,
+        "hotel": 2
+      }
+    },
+    {
+      "governorate": "عدن",
+      "district": "التواهي",
+      "count": 71,
+      "boundaryCount": 0,
+      "approximateCount": 71,
+      "categories": {
+        "beauty": 1,
+        "clothes": 2,
+        "craft": 1,
+        "delivery": 2,
+        "edu": 3,
+        "elec": 2,
+        "food": 3,
+        "gov": 2,
+        "grocery": 7,
+        "health": 8,
+        "home": 1,
+        "hotel": 8,
+        "market": 3,
+        "money": 7,
+        "mosque": 11,
+        "pharmacy": 3,
+        "transport": 7
+      }
+    },
+    {
+      "governorate": "المحويت",
+      "district": "الطويله",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "health": 3,
+        "money": 1
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "التحيتا",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "edu": 3,
+        "health": 5,
+        "hotel": 2
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "الطيال",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "health": 4
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "عتق",
+      "count": 21,
+      "boundaryCount": 0,
+      "approximateCount": 21,
+      "categories": {
+        "build": 1,
+        "health": 16,
+        "hotel": 1,
+        "money": 2,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "أمانة العاصمة",
+      "district": "الثوره",
+      "count": 783,
+      "boundaryCount": 0,
+      "approximateCount": 783,
+      "categories": {
+        "beauty": 11,
+        "books": 16,
+        "build": 4,
+        "cafe": 1,
+        "clothes": 27,
+        "craft": 7,
+        "delivery": 4,
+        "edu": 43,
+        "elec": 13,
+        "farm": 2,
+        "food": 91,
+        "gold": 3,
+        "gov": 25,
+        "grocery": 165,
+        "health": 46,
+        "home": 12,
+        "hotel": 19,
+        "market": 5,
+        "money": 26,
+        "mosque": 54,
+        "pharmacy": 52,
+        "real_estate": 3,
+        "salon": 14,
+        "telecom": 26,
+        "transport": 49,
+        "vehicles": 44,
+        "watches": 1,
+        "wedding": 20
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "عين",
+      "count": 38,
+      "boundaryCount": 0,
+      "approximateCount": 38,
+      "categories": {
+        "edu": 3,
+        "health": 15,
+        "hotel": 2,
+        "mosque": 14,
+        "transport": 4
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "الزاهر",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "الجوف",
+      "district": "الزاهر",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "health": 9
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "الزيديه",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 8
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "الزهره",
+      "count": 21,
+      "boundaryCount": 0,
+      "approximateCount": 21,
+      "categories": {
+        "edu": 3,
+        "farm": 1,
+        "food": 1,
+        "health": 12,
+        "hotel": 3,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "أمانة العاصمة",
+      "district": "ازال",
+      "count": 98,
+      "boundaryCount": 0,
+      "approximateCount": 98,
+      "categories": {
+        "beauty": 1,
+        "books": 1,
+        "build": 7,
+        "cafe": 1,
+        "clothes": 2,
+        "craft": 2,
+        "edu": 11,
+        "elec": 2,
+        "food": 4,
+        "gov": 3,
+        "grocery": 25,
+        "health": 5,
+        "hotel": 3,
+        "money": 3,
+        "mosque": 10,
+        "pharmacy": 7,
+        "transport": 3,
+        "vehicles": 2,
+        "wedding": 4,
+        "delivery": 1,
+        "telecom": 1
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "بعدان",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "grocery": 1,
+        "health": 9,
+        "hotel": 1,
+        "mosque": 2,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "باجل",
+      "count": 23,
+      "boundaryCount": 0,
+      "approximateCount": 23,
+      "categories": {
+        "books": 2,
+        "edu": 1,
+        "elec": 2,
+        "food": 3,
+        "grocery": 1,
+        "health": 5,
+        "hotel": 4,
+        "market": 1,
+        "transport": 2,
+        "vehicles": 2
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "بكيل المير",
+      "count": 2,
+      "boundaryCount": 0,
+      "approximateCount": 2,
+      "categories": {
+        "health": 2
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "بني العوام",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "health": 10,
+        "hotel": 1,
+        "mosque": 1,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "أمانة العاصمة",
+      "district": "بني الحارث",
+      "count": 76,
+      "boundaryCount": 0,
+      "approximateCount": 76,
+      "categories": {
+        "clothes": 5,
+        "edu": 7,
+        "elec": 2,
+        "grocery": 2,
+        "health": 14,
+        "hotel": 1,
+        "market": 6,
+        "money": 2,
+        "mosque": 7,
+        "real_estate": 1,
+        "telecom": 1,
+        "transport": 13,
+        "vehicles": 10,
+        "wedding": 5
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "بني ضبيان",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "edu": 1,
+        "health": 7
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "بني حشيش",
+      "count": 5,
+      "boundaryCount": 0,
+      "approximateCount": 5,
+      "categories": {
+        "edu": 1,
+        "health": 4
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "بني مطر",
+      "count": 15,
+      "boundaryCount": 0,
+      "approximateCount": 15,
+      "categories": {
+        "elec": 1,
+        "food": 1,
+        "grocery": 2,
+        "health": 9,
+        "mosque": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "بني قيس الطور",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "grocery": 1,
+        "health": 1,
+        "hotel": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "المحويت",
+      "district": "بني سعد",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "health": 9
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "بني صريم",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "health": 8,
+        "mosque": 2
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "باقم",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "health": 4
+      }
+    },
+    {
+      "governorate": "الجوف",
+      "district": "برط العنان",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "health": 12,
+        "market": 2
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "بيحان",
+      "count": 16,
+      "boundaryCount": 0,
+      "approximateCount": 16,
+      "categories": {
+        "craft": 2,
+        "edu": 1,
+        "gov": 1,
+        "health": 10,
+        "mosque": 2
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "بيت الفقيه",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "health": 2,
+        "money": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "بدبده",
+      "count": 16,
+      "boundaryCount": 0,
+      "approximateCount": 16,
+      "categories": {
+        "health": 16
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "بلاد الروس",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "edu": 1,
+        "food": 2,
+        "health": 3,
+        "hotel": 1,
+        "mosque": 1,
+        "transport": 5
+      }
+    },
+    {
+      "governorate": "ريمة",
+      "district": "بلاد الطعام",
+      "count": 5,
+      "boundaryCount": 0,
+      "approximateCount": 5,
+      "categories": {
+        "health": 5
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "بروم ميفع",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "edu": 1,
+        "food": 1,
+        "health": 5,
+        "money": 2,
+        "transport": 1,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "برع",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "health": 10
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "دهر",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "health": 5,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "الضالع",
+      "district": "دمت",
+      "count": 25,
+      "boundaryCount": 0,
+      "approximateCount": 25,
+      "categories": {
+        "edu": 2,
+        "gov": 1,
+        "grocery": 2,
+        "health": 11,
+        "hotel": 3,
+        "mosque": 2,
+        "transport": 3,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "عدن",
+      "district": "دار سعد",
+      "count": 72,
+      "boundaryCount": 0,
+      "approximateCount": 72,
+      "categories": {
+        "books": 1,
+        "clothes": 1,
+        "edu": 2,
+        "food": 3,
+        "grocery": 3,
+        "health": 1,
+        "hotel": 19,
+        "market": 2,
+        "money": 1,
+        "mosque": 22,
+        "real_estate": 3,
+        "telecom": 2,
+        "transport": 6,
+        "vehicles": 4,
+        "wedding": 2
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "دوعن",
+      "count": 26,
+      "boundaryCount": 0,
+      "approximateCount": 26,
+      "categories": {
+        "edu": 2,
+        "food": 4,
+        "grocery": 2,
+        "health": 9,
+        "hotel": 1,
+        "money": 3,
+        "mosque": 1,
+        "transport": 4
+      }
+    },
+    {
+      "governorate": "ذمار",
+      "district": "ضوران انس",
+      "count": 5,
+      "boundaryCount": 0,
+      "approximateCount": 5,
+      "categories": {
+        "health": 5
+      }
+    },
+    {
+      "governorate": "ذمار",
+      "district": "مدينة ذمار",
+      "count": 253,
+      "boundaryCount": 0,
+      "approximateCount": 253,
+      "categories": {
+        "books": 3,
+        "build": 1,
+        "clothes": 5,
+        "craft": 1,
+        "delivery": 1,
+        "edu": 26,
+        "elec": 5,
+        "food": 22,
+        "gov": 11,
+        "grocery": 20,
+        "health": 25,
+        "hotel": 11,
+        "money": 9,
+        "mosque": 65,
+        "pharmacy": 18,
+        "telecom": 2,
+        "transport": 16,
+        "vehicles": 11,
+        "wedding": 1
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "ذي السفال",
+      "count": 31,
+      "boundaryCount": 0,
+      "approximateCount": 31,
+      "categories": {
+        "beauty": 1,
+        "food": 4,
+        "grocery": 1,
+        "health": 14,
+        "hotel": 2,
+        "money": 3,
+        "pharmacy": 3,
+        "transport": 3
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "ذي ناعم",
+      "count": 19,
+      "boundaryCount": 0,
+      "approximateCount": 19,
+      "categories": {
+        "beauty": 1,
+        "edu": 2,
+        "health": 4,
+        "money": 1,
+        "mosque": 9,
+        "transport": 1,
+        "utility": 1
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "ذيبين",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "health": 9
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "باب المندب",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "edu": 2,
+        "health": 6,
+        "market": 1,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "ظليمة حبور",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "health": 7,
+        "market": 2
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "خدير",
+      "count": 44,
+      "boundaryCount": 0,
+      "approximateCount": 44,
+      "categories": {
+        "books": 1,
+        "build": 8,
+        "clothes": 3,
+        "craft": 2,
+        "edu": 2,
+        "elec": 2,
+        "food": 1,
+        "gold": 1,
+        "grocery": 3,
+        "health": 4,
+        "hotel": 3,
+        "money": 4,
+        "mosque": 1,
+        "pharmacy": 2,
+        "real_estate": 1,
+        "telecom": 2,
+        "transport": 4
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "عيال سريح",
+      "count": 73,
+      "boundaryCount": 0,
+      "approximateCount": 73,
+      "categories": {
+        "edu": 6,
+        "elec": 1,
+        "food": 2,
+        "gov": 5,
+        "grocery": 1,
+        "health": 21,
+        "hotel": 3,
+        "mosque": 13,
+        "pharmacy": 4,
+        "real_estate": 1,
+        "telecom": 2,
+        "transport": 4,
+        "vehicles": 4,
+        "wedding": 6
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "فرع العدين",
+      "count": 29,
+      "boundaryCount": 0,
+      "approximateCount": 29,
+      "categories": {
+        "edu": 4,
+        "health": 19,
+        "hotel": 2,
+        "mosque": 4
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "غمر",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "health": 9,
+        "market": 4
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "غيل باوزير",
+      "count": 24,
+      "boundaryCount": 0,
+      "approximateCount": 24,
+      "categories": {
+        "edu": 2,
+        "food": 4,
+        "grocery": 3,
+        "health": 3,
+        "hotel": 1,
+        "money": 3,
+        "mosque": 4,
+        "transport": 4
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "غيل بن يمين",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "health": 3,
+        "money": 1
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "حبان",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "craft": 1,
+        "health": 7
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "حبيل جبر",
+      "count": 5,
+      "boundaryCount": 0,
+      "approximateCount": 5,
+      "categories": {
+        "food": 1,
+        "health": 3,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "سقطرى",
+      "district": "حديبو",
+      "count": 18,
+      "boundaryCount": 0,
+      "approximateCount": 18,
+      "categories": {
+        "edu": 3,
+        "food": 3,
+        "grocery": 1,
+        "health": 3,
+        "hotel": 5,
+        "money": 1,
+        "mosque": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "حجر",
+      "count": 16,
+      "boundaryCount": 0,
+      "approximateCount": 16,
+      "categories": {
+        "food": 1,
+        "health": 12,
+        "hotel": 2,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "حجر الصيعر",
+      "count": 1,
+      "boundaryCount": 0,
+      "approximateCount": 1,
+      "categories": {
+        "health": 1
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "حجه",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "مدينة حجه",
+      "count": 31,
+      "boundaryCount": 0,
+      "approximateCount": 31,
+      "categories": {
+        "edu": 1,
+        "food": 2,
+        "gov": 4,
+        "grocery": 2,
+        "health": 6,
+        "hotel": 5,
+        "money": 2,
+        "mosque": 3,
+        "pharmacy": 2,
+        "telecom": 2,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "حالمين",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "health": 11
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "همدان",
+      "count": 16,
+      "boundaryCount": 0,
+      "approximateCount": 16,
+      "categories": {
+        "edu": 7,
+        "health": 3,
+        "market": 1,
+        "mosque": 4,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "حرض",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "food": 1,
+        "health": 5,
+        "market": 1
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "حرف سفيان",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "health": 7,
+        "hotel": 2
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "حريب",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "edu": 3,
+        "health": 6,
+        "mosque": 1,
+        "transport": 3
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "حريب القرامش",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 7
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "حريضه",
+      "count": 44,
+      "boundaryCount": 0,
+      "approximateCount": 44,
+      "categories": {
+        "books": 1,
+        "edu": 1,
+        "gov": 1,
+        "grocery": 2,
+        "health": 14,
+        "hotel": 2,
+        "market": 1,
+        "money": 4,
+        "mosque": 5,
+        "pharmacy": 1,
+        "transport": 6,
+        "vehicles": 6
+      }
+    },
+    {
+      "governorate": "المهرة",
+      "district": "حصوين",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "food": 1,
+        "grocery": 1,
+        "health": 6,
+        "money": 1,
+        "mosque": 2,
+        "transport": 2,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "المهرة",
+      "district": "حات",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "health": 4
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "حطيب",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "health": 11
+      }
+    },
+    {
+      "governorate": "المهرة",
+      "district": "حوف",
+      "count": 19,
+      "boundaryCount": 0,
+      "approximateCount": 19,
+      "categories": {
+        "clothes": 1,
+        "food": 2,
+        "grocery": 2,
+        "health": 9,
+        "hotel": 2,
+        "money": 2,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "حيدان",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "health": 10
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "حيفان",
+      "count": 167,
+      "boundaryCount": 0,
+      "approximateCount": 167,
+      "categories": {
+        "books": 1,
+        "cafe": 4,
+        "clothes": 6,
+        "delivery": 1,
+        "edu": 10,
+        "elec": 3,
+        "food": 15,
+        "gov": 1,
+        "grocery": 35,
+        "health": 39,
+        "home": 1,
+        "hotel": 3,
+        "market": 2,
+        "money": 3,
+        "mosque": 25,
+        "pharmacy": 5,
+        "salon": 2,
+        "telecom": 6,
+        "transport": 1,
+        "vehicles": 3,
+        "wedding": 1
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "حيران",
+      "count": 2,
+      "boundaryCount": 0,
+      "approximateCount": 2,
+      "categories": {
+        "health": 2
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "حيس",
+      "count": 16,
+      "boundaryCount": 0,
+      "approximateCount": 16,
+      "categories": {
+        "edu": 1,
+        "gov": 5,
+        "health": 10
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "حزم العدين",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "health": 4
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "حبيش",
+      "count": 16,
+      "boundaryCount": 0,
+      "approximateCount": 16,
+      "categories": {
+        "edu": 1,
+        "health": 12,
+        "hotel": 3
+      }
+    },
+    {
+      "governorate": "المحويت",
+      "district": "حفاش",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "health": 12,
+        "hotel": 1
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "حوث",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "edu": 1,
+        "health": 8,
+        "hotel": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "اب",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "grocery": 1,
+        "health": 5,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "ذمار",
+      "district": "جبل الشرق",
+      "count": 21,
+      "boundaryCount": 0,
+      "approximateCount": 21,
+      "categories": {
+        "edu": 1,
+        "health": 17,
+        "mosque": 2,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "جبل عيال يزيد",
+      "count": 12,
+      "boundaryCount": 0,
+      "approximateCount": 12,
+      "categories": {
+        "health": 10,
+        "real_estate": 1,
+        "wedding": 1
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "جبل حبشي",
+      "count": 21,
+      "boundaryCount": 0,
+      "approximateCount": 21,
+      "categories": {
+        "edu": 2,
+        "health": 19
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "جبل مراد",
+      "count": 15,
+      "boundaryCount": 0,
+      "approximateCount": 15,
+      "categories": {
+        "edu": 1,
+        "health": 14
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "جبل راس",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "gov": 1,
+        "health": 9
+      }
+    },
+    {
+      "governorate": "الضالع",
+      "district": "جحاف",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "health": 13,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "ذمار",
+      "district": "جهران",
+      "count": 67,
+      "boundaryCount": 0,
+      "approximateCount": 67,
+      "categories": {
+        "books": 1,
+        "clothes": 1,
+        "delivery": 1,
+        "edu": 2,
+        "food": 4,
+        "grocery": 2,
+        "health": 22,
+        "hotel": 6,
+        "money": 3,
+        "mosque": 14,
+        "pharmacy": 2,
+        "telecom": 1,
+        "transport": 6,
+        "vehicles": 2
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "جردان",
+      "count": 1,
+      "boundaryCount": 0,
+      "approximateCount": 1,
+      "categories": {
+        "health": 1
+      }
+    },
+    {
+      "governorate": "أبين",
+      "district": "جيشان",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 5,
+        "mosque": 2
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "جبله",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "edu": 2,
+        "farm": 1,
+        "health": 6,
+        "mosque": 5
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "جحانه",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 6,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "الضالع",
+      "district": "جبن",
+      "count": 5,
+      "boundaryCount": 0,
+      "approximateCount": 5,
+      "categories": {
+        "edu": 1,
+        "health": 4
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "كمران",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 2,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "الجوف",
+      "district": "خب و الشعف",
+      "count": 2,
+      "boundaryCount": 0,
+      "approximateCount": 2,
+      "categories": {
+        "health": 2
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "خمر",
+      "count": 68,
+      "boundaryCount": 0,
+      "approximateCount": 68,
+      "categories": {
+        "edu": 6,
+        "food": 1,
+        "health": 33,
+        "hotel": 2,
+        "mosque": 16,
+        "transport": 7,
+        "vehicles": 2,
+        "wedding": 1
+      }
+    },
+    {
+      "governorate": "أبين",
+      "district": "خنفر",
+      "count": 12,
+      "boundaryCount": 0,
+      "approximateCount": 12,
+      "categories": {
+        "edu": 1,
+        "food": 1,
+        "health": 9,
+        "money": 1
+      }
+    },
+    {
+      "governorate": "الجوف",
+      "district": "خراب المراشى",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "health": 13
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "خارف",
+      "count": 12,
+      "boundaryCount": 0,
+      "approximateCount": 12,
+      "categories": {
+        "health": 12
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "خولان",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "grocery": 1,
+        "health": 4,
+        "hotel": 1
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "خيران المحرق",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "health": 3,
+        "market": 1
+      }
+    },
+    {
+      "governorate": "عدن",
+      "district": "خور مكسر",
+      "count": 28,
+      "boundaryCount": 0,
+      "approximateCount": 28,
+      "categories": {
+        "build": 2,
+        "cafe": 1,
+        "gov": 3,
+        "grocery": 2,
+        "health": 1,
+        "hotel": 9,
+        "money": 1,
+        "mosque": 2,
+        "transport": 7
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "كتاف والبقع",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "health": 9,
+        "market": 1
+      }
+    },
+    {
+      "governorate": "عدن",
+      "district": "صيره",
+      "count": 143,
+      "boundaryCount": 0,
+      "approximateCount": 143,
+      "categories": {
+        "beauty": 1,
+        "books": 2,
+        "cafe": 3,
+        "clothes": 5,
+        "delivery": 2,
+        "edu": 11,
+        "elec": 1,
+        "food": 20,
+        "gold": 1,
+        "gov": 4,
+        "grocery": 10,
+        "health": 9,
+        "hotel": 14,
+        "market": 2,
+        "money": 15,
+        "mosque": 25,
+        "pharmacy": 3,
+        "real_estate": 1,
+        "transport": 6,
+        "vehicles": 6,
+        "wedding": 2
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "كعيدنه",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "health": 8,
+        "home": 1
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "كحلان عفار",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "كحلان الشرف",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "كشر",
+      "count": 15,
+      "boundaryCount": 0,
+      "approximateCount": 15,
+      "categories": {
+        "health": 15
+      }
+    },
+    {
+      "governorate": "ريمة",
+      "district": "كسمه",
+      "count": 12,
+      "boundaryCount": 0,
+      "approximateCount": 12,
+      "categories": {
+        "health": 12
+      }
+    },
+    {
+      "governorate": "أبين",
+      "district": "لودر",
+      "count": 15,
+      "boundaryCount": 0,
+      "approximateCount": 15,
+      "categories": {
+        "health": 11,
+        "hotel": 2,
+        "money": 2
+      }
+    },
+    {
+      "governorate": "أمانة العاصمة",
+      "district": "معين",
+      "count": 270,
+      "boundaryCount": 0,
+      "approximateCount": 270,
+      "categories": {
+        "beauty": 3,
+        "books": 2,
+        "build": 2,
+        "clothes": 10,
+        "craft": 2,
+        "delivery": 2,
+        "edu": 29,
+        "food": 21,
+        "gov": 4,
+        "grocery": 42,
+        "health": 27,
+        "home": 1,
+        "hotel": 17,
+        "market": 3,
+        "money": 11,
+        "mosque": 22,
+        "pharmacy": 22,
+        "real_estate": 2,
+        "salon": 3,
+        "telecom": 3,
+        "transport": 24,
+        "vehicles": 5,
+        "wedding": 13
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "مارب",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 2,
+        "hotel": 2,
+        "transport": 2,
+        "vehicles": 2
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "مدينة مارب",
+      "count": 135,
+      "boundaryCount": 0,
+      "approximateCount": 135,
+      "categories": {
+        "build": 1,
+        "clothes": 2,
+        "edu": 7,
+        "elec": 3,
+        "farm": 2,
+        "food": 2,
+        "gov": 2,
+        "grocery": 10,
+        "health": 33,
+        "home": 2,
+        "hotel": 18,
+        "market": 1,
+        "money": 5,
+        "mosque": 15,
+        "pharmacy": 2,
+        "real_estate": 1,
+        "telecom": 2,
+        "transport": 14,
+        "vehicles": 13
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "مبين",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 6,
+        "mosque": 2
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "مدغل الجدعان",
+      "count": 1,
+      "boundaryCount": 0,
+      "approximateCount": 1,
+      "categories": {
+        "health": 1
+      }
+    },
+    {
+      "governorate": "ذمار",
+      "district": "مغرب عنس",
+      "count": 42,
+      "boundaryCount": 0,
+      "approximateCount": 42,
+      "categories": {
+        "edu": 2,
+        "health": 34,
+        "hotel": 4,
+        "mosque": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "ماهليه",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "مجز",
+      "count": 5,
+      "boundaryCount": 0,
+      "approximateCount": 5,
+      "categories": {
+        "health": 5
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "مجزر",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 2,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "المهرة",
+      "district": "منعر",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "مناخه",
+      "count": 12,
+      "boundaryCount": 0,
+      "approximateCount": 12,
+      "categories": {
+        "food": 2,
+        "health": 9,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "مقبنه",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "health": 10
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "مرخة العليا",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "health": 10,
+        "market": 1
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "مرخة السفلى",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "health": 8,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "مشرعة وحدنان",
+      "count": 15,
+      "boundaryCount": 0,
+      "approximateCount": 15,
+      "categories": {
+        "edu": 1,
+        "health": 12,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "مسور",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "health": 10
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "مسوره",
+      "count": 1,
+      "boundaryCount": 0,
+      "approximateCount": 1,
+      "categories": {
+        "health": 1
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "ماويه",
+      "count": 15,
+      "boundaryCount": 0,
+      "approximateCount": 15,
+      "categories": {
+        "edu": 2,
+        "farm": 1,
+        "health": 12
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "موزع",
+      "count": 16,
+      "boundaryCount": 0,
+      "approximateCount": 16,
+      "categories": {
+        "edu": 7,
+        "health": 6,
+        "hotel": 1,
+        "money": 1,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "ميفعه",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "food": 1,
+        "grocery": 1,
+        "health": 7,
+        "hotel": 1,
+        "money": 1,
+        "mosque": 1,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "ذمار",
+      "district": "ميفعة عنس",
+      "count": 18,
+      "boundaryCount": 0,
+      "approximateCount": 18,
+      "categories": {
+        "edu": 4,
+        "health": 9,
+        "mosque": 1,
+        "transport": 4
+      }
+    },
+    {
+      "governorate": "ريمة",
+      "district": "مزهر",
+      "count": 17,
+      "boundaryCount": 0,
+      "approximateCount": 17,
+      "categories": {
+        "edu": 5,
+        "grocery": 1,
+        "health": 9,
+        "mosque": 2
+      }
+    },
+    {
+      "governorate": "المحويت",
+      "district": "ملحان",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "health": 13
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "ميدي",
+      "count": 5,
+      "boundaryCount": 0,
+      "approximateCount": 5,
+      "categories": {
+        "delivery": 1,
+        "gov": 1,
+        "health": 3
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "منبه",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "health": 9
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "مذيخره",
+      "count": 12,
+      "boundaryCount": 0,
+      "approximateCount": 12,
+      "categories": {
+        "edu": 1,
+        "health": 10,
+        "hotel": 1
+      }
+    },
+    {
+      "governorate": "أبين",
+      "district": "موديه",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 7
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "مكيراس",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 7
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "مستباء",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "health": 3,
+        "market": 3
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "نجره",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "health": 9
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "ناطع",
+      "count": 2,
+      "boundaryCount": 0,
+      "approximateCount": 2,
+      "categories": {
+        "health": 2
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "نهم",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "gov": 1,
+        "health": 5
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "نصاب",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "health": 10,
+        "hotel": 1
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "نعمان",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "أمانة العاصمة",
+      "district": "صنعاء القديمه",
+      "count": 651,
+      "boundaryCount": 0,
+      "approximateCount": 651,
+      "categories": {
+        "beauty": 3,
+        "books": 9,
+        "build": 5,
+        "cafe": 8,
+        "clothes": 36,
+        "craft": 5,
+        "delivery": 5,
+        "edu": 25,
+        "elec": 18,
+        "food": 55,
+        "gold": 5,
+        "gov": 15,
+        "grocery": 111,
+        "health": 37,
+        "home": 29,
+        "hotel": 22,
+        "market": 5,
+        "money": 9,
+        "mosque": 73,
+        "pharmacy": 71,
+        "salon": 1,
+        "telecom": 41,
+        "transport": 34,
+        "vehicles": 17,
+        "wedding": 12
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "عسيلان",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 3
+      }
+    },
+    {
+      "governorate": "ذمار",
+      "district": "عتمه",
+      "count": 18,
+      "boundaryCount": 0,
+      "approximateCount": 18,
+      "categories": {
+        "edu": 1,
+        "health": 13,
+        "hotel": 1,
+        "market": 1,
+        "mosque": 2
+      }
+    },
+    {
+      "governorate": "الضالع",
+      "district": "قعطبه",
+      "count": 12,
+      "boundaryCount": 0,
+      "approximateCount": 12,
+      "categories": {
+        "edu": 3,
+        "food": 2,
+        "health": 5,
+        "money": 2
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "قفل شمر",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "health": 8,
+        "mosque": 2,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "قفلة عذر",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 8
+      }
+    },
+    {
+      "governorate": "سقطرى",
+      "district": "قلنسية وعبد الكوري",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 2,
+        "hotel": 1
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "قاره",
+      "count": 3,
+      "boundaryCount": 0,
+      "approximateCount": 3,
+      "categories": {
+        "health": 2,
+        "market": 1
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "قطابر",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 8
+      }
+    },
+    {
+      "governorate": "المهرة",
+      "district": "قشن",
+      "count": 5,
+      "boundaryCount": 0,
+      "approximateCount": 5,
+      "categories": {
+        "health": 2,
+        "money": 1,
+        "mosque": 1,
+        "pharmacy": 1
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "رداع",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 6,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "ردفان",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "health": 6,
+        "money": 1,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "ردمان",
+      "count": 11,
+      "boundaryCount": 0,
+      "approximateCount": 11,
+      "categories": {
+        "health": 10,
+        "market": 1
+      }
+    },
+    {
+      "governorate": "شبوة",
+      "district": "رضوم",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "edu": 1,
+        "health": 5,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "رغوان",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "health": 2,
+        "hotel": 2
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "رحبه",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "food": 1,
+        "health": 8
+      }
+    },
+    {
+      "governorate": "الجوف",
+      "district": "رجوزه",
+      "count": 15,
+      "boundaryCount": 0,
+      "approximateCount": 15,
+      "categories": {
+        "edu": 1,
+        "health": 13,
+        "hotel": 1
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "رخيه",
+      "count": 5,
+      "boundaryCount": 0,
+      "approximateCount": 5,
+      "categories": {
+        "health": 3,
+        "hotel": 1,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "أبين",
+      "district": "رصد",
+      "count": 27,
+      "boundaryCount": 0,
+      "approximateCount": 27,
+      "categories": {
+        "edu": 2,
+        "gov": 1,
+        "grocery": 1,
+        "health": 22,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "ريده",
+      "count": 15,
+      "boundaryCount": 0,
+      "approximateCount": 15,
+      "categories": {
+        "edu": 1,
+        "grocery": 2,
+        "health": 10,
+        "hotel": 1,
+        "mosque": 1
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "رازح",
+      "count": 15,
+      "boundaryCount": 0,
+      "approximateCount": 15,
+      "categories": {
+        "health": 12,
+        "market": 1,
+        "mosque": 1,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "رماه",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "gov": 1,
+        "grocery": 1,
+        "health": 2,
+        "money": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "صعده",
+      "count": 32,
+      "boundaryCount": 0,
+      "approximateCount": 32,
+      "categories": {
+        "edu": 6,
+        "grocery": 2,
+        "health": 13,
+        "hotel": 2,
+        "market": 1,
+        "mosque": 3,
+        "transport": 1,
+        "vehicles": 4
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "صعفان",
+      "count": 15,
+      "boundaryCount": 0,
+      "approximateCount": 15,
+      "categories": {
+        "health": 15
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "صباح",
+      "count": 5,
+      "boundaryCount": 0,
+      "approximateCount": 5,
+      "categories": {
+        "health": 5
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "صبر الموادم",
+      "count": 17,
+      "boundaryCount": 0,
+      "approximateCount": 17,
+      "categories": {
+        "edu": 4,
+        "health": 8,
+        "mosque": 4,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "ساه",
+      "count": 25,
+      "boundaryCount": 0,
+      "approximateCount": 25,
+      "categories": {
+        "edu": 1,
+        "food": 1,
+        "health": 13,
+        "home": 1,
+        "money": 3,
+        "mosque": 5,
+        "pharmacy": 1
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "سحار",
+      "count": 12,
+      "boundaryCount": 0,
+      "approximateCount": 12,
+      "categories": {
+        "elec": 2,
+        "farm": 1,
+        "health": 8,
+        "telecom": 1
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "صاله",
+      "count": 118,
+      "boundaryCount": 0,
+      "approximateCount": 118,
+      "categories": {
+        "delivery": 4,
+        "edu": 24,
+        "elec": 2,
+        "food": 5,
+        "gov": 2,
+        "grocery": 5,
+        "health": 15,
+        "home": 1,
+        "hotel": 21,
+        "market": 1,
+        "money": 17,
+        "mosque": 8,
+        "pharmacy": 1,
+        "transport": 9,
+        "wedding": 3
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "سامع",
+      "count": 5,
+      "boundaryCount": 0,
+      "approximateCount": 5,
+      "categories": {
+        "health": 4,
+        "market": 1
+      }
+    },
+    {
+      "governorate": "أمانة العاصمة",
+      "district": "ضواحي الامانة همدان",
+      "count": 62,
+      "boundaryCount": 0,
+      "approximateCount": 62,
+      "categories": {
+        "delivery": 1,
+        "edu": 6,
+        "grocery": 3,
+        "health": 9,
+        "mosque": 9,
+        "real_estate": 1,
+        "transport": 18,
+        "vehicles": 2,
+        "beauty": 1,
+        "books": 1,
+        "build": 1,
+        "clothes": 1,
+        "elec": 1,
+        "food": 4,
+        "hotel": 1,
+        "money": 1,
+        "pharmacy": 1,
+        "wedding": 1
+      }
+    },
+    {
+      "governorate": "أمانة العاصمة",
+      "district": "ضواحي الامانة سنحان وبني بهلول",
+      "count": 676,
+      "boundaryCount": 0,
+      "approximateCount": 676,
+      "categories": {
+        "beauty": 3,
+        "books": 17,
+        "build": 10,
+        "cafe": 3,
+        "clothes": 15,
+        "craft": 6,
+        "delivery": 2,
+        "edu": 54,
+        "elec": 3,
+        "food": 53,
+        "gold": 1,
+        "gov": 6,
+        "grocery": 154,
+        "health": 58,
+        "home": 9,
+        "hotel": 34,
+        "money": 17,
+        "mosque": 45,
+        "pharmacy": 48,
+        "salon": 5,
+        "telecom": 19,
+        "transport": 52,
+        "vehicles": 28,
+        "wedding": 31,
+        "market": 1,
+        "real_estate": 2
+      }
+    },
+    {
+      "governorate": "صنعاء",
+      "district": "سنحان وبني بهلول",
+      "count": 20,
+      "boundaryCount": 0,
+      "approximateCount": 20,
+      "categories": {
+        "craft": 1,
+        "edu": 3,
+        "grocery": 2,
+        "health": 5,
+        "hotel": 1,
+        "market": 1,
+        "mosque": 3,
+        "transport": 3,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "ساقين",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 7
+      }
+    },
+    {
+      "governorate": "أبين",
+      "district": "سرار",
+      "count": 2,
+      "boundaryCount": 0,
+      "approximateCount": 2,
+      "categories": {
+        "health": 2
+      }
+    },
+    {
+      "governorate": "المهرة",
+      "district": "سيحوت",
+      "count": 15,
+      "boundaryCount": 0,
+      "approximateCount": 15,
+      "categories": {
+        "health": 9,
+        "market": 1,
+        "money": 2,
+        "mosque": 1,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "سيئون",
+      "count": 288,
+      "boundaryCount": 0,
+      "approximateCount": 288,
+      "categories": {
+        "beauty": 1,
+        "books": 7,
+        "build": 10,
+        "cafe": 7,
+        "clothes": 4,
+        "delivery": 8,
+        "edu": 15,
+        "elec": 9,
+        "farm": 1,
+        "food": 16,
+        "gov": 5,
+        "grocery": 16,
+        "health": 17,
+        "home": 12,
+        "hotel": 23,
+        "market": 2,
+        "money": 18,
+        "mosque": 73,
+        "pharmacy": 5,
+        "telecom": 2,
+        "transport": 23,
+        "vehicles": 14
+      }
+    },
+    {
+      "governorate": "صعدة",
+      "district": "شداء",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 7
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "شهاره",
+      "count": 10,
+      "boundaryCount": 0,
+      "approximateCount": 10,
+      "categories": {
+        "health": 8,
+        "market": 2
+      }
+    },
+    {
+      "governorate": "المهرة",
+      "district": "شحن",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "books": 1,
+        "health": 2,
+        "hotel": 2,
+        "money": 1,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "شرعب الرونه",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "edu": 2,
+        "health": 12
+      }
+    },
+    {
+      "governorate": "تعز",
+      "district": "شرعب السلام",
+      "count": 14,
+      "boundaryCount": 0,
+      "approximateCount": 14,
+      "categories": {
+        "health": 13,
+        "hotel": 1
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "شرس",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "health": 4
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "شبام",
+      "count": 45,
+      "boundaryCount": 0,
+      "approximateCount": 45,
+      "categories": {
+        "elec": 1,
+        "grocery": 3,
+        "health": 19,
+        "hotel": 4,
+        "money": 2,
+        "mosque": 1,
+        "telecom": 1,
+        "transport": 13,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "المحويت",
+      "district": "شبام كوكبان",
+      "count": 6,
+      "boundaryCount": 0,
+      "approximateCount": 6,
+      "categories": {
+        "food": 1,
+        "health": 5
+      }
+    },
+    {
+      "governorate": "أمانة العاصمة",
+      "district": "شعوب",
+      "count": 586,
+      "boundaryCount": 0,
+      "approximateCount": 586,
+      "categories": {
+        "beauty": 3,
+        "books": 7,
+        "build": 6,
+        "cafe": 2,
+        "clothes": 11,
+        "craft": 3,
+        "delivery": 2,
+        "edu": 39,
+        "elec": 7,
+        "farm": 1,
+        "food": 60,
+        "gold": 1,
+        "gov": 16,
+        "grocery": 109,
+        "health": 41,
+        "home": 10,
+        "hotel": 19,
+        "market": 6,
+        "money": 14,
+        "mosque": 45,
+        "pharmacy": 63,
+        "salon": 4,
+        "telecom": 10,
+        "transport": 54,
+        "vehicles": 30,
+        "wedding": 23
+      }
+    },
+    {
+      "governorate": "أبين",
+      "district": "سباح",
+      "count": 9,
+      "boundaryCount": 0,
+      "approximateCount": 9,
+      "categories": {
+        "health": 7,
+        "mosque": 2
+      }
+    },
+    {
+      "governorate": "مأرب",
+      "district": "صرواح",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "health": 4
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "صوير",
+      "count": 4,
+      "boundaryCount": 0,
+      "approximateCount": 4,
+      "categories": {
+        "health": 4
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "تريم",
+      "count": 290,
+      "boundaryCount": 0,
+      "approximateCount": 290,
+      "categories": {
+        "books": 4,
+        "build": 11,
+        "cafe": 4,
+        "clothes": 1,
+        "craft": 2,
+        "delivery": 3,
+        "edu": 15,
+        "elec": 6,
+        "food": 9,
+        "grocery": 14,
+        "health": 18,
+        "home": 9,
+        "hotel": 4,
+        "market": 3,
+        "money": 15,
+        "mosque": 131,
+        "pharmacy": 9,
+        "telecom": 1,
+        "transport": 12,
+        "vehicles": 19
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "ثمود",
+      "count": 5,
+      "boundaryCount": 0,
+      "approximateCount": 5,
+      "categories": {
+        "food": 1,
+        "health": 3,
+        "money": 1
+      }
+    },
+    {
+      "governorate": "عمران",
+      "district": "ثلاء",
+      "count": 17,
+      "boundaryCount": 0,
+      "approximateCount": 17,
+      "categories": {
+        "edu": 2,
+        "health": 14,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "تبن",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "edu": 1,
+        "grocery": 2,
+        "health": 3,
+        "vehicles": 1
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "طور الباحه",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "food": 1,
+        "grocery": 1,
+        "health": 3,
+        "mosque": 1,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "وادي العين",
+      "count": 40,
+      "boundaryCount": 0,
+      "approximateCount": 40,
+      "categories": {
+        "edu": 3,
+        "food": 3,
+        "grocery": 2,
+        "health": 11,
+        "money": 1,
+        "mosque": 10,
+        "transport": 7,
+        "vehicles": 3
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "وضره",
+      "count": 5,
+      "boundaryCount": 0,
+      "approximateCount": 5,
+      "categories": {
+        "edu": 1,
+        "health": 4
+      }
+    },
+    {
+      "governorate": "البيضاء",
+      "district": "ولدربيع",
+      "count": 2,
+      "boundaryCount": 0,
+      "approximateCount": 2,
+      "categories": {
+        "health": 2
+      }
+    },
+    {
+      "governorate": "حجة",
+      "district": "وشحه",
+      "count": 7,
+      "boundaryCount": 0,
+      "approximateCount": 7,
+      "categories": {
+        "health": 7
+      }
+    },
+    {
+      "governorate": "ذمار",
+      "district": "وصاب العالي",
+      "count": 113,
+      "boundaryCount": 0,
+      "approximateCount": 113,
+      "categories": {
+        "craft": 1,
+        "edu": 1,
+        "food": 1,
+        "gov": 1,
+        "grocery": 9,
+        "health": 21,
+        "hotel": 2,
+        "market": 11,
+        "mosque": 60,
+        "pharmacy": 1,
+        "telecom": 1,
+        "transport": 3,
+        "utility": 1
+      }
+    },
+    {
+      "governorate": "ذمار",
+      "district": "وصاب السافل",
+      "count": 24,
+      "boundaryCount": 0,
+      "approximateCount": 24,
+      "categories": {
+        "edu": 1,
+        "health": 19,
+        "hotel": 3,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "يبعث",
+      "count": 8,
+      "boundaryCount": 0,
+      "approximateCount": 8,
+      "categories": {
+        "edu": 1,
+        "health": 3,
+        "hotel": 1,
+        "money": 2,
+        "transport": 1
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "يافع",
+      "count": 29,
+      "boundaryCount": 0,
+      "approximateCount": 29,
+      "categories": {
+        "edu": 3,
+        "food": 1,
+        "grocery": 2,
+        "health": 15,
+        "hotel": 3,
+        "money": 2,
+        "mosque": 3
+      }
+    },
+    {
+      "governorate": "لحج",
+      "district": "يهر",
+      "count": 13,
+      "boundaryCount": 0,
+      "approximateCount": 13,
+      "categories": {
+        "grocery": 3,
+        "health": 8,
+        "mosque": 2
+      }
+    },
+    {
+      "governorate": "إب",
+      "district": "يريم",
+      "count": 43,
+      "boundaryCount": 0,
+      "approximateCount": 43,
+      "categories": {
+        "beauty": 1,
+        "build": 2,
+        "delivery": 1,
+        "edu": 2,
+        "elec": 1,
+        "food": 5,
+        "gov": 1,
+        "grocery": 5,
+        "health": 12,
+        "market": 1,
+        "money": 4,
+        "mosque": 2,
+        "pharmacy": 2,
+        "transport": 3,
+        "wedding": 1
+      }
+    },
+    {
+      "governorate": "الحديدة",
+      "district": "زبيد",
+      "count": 21,
+      "boundaryCount": 0,
+      "approximateCount": 21,
+      "categories": {
+        "books": 1,
+        "edu": 7,
+        "health": 8,
+        "hotel": 2,
+        "money": 1,
+        "transport": 2
+      }
+    },
+    {
+      "governorate": "حضرموت",
+      "district": "زمخ ومنوخ",
+      "count": 0,
+      "boundaryCount": 0,
+      "approximateCount": 0,
+      "categories": {}
+    },
+    {
+      "governorate": "أبين",
+      "district": "زنجبار",
+      "count": 25,
+      "boundaryCount": 0,
+      "approximateCount": 25,
+      "categories": {
+        "edu": 1,
+        "grocery": 1,
+        "health": 12,
+        "home": 1,
+        "money": 3,
+        "mosque": 2,
+        "transport": 4,
+        "vehicles": 1
+      }
+    }
+  ]
+}
