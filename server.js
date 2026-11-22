@@ -386,11 +386,13 @@ async function searchGeoapifyPlaces(params) {
   const lat = Number(params.lat), lon = Number(params.lon);
   const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
   const radius = Math.min(15000, Math.max(1000, Number(params.radius) || 7000));
-  if ((!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen") && !hasCoordinates && !query) {
-    const error = new Error("أدخل اسم مكان أو نشاط للبحث في اليمن، أو اختر محافظة أو مديرية لتضييق النطاق.");
-    error.statusCode = 400;
+  const countrywideSearch=!hasCoordinates&&(!place||normalizeText(place)==="اليمن"||normalizeText(place)==="yemen");
+  if(countrywideSearch&&!query){
+    const error=new Error("أدخل اسم مكان أو نشاط للبحث في اليمن، أو اختر محافظة أو مديرية لتضييق النطاق.");
+    error.statusCode=400;
     throw error;
   }
+  if(countrywideSearch&&query)return searchYemenNominatim(query,category);
 
   const cacheKey = (hasCoordinates ? "near:" + lat.toFixed(3) + ":" + lon.toFixed(3) : normalizeText(place)) + "|" + category + "|" + normalizeText(query);
   const cached = readCache(geoapifyCache, cacheKey);
@@ -773,6 +775,72 @@ async function searchCommonsPhotos(query, place) {
     return result;
   }catch(error){
     if(error.name==="AbortError")throw new Error("انتهت مهلة البحث عن الصور.");
+    throw error;
+  }finally{clearTimeout(timer);}
+}
+
+async function searchYemenNominatim(query, category="all") {
+  const normalizedQuery=normalizeText(query);
+  const cacheKey="nominatim:yemen:"+normalizedQuery+"|"+category;
+  const cached=readCache(resultCache,cacheKey);
+  if(cached)return {...cached,cached:true,fetchedAt:new Date().toISOString()};
+  await waitForNominatimSlot();
+  lastGeocodeAt=Date.now();
+  const url=new URL("https://nominatim.openstreetmap.org/search");
+  url.search=new URLSearchParams({
+    q:query,format:"jsonv2",addressdetails:"1",extratags:"1",namedetails:"1",
+    limit:"20",countrycodes:"ye","accept-language":"ar,en"
+  }).toString();
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),9000);
+  try{
+    const response=await fetch(url,{signal:controller.signal,headers:{
+      "Accept":"application/json",
+      "User-Agent":"DalilnaDirectory/2.6.0 (+https://dalilna-live.onrender.com)",
+      "Referer":"https://dalilna-live.onrender.com/"
+    }});
+    if(response.status===429){const error=new Error("مصدر البحث المفتوح مزدحم. حاول مرة أخرى بعد قليل.");error.statusCode=503;throw error;}
+    if(!response.ok){const error=new Error("تعذر البحث بالاسم في OpenStreetMap حالياً.");error.statusCode=503;throw error;}
+    const payload=await response.json();
+    const rows=Array.isArray(payload)?payload:[];
+    const items=rows.filter(row=>{
+      const code=String(row.address?.country_code||"").toLowerCase();
+      const lat=Number(row.lat),lon=Number(row.lon);
+      return (!code||code==="ye")&&Number.isFinite(lat)&&Number.isFinite(lon)
+        &&lat>=11&&lat<=20.5&&lon>=41&&lon<=55.5;
+    }).map(row=>{
+      const tags=row.extratags&&typeof row.extratags==="object"?row.extratags:{};
+      const names=row.namedetails&&typeof row.namedetails==="object"?row.namedetails:{};
+      const name=cleanText(row.name||names.name||row.display_name?.split(",")[0]||"",180);
+      if(!name)return null;
+      const categoryFromTags=classifyCategory({[row.category||row.class||""]:row.type||""});
+      const categoryValue=categoryFromTags||category||"other";
+      const lat=Number(row.lat),lon=Number(row.lon),type=String(row.osm_type||"").toLowerCase(),id=String(row.osm_id||"");
+      const phone=cleanText(tags.phone||tags["contact:phone"]||tags.mobile||"",60);
+      const website=cleanText(tags.website||tags["contact:website"]||"",300);
+      const openingHours=cleanText(tags.opening_hours||"",100);
+      const mapsUrl="https://www.openstreetmap.org/?mlat="+lat+"&mlon="+lon+"#map=18/"+lat+"/"+lon;
+      return {
+        id:type&&id?"osm-"+type+"-"+id:"nominatim-"+lat.toFixed(6)+"-"+lon.toFixed(6),
+        name,nameEn:cleanText(names["name:en"]||"",160),category:categoryValue,categories:[categoryValue],
+        address:cleanText(row.display_name||"",260),phone,website,openingHours,lat,lon,
+        governorate:cleanText(row.address?.state||row.address?.province||"",100),
+        district:cleanText(row.address?.county||row.address?.district||row.address?.city||"",100),
+        source:"OpenStreetMap (Nominatim)",sourceUrl:type&&id?"https://www.openstreetmap.org/"+type+"/"+id:"https://www.openstreetmap.org/copyright",
+        mapsUrl,assignmentQuality:"live-nominatim"
+      };
+    }).filter(Boolean);
+    const result={
+      category,items,count:items.length,source:"OpenStreetMap Nominatim",
+      attribution:"© OpenStreetMap contributors",
+      sourceUrl:"https://www.openstreetmap.org/copyright",
+      place:"اليمن",fetchedAt:new Date().toISOString(),cached:false,
+      paidProvidersDisabled:true,
+      note:"نتائج بحث اسمية مباشرة داخل اليمن. قد لا تتضمن الهاتف أو ساعات العمل إذا لم ينشرها المصدر."
+    };
+    if(items.length)touchCache(resultCache,cacheKey,result,5*60*1000);
+    return result;
+  }catch(error){
+    if(error.name==="AbortError"){const timeout=new Error("تأخر بحث OpenStreetMap في الرد.");timeout.statusCode=503;throw timeout;}
     throw error;
   }finally{clearTimeout(timer);}
 }
