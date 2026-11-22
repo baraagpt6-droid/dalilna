@@ -909,6 +909,16 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     </div>
     <section class="shared-marketplace-panel" id="sharedSouqPanel">
       <div class="shared-marketplace-head"><h3>المعروضات المعتمدة في كل اليمن</h3><button type="button" class="ghost" id="sharedSouqRefresh">تحديث السوق</button></div>
+      <div class="cat-tabs souq-category-tabs" id="souqCategoryTabs" aria-label="أقسام سوق البيع والشراء">
+        <button type="button" data-group="all" aria-pressed="true">الكل</button>
+        <button type="button" data-group="electronics" aria-pressed="false">جوالات وإلكترونيات</button>
+        <button type="button" data-group="vehicles" aria-pressed="false">سيارات ودراجات</button>
+        <button type="button" data-group="property" aria-pressed="false">عقارات وأراضٍ</button>
+        <button type="button" data-group="solar" aria-pressed="false">طاقة شمسية</button>
+        <button type="button" data-group="home" aria-pressed="false">أثاث وأجهزة</button>
+        <button type="button" data-group="agriculture" aria-pressed="false">مواشٍ وزراعة</button>
+        <button type="button" data-group="clothing" aria-pressed="false">ملابس وعطور</button>
+      </div>
       <div class="shared-marketplace-controls">
         <select id="sharedSouqGovernorate"><option value="all">كل المحافظات</option></select>
       </div>
