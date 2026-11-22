@@ -778,9 +778,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <section class="shared-marketplace-panel" id="sharedDirectoryPanel">
       <div class="shared-marketplace-head"><h2>الإعلانات المعتمدة في دليلنا</h2><span class="tag">تظهر للجميع</span></div>
       <p class="shared-marketplace-status">تظهر هنا إضافات المستخدمين التي اعتمدتها الإدارة، وتدخل أيضاً في نتائج البحث حسب المنطقة.</p>
-      <div class="shared-marketplace-actions">
-        <button type="button" class="ghost" id="sharedDirectoryRefresh">تحديث الإعلانات المعتمدة</button>
-      </div>
+      
       <div class="shared-marketplace-status" id="sharedDirectoryStatus" aria-live="polite">جارٍ التحقق من قاعدة البيانات المشتركة…</div>
       <div class="shared-marketplace-list" id="sharedDirectoryItems"></div>
     </section>
@@ -888,7 +886,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <button class="add" id="addJob">+ أضف وظيفة</button>
     </div>
     <section class="shared-marketplace-panel" id="sharedJobsPanel">
-      <div class="shared-marketplace-head"><h3>الوظائف المعتمدة في اليمن</h3><button type="button" class="ghost" id="sharedJobsRefresh">تحديث الوظائف</button></div>
+      <div class="shared-marketplace-head"><h3>الوظائف المعتمدة في اليمن</h3></div>
       <div class="shared-marketplace-status" id="sharedJobsStatus">الإعلانات المعتمدة من جميع المحافظات ستظهر هنا.</div>
       <div class="shared-marketplace-list" id="sharedJobsItems"></div>
       <div class="shared-source-links"><a href="https://yemenboard.com/" target="_blank" rel="noopener noreferrer">Yemen Board</a><a href="https://www.yemenshortlist.com/en/home" target="_blank" rel="noopener noreferrer">Yemen ShortList</a></div>
@@ -908,7 +906,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <button class="ghost" id="sqBuy">+ اطلب غرضاً</button>
     </div>
     <section class="shared-marketplace-panel" id="sharedSouqPanel">
-      <div class="shared-marketplace-head"><h3>المعروضات المعتمدة في كل اليمن</h3><button type="button" class="ghost" id="sharedSouqRefresh">تحديث السوق</button></div>
+      <div class="shared-marketplace-head"><h3>المعروضات المعتمدة في كل اليمن</h3></div>
       <div class="cat-tabs souq-category-tabs" id="souqCategoryTabs" aria-label="أقسام سوق البيع والشراء">
         <button type="button" data-group="all" aria-pressed="true">الكل</button>
         <button type="button" data-group="electronics" aria-pressed="false">جوالات وإلكترونيات</button>
@@ -2447,7 +2445,7 @@ const STORE_KEY="dalilna_app_v6";
 const APP_VERSION="2.6.1";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
-  ["health","مستشفيات ومراكز"],["pharmacy","صيدليات وعيادات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
+  ["health","مستشفيات ومراكز صحية"],["pharmacy","صيدليات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
   ["jobs","وظائف"],["land","أراضٍ وعقارات"],["vehicles","سيارات ودراجات"],["build","مواد بناء"],["parts","قطع غيار"],
   ["craft","حرفيون وصيانة"],["transport","نقل ومواصلات"],["telecom","جوالات واتصالات"],["utility","مياه وغاز"],
   ["farm","زراعة ومواشي"],["mosque","مساجد"],["gold","ذهب ومجوهرات"],["wedding","قاعات أعراس"],
@@ -2459,7 +2457,7 @@ const CN=Object.fromEntries(CATS);
 const CAT_KEYS=new Set(CATS.map(([k])=>k));
 const CN_EN={
   grocery:"Groceries",food:"Restaurants & Bakeries",cafe:"Cafes & Coffee",edu:"Schools & Education",
-  health:"Hospitals & Centers",pharmacy:"Pharmacies & Clinics",gov:"Government Offices",money:"Exchange & Transfers",
+  health:"Hospitals & Health Centres",pharmacy:"Pharmacies",gov:"Government Offices",money:"Exchange & Transfers",
   jobs:"Jobs",land:"Real Estate & Land",vehicles:"Cars & Motorcycles",build:"Building Materials",parts:"Spare Parts",
   craft:"Craftsmen & Repair",transport:"Transport",telecom:"Mobiles & Telecom",utility:"Water & Gas",
   farm:"Agriculture & Livestock",mosque:"Mosques",gold:"Gold & Jewelry",wedding:"Wedding Halls",
@@ -2521,7 +2519,7 @@ const CAT_GROUPS={
   daily:["grocery","food","cafe","utility","delivery","market","laundry"],
   health:["pharmacy","health","edu","gov","mosque"],
   tech:["solar","elec","craft","parts","transport","telecom","build"],
-  shop:["clothes","home","gold","beauty","books","wedding","hotel","souq"]
+  shop:["clothes","home","gold","beauty","books","wedding","hotel"]
 };
 const CAT_SYN={
   pharmacy:"صيدلية صيدليات دواء ادوية عقاقير علاج حبوب مستلزمات طبية",
@@ -2865,7 +2863,9 @@ function normalizeState(raw){
     aiCloudConsent:raw.aiCloudConsent===true,
     onboarded:raw.onboarded===true,
     adminWhatsApp:digits(cleanText(raw.adminWhatsApp,24))||base.adminWhatsApp,
-    theme:raw.theme==="light"?"light":"dark",lang:raw.lang==="en"?"en":"ar"
+    theme:raw.theme==="light"?"light":"dark",lang:raw.lang==="en"?"en":"ar",
+    defaultGovernorate:cleanText(raw.defaultGovernorate,80),
+    notificationsEnabled:raw.notificationsEnabled===true
   };
 }
 const storedInitialState=loadState();
@@ -3421,11 +3421,12 @@ $("#tiles").addEventListener("click",e=>{
 });
 
 function renderCategories(){
-  const cnt={};for(const [key] of CATS)cnt[key]=getDirectoryCategoryCount(key);
+  const directoryCategories=CATS.filter(([key])=>!["souq","parts"].includes(key));
+  const cnt={};for(const [key] of directoryCategories)cnt[key]=getDirectoryCategoryCount(key);
   const q="";
-  let list=CATS;
-  if(catGroup!=="all"&&CAT_GROUPS[catGroup])list=CATS.filter(([k])=>CAT_GROUPS[catGroup].includes(k));
-  if(q)list=CATS.filter(([k,v])=>v.includes(q)||(CAT_SYN[k]||"").includes(q));
+  let list=directoryCategories;
+  if(catGroup!=="all"&&CAT_GROUPS[catGroup])list=directoryCategories.filter(([k])=>CAT_GROUPS[catGroup].includes(k));
+  if(q)list=directoryCategories.filter(([k,v])=>v.includes(q)||(CAT_SYN[k]||"").includes(q));
   const limit=(!catExpanded&&!q&&catGroup==="all")?12:list.length;
   const shown=list.slice(0,limit);
   $("#tiles").innerHTML=shown.map(([k])=>`
@@ -4108,7 +4109,7 @@ function directoryMapSearchInfo(q){
   return {category,productType:product?product.productType:"",label,place,mapQuery,productSearch:!!product};
 }
 function liveDirectoryPanelHTML(){
- return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>البحث في دليل المحلات والخدمات اليمني</b><div class="live-directory-sub">ابحث في جميع محافظات اليمن، أو اختر قسماً أو مديرية لتضييق النتائج.</div></div><button type="button" class="live-directory-refresh" id="liveDirectoryRefresh">تحديث السجل</button></div><div class="live-directory-status" id="liveDirectoryStatus">جارٍ تجهيز فهرس البحث الموحد…</div><div class="live-directory-list" id="liveDirectoryItems"></div></section>';
+ return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>'+(curLang==="en"?"Search Yemen's shops and services":"البحث في دليل المحلات والخدمات اليمني")+'</b><div class="live-directory-sub">'+(curLang==="en"?"Search across all governorates or narrow by category and district.":"ابحث في جميع محافظات اليمن، أو اختر قسماً أو مديرية لتضييق النتائج.")+'</div></div></div><div class="live-directory-status" id="liveDirectoryStatus">'+(curLang==="en"?"Preparing the unified search index…":"جارٍ تجهيز فهرس البحث الموحد…")+'</div><div class="live-directory-list" id="liveDirectoryItems"></div></section>';
 }
 const LIVE_DIRECTORY_API="https://dalilna-live.onrender.com";
 const LIVE_CATALOG_LOCAL_BASE="./regional-catalog/";
@@ -4528,7 +4529,7 @@ async function runLiveDirectorySearch(force){
   }catch(error){
    if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
    status.textContent="تعذر تحميل الفهرس المحلي: "+String(error&&error.message||"خطأ غير معروف");
-   box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">لم يكتمل تحميل السجل المحلي. يمكنك إعادة المحاولة أو اختيار منطقة أخرى.</div><button type="button" class="live-directory-refresh" id="liveDirectoryRetry">إعادة تحميل السجل</button>';
+   box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">'+(curLang==="en"?"The local catalogue could not be loaded. The directory will retry automatically when you search again.":"لم يكتمل تحميل السجل المحلي. سيُعاد المحاولة تلقائياً عند البحث مرة أخرى.")+'</div>';
   }finally{
    clearTimeout(requestTimer);
    if(liveDirectoryController===controller)liveDirectoryController=null;
@@ -4562,7 +4563,6 @@ document.addEventListener("click",event=>{
  }
  const commons=event.target.closest("[data-commons-photos]");if(commons){loadLiveCommonsPhotos(commons);return;}
  if(event.target.closest("#liveDirectoryMore")){liveDirectoryVisibleCount+=8;if(liveDirectoryLastData)renderLiveDirectoryResponse(liveDirectoryLastData);return;}
- if(event.target.closest("#liveDirectoryRefresh")||event.target.closest("#liveDirectoryRetry")){runLiveDirectorySearch(true);return;}
  if(event.target.closest("#liveDirectoryChooseRegion")){$("#scopeBtn").click();return;}
  if(event.target.closest("#liveDirectoryUseLocation")){
   if(!navigator.geolocation){toast("المتصفح لا يدعم تحديد الموقع.");return;}
@@ -5231,7 +5231,11 @@ function render(){
   }
   const showTopSearch=searchActive;
   const topSection=$("#searchResultsTop"),topList=$("#searchResultList"),homeSlot=$("#homeListSlot");
-  if(topSection)topSection.hidden=!showTopSearch;
+   if(topSection)topSection.hidden=!showTopSearch;
+   if(topList)topList.hidden=showTopSearch;
+   const nodes=[$("#latestT"),$("#list"),$("#more")].filter(Boolean);
+   if(showTopSearch&&topList)nodes.forEach(node=>topList.appendChild(node));
+   else if(homeSlot)nodes.forEach(node=>homeSlot.appendChild(node));
   const nodes=[$("#latestT"),$("#list"),$("#more")].filter(Boolean);
   if(showTopSearch&&topList)nodes.forEach(node=>topList.appendChild(node));
   else if(homeSlot)nodes.forEach(node=>homeSlot.appendChild(node));
