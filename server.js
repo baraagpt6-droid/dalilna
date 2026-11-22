@@ -813,7 +813,7 @@ async function searchYemenNominatim(query, category="all") {
       const name=cleanText(row.name||names.name||row.display_name?.split(",")[0]||"",180);
       if(!name)return null;
       const categoryFromTags=classifyCategory({[row.category||row.class||""]:row.type||""});
-      const categoryValue=categoryFromTags||category||"other";
+      const categoryValue=category&&category!=="all"?category:(categoryFromTags||"other");
       const lat=Number(row.lat),lon=Number(row.lon),type=String(row.osm_type||"").toLowerCase(),id=String(row.osm_id||"");
       const phone=cleanText(tags.phone||tags["contact:phone"]||tags.mobile||"",60);
       const website=cleanText(tags.website||tags["contact:website"]||"",300);
