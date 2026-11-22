@@ -33,6 +33,12 @@ async function main(){
  assert.ok(Array.isArray(r.payload.items));
  assert.ok(Number.isFinite(r.payload.count));
  process.stdout.write("PASS live Geoapify grocery search returned "+r.payload.count+" results\n");
+ const nationwideQuery=new URLSearchParams({q:"pharmacy",category:"pharmacy"});
+ const nationwide=await get("/api/places/search?"+nationwideQuery.toString());
+ assert.equal(nationwide.response.status,200,"countrywide search without a selected governorate or coordinates must use the Yemen Nominatim fallback");
+ assert.equal(nationwide.payload.source,"OpenStreetMap Nominatim");
+ assert.ok(Array.isArray(nationwide.payload.items));
+ process.stdout.write("PASS nationwide OpenStreetMap Nominatim search returned "+nationwide.payload.count+" Yemen results\\n");
  const commons=await get("/api/places/photos?q=Sanaa%20mosque&place=Sanaa%20Yemen");assert.equal(commons.response.status,200);assert.equal(commons.payload.source,"Wikimedia Commons");assert.ok(Array.isArray(commons.payload.items));
  const marketplace=await get("/api/marketplace/status");
  assert.equal(marketplace.response.status,200);
