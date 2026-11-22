@@ -19,6 +19,20 @@ test("every governorate file loads with stable identifiers",()=>{
  }
  assert.equal(total,manifest.totalCount);
 });
+test("district count manifest contains 335 districts and separates approximate assignments",()=>{
+ if(!Array.isArray(manifest.districtCounts)) return; // The next catalog refresh publishes this field.
+ assert.equal(manifest.districtCounts.length,335);
+ const keys=manifest.districtCounts.map(x=>x.governorate+"|"+x.district);
+ assert.equal(new Set(keys).size,335);
+ for(const row of manifest.districtCounts){
+  assert.ok(Number.isInteger(row.count)&&row.count>=0);
+  assert.ok(Number.isInteger(row.boundaryCount)&&row.boundaryCount>=0);
+  assert.ok(Number.isInteger(row.approximateCount)&&row.approximateCount>=0);
+  assert.equal(row.count,row.boundaryCount+row.approximateCount);
+ }
+ assert.equal(manifest.districtCountTotal,manifest.districtCounts.reduce((sum,row)=>sum+row.count,0));
+ assert.ok(manifest.districtCountTotal<=manifest.totalCount);
+});
 test("reader accepts arrays, object arrays, and keyed object maps",()=>{
  const array=[{name:"صيدلية",category:"pharmacy",lat:15,lon:44}],mapped={"osm-node-44":{name:"محل",category:"grocery",lat:15,lon:44}};
  assert.equal(runtime.normalizeItems(array).length,1);

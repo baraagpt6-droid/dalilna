@@ -1,14 +1,14 @@
-Dalilna 2.1.6
+Dalilna 2.1.7
 Application release: PWA + Android WebView
-Android versionCode: 216
-Web app version: 2.1.6
-Primary place discovery: a static per-governorate OpenStreetMap catalogue, refreshed weekly from Geofabrik extracts.
+Android versionCode: 217
+Web app version: 2.1.7
+Primary place discovery: a static per-governorate OpenStreetMap catalogue, refreshed weekly from Geofabrik extracts. The generated manifest includes district counts with separate boundary-match and centroid-estimate totals.
 OpenStreetMap data license: ODbL-1.0; attribution: © OpenStreetMap contributors.
 Administrative names and district centroids: Open Admin Data Yemen, CC BY 4.0.
 Catalogue files: regional-catalog/manifest.json and one JSON file per governorate. The build pipeline refuses to publish an empty catalogue.
 Map APIs are not required to open or browse regional place lists. Individual place cards retain optional OpenStreetMap direction links.
 Jobs, vehicles, products, homes, apartments, land and rental adverts are user-submitted shared listings. New listings remain pending until server-side admin approval.
-The shared marketplace API filters by category, product type, governorate, district and listing type, including rent.
-Marketplace schema version: 2. Server secrets DATABASE_URL and DALILNA_ADMIN_TOKEN remain server-only.
+The shared marketplace API filters by category, product group, governorate, district and listing type, including rent. Business/service directory entries do not expire; sale/rent marketplace listings expire after 60 days.
+Marketplace schema version: 2. The expires_at column is nullable so approved business/service listings can remain active indefinitely. Server secrets DATABASE_URL and DALILNA_ADMIN_TOKEN remain server-only.
 Android APK is a debug-signed testing build, not a Google Play production release.
 Quick service shortcuts wrap their Arabic labels inside each card on narrow mobile screens.

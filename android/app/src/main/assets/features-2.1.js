@@ -15,7 +15,7 @@
   all:[["Bayt","https://www.bayt.com/"],["GulfTalent","https://www.gulftalent.com/jobs"],["LinkedIn","https://www.linkedin.com/jobs/"],["ReliefWeb","https://reliefweb.int/jobs"]]
  };
  const TYPES=[["all","الكل"],["sale","للبيع"],["wanted","مطلوب"],["barter","مقايضة"],["free","مجاناً"]];
- const GROUPS=[["all","كل الأصناف"],["electronics","جوالات وإلكترونيات"],["vehicles","سيارات ودراجات"],["solar","منظومات طاقة شمسية"],["home","أثاث ومنزل"],["property","عقارات وأراضٍ"],["agriculture","مواشي وزراعة"],["tools","معدات وأدوات"],["clothing","ملابس وعطور"],["other","أشياء أخرى"]];
+ const GROUPS=[["all","كل الأصناف"],["electronics","جوالات وإلكترونيات"],["vehicles","سيارات ودراجات"],["solar","منظومات طاقة شمسية"],["property","عقارات وأراضٍ"],["home","أثاث ومنزل"],["agriculture","مواشي وزراعة"],["tools","معدات وأدوات"],["clothing","ملابس وعطور"],["other","أشياء أخرى"]];
  let country="YE",transaction="all",group="all";
  const $=id=>document.getElementById(id);
  function el(tag,attrs,text){
@@ -96,6 +96,18 @@
   const date=new Date(value);
   return Number.isNaN(date.getTime())?"":new Intl.DateTimeFormat("ar",{year:"numeric",month:"short",day:"numeric"}).format(date);
  }
+ function safeJobUrl(value){
+  try{const url=new URL(String(value||""));return url.protocol==="https:"?url.href:"";}catch(_){return "";}
+ }
+ function officialApplicationUrl(value){
+  const href=safeJobUrl(value);if(!href)return "";
+  const host=new URL(href).hostname.toLowerCase();
+  const allowed=["yemenhr.com","reliefweb.int","bayt.com","careers.un.org","careers.sa"];
+  return allowed.some(root=>host===root||host.endsWith("."+root))?href:"";
+ }
+ function readJobFavorites(){
+  try{const value=JSON.parse(localStorage.getItem("dalilna-job-favs-v1")||"[]");return Array.isArray(value)?value:[];}catch(_){return [];}
+ }
  async function loadJobs(){
   const status=$("jobsFeedStatus"),box=$("jobsFeedCards");
   if(!status||!box)return;
@@ -115,10 +127,34 @@
     const meta=el("div",{class:"job-feed-meta"});
     [job.organization,job.city||job.location,job.country,formatDate(job.publishedAt),job.source].filter(Boolean).forEach(value=>meta.appendChild(el("span",{},String(value))));
     card.appendChild(meta);
-    if(job.eligibility)card.appendChild(el("p",{},"شرط التقديم: "+job.eligibility));
+    const summary=String(job.summaryAr||job.summary||"").trim();
+    if(summary)card.appendChild(el("p",{class:"job-feed-summary"},summary.slice(0,700)));
+    if(job.eligibility)card.appendChild(el("p",{},"المؤهلات / الشروط: "+job.eligibility));
     if(job.deadline)card.appendChild(el("p",{},"آخر موعد للتقديم: "+job.deadline));
     const actions=el("div",{class:"job-feed-actions"});
-    if(job.url&&/^https?:\/\//i.test(job.url))actions.appendChild(el("a",{href:job.url,target:"_blank",rel:"noopener noreferrer"},"التقديم من المصدر"));
+    const direct=officialApplicationUrl(job.applicationUrl);
+    const sourceUrl=safeJobUrl(job.url);
+    if(direct)actions.appendChild(el("a",{href:direct,target:"_blank",rel:"noopener noreferrer"},"التقديم من المصدر"));
+    else actions.appendChild(el("span",{class:"job-feed-no-apply"},"لا يتوفر رابط تقديم رسمي مباشر لهذا الإعلان"));
+    if(sourceUrl&&sourceUrl!==direct)actions.appendChild(el("a",{href:sourceUrl,target:"_blank",rel:"noopener noreferrer"},"صفحة المصدر"));
+    const favoriteSet=new Set(readJobFavorites());
+    const favorite=el("button",{type:"button","aria-pressed":favoriteSet.has(String(job.id))?"true":"false"},favoriteSet.has(String(job.id))?"★ محفوظة":"☆ حفظ");
+    favorite.addEventListener("click",()=>{
+     const items=new Set(readJobFavorites()),key=String(job.id||sourceUrl||job.title);
+     if(items.has(key))items.delete(key);else items.add(key);
+     localStorage.setItem("dalilna-job-favs-v1",JSON.stringify([...items].slice(-300)));
+     favorite.setAttribute("aria-pressed",items.has(key)?"true":"false");
+     favorite.textContent=items.has(key)?"★ محفوظة":"☆ حفظ";
+    });
+    actions.appendChild(favorite);
+    const share=el("button",{type:"button"},"مشاركة");
+    share.addEventListener("click",async()=>{
+     const target=direct||sourceUrl;
+     const payload={title:job.title||"وظيفة من دليلنا",text:[job.title,job.organization,job.city||job.location,job.deadline].filter(Boolean).join(" · "),url:target||location.href};
+     try{if(navigator.share)await navigator.share(payload);else if(navigator.clipboard)await navigator.clipboard.writeText(payload.text+" "+payload.url);else throw new Error("share-unavailable");}
+     catch(error){if(error.name!=="AbortError")toast("تعذرت المشاركة من هذا الجهاز.");}
+    });
+    actions.appendChild(share);
     card.appendChild(actions);box.appendChild(card);
    });
   }catch(error){status.textContent="تعذر تحميل الوظائف من الخادم. "+error.message;}

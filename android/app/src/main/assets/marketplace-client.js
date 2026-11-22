@@ -203,7 +203,7 @@
       (result.items || []).forEach(item => list.appendChild(makeCard(item)));
       status.textContent = result.count
         ? "يعرض " + result.items.length + " من " + result.count + " إعلاناً منشوراً · آخر تحديث " + new Date(result.fetchedAt).toLocaleTimeString("ar")
-        : "لا توجد إعلانات معتمدة تطابق البحث حالياً.";
+        : "";
     } catch (e) {
       list.replaceChildren();
       status.textContent = e.status === 503
@@ -224,7 +224,6 @@
     const selectedGroup = document.querySelector("#souqCategoryTabs [aria-pressed=true]");
     return loadList({
       category: "marketplace",
-      productType: $("sharedSouqType") && $("sharedSouqType").value,
       listingType: selectedType && selectedType.dataset.transaction !== "all" ? selectedType.dataset.transaction : "",
       productGroup: selectedGroup && selectedGroup.dataset.group !== "all" ? selectedGroup.dataset.group : "",
       governorate: $("sharedSouqGovernorate") && $("sharedSouqGovernorate").value
@@ -383,7 +382,6 @@
   function bind() {
     fillSelect($("sharedDirectoryCategory"),CATS,"كل الأقسام");
     fillSelect($("sharedDirectoryGovernorate"),GOVS.map(x=>[x,x]),"كل المحافظات");
-    fillSelect($("sharedSouqType"),PRODUCTS,"كل أنواع المنتجات");
     fillSelect($("sharedSouqGovernorate"),GOVS.map(x=>[x,x]),"كل المحافظات");
     const search = $("sharedDirectorySearch");
     if (search) search.addEventListener("click",loadHome);
@@ -392,7 +390,6 @@
     const homeRefresh=$("sharedDirectoryRefresh");if(homeRefresh)homeRefresh.addEventListener("click",loadHome);
     const souqRefresh=$("sharedSouqRefresh");if(souqRefresh)souqRefresh.addEventListener("click",loadSouq);
     const jobsRefresh=$("sharedJobsRefresh");if(jobsRefresh)jobsRefresh.addEventListener("click",loadJobs);
-    const souqType=$("sharedSouqType");if(souqType)souqType.addEventListener("change",loadSouq);
     const souqGov=$("sharedSouqGovernorate");if(souqGov)souqGov.addEventListener("change",loadSouq);
     const adminButton=$("sharedAdminReviewButton");if(adminButton)adminButton.addEventListener("click",loadAdminQueue);
     const migrateButton=$("sharedMigrateLocalButton");if(migrateButton)migrateButton.addEventListener("click",migrateLocal);

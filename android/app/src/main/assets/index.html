@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.1.6">
+<meta name="app-version" content="2.1.7">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -767,17 +767,9 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 
     <section class="shared-marketplace-panel" id="sharedDirectoryPanel">
       <div class="shared-marketplace-head"><h2>الإعلانات المعتمدة في دليلنا</h2><span class="tag">تظهر للجميع</span></div>
-      <p class="shared-marketplace-status">ابحث عن المحلات والمنتجات والوظائف التي أضافها المستخدمون واعتمدتها الإدارة. المحلات الموجودة في الخرائط تظهر أيضاً في البحث المباشر حسب المنطقة.</p>
-      <div class="shared-marketplace-controls">
-        <input id="sharedDirectoryQuery" class="wide" type="search" placeholder="ابحث عن محل أو منتج أو خدمة أو وظيفة">
-        <select id="sharedDirectoryCategory"><option value="all">كل الأقسام</option></select>
-        <select id="sharedDirectoryGovernorate"><option value="all">كل المحافظات</option></select>
-        <input id="sharedDirectoryDistrict" type="search" placeholder="المديرية (اختياري)">
-      </div>
+      <p class="shared-marketplace-status">تظهر هنا إضافات المستخدمين التي اعتمدتها الإدارة، وتدخل أيضاً في نتائج البحث حسب المنطقة.</p>
       <div class="shared-marketplace-actions">
-        <button type="button" class="add" id="sharedDirectorySearch">بحث في الإعلانات المشتركة</button>
-        <button type="button" class="ghost" id="sharedDirectoryRefresh">تحديث</button>
-        <button type="button" class="ghost" id="sharedMigrateLocalButton">نقل إضافاتي القديمة للمراجعة</button>
+        <button type="button" class="ghost" id="sharedDirectoryRefresh">تحديث الإعلانات المعتمدة</button>
       </div>
       <div class="shared-marketplace-status" id="sharedDirectoryStatus" aria-live="polite">جارٍ التحقق من قاعدة البيانات المشتركة…</div>
       <div class="shared-marketplace-list" id="sharedDirectoryItems"></div>
@@ -908,7 +900,6 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <section class="shared-marketplace-panel" id="sharedSouqPanel">
       <div class="shared-marketplace-head"><h3>المعروضات المعتمدة في كل اليمن</h3><button type="button" class="ghost" id="sharedSouqRefresh">تحديث السوق</button></div>
       <div class="shared-marketplace-controls">
-        <select id="sharedSouqType"><option value="all">كل أنواع المنتجات</option></select>
         <select id="sharedSouqGovernorate"><option value="all">كل المحافظات</option></select>
       </div>
       <div class="shared-marketplace-status" id="sharedSouqStatus">الجوالات والساعات والسيارات والأراضي والعقارات وغيرها من المعروضات المعتمدة ستظهر هنا.</div>
@@ -996,6 +987,11 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <h2 style="font-size:20px">اختيار صفة الحساب</h2>
       <button type="button" class="x" id="accClose">✕</button>
     </div>
+    <section class="panel" style="margin:10px 0">
+      <h3 style="margin:0 0 6px">إضافاتي</h3>
+      <p class="where" style="margin:0 0 8px">انقل الإضافات القديمة المحفوظة على هذا الجهاز إلى قائمة مراجعة الإدارة.</p>
+      <button type="button" class="ghost" id="sharedMigrateLocalButton">نقل إضافاتي القديمة للمراجعة</button>
+    </section>
     <p class="where" style="margin:0">اختر كيف ترغب في استخدام التطبيق الآن:</p>
 
     <button type="button" class="role-opt" id="roleClientBtn">
@@ -1084,7 +1080,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     </div>
     <div class="two">
       <label>المحافظة<input type="hidden" name="gov" id="fgov" value="إب"><button type="button" class="picker-btn" id="fgovBtn"><span id="fgovLbl">إب</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button></label>
-      <label>المديرية<input name="dist" value="حبيش" placeholder="مثلاً: حبيش"></label>
+      <label>المديرية<input type="hidden" name="dist" id="fdist" value="حبيش"><button type="button" class="picker-btn" id="fdistBtn"><span id="fdistLbl">حبيش</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button></label>
     </div>
     <div class="two">
       <label>العزلة / المنطقة (اختياري)<input name="area" list="areas" placeholder="اختياري"></label>
@@ -3124,7 +3120,9 @@ function getScopeOptions(){
     for(const dist of rows){
       const group=(curLang==="en"?"Districts — ":"مديريات ")+gov;
       const label=(normalizePlace(dist)===normalizePlace("مدينة حجه")&&normalizePlace(gov)===normalizePlace("حجة"))?(curLang==="en"?"Hajjah City (District)":"مدينة حجة (مديرية)"):dist;
-      options.push({group,val:"district:"+gov+"|"+dist,label:curLang==="en"?`${dist} — ${gov}`:label+" — "+gov,count:distCnt[normalizePlace(gov)+"|"+normalizePlace(dist)]||0});
+      const catalogDistrict=catalogDistrictStats(gov,dist);
+      const localCount=distCnt[normalizePlace(gov)+"|"+normalizePlace(dist)]||0;
+      options.push({group,val:"district:"+gov+"|"+dist,label:curLang==="en"?`${dist} — ${gov}`:label+" — "+gov,count:Number(catalogDistrict?.count||0)+localCount,boundaryCount:Number(catalogDistrict?.boundaryCount||0),approximateCount:Number(catalogDistrict?.approximateCount||0)});
     }
   }
   options.push({group:curLang==="en"?"Hubaish Sub-Districts (22)":"عزل مديرية حبيش (22 عزلة)",val:"district:إب|حبيش",label:curLang==="en"?"Hubaish District — All Sub-Districts":"مديرية حبيش بالكامل",count:distCnt[normalizePlace("إب")+"|"+normalizePlace("حبيش")]||0});
@@ -3139,7 +3137,14 @@ function getScopeOptions(){
   return options;
 }
 function buildScopeSelector(){
-  const opts=getScopeOptions();const cur=opts.find(o=>o.val===scope)||opts[0];const stats=catalogStatsForScope(),place=scope&&scope.startsWith("gov:")?"محافظة "+scope.slice(4):"اليمن";const countLabel=stats?place+" • "+regionNumber(stats.count)+" محل وخدمة":(cur.count?Number(cur.count).toLocaleString("ar")+" إدراج":"");$("#scopeLbl").textContent=cur.label+(countLabel?" · "+countLabel:"");
+  const opts=getScopeOptions();const cur=opts.find(o=>o.val===scope)||opts[0];const stats=catalogStatsForScope();
+  let place="اليمن";
+  if(scope&&scope.startsWith("gov:"))place="محافظة "+scope.slice(4);
+  else if(scope&&scope.startsWith("district:")){const pair=scope.slice(9).split("|");place="مديرية "+(pair[1]||"")+" — "+(pair[0]||"");}
+  const countLabel=stats?place+" • "+regionNumber(stats.count)+" مكان وخدمة":(cur.count?Number(cur.count).toLocaleString("ar")+" مكان وخدمة":"");
+  const approximate=Number(stats?.approximateCount||cur.approximateCount||0);
+  const qualityLabel=approximate>0?" · "+regionNumber(approximate)+" تقديري":"";
+  $("#scopeLbl").textContent=cur.label+(countLabel?" · "+countLabel:"")+qualityLabel;
 }
 function scopeMatchesItem(item, selected=scope){
   if(!selected)return true;
@@ -3629,6 +3634,11 @@ function updateFormPickerLabels(){
   $("#fcatLbl").textContent=CN[cat]||cat;
   const gov=GOVS.includes($("#fgov").value)?$("#fgov").value:"إب";
   $("#fgovLbl").textContent=gov;
+  const districts=YEMEN_DISTRICTS[gov]||[];
+  const selected=String($("#fdist").value||"").trim();
+  if(selected&&!districts.some(name=>normalizePlace(name)===normalizePlace(selected)))$("#fdist").value="";
+  $("#fdistLbl").textContent=$("#fdist").value||"اختر المديرية";
+  $("#fdistBtn").disabled=!districts.length;
 }
 $("#fcatBtn").addEventListener("click",()=>openCustomPicker({
   title:curLang==="en"?"Select Category":"اختر القسم",searchable:true,
@@ -3638,8 +3648,18 @@ $("#fcatBtn").addEventListener("click",()=>openCustomPicker({
 $("#fgovBtn").addEventListener("click",()=>openCustomPicker({
   title:curLang==="en"?"Select Governorate":"اختر المحافظة",searchable:true,
   options:GOVS.map(label=>({val:label,label})),selected:$("#fgov").value,
-  onSelect:val=>{$("#fgov").value=val;updateFormPickerLabels();}
+  onSelect:val=>{$("#fgov").value=val;$("#fdist").value="";updateFormPickerLabels();}
 }));
+$("#fdistBtn").addEventListener("click",()=>{
+ const gov=$("#fgov").value,rows=YEMEN_DISTRICTS[gov]||[];
+ if(!rows.length){toast("لا توجد قائمة مديريات للمحافظة المختارة.");return;}
+ openCustomPicker({
+  title:"اختر المديرية — "+gov,searchable:true,
+  options:rows.map(label=>({val:label,label})),
+  selected:$("#fdist").value,
+  onSelect:val=>{$("#fdist").value=val;updateFormPickerLabels();}
+ });
+});
 $("#areaBtn").addEventListener("click",()=>{
   const current=S.items.filter(i=>i.cat===curCat),counts={};
   for(const i of current)counts[i.area]=(counts[i.area]||0)+1;
@@ -4109,15 +4129,29 @@ let liveMarketplaceCounts={all:{},governorates:{}};
 window.addEventListener("dalilna:marketplace-counts",event=>{const detail=event.detail||{};liveMarketplaceCounts={all:detail.all||{},governorates:detail.governorates||{}};renderCategories();buildScopeSelector();});
 function normalizeRegionalCatalogItems(payload){return window.DalilnaRegionalCatalog?.normalizeItems(payload)||[];}
 function catalogManifestRecord(gov){return (liveCatalogManifest?.governorates||[]).find(row=>normalizePlace(row?.name)===normalizePlace(gov))||null;}
+function catalogDistrictStats(gov,district){
+ const rows=liveCatalogManifest?.districtCounts;
+ if(!Array.isArray(rows))return null;
+ return rows.find(row=>normalizePlace(row?.governorate)===normalizePlace(gov)&&normalizePlace(row?.district)===normalizePlace(district))||null;
+}
 function catalogStatsForScope(){
  const manifest=liveCatalogManifest;if(!manifest)return null;const ctx=regionCurrentContext();
  if(!ctx.gov){const categories={};for(const row of manifest.governorates||[])for(const [key,count] of Object.entries(row?.categories||{}))categories[key]=(categories[key]||0)+Number(count||0);return {count:Number(manifest.totalCount||0),categories,snapshotDate:manifest.snapshotDate||""};}
  const region=catalogManifestRecord(ctx.gov);if(!region)return null;
  if(ctx.type==="governorate")return {count:Number(region.count||0),categories:region.categories||{},snapshotDate:manifest.snapshotDate||""};
- const cached=liveCatalogFiles.get(region.file);if(!cached||!Array.isArray(cached.items))return null;
+ const cached=liveCatalogFiles.get(region.file);
+ if(ctx.type==="district"){
+  const summary=catalogDistrictStats(ctx.gov,ctx.district);
+  if(!cached||!Array.isArray(cached.items)){
+   if(!summary)return null;
+   return {count:Number(summary.count||0),categories:summary.categories||{},boundaryCount:Number(summary.boundaryCount||0),approximateCount:Number(summary.approximateCount||0),snapshotDate:manifest.snapshotDate||""};
+  }
+ }
+ if(!cached||!Array.isArray(cached.items))return null;
  const rows=cached.items.filter(item=>ctx.type==="district"?normalizePlace(item?.district)===normalizePlace(ctx.district):ctx.type==="subdistrict"?(normalizePlace(item?.area)===normalizePlace(ctx.area)||normalizePlace(item?.village)===normalizePlace(ctx.area)):true);
  const categories={};for(const item of rows){const key=String(item?.category||"");if(key)categories[key]=(categories[key]||0)+1;}
- return {count:rows.length,categories,snapshotDate:cached.snapshotDate||manifest.snapshotDate||""};
+ const summary=ctx.type==="district"?catalogDistrictStats(ctx.gov,ctx.district):null;
+ return {count:rows.length,categories,boundaryCount:Number(summary?.boundaryCount||0),approximateCount:Number(summary?.approximateCount||0),snapshotDate:cached.snapshotDate||manifest.snapshotDate||""};
 }
 function getMarketplaceCount(category){const ctx=regionCurrentContext(),counts=ctx.gov?liveMarketplaceCounts.governorates?.[ctx.gov]:liveMarketplaceCounts.all;return Number(counts?.[category]||0);}
 function getDirectoryCategoryCount(category){const stats=catalogStatsForScope(),categories=stats?.categories||{};const aliases=category==="land"?["real_estate"]:category==="parts"?["vehicles"]:[];return Number(categories?.[category]||0)+aliases.reduce((sum,key)=>sum+Number(categories?.[key]||0),0)+getMarketplaceCount(category);}

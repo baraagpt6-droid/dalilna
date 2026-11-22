@@ -27,13 +27,14 @@ CREATE TABLE IF NOT EXISTS marketplace_listings (
  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
  approved_at TIMESTAMPTZ,
  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
- expires_at TIMESTAMPTZ NOT NULL DEFAULT (NOW()+INTERVAL '120 days'),
+ expires_at TIMESTAMPTZ DEFAULT NULL,
  CHECK(status IN ('pending','approved','rejected','sold','archived')),
  CHECK(latitude IS NULL OR latitude BETWEEN -90 AND 90),
  CHECK(longitude IS NULL OR longitude BETWEEN -180 AND 180)
 );
 ALTER TABLE marketplace_listings ADD COLUMN IF NOT EXISTS opening_hours VARCHAR(120) NOT NULL DEFAULT '';
 ALTER TABLE marketplace_listings ADD COLUMN IF NOT EXISTS website VARCHAR(320) NOT NULL DEFAULT '';
+ALTER TABLE marketplace_listings ALTER COLUMN expires_at DROP NOT NULL;
 CREATE INDEX IF NOT EXISTS marketplace_public_idx ON marketplace_listings(status,category,governorate,created_at DESC);
 CREATE INDEX IF NOT EXISTS marketplace_product_idx ON marketplace_listings(product_type,created_at DESC) WHERE category='souq';
 CREATE INDEX IF NOT EXISTS marketplace_jobs_deadline_idx ON marketplace_listings(deadline) WHERE category='jobs' AND status='approved';
