@@ -37,13 +37,20 @@ jobs:
           osmium --version
       - name: Download current open datasets
         run: |
-          if ! curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen-latest.osm.pbf -o yemen-latest.osm.pbf; then
-            echo "Latest Geofabrik extract unavailable; using the verified 2026-11-21 snapshot."
-            curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen-261121.osm.pbf -o yemen-latest.osm.pbf
+          GEOFABRIK_BASE="https://download.geofabrik.de/asia"
+          if ! curl -fL --retry 4 --retry-delay 3 "$GEOFABRIK_BASE/yemen-latest.osm.pbf" -o yemen-latest.osm.pbf \
+            || [[ ! -s yemen-latest.osm.pbf ]] \
+            || [[ "$(stat -c%s yemen-latest.osm.pbf)" -lt 1000000 ]]; then
+            echo "Latest Geofabrik Yemen extract is unavailable or invalid; resolving the newest dated snapshot."
+            curl -fL --retry 4 --retry-delay 3 "$GEOFABRIK_BASE/yemen.html" -o yemen-index.html
+            SNAPSHOT="$(python3 scripts/resolve_geofabrik_snapshot.py < yemen-index.html)"
+            test -n "$SNAPSHOT"
+            echo "Using the newest available Geofabrik snapshot: $SNAPSHOT"
+            curl -fL --retry 4 --retry-delay 3 "$GEOFABRIK_BASE/$SNAPSHOT" -o yemen-latest.osm.pbf
           fi
-          if [[ "$(stat -c%s yemen-latest.osm.pbf)" -lt 1000000 ]]; then
-            echo "Latest Geofabrik response was not a valid PBF; falling back to 2026-11-15 snapshot."
-            curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen-261115.osm.pbf -o yemen-latest.osm.pbf
+          if [[ ! -s yemen-latest.osm.pbf ]] || [[ "$(stat -c%s yemen-latest.osm.pbf)" -lt 1000000 ]]; then
+            echo "Geofabrik Yemen extract is missing or smaller than 1 MB; refusing to build from an invalid file."
+            exit 1
           fi
           download_admin_file() {
             local name="$1"
