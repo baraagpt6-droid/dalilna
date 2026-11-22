@@ -287,11 +287,26 @@ def prepare_boundaries(features, governors, districts):
 
 
 def assign_region(lat, lon, governors, districts, boundaries):
+    matched_governorate = None
     for boundary in boundaries:
         west, south, east, north = boundary["bbox"]
         if west <= lon <= east and south <= lat <= north and point_in_geometry(lon, lat, boundary["geometry"]):
             target = boundary["target"]
-            return target["governorate"], target["district"], "osm-boundary"
+            # A district polygon is more specific than a governorate polygon.
+            # Do not stop at a governorate boundary when no district polygon matched.
+            if target.get("district"):
+                return target["governorate"], target["district"], "osm-boundary"
+            matched_governorate = target.get("governorate") or matched_governorate
+
+    if matched_governorate:
+        local_districts = [d for d in districts if d["governorate"] == matched_governorate]
+        if local_districts:
+            nearest = min(local_districts, key=lambda d: distance_km(lat, lon, d["lat"], d["lon"]))
+            distance = distance_km(lat, lon, nearest["lat"], nearest["lon"])
+            if distance <= 70:
+                return matched_governorate, nearest["name"], "approximate-district-centroid"
+        return matched_governorate, "", "approximate-governorate-centroid"
+
     nearest = min(districts, key=lambda d: distance_km(lat, lon, d["lat"], d["lon"]))
     distance = distance_km(lat, lon, nearest["lat"], nearest["lon"])
     if distance <= 70:
@@ -418,9 +433,11 @@ def write_catalog(items, governors, districts, output):
         }
         for (governorate, district_name), bucket in district_buckets.items()
     ]
+    district_count_total = sum(row["count"] for row in district_manifest)
     manifest = {"schemaVersion": 1, "snapshotDate": snapshot, "totalCount": len(items),
                 "districtCountSchemaVersion": 1,
-                "districtCountTotal": sum(row["count"] for row in district_manifest),
+                "districtCountTotal": district_count_total,
+                "unassignedCount": max(0, len(items) - district_count_total),
                 "districtCounts": district_manifest,
                 "source": "OpenStreetMap contributors", "license": "ODbL-1.0",
                 "attribution": "© OpenStreetMap contributors",

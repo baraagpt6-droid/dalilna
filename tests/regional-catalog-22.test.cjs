@@ -19,6 +19,15 @@ test("every governorate file loads with stable identifiers",()=>{
  }
  assert.equal(total,manifest.totalCount);
 });
+test("catalogue builder prefers district polygons before governorate-only boundaries",()=>{
+ const source=fs.readFileSync(require("node:path").join(__dirname,"../scripts/build_regional_catalog.py"),"utf8");
+ assert.ok(source.includes("if target.get(\"district\"):"));
+ assert.ok(source.includes("local_districts = [d for d in districts if d[\"governorate\"] == matched_governorate]"));
+});
+test("district backfill script writes a reconciled manifest from the 335 official districts",()=>{
+ const source=fs.readFileSync(require("node:path").join(__dirname,"../scripts/backfill_district_counts.py"),"utf8");
+ for(const token of ["Expected 335 administrative districts","districtCountTotal","unassignedCount","approximate-district-centroid","70"] )assert.ok(source.includes(token),token);
+});
 test("district count manifest contains 335 districts and separates approximate assignments",()=>{
  if(!Array.isArray(manifest.districtCounts)) return; // The next catalog refresh publishes this field.
  assert.equal(manifest.districtCounts.length,335);
@@ -31,6 +40,7 @@ test("district count manifest contains 335 districts and separates approximate a
   assert.equal(row.count,row.boundaryCount+row.approximateCount);
  }
  assert.equal(manifest.districtCountTotal,manifest.districtCounts.reduce((sum,row)=>sum+row.count,0));
+ if(Number.isInteger(manifest.unassignedCount))assert.equal(manifest.districtCountTotal+manifest.unassignedCount,manifest.totalCount);
  assert.ok(manifest.districtCountTotal<=manifest.totalCount);
 });
 test("reader accepts arrays, object arrays, and keyed object maps",()=>{

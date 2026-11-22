@@ -1,0 +1,51 @@
+name: Backfill Yemen district counts
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/backfill_district_counts.py"
+      - ".github/workflows/backfill-district-counts.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dalilna-regional-catalog
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Fetch administrative district reference data
+        run: |
+          git clone --depth 1 --branch master https://github.com/open-admin-data/yemen-administrative-divisions.git admin-data
+          test -s admin-data/data/all-district.json
+          python3 - <<'PY'
+          import json
+          with open("admin-data/data/all-district.json", encoding="utf-8") as stream:
+              rows = json.load(stream)
+          assert len(rows) == 335, f"Expected 335 districts, got {len(rows)}"
+          print("Loaded administrative districts:", len(rows))
+          PY
+      - name: Backfill and validate district counts
+        run: python3 scripts/backfill_district_counts.py --districts admin-data/data/all-district.json
+      - name: Commit updated catalogue data
+        run: |
+          if git diff --quiet -- regional-catalog; then
+            echo "The catalogue already contains complete district assignments."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add regional-catalog
+          git commit -m "data: backfill Yemen district assignments and counts"
+          git push origin HEAD:main
