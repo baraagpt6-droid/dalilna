@@ -121,10 +121,10 @@ async function syncMerchantFeed(req,res){
  const activeClientRefs=Array.isArray(payload.activeClientRefs)
   ? [...new Set(payload.activeClientRefs.map(value=>clean(value,100)).filter(value=>value.startsWith("feed:")&&value.length>=10&&value.length<=100))]
   : [];
- if(!sourceKey||items.length>250||(!items.length&&!completeSnapshot))throw error("INVALID_PRODUCT_FEED","خلاصة المنتجات فارغة أو غير صالحة.");
+ if(!sourceKey||items.length===0||items.length>250)throw error("INVALID_PRODUCT_FEED","خلاصة المنتجات فارغة أو غير صالحة.");
  if(completeSnapshot&&!activeClientRefs.length)throw error("INVALID_PRODUCT_SNAPSHOT","لا يمكن اعتماد لقطة كاملة من دون قائمة المنتجات النشطة.");
  const db=getPool();await schema(db);const client=await db.connect();
- let inserted=0,updated=0,skipped=0;
+ let inserted=0,updated=0,skipped=0;const activeRefs=[];
  try{
   await client.query("BEGIN");
   for(const raw of items){
@@ -146,7 +146,7 @@ async function syncMerchantFeed(req,res){
    }catch(_){skipped++;}
   }
   let archived=0;
-  if(completeSnapshot&&skipped===0&&activeClientRefs.length>0&&activeRefs.every(ref=>activeClientRefs.includes(ref))){
+  if(completeSnapshot&&skipped===0&&activeClientRefs.length>0&&activeRefs.length===activeClientRefs.length&&activeRefs.every(ref=>activeClientRefs.includes(ref))){
    const stale=await client.query("UPDATE marketplace_listings SET status='archived',expires_at=NOW(),updated_at=NOW() WHERE client_ref LIKE 'feed:%' AND status='approved' AND NOT (client_ref=ANY($1::text[])) RETURNING id",[activeClientRefs]);
    archived=stale.rowCount||0;
   }
