@@ -3,12 +3,13 @@ name: Refresh Yemen regional places catalogue
 on:
   workflow_dispatch:
   schedule:
-    - cron: "20 2 * * *"
+    - cron: "0 */6 * * *"
   push:
     branches: [main]
     paths:
       - "scripts/build_regional_catalog.py"
       - "scripts/test_regional_catalog.py"
+      - "scripts/fuse_regional_catalog.py"
       - "category-mapping.json"
       - "regions-yemen.js"
       - ".github/workflows/refresh-regional-catalog.yml"
@@ -36,6 +37,24 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y osmium-tool
           osmium --version
+      - name: Install Overture Places downloader
+        run: |
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip overturemaps
+          .venv/bin/overturemaps --help
+      - name: Download latest Overture Places for Yemen
+        run: |
+          # Yemen mainland plus Socotra. Overture's Python client resolves the latest STAC release.
+          .venv/bin/overturemaps download --bbox=41.0,11.0,55.5,20.5 -f geojson --type=place -o overture-yemen.geojson
+          test -s overture-yemen.geojson
+          python3 - <<'PY'
+          import json
+          payload=json.load(open("overture-yemen.geojson",encoding="utf-8"))
+          features=payload.get("features",[]) if isinstance(payload,dict) else []
+          if not features:
+              raise SystemExit("Overture returned no Yemen place features.")
+          print("Overture Yemen places:",len(features))
+          PY
       - name: Download current open datasets
         run: |
           GEOFABRIK_BASE="https://download.geofabrik.de/asia"
@@ -86,6 +105,17 @@ jobs:
             -o places.osm.pbf
           osmium export places.osm.pbf -o places.geojson
           test -s places.geojson
+      - name: Fuse OSM, Overture and optional Foursquare Places
+        env:
+          FSQ_OS_PLACES_EXPORT_URL: ${{ secrets.FSQ_OS_PLACES_EXPORT_URL }}
+          FSQ_OS_PLACES_ACCESS_TOKEN: ${{ secrets.FSQ_OS_PLACES_ACCESS_TOKEN }}
+          FSQ_OS_PLACES_CATEGORIES_URL: ${{ secrets.FSQ_OS_PLACES_CATEGORIES_URL }}
+        run: |
+          ARGS=(--osm places.geojson --overture overture-yemen.geojson --country-boundary yemen-country.geojson --output fused-places.geojson)
+          if [[ -n "$FSQ_OS_PLACES_EXPORT_URL" ]]; then ARGS+=(--fsq-url "$FSQ_OS_PLACES_EXPORT_URL"); fi
+          if [[ -n "$FSQ_OS_PLACES_CATEGORIES_URL" ]]; then ARGS+=(--fsq-categories-url "$FSQ_OS_PLACES_CATEGORIES_URL"); fi
+          python3 scripts/fuse_regional_catalog.py "${ARGS[@]}"
+          test -s fused-places.geojson
       - name: Extract available administrative boundaries
         shell: bash
         run: |
@@ -127,6 +157,30 @@ jobs:
               raise SystemExit("ADM2 source contains invalid polygon geometry")
           print("geoBoundaries Yemen ADM2 polygons:", len(features))
           PY
+      - name: Download and validate Yemen country boundary for strict clipping
+        shell: bash
+        run: |
+          META_URL="https://www.geoboundaries.org/api/current/gbOpen/YEM/ADM0/"
+          curl -fL --retry 4 --retry-delay 3 "$META_URL" -o geoboundaries-yemen-adm0-metadata.json
+          GEOJSON_URL="$(python3 - <<'PY'
+          import json
+          data=json.load(open("geoboundaries-yemen-adm0-metadata.json",encoding="utf-8"))
+          if data.get("boundaryType")!="ADM0" or data.get("boundaryISO")!="YEM" or int(data.get("admUnitCount",0))!=1:
+              raise SystemExit("Expected exactly one Yemen ADM0 boundary")
+          url=data.get("gjDownloadURL")
+          if not url or not url.startswith("https://"): raise SystemExit("No secure ADM0 GeoJSON URL")
+          print(url)
+          PY
+          )"
+          curl -fL --retry 4 --retry-delay 3 "$GEOJSON_URL" -o yemen-country.geojson
+          python3 - <<'PY'
+          import json
+          data=json.load(open("yemen-country.geojson",encoding="utf-8"))
+          features=data.get("features",[])
+          if len(features)!=1 or (features[0].get("geometry") or {}).get("type") not in {"Polygon","MultiPolygon"}:
+              raise SystemExit("Invalid Yemen ADM0 clipping polygon")
+          print("Validated Yemen country polygon")
+          PY
       - name: Merge OSM and geoBoundaries administrative polygons
         run: |
           python3 - <<'PY'
@@ -144,7 +198,7 @@ jobs:
         run: |
           python3 scripts/test_regional_catalog.py
           python3 scripts/build_regional_catalog.py \
-            --places places.geojson \
+            --places fused-places.geojson \
             --boundaries all-boundaries.geojson \
             --governorates all-governorate.json \
             --districts all-district.json \
@@ -156,7 +210,9 @@ jobs:
               data = json.load(f)
           assert data["totalCount"] > 0, "Refusing to publish an empty catalogue."
           assert len(data["governorates"]) == 22, "Expected all 22 governorates."
-          assert data["license"] == "ODbL-1.0"
+          assert "Per-record source licenses" in data["license"]
+          assert data["sourceCounts"].get("OpenStreetMap", 0) > 0
+          assert data["sourceCounts"].get("Overture Maps", 0) > 0
           assert len(data.get("districtCounts", [])) == 335, "Expected district counts for all 335 districts."
           assert data["districtCountTotal"] + data["unassignedCount"] == data["totalCount"]
           print("Catalogue records:", data["totalCount"])
@@ -165,14 +221,29 @@ jobs:
           print("Polygon district assignments:", sum(item["boundaryCount"] for item in data["districtCounts"]))
           print("Approximate district assignments:", sum(item["approximateCount"] for item in data["districtCounts"]))
           PY
+      - name: Update silent version metadata with the published catalogue snapshot
+        run: |
+          python3 - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+          manifest=json.loads(Path("regional-catalog/manifest.json").read_text(encoding="utf-8"))
+          version=json.loads(Path("version.json").read_text(encoding="utf-8"))
+          version["catalogSnapshotDate"]=manifest["snapshotDate"]
+          version["catalogGeneratedAt"]=manifest["generatedAt"]
+          version["catalogTotalCount"]=manifest["totalCount"]
+          version["sourceCounts"]=manifest.get("sourceCounts",{})
+          version["updatedAt"]=datetime.now(timezone.utc).isoformat()
+          Path("version.json").write_text(json.dumps(version,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          PY
       - name: Publish catalogue and trigger web and Android builds
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [[ -n "$(git status --porcelain -- regional-catalog)" ]]; then
+          if [[ -n "$(git status --porcelain -- regional-catalog version.json)" ]]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add regional-catalog
+            git add regional-catalog version.json
             git commit -m "data: refresh Yemen regional places catalogue"
             git push origin main
             gh workflow run deploy-pages.yml --ref main

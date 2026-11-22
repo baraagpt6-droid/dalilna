@@ -10,8 +10,8 @@ android {
         applicationId = "ye.dalilna.app"
         minSdk = 24
         targetSdk = 35
-        versionCode = 240
-        versionName = "2.4.0"
+        versionCode = 260
+        versionName = "2.6.0"
     }
 
     buildTypes {

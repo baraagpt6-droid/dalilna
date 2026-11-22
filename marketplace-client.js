@@ -399,6 +399,11 @@
     const souqRefresh=$("sharedSouqRefresh");if(souqRefresh)souqRefresh.addEventListener("click",loadSouq);
     const jobsRefresh=$("sharedJobsRefresh");if(jobsRefresh)jobsRefresh.addEventListener("click",loadJobs);
     const souqGov=$("sharedSouqGovernorate");if(souqGov)souqGov.addEventListener("change",loadSouq);
+    const souqTabs=$("souqCategoryTabs");if(souqTabs)souqTabs.addEventListener("click",event=>{
+      const button=event.target.closest("[data-group]");if(!button)return;
+      souqTabs.querySelectorAll("[data-group]").forEach(item=>item.setAttribute("aria-pressed",item===button?"true":"false"));
+      loadSouq();
+    });
     const adminButton=$("sharedAdminReviewButton");if(adminButton)adminButton.addEventListener("click",loadAdminQueue);
     const migrateButton=$("sharedMigrateLocalButton");if(migrateButton)migrateButton.addEventListener("click",migrateLocal);
     loadHome();

@@ -1,17 +1,17 @@
-Dalilna 2.4.0
-Web/PWA version: 2.4.0
-Android versionName: 2.4.0
-Android versionCode: 240
+Dalilna 2.6.0
+Web/PWA version: 2.6.0
+Android versionName: 2.6.0
+Android versionCode: 260
 
 Core changes:
-- Dictionary-driven OpenStreetMap taxonomy from category-mapping.json; categories can be multi-assigned (e.g. pharmacy belongs to health and pharmacy).
+- Fused open-data POIs from OpenStreetMap (ODbL-1.0), Overture Maps Places (per-source licenses) and optional Foursquare Open Places export (Apache-2.0); de-duplication merges matching names within 50 metres while preserving per-source provenance.
 - Every place record retains Arabic/English names, category memberships, activity tags, address/neighbourhood and district/governorate search text.
 - Global search spans all 22 governorate catalogues; Arabic normalization folds Alif variants, taa marbuta/ha, ya/alif maqsura, diacritics and the definite article.
 - Yemen ADM2 polygons from geoBoundaries (335 district polygons) are combined with OSM administrative polygons. District assignments distinguish polygon matches from centroid estimates.
 - Souq shows PostgreSQL product listings only; map directory cards/restaurant records are not used as products. Seven product groups are exposed.
 - Merchant-feed sync uses authenticated, idempotent PostgreSQL upserts. Empty/partial/invalid snapshots do not archive existing products.
-- PWA cache namespace is v2.4.0. Android upgrades clear WebView HTTP cache once per new version while retaining localStorage.
-- Daily schedules cover places, jobs, service/FX checks and any configured merchant product feeds.
+- PWA cache namespace is v2.6.0. Android upgrades clear WebView HTTP cache once per new version while retaining localStorage.
+- Every-six-hour schedules refresh places, jobs, service/FX checks and any configured merchant product feeds. Foursquare portal export remains optional until its HTTPS export URL and access token are configured.
 
 Sources/licenses:
 - OpenStreetMap contributors, ODbL-1.0.

@@ -9,6 +9,7 @@ on:
       - 'features-2.1.js'
       - 'features-2.1.css'
       - 'jobs-feed.json'
+      - 'version.json'
       - 'marketplace-api.js'
       - 'marketplace-client.js'
       - 'db/**'
@@ -53,7 +54,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p android/app/src/main/assets/icons android/app/src/main/assets/regional-catalog
-          cp index.html regional-catalog-runtime.js marketplace-client.js features-2.1.js features-2.1.css jobs-feed.json manifest.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html android/app/src/main/assets/
+          cp index.html regional-catalog-runtime.js marketplace-client.js features-2.1.js features-2.1.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html android/app/src/main/assets/
           cp icons/* android/app/src/main/assets/icons/
           cp regional-catalog/*.json android/app/src/main/assets/regional-catalog/
           cmp -s index.html android/app/src/main/assets/index.html
@@ -63,6 +64,11 @@ jobs:
           cmp -s features-2.1.js android/app/src/main/assets/features-2.1.js
           cmp -s features-2.1.css android/app/src/main/assets/features-2.1.css
           cmp -s jobs-feed.json android/app/src/main/assets/jobs-feed.json
+          cmp -s version.json android/app/src/main/assets/version.json
+      - name: Verify Python data-fusion pipeline and deduplication
+        run: |
+          python3 -m py_compile scripts/build_regional_catalog.py scripts/fuse_regional_catalog.py scripts/test_regional_catalog.py
+          python3 scripts/test_regional_catalog.py
       - name: Run unit and UI tests
         run: npm test
       - name: Verify real HTTP routes with mocked OSM and Commons providers
@@ -72,7 +78,7 @@ jobs:
         env:
           LIVE_API_BASE_URL: https://dalilna-live.onrender.com
         run: node scripts/live-places-smoke.cjs
-      - name: Verify Dalilna 2.4 live API, marketplace database and jobs endpoints
+      - name: Verify Dalilna 2.6 live API, marketplace database and jobs endpoints
         if: github.event_name == 'push'
         env:
           LIVE_API_BASE_URL: https://dalilna-live.onrender.com
@@ -86,7 +92,7 @@ jobs:
             return body;
           }
           const health = await get("/health");
-          if (health.version !== "2.4.0") throw new Error("Expected API version 2.4.0, got " + health.version);
+          if (health.version !== "2.6.0") throw new Error("Expected API version 2.6.0, got " + health.version);
           const market = await get("/api/marketplace/status");
           if (market.ready !== true || market.databaseConfigured !== true) {
             throw new Error("Marketplace database is not ready: " + JSON.stringify(market));

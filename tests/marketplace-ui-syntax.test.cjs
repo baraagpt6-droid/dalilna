@@ -7,9 +7,12 @@ test("all inline JavaScript in PWA parses",()=>{assert.ok(inline.length>=2);inli
 test("marketplace client parses",()=>new vm.Script(client,{filename:"marketplace-client.js"}));
 test("Dalilna 2.1 feature layer parses and exposes job and marketplace filters",()=>{new vm.Script(features,{filename:"features-2.1.js"});for(const token of ['id="jobsCountryTabs"','id="souqTransactionTabs"','id="souqCategoryTabs"','/api/jobs/candidates'])assert.ok(features.includes(token),token);});
 test("regional catalogue runtime exports safe parsers",()=>{const runtime=require("../regional-catalog-runtime");assert.equal(typeof runtime.normalizeItems,"function");assert.equal(typeof runtime.yemenPhone,"function");});
-test("smart search reads static local catalogue and shared ads, not live map endpoints",()=>{
+test("smart search uses the local catalogue first and Nominatim as its live fallback",()=>{
  for(const token of ["LIVE_CATALOG_BASE","loadRegionalCatalogManifest","loadRegionalCatalog(context.gov","loadLiveMarketplaceMatches","OpenStreetMap contributors"])assert.ok(html.includes(token),token);
- for(const token of ["searchLivePlaces(","/api/places/search","/api/geoapify/search"])assert.ok(!html.includes(token),token);
+ assert.ok(!html.includes("searchLivePlaces("));
+ assert.ok(html.includes("searchLiveDirectoryFallback"));
+ assert.ok(html.includes("/api/places/search"));
+ assert.ok(!html.includes("/api/geoapify/search"));
 });
 test("Android and PWA assets remain byte-for-byte aligned",()=>{
  for(const name of ["index.html","sw.js","marketplace-client.js","regional-catalog-runtime.js","features-2.1.js","features-2.1.css","jobs-feed.json"])assert.equal(fs.readFileSync("android/app/src/main/assets/"+name,"utf8"),fs.readFileSync(name,"utf8"),name+" mismatch");
@@ -52,16 +55,16 @@ test("job cards only render apply buttons from approved official provider hosts"
  assert.ok(jobs.includes('function isOfficialApplicationUrl'));
 });
 
-test("PWA version metadata and asset cache tags are 2.4.0",()=>{
- assert.ok(html.includes('content="2.4.0"'));
- assert.ok(html.includes('features-2.1.css?v=2.4.0'));
- assert.ok(html.includes('features-2.1.js?v=2.4.0'));
- assert.ok(sw.includes('CACHE_PREFIX + "v2.4.0"'));
+test("PWA version metadata and asset cache tags are 2.6.0",()=>{
+ assert.ok(html.includes('content="2.6.0"'));
+ assert.ok(html.includes('features-2.1.css?v=2.6.0'));
+ assert.ok(html.includes('features-2.1.js?v=2.6.0'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.6.0"'));
 });
 test("main directory search loads all 22 governorate files without requiring a selected governorate",()=>{
  assert.ok(html.includes("async function loadAllRegionalCatalog(force)"));
  assert.ok(html.includes("regionalCatalogMatches(loaded.items,context,query,category,productType)"));
- assert.ok(html.includes("جارٍ البحث في سجلات المحافظات الـ22"));
+ assert.ok(html.includes("جارٍ تحميل سجلات المحافظات الـ22 في الخلفية"));
  assert.ok(html.includes("normalizeSearchPlace"));
 });
 test("Souq renders only shared PostgreSQL product listings and excludes map restaurants and local ratings",()=>{
@@ -97,11 +100,11 @@ test("exchange rates use fresh public quotes and do not display saved device pri
  assert.ok(!html.includes("S.fx.s.usdB"));
  assert.ok(!html.includes("S.fx.a.usdB"));
 });
-test("Android 2.4.0 updates app version and clears only the WebView HTTP cache",()=>{
+test("Android 2.6.0 updates app version and clears only the WebView HTTP cache",()=>{
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
  const activity=fs.readFileSync("android/app/src/main/java/ye/dalilna/app/MainActivity.java","utf8");
- assert.ok(gradle.includes("versionCode = 240"));
- assert.ok(gradle.includes('versionName = "2.4.0"'));
+ assert.ok(gradle.includes("versionCode = 260"));
+ assert.ok(gradle.includes('versionName = "2.6.0"'));
  assert.ok(activity.includes("webView.clearCache(true)"));
  assert.ok(activity.includes("installed_version_code"));
  assert.ok(activity.includes("Keep DOM storage/localStorage intact"));
@@ -136,10 +139,10 @@ test("Souq renders shared product cards with seller, WhatsApp and share actions"
  assert.ok(client.includes("wa.me/"));
  assert.ok(client.includes("share.dataset.shareId"));
 });
-test("daily catalogue workflow fetches Yemen ADM2 polygon boundaries",()=>{
- assert.ok(workflow.includes('cron: "20 2 * * *"'));
- assert.ok(workflow.includes("YEM/ADM2"));
- assert.ok(workflow.includes("geoBoundaries"));
+test("six-hour catalogue workflow imports OSM, Overture and Yemen country/admin polygons",()=>{
+ assert.ok(workflow.includes('cron: "0 */6 * * *"'));
+ assert.ok(workflow.includes("YEM/ADM2") && workflow.includes("YEM/ADM0"));
+ assert.ok(workflow.includes("geoBoundaries") && workflow.includes("overturemaps download") && workflow.includes("fuse_regional_catalog.py"));
 });
 
 test("merchant feed SQL maps latitude, longitude and source metadata to distinct parameters",()=>{
@@ -150,12 +153,12 @@ test("merchant feed SQL maps latitude, longitude and source metadata to distinct
  assert.ok(feed.includes("ON CONFLICT(client_ref) DO UPDATE"));
  assert.ok(feed.includes("completeSnapshot&&skipped===0"));
 });
-test("Android 2.4.0 cache and version metadata remain synchronized",()=>{
- assert.ok(sw.includes('CACHE_PREFIX + "v2.4.0"'));
- assert.ok(html.includes('content="2.4.0"'));
+test("Android 2.6.0 cache and version metadata remain synchronized",()=>{
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.6.0"'));
+ assert.ok(html.includes('content="2.6.0"'));
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
- assert.ok(gradle.includes("versionCode = 240"));
- assert.ok(gradle.includes('versionName = "2.4.0"'));
+ assert.ok(gradle.includes("versionCode = 260"));
+ assert.ok(gradle.includes('versionName = "2.6.0"'));
 });
 
 test("daily sync workflow checks jobs, marketplace, exchange and configured merchant feeds",()=>{
@@ -184,17 +187,17 @@ test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black 
  assert.ok(html.includes('.quick-jump-btn{display:flex;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:6px;padding:6px 5px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--ink);font:600 11.5px \'Readex Pro\',Tahoma,sans-serif;text-decoration:none;white-space:normal;text-align:center;overflow:hidden}'));
 });
 test("regional catalogue manifest loads at first visit and does not show a local-only count as the national total",()=>{
- assert.ok(html.includes('loadRegionalCatalogManifest(false).catch'));
- assert.ok(html.includes('جارٍ تحميل فهرس اليمن'));
- assert.ok(html.includes('manifest.json?v=2.4.0'));
+ assert.ok(html.includes('loadRegionalCatalogManifest(false).then(()=>warmUnifiedSearchIndex(false))'));
+ assert.ok(html.includes('جارٍ تجهيز فهرس البحث الموحد'));
+ assert.ok(html.includes('manifest.json?v=2.6.0'));
  assert.ok(html.includes('cache:"no-store"'));
  assert.ok(html.includes('districtCounts.length!==335'));
 });
 test("service worker refreshes regional data and critical CSS/JS from the network",()=>{
- assert.ok(sw.includes('CACHE_PREFIX + "v2.4.0"'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.6.0"'));
  assert.ok(sw.includes('url.pathname.includes("/regional-catalog/")'));
  assert.ok(sw.includes('fetch(request, { cache: "no-store" })'));
- assert.ok(sw.includes('features-2.1.css?v=2.4.0'));
+ assert.ok(sw.includes('features-2.1.css?v=2.6.0'));
 });
 
 test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});
@@ -232,7 +235,7 @@ test("search state observer cannot recursively observe its own hidden updates",(
 test("regional catalogue requests are cancelled before a newer search starts",()=>{
  assert.ok(html.includes("liveDirectoryController.abort()"));
  assert.ok(html.includes("controller.signal.aborted"));
- assert.ok(html.includes("},260);"));
+ assert.ok(html.includes("},45);"));
 });
 
 test("Dalilna quick jump buttons use SVG icons and native anchor targets",()=>{

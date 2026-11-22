@@ -1579,5 +1579,266 @@
     "salon",
     "laundry",
     "other"
-  ]
+  ],
+  "externalCategoryHints": {
+    "health": [
+      "hospital",
+      "clinic",
+      "medical center",
+      "medical centre",
+      "healthcare",
+      "doctor",
+      "dentist",
+      "urgent care",
+      "مستشفى",
+      "عيادة",
+      "مركز صحي"
+    ],
+    "pharmacy": [
+      "pharmacy",
+      "drugstore",
+      "chemist",
+      "صيدلية"
+    ],
+    "edu": [
+      "school",
+      "university",
+      "college",
+      "kindergarten",
+      "education",
+      "مدرسة",
+      "جامعة",
+      "روضة"
+    ],
+    "mosque": [
+      "mosque",
+      "place of worship",
+      "religious organization",
+      "مسجد",
+      "جامع"
+    ],
+    "grocery": [
+      "grocery",
+      "supermarket",
+      "convenience store",
+      "food market",
+      "بقالة",
+      "سوبرماركت"
+    ],
+    "food": [
+      "restaurant",
+      "fast food",
+      "food court",
+      "مطعم"
+    ],
+    "cafe": [
+      "cafe",
+      "coffee shop",
+      "tea house",
+      "مقهى",
+      "كافيه"
+    ],
+    "money": [
+      "bank",
+      "atm",
+      "money transfer",
+      "currency exchange",
+      "صراف",
+      "بنك"
+    ],
+    "utility": [
+      "gas station",
+      "fuel",
+      "petrol station",
+      "محطة وقود"
+    ],
+    "vehicles": [
+      "car repair",
+      "auto repair",
+      "vehicle repair",
+      "car dealer",
+      "motorcycle dealer",
+      "قطع غيار",
+      "سيارات"
+    ],
+    "telecom": [
+      "mobile phone",
+      "cell phone",
+      "telecommunication",
+      "جوال",
+      "اتصالات"
+    ],
+    "elec": [
+      "electronics store",
+      "computer store",
+      "electronics",
+      "computer",
+      "إلكترونيات",
+      "كمبيوتر"
+    ],
+    "clothes": [
+      "clothing store",
+      "shoe store",
+      "clothing",
+      "ملابس",
+      "أحذية"
+    ],
+    "home": [
+      "furniture store",
+      "home goods",
+      "hardware store",
+      "building material",
+      "أثاث",
+      "مواد بناء"
+    ],
+    "hotel": [
+      "hotel",
+      "motel",
+      "hostel",
+      "guest house",
+      "فندق"
+    ],
+    "delivery": [
+      "courier",
+      "post office",
+      "delivery",
+      "parcel",
+      "شحن",
+      "توصيل"
+    ],
+    "gov": [
+      "government office",
+      "municipal office",
+      "public service",
+      "حكومي",
+      "بلدية"
+    ],
+    "beauty": [
+      "hair salon",
+      "beauty salon",
+      "barber",
+      "صالون",
+      "حلاقة",
+      "عطور"
+    ],
+    "craft": [
+      "repair",
+      "craft",
+      "electrician",
+      "plumber",
+      "mechanic",
+      "صيانة",
+      "سباك",
+      "كهربائي"
+    ],
+    "tourism": [
+      "park",
+      "tourist attraction",
+      "museum",
+      "landmark",
+      "حديقة",
+      "متحف"
+    ],
+    "solar": [
+      "solar",
+      "solar energy",
+      "renewable energy",
+      "طاقة شمسية"
+    ],
+    "farm": [
+      "farm",
+      "agriculture",
+      "agricultural",
+      "livestock",
+      "مزرعة",
+      "زراعة",
+      "مواشي"
+    ],
+    "market": [
+      "market",
+      "marketplace",
+      "بازار",
+      "سوق"
+    ],
+    "build": [
+      "building materials",
+      "construction materials",
+      "hardware store",
+      "construction supply",
+      "مواد بناء",
+      "حديد",
+      "أسمنت",
+      "أدوات بناء"
+    ],
+    "parts": [
+      "auto parts",
+      "car parts",
+      "spare parts",
+      "vehicle parts",
+      "قطع غيار",
+      "مستلزمات سيارات"
+    ],
+    "transport": [
+      "bus station",
+      "taxi stand",
+      "public transport",
+      "transportation",
+      "terminal",
+      "محطة باص",
+      "نقل",
+      "مواصلات"
+    ],
+    "wedding": [
+      "wedding venue",
+      "event venue",
+      "banquet hall",
+      "wedding hall",
+      "قاعة أفراح",
+      "صالة أعراس",
+      "قاعات مناسبات"
+    ],
+    "gold": [
+      "jewelry",
+      "jewellery",
+      "gold shop",
+      "precious metals",
+      "ذهب",
+      "مجوهرات",
+      "صياغة"
+    ],
+    "books": [
+      "book store",
+      "bookshop",
+      "stationery",
+      "library",
+      "مكتبة",
+      "قرطاسية",
+      "كتب"
+    ],
+    "salon": [
+      "barber",
+      "hair salon",
+      "beauty salon",
+      "حلاق",
+      "كوافير",
+      "صالون حلاقة"
+    ],
+    "laundry": [
+      "laundry",
+      "dry cleaner",
+      "clothing care",
+      "مغسلة",
+      "غسيل ملابس",
+      "كوي"
+    ],
+    "real_estate": [
+      "real estate agency",
+      "property agency",
+      "estate agent",
+      "property management",
+      "عقار",
+      "مكتب عقاري",
+      "وسيط عقاري"
+    ]
+  }
 }

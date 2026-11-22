@@ -190,6 +190,12 @@ def categories_for_tags(tags, mapping=None):
     mapping = mapping or CATEGORY_MAPPING
     definitions = mapping.get("categories", {})
     matched = []
+    external = tags.get("__catalog_categories") or []
+    if isinstance(external, str):
+        external = [external]
+    for category in external:
+        if category in definitions and category not in matched:
+            matched.append(category)
     for category, definition in definitions.items():
         for rule in definition.get("osmTags", []):
             if _matches_rule(tags, rule):
@@ -449,7 +455,8 @@ def build_items(features, governors, districts, boundaries):
             object_type, raw_id = raw_id.split("/", 1)
         if not raw_id:
             raw_id = f"coord-{lat:.6f}-{lon:.6f}"
-        item_id = "osm-" + re.sub(r"[^a-zA-Z0-9_-]", "-", object_type + "-" + raw_id)
+        id_prefix = "osm" if (feature.get("properties") or {}).get("__source", "OpenStreetMap") == "OpenStreetMap" else "place"
+        item_id = id_prefix + "-" + re.sub(r"[^a-zA-Z0-9_-]", "-", object_type + "-" + raw_id)
         key = (normalize(name_ar), normalize(name_en), round(lat, 4), round(lon, 4))
         if key in seen:
             continue
@@ -501,6 +508,14 @@ def build_items(features, governors, districts, boundaries):
             searchable_values.extend([definition.get("labelAr", ""), definition.get("labelEn", "")])
         search_text = clean(" ".join(str(value) for value in searchable_values if value), 2400)
 
+        properties = feature.get("properties") or {}
+        source_rows = properties.get("__sources") if isinstance(properties.get("__sources"), list) else []
+        if not source_rows:
+            source_rows = [{"name": "OpenStreetMap", "id": source_id, "license": "ODbL-1.0", "url": source_url}]
+        source_names = sorted({clean(row.get("name"), 80) for row in source_rows if isinstance(row, dict) and row.get("name")})
+        primary_source = source_names[0] if len(source_names) == 1 else "Multiple open sources"
+        source_urls = [clean(row.get("url"), 320) for row in source_rows if isinstance(row, dict) and row.get("url")]
+        properties_sources = source_rows
         output.append({
             "id": item_id,
             "name": name_ar,
@@ -528,8 +543,11 @@ def build_items(features, governors, districts, boundaries):
             "lat": round(lat, 6),
             "lon": round(lon, 6),
             "mapsUrl": maps,
-            "sourceUrl": source_url,
-            "source": "OpenStreetMap",
+            "sourceUrl": source_url if "OpenStreetMap" in source_names else (source_urls[0] if source_urls else maps),
+            "source": primary_source,
+            "sources": properties_sources,
+            "sourceConfidence": properties.get("__confidence"),
+            "operatingStatus": properties.get("__operating_status"),
             "assignmentQuality": quality
         })
     return output
@@ -543,16 +561,18 @@ def write_catalog(items, governors, districts, output):
     grouped = defaultdict(list)
     for item in items:
         grouped[item["governorate"]].append(item)
-    snapshot = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    generated_at = datetime.now(timezone.utc).isoformat()
+    snapshot = generated_at[:10]
     manifest_rows = []
     for gov in governors:
         rows = grouped.get(gov["name"], [])
         rows.sort(key=lambda item: (item["district"], item["category"], normalize(item["name"])))
         counts = Counter(category for item in rows for category in item.get("categories", [item["category"]]))
         filename = gov["slug"] + ".json"
-        payload = {"schemaVersion": 1, "governorate": gov["name"], "snapshotDate": snapshot,
-                   "source": "OpenStreetMap contributors", "license": "ODbL-1.0",
-                   "attribution": "© OpenStreetMap contributors",
+        payload = {"schemaVersion": 2, "governorate": gov["name"], "snapshotDate": snapshot,
+                   "source": "Open data fusion: OpenStreetMap, Overture Maps and optional Foursquare Open Places",
+                   "license": "Per-record source licenses; see each item.sources[].license",
+                   "attribution": ["© OpenStreetMap contributors (ODbL-1.0)", "Overture Maps (CDLA-Permissive-2.0 and source-specific licenses)", "Foursquare Open Places (Apache-2.0 when independently imported)"],
                    "administrativeSource": "Open Admin Data Yemen (CC BY 4.0)", "items": rows}
         (output / filename).write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
         manifest_rows.append({"name": gov["name"], "nameEn": gov.get("nameEn", ""), "slug": gov["slug"], "file": filename,
@@ -594,13 +614,32 @@ def write_catalog(items, governors, districts, output):
         for (governorate, district_name), bucket in district_buckets.items()
     ]
     district_count_total = sum(row["count"] for row in district_manifest)
-    manifest = {"schemaVersion": 1, "snapshotDate": snapshot, "totalCount": len(items),
+    source_counts = Counter()
+    license_counts = Counter()
+    for item in items:
+        for source in item.get("sources", []):
+            if not isinstance(source, dict):
+                continue
+            source_name = clean(source.get("name") or "Unknown", 80)
+            license_name = clean(source.get("license") or "Unknown", 80)
+            if source_name:
+                source_counts[source_name] += 1
+            dataset = clean(source.get("dataset") or "", 80).lower()
+            if source_name == "Overture Maps" and dataset == "foursquare":
+                source_counts["Foursquare Open Places (via Overture)"] += 1
+            if source_name == "Foursquare Open Places":
+                source_counts["Foursquare Open Places (standalone)"] += 1
+            if license_name:
+                license_counts[license_name] += 1
+    manifest = {"schemaVersion": 2, "snapshotDate": snapshot, "generatedAt": generated_at, "totalCount": len(items),
+                "sourceCounts": dict(source_counts), "licenseCounts": dict(license_counts),
                 "districtCountSchemaVersion": 1,
                 "districtCountTotal": district_count_total,
                 "unassignedCount": max(0, len(items) - district_count_total),
                 "districtCounts": district_manifest,
-                "source": "OpenStreetMap contributors", "license": "ODbL-1.0",
-                "attribution": "© OpenStreetMap contributors",
+                "source": "Open data fusion: OpenStreetMap, Overture Maps and optional Foursquare Open Places",
+                "license": "Per-record source licenses; see each item.sources[].license",
+                "attribution": ["© OpenStreetMap contributors (ODbL-1.0)", "Overture Maps (CDLA-Permissive-2.0 and source-specific licenses)", "Foursquare Open Places (Apache-2.0 when independently imported)"],
                 "administrativeSource": "Open Admin Data Yemen (CC BY 4.0)",
                 "assignmentNote": "District counts include polygon matches (OSM administrative boundaries or geoBoundaries Yemen ADM2) and explicitly marked nearest-centroid estimates. Use boundaryCount for polygon-derived assignments and approximateCount for estimates.",
                 "districtCountMethod": "Point-in-Polygon for matched ADM2/OSM polygons; nearest published district-centroid fallback is flagged approximate.",

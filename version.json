@@ -1,0 +1,16 @@
+{
+  "version": "2.6.0",
+  "versionCode": 260,
+  "webVersion": "2.6.0",
+  "androidVersion": "2.6.0",
+  "androidVersionCode": 260,
+  "catalogSchemaVersion": 2,
+  "catalogSnapshotDate": null,
+  "catalogTotalCount": null,
+  "sources": [
+    "OpenStreetMap",
+    "Overture Maps",
+    "Foursquare Open Places (optional portal export)"
+  ],
+  "generatedAt": "2026-11-23T00:00:00Z"
+}

@@ -5,6 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_regional_catalog as catalog
+import fuse_regional_catalog as fusion
 
 
 class RegionalCatalogTests(unittest.TestCase):
@@ -121,6 +122,82 @@ class RegionalCatalogTests(unittest.TestCase):
         self.assertEqual(catalog.classify({"amenity": "marketplace"}), "market")
         self.assertEqual(catalog.classify({"shop": "jewelry"}), "gold")
         self.assertEqual(catalog.classify({"railway": "station"}), "transport")
+
+
+    def test_external_taxonomy_maps_overture_places_to_shared_arabic_categories(self):
+        mapping = catalog.load_category_mapping()
+        feature = {"type":"Feature","id":"abc","geometry":{"type":"Point","coordinates":[44.1,13.9]},
+                   "properties":{"id":"gers-1","names":{"primary":"Test Hospital"},"basic_category":"hospital",
+                                 "taxonomy":{"primary":"hospital","hierarchy":["healthcare","hospital"]},
+                                 "phones":["+967777123456"],"confidence":0.98,
+                                 "sources":[{"dataset":"meta","license":"CDLA-Permissive-2.0"}]}}
+        converted = fusion.as_feature(feature,"overture",mapping)
+        self.assertIsNotNone(converted)
+        tags = converted["properties"]["tags"]
+        self.assertIn("health",tags["__catalog_categories"])
+        self.assertEqual(tags["name:en"],"Test Hospital")
+        self.assertEqual(tags["phone"],"+967777123456")
+        self.assertEqual(converted["properties"]["__sources"][0]["license"],"CDLA-Permissive-2.0")
+
+    def test_foursquare_open_places_records_use_apache_license_and_category_crosswalk(self):
+        mapping = catalog.load_category_mapping()
+        feature = {"type":"Feature","geometry":{"type":"Point","coordinates":[44.2,13.8]},
+                   "properties":{"fsq_place_id":"fsq-1","name":"Test Pharmacy",
+                                 "fsq_category_labels":["Health and Beauty > Pharmacies"],"latitude":13.8,"longitude":44.2,
+                                 "tel":"+967777123456","address":"Test Street","country":"YE"}}
+        converted = fusion.as_feature(feature,"fsq",mapping)
+        self.assertIsNotNone(converted)
+        tags = converted["properties"]["tags"]
+        self.assertIn("pharmacy",tags["__catalog_categories"])
+        self.assertEqual(tags["phone"],"+967777123456")
+        self.assertEqual(converted["properties"]["__sources"][0]["license"],"Apache-2.0")
+
+    def test_places_within_50m_merge_and_keep_complementary_data(self):
+        mapping = catalog.load_category_mapping()
+        a = fusion.as_feature({"type":"Feature","id":"node/10","geometry":{"type":"Point","coordinates":[44.0,14.0]},
+             "properties":{"tags":{"name:ar":"صيدلية النور","amenity":"pharmacy"},"id":"node/10"}},
+             "osm",mapping)
+        b = fusion.as_feature({"type":"Feature","geometry":{"type":"Point","coordinates":[44.0001,14.0001]},
+             "properties":{"id":"gers-pharmacy","names":{"primary":"صيدلية النور","common":["Al Noor Pharmacy"]},
+                           "basic_category":"pharmacy","confidence":0.95,"phones":["+967777123456"],
+                           "addresses":[{"freeform":"شارع الاختبار"}],
+                           "sources":[{"dataset":"meta","license":"CDLA-Permissive-2.0"}]}},
+             "overture",mapping)
+        merged,stats=fusion.deduplicate([a,b])
+        self.assertEqual(len(merged),1)
+        self.assertEqual(stats["duplicatesMerged"],1)
+        tags=merged[0]["properties"]["tags"]
+        self.assertEqual(tags["name:ar"],"صيدلية النور")
+        self.assertEqual(tags["name:en"],"Al Noor Pharmacy")
+        self.assertEqual(tags["phone"],"+967777123456")
+        self.assertIn("health",tags["__catalog_categories"])
+        self.assertIn("pharmacy",tags["__catalog_categories"])
+        self.assertEqual(len(merged[0]["properties"]["__sources"]),2)
+        self.assertEqual(merged[0]["geometry"]["coordinates"],[44.0001,14.0001])
+        self.assertEqual(merged[0]["properties"]["__confidence"],0.95)
+
+    def test_places_more_than_50m_apart_are_not_deduplicated(self):
+        a={"type":"Feature","id":"a","geometry":{"type":"Point","coordinates":[44.0,14.0]},
+           "properties":{"tags":{"name":"صيدلية النور"}}}
+        b={"type":"Feature","id":"b","geometry":{"type":"Point","coordinates":[44.001,14.0]},
+           "properties":{"tags":{"name":"صيدلية النور"}}}
+        merged,stats=fusion.deduplicate([a,b])
+        self.assertEqual(len(merged),2)
+        self.assertEqual(stats["duplicatesMerged"],0)
+
+    def test_yemen_country_polygon_filters_out_neighbouring_bbox_records(self):
+        polygon={"type":"Polygon","coordinates":[[[43,12],[46,12],[46,16],[43,16],[43,12]]]}
+        inside={"type":"Feature","geometry":{"type":"Point","coordinates":[44,14]}}
+        outside={"type":"Feature","geometry":{"type":"Point","coordinates":[47,14]}}
+        self.assertTrue(fusion.country_contains(inside,[polygon]))
+        self.assertFalse(fusion.country_contains(outside,[polygon]))
+
+    def test_closed_overture_places_are_rejected(self):
+        mapping=catalog.load_category_mapping()
+        feature={"type":"Feature","geometry":{"type":"Point","coordinates":[44,14]},
+                 "properties":{"names":{"primary":"Closed Hospital"},"basic_category":"hospital",
+                               "operating_status":"permanently_closed","confidence":0}}
+        self.assertIsNone(fusion.as_feature(feature,"overture",mapping))
 
 
 if __name__ == "__main__":
