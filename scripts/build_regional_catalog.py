@@ -362,7 +362,7 @@ def build_items(features, governors, districts, boundaries):
     return output
 
 
-def write_catalog(items, governors, output):
+def write_catalog(items, governors, districts, output):
     if not items:
         raise ValueError("No named places extracted. Refusing to replace the public catalogue with an empty dataset.")
     output = Path(output)
@@ -384,11 +384,48 @@ def write_catalog(items, governors, output):
         (output / filename).write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
         manifest_rows.append({"name": gov["name"], "slug": gov["slug"], "file": filename,
                               "count": len(rows), "categories": dict(counts)})
+    district_buckets = {
+        (district["governorate"], district["name"]): {
+            "count": 0, "boundaryCount": 0, "approximateCount": 0, "categories": Counter()
+        }
+        for district in districts
+    }
+    for item in items:
+        district_name = clean(item.get("district"))
+        governorate = clean(item.get("governorate"))
+        if not district_name:
+            continue
+        bucket = district_buckets.get((governorate, district_name))
+        if bucket is None:
+            continue
+        bucket["count"] += 1
+        if item.get("assignmentQuality") == "osm-boundary":
+            bucket["boundaryCount"] += 1
+        else:
+            bucket["approximateCount"] += 1
+        category = clean(item.get("category"), 40)
+        if category:
+            bucket["categories"][category] += 1
+
+    district_manifest = [
+        {
+            "governorate": governorate,
+            "district": district_name,
+            "count": bucket["count"],
+            "boundaryCount": bucket["boundaryCount"],
+            "approximateCount": bucket["approximateCount"],
+            "categories": dict(bucket["categories"])
+        }
+        for (governorate, district_name), bucket in district_buckets.items()
+    ]
     manifest = {"schemaVersion": 1, "snapshotDate": snapshot, "totalCount": len(items),
+                "districtCountSchemaVersion": 1,
+                "districtCountTotal": sum(row["count"] for row in district_manifest),
+                "districtCounts": district_manifest,
                 "source": "OpenStreetMap contributors", "license": "ODbL-1.0",
                 "attribution": "© OpenStreetMap contributors",
                 "administrativeSource": "Open Admin Data Yemen (CC BY 4.0)",
-                "assignmentNote": "OpenStreetMap administrative polygon when available; otherwise nearest district or governorate centroid. Centroid assignments are approximate, not official boundary verification.",
+                "assignmentNote": "District counts include boundary matches and centroid estimates. boundaryCount is matched to an OSM administrative polygon; approximateCount uses the nearest district centroid and must be treated as an estimate.",
                 "governorates": manifest_rows}
     (output / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
     return manifest
@@ -406,7 +443,7 @@ def main():
     governors, districts = load_admin(args.governorates, args.districts, args.regions)
     boundaries = prepare_boundaries(geojson_features(args.boundaries), governors, districts)
     items = build_items(geojson_features(args.places), governors, districts, boundaries)
-    manifest = write_catalog(items, governors, args.output)
+    manifest = write_catalog(items, governors, districts, args.output)
     print(json.dumps({
         "snapshotDate": manifest["snapshotDate"], "totalCount": manifest["totalCount"],
         "governorates": len(manifest["governorates"]),
