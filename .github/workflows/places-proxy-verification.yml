@@ -87,12 +87,23 @@ jobs:
           if (assistant.provider !== "Gemini" || typeof assistant.configured !== "boolean") {
             throw new Error("Render Gemini assistant status endpoint returned an invalid response.");
           }
-          const vercelResponse = await fetch("https://dalilna-oavk.vercel.app/api/assistant", {
-            headers: { Accept: "application/json" }
+          // Probe Vercel with an empty question. The current Vercel deployment may
+          // still have the older POST-only handler while its deployment is rate-limited.
+          // The handler checks for a missing key before validating the question, so
+          // this distinguishes configured vs missing without calling Gemini or spending tokens.
+          const vercelProbe = await fetch("https://dalilna-oavk.vercel.app/api/assistant", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ question: "" })
           });
-          const vercelAssistant = await vercelResponse.json().catch(() => ({}));
-          if (!vercelResponse.ok || vercelAssistant.provider !== "Gemini" || typeof vercelAssistant.configured !== "boolean") {
-            throw new Error("Vercel Gemini assistant status endpoint returned an invalid response: HTTP " + vercelResponse.status);
+          const vercelProbeBody = await vercelProbe.json().catch(() => ({}));
+          let geminiVercelKeyConfigured;
+          if (vercelProbe.status === 503 && vercelProbeBody.error === "cloud_ai_not_configured") {
+            geminiVercelKeyConfigured = false;
+          } else if (vercelProbe.status === 400 && vercelProbeBody.error === "question_required") {
+            geminiVercelKeyConfigured = true;
+          } else {
+            throw new Error("Vercel Gemini configuration probe returned an unexpected response: HTTP " + vercelProbe.status);
           }
           console.log(JSON.stringify({
             apiVersion: health.version,
@@ -101,7 +112,7 @@ jobs:
             jobSeekersReturned: seekers.items.length,
             geminiProvider: assistant.provider,
             geminiRenderKeyConfigured: assistant.configured,
-            geminiVercelKeyConfigured: vercelAssistant.configured,
+            geminiVercelKeyConfigured,
             geminiModel: assistant.model,
             jobsFeedUpdatedAt: jobs.fetchedAt
           }, null, 2));
