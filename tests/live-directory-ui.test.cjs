@@ -28,8 +28,26 @@ test("individual place cards use optional map and source links from catalogue da
  for(const token of ["record.mapsUrl","record.sourceUrl","data-map-toggle","عرض الخريطة","OpenStreetMap"])assert.ok(html.includes(token),token);
 });
 test("all-tab search uses the preloaded Yemen index and live OSM fallback",()=>{
- for(const token of ["const showTopSearch=searchActive","if(view!==\\"home\\")go(\\"home\\")","warmUnifiedSearchIndex(false)","searchLiveDirectoryFallback","rows.length<5"])assert.ok(html.includes(token),token);
+ for(const token of ["const showTopSearch=searchActive",'if(view!=="home")go("home")',"warmUnifiedSearchIndex(false)","searchLiveDirectoryFallback","rows.length<5"])assert.ok(html.includes(token),token);
  assert.ok(!html.includes("id=\\"catFilterQ\\""));
+});
+
+
+test("place cards omit local ratings, image search and file upload controls",()=>{
+ const start=html.indexOf("function liveDirectoryCardHTML(item){");
+ const end=html.indexOf("\nfunction geoapifyDirectoryCardHTML(item){",start);
+ assert.ok(start>=0&&end>start);
+ const card=html.slice(start,end);
+ for(const forbidden of ["تقييم المستخدمين على هذا الجهاز","data-live-rate-id","data-commons-photos","البحث عن صور مرخصة","type=\"file\"","Choose file"])assert.ok(!card.includes(forbidden),forbidden);
+ for(const required of ["اتصال","واتساب","الخريطة","record.address","record.openingHours"])assert.ok(card.includes(required),required);
+});
+test("seven product-group filters are visible and connected to the shared marketplace API",()=>{
+ const groups=["electronics","vehicles","property","solar","home","agriculture","clothing"];
+ for(const group of groups)assert.ok(html.includes('data-group="'+group+'"'),group);
+ const client=fs.readFileSync("marketplace-client.js","utf8");
+ assert.ok(client.includes("productGroup: selectedGroup"));
+ assert.ok(client.includes('souqTabs.addEventListener("click"'));
+ assert.ok(!client.includes("Restaurant"));
 });
 
 
