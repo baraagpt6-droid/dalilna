@@ -37,17 +37,25 @@ jobs:
           osmium --version
       - name: Download current open datasets
         run: |
-          curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen-latest.osm.pbf -o yemen-latest.osm.pbf
-          # Use the GitHub Contents API for administrative files. It avoids the
-          # intermittent raw.githubusercontent.com 404 responses observed in CI.
-          curl -fL --retry 4 --retry-delay 3 \
-            -H "Accept: application/vnd.github.raw" \
-            "https://api.github.com/repos/open-admin-data/yemen-administrative-divisions/contents/data/all-governorate.json?ref=master" \
-            -o all-governorate.json
-          curl -fL --retry 4 --retry-delay 3 \
-            -H "Accept: application/vnd.github.raw" \
-            "https://api.github.com/repos/open-admin-data/yemen-administrative-divisions/contents/data/all-district.json?ref=master" \
-            -o all-district.json
+          if ! curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen-latest.osm.pbf -o yemen-latest.osm.pbf; then
+            echo "Latest Geofabrik extract unavailable; using the verified 2026-11-15 snapshot."
+            curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen-261115.osm.pbf -o yemen-latest.osm.pbf
+          fi
+          if [[ "$(stat -c%s yemen-latest.osm.pbf)" -lt 1000000 ]]; then
+            echo "Latest Geofabrik response was not a valid PBF; falling back to 2026-11-15."
+            curl -fL --retry 4 --retry-delay 3 https://download.geofabrik.de/asia/yemen-261115.osm.pbf -o yemen-latest.osm.pbf
+          fi
+          download_admin_file() {
+            local name="$1"
+            local api_url="https://api.github.com/repos/open-admin-data/yemen-administrative-divisions/contents/data/${name}?ref=master"
+            local raw_url="https://raw.githubusercontent.com/open-admin-data/yemen-administrative-divisions/master/data/${name}"
+            if ! curl -fL --retry 3 --retry-delay 2 -H "Accept: application/vnd.github.raw+json" "$api_url" -o "$name"; then
+              echo "Contents API download failed for $name; using raw GitHub URL."
+              curl -fL --retry 4 --retry-delay 3 "$raw_url" -o "$name"
+            fi
+          }
+          download_admin_file all-governorate.json
+          download_admin_file all-district.json
           test "$(stat -c%s yemen-latest.osm.pbf)" -gt 1000000
           test "$(stat -c%s all-governorate.json)" -gt 1000
           test "$(stat -c%s all-district.json)" -gt 100000
