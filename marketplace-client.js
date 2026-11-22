@@ -207,10 +207,10 @@
       const result = await api("/api/marketplace/listings?" + params.toString());
       list.replaceChildren();
       (result.items || []).forEach(item => list.appendChild(makeCard(item)));
-      return result;
       status.textContent = result.count
         ? "يعرض " + result.items.length + " من " + result.count + " إعلاناً منشوراً · آخر تحديث " + new Date(result.fetchedAt).toLocaleTimeString("ar")
         : "";
+      return result;
     } catch (e) {
       list.replaceChildren();
       status.textContent = e.status === 503
