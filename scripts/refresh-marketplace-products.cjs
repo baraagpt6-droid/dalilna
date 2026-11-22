@@ -96,9 +96,10 @@ async function syncConfiguredFeeds(){
    sourceStats.push({host:url.hostname,received:rawItems.length,accepted:normalized.length});
   }catch(error){failures.push(url.hostname+": "+clean(error.message,160));}
  }
- if(!collected.length){
+ const snapshotComplete=failures.length===0&&rejected===0&&!oversized&&collected.length<=MAX_ITEMS;
+ if(!collected.length&&!snapshotComplete){
   if(failures.length)throw new Error("No usable products were returned. "+failures.join("; "));
-  return {configured:configured.length,received:0,accepted:0,skipped:0,sources:sourceStats};
+  return {configured:configured.length,received:sourceStats.reduce((n,x)=>n+x.received,0),accepted:0,skipped:rejected,sources:sourceStats,snapshotComplete:false};
  }
  const unique=new Map();
  for(const item of collected)unique.set(item.clientRef,item);
@@ -110,7 +111,7 @@ async function syncConfiguredFeeds(){
  }));
  const response=await fetch(BASE+"/api/marketplace/feed-sync",{
   method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,Accept:"application/json"},
-  body:JSON.stringify({sourceKey:"verified-merchant-feeds",sourceName:"Verified merchant product feeds",completeSnapshot:failures.length===0&&rejected===0&&!oversized&&collected.length<=MAX_ITEMS,items})
+  body:JSON.stringify({sourceKey:"verified-merchant-feeds",sourceName:"Verified merchant product feeds",completeSnapshot:snapshotComplete,items})
  });
  const result=await response.json().catch(()=>({}));
  if(!response.ok)throw new Error("Marketplace API "+response.status+": "+clean(result.error||"feed sync failed",220));
