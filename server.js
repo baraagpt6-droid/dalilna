@@ -33,7 +33,7 @@ const CATEGORY_MAPPING = require("./category-mapping.json");
 const ALL_OSM_KEYS = [
   "shop","amenity","healthcare","tourism","office","craft","leisure",
   "public_transport","landuse","railway","building","emergency",
-  "delivery","courier","service"
+  "delivery","courier","service","product"
 ];
 const ALL_FILTERS = [...new Set(ALL_OSM_KEYS.map(key => '[ "'+key+'" ]'.replace(/ /g,"")))];
 const CATEGORY_ALIASES = {land:"real_estate",watches:"gold"};
