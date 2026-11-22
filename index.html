@@ -3064,7 +3064,7 @@ function renderProfilePanel(){
  const select=$("#profileDefaultGovernorate");
  if(select){
    const current=S.defaultGovernorate||"";
-   select.innerHTML='<option value="">'+(english?"All Yemen":"كل اليمن")+'</option>'+GOVS.map(g=>'<option value="'+esc(g)+'">'+esc(english?(GOV_EN?.[g]||g):g)+'</option>').join("");
+   select.innerHTML='<option value="">'+(english?"All Yemen":"كل اليمن")+'</option>'+GOVS.map(g=>'<option value="'+esc(g)+'">'+esc(g)+'</option>').join("");
    select.value=current;
  }
  const labels={
@@ -3081,9 +3081,46 @@ $("#accountBtn").addEventListener("click",()=>{
   const mp=S.session.merchant||S.merchantProfile||{};
   $("#merchName").value=mp.name||"";
   $("#merchPhone").value=mp.phone||"";
+  renderProfilePanel();
   showDlg("#accountDlg");
 });
 $("#accClose").addEventListener("click",()=>{S.onboarded=true;saveState();closeDlg("#accountDlg");});
+$("#profileDefaultGovernorate").addEventListener("change",event=>{
+ S.defaultGovernorate=String(event.target.value||"").trim();
+ saveState();
+ scope=S.defaultGovernorate?"gov:"+S.defaultGovernorate:"";
+ liveDirectoryCoords=null;
+ buildScopeSelector();
+ render();
+});
+$("#profileLanguageBtn").addEventListener("click",()=>{
+ S.lang=S.lang==="en"?"ar":"en";
+ saveState();applyLang();renderProfilePanel();
+ toast(S.lang==="en"?"Language changed":"تم تغيير اللغة");
+});
+$("#profileThemeBtn").addEventListener("click",()=>{
+ S.theme=S.theme==="light"?"dark":"light";
+ applyTheme();saveState();renderProfilePanel();
+});
+$("#profileNotificationsBtn").addEventListener("click",async()=>{
+ if(!("Notification" in window)){
+  toast(curLang==="en"?"Notifications are not supported by this browser.":"هذا المتصفح لا يدعم الإشعارات.");
+  return;
+ }
+ let permission=Notification.permission;
+ if(permission==="default"){
+  try{permission=await Notification.requestPermission();}catch(_){permission="denied";}
+ }
+ S.notificationsEnabled=permission==="granted";
+ saveState();renderProfilePanel();
+ toast(S.notificationsEnabled?(curLang==="en"?"Notifications permission enabled on this device.":"تم السماح بالإشعارات على هذا الجهاز."):(curLang==="en"?"Notifications permission was not granted.":"لم يتم منح إذن الإشعارات."));
+});
+$("#profileLogoutBtn").addEventListener("click",()=>{
+ S.session={role:"client",adminEmail:"",merchant:null};
+ saveState();syncRoleUI();render();renderProfilePanel();closeDlg("#accountDlg");
+ toast(curLang==="en"?"Signed out on this device.":"تم تسجيل الخروج من هذا الجهاز.");
+});
+
 $("#accountDlg").addEventListener("close",()=>{
   $("#adminAccessHint").hidden=true;
   $("#adminLoginForm").hidden=true;
