@@ -77,7 +77,8 @@ test("seven product-group filters are visible and connected to the shared market
  const client=fs.readFileSync("marketplace-client.js","utf8");
  assert.ok(client.includes("productGroup: selectedGroup"));
  assert.ok(client.includes('souqTabs.addEventListener("click"'));
- assert.ok(!client.includes("Restaurant"));
+ assert.ok(!client.includes("Restaurant directory"));
+ assert.ok(!client.includes("runSouqStores"));
 });
 
 

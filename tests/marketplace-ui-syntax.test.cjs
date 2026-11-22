@@ -29,7 +29,7 @@ test("legacy migration keeps opening hours, websites and coordinates",()=>{
 
 
 test("marketplace client displays rental labels",()=>{
- assert.ok(client.includes('item.listingType === "rent") labels.push("للإيجار")'));
+ assert.ok(client.includes('item.listingType === "rent") labels.push(label("للإيجار"));'));
 });
 
 test("home shared directory panel no longer repeats search controls",()=>{
