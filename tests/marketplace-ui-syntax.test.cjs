@@ -157,6 +157,22 @@ test("Android 2.4.0 cache and version metadata remain synchronized",()=>{
  assert.ok(gradle.includes('versionName = "2.4.0"'));
 });
 
+test("daily sync workflow checks jobs, marketplace, exchange and configured merchant feeds",()=>{
+ const daily=fs.readFileSync(path.join(__dirname,"../scripts/daily-sync.cjs"),"utf8");
+ const workflow=fs.readFileSync(path.join(__dirname,"../.github/workflows/daily-sync.yml"),"utf8");
+ assert.ok(daily.includes("checkServices()"));
+ assert.ok(daily.includes("checkExchange()"));
+ assert.ok(daily.includes("syncConfiguredFeeds()"));
+ assert.ok(daily.includes("country=YE"));
+ assert.ok(workflow.includes("DALILNA_PRODUCT_FEED_URLS"));
+ assert.ok(workflow.includes("DALILNA_PRODUCT_SYNC_TOKEN"));
+});
+test("empty merchant snapshots never archive existing feed listings",()=>{
+ const feed=fs.readFileSync(path.join(__dirname,"../scripts/refresh-marketplace-products.cjs"),"utf8");
+ const api=fs.readFileSync(path.join(__dirname,"../marketplace-api.js"),"utf8");
+ assert.ok(feed.includes("collected.length>0"));
+ assert.ok(api.includes("completeSnapshot&&skipped===0&&activeRefs.length>0"));
+});
 test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black shapes",()=>{
  const start=html.indexOf('<nav class="quick-jump-bar"'),end=html.indexOf('</nav>',start);
  const bar=html.slice(start,end);
