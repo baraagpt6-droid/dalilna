@@ -69,6 +69,8 @@ class RegionalCatalogTests(unittest.TestCase):
             ({"shop": "farm"}, "farm"),
             ({"amenity": "marketplace"}, "market"),
             ({"shop": "appliance"}, "home"),
+            ({"building": "commercial"}, "other"),
+            ({"building": "retail"}, "other"),
         ]
         for tags, expected in cases:
             with self.subTest(tags=tags):
