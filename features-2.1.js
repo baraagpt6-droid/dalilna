@@ -15,7 +15,16 @@
   all:[["Bayt","https://www.bayt.com/"],["GulfTalent","https://www.gulftalent.com/jobs"],["LinkedIn","https://www.linkedin.com/jobs/"],["ReliefWeb","https://reliefweb.int/jobs"]]
  };
  const TYPES=[["all","الكل"],["sale","للبيع"],["wanted","مطلوب"],["barter","مقايضة"],["free","مجاناً"]];
- const GROUPS=[["all","كل الأصناف"],["electronics","جوالات وإلكترونيات"],["vehicles","سيارات ودراجات"],["solar","منظومات طاقة شمسية"],["property","عقارات وأراضٍ"],["home","أثاث ومنزل"],["agriculture","مواشي وزراعة"],["tools","معدات وأدوات"],["clothing","ملابس وعطور"],["other","أشياء أخرى"]];
+ const GROUPS=[
+  ["all","كل الأصناف"],
+  ["electronics","جوالات وإلكترونيات"],
+  ["vehicles","سيارات ودراجات وقطع غيار"],
+  ["property","عقارات وأراضٍ"],
+  ["solar","طاقة شمسية وبطاريات"],
+  ["home","أثاث وأجهزة منزلية"],
+  ["agriculture","مواشي وزراعة ومعدات"],
+  ["clothing","ملابس وعطور ومستلزمات"]
+ ];
  let country="YE",transaction="all",group="all";
  const $=id=>document.getElementById(id);
  function el(tag,attrs,text){
