@@ -4457,25 +4457,52 @@ async function searchLiveDirectoryFallback(query,category,context,signal,force){
  if(liveFallbackCache.size>80)liveFallbackCache.delete(liveFallbackCache.keys().next().value);
  return mapped;
 }
+function localDirectoryCatalogMatches(query,context,category,productType){
+ if(!query)return [];
+ const aliases={land:["real_estate"],watches:["gold"],vehicles:["parts"]};
+ return localDirectorySearch(query,80).filter(item=>{
+  const wanted=String(category||"all"),cat=String(item.cat||"");
+  if(wanted!=="all"&&cat!==wanted&&!(aliases[wanted]||[]).includes(cat))return false;
+  if(productType&&item.productType&&item.productType!==productType)return false;
+  if(context?.gov&&normalizePlace(item.gov)!==normalizePlace(context.gov))return false;
+  if(context?.district&&normalizePlace(item.dist)!==normalizePlace(context.district))return false;
+  return true;
+ }).map(item=>{
+  const lat=Number(item.lat??item.latitude),lon=Number(item.lng??item.lon??item.longitude);
+  const point=Number.isFinite(lat)&&Number.isFinite(lon);
+  return {...item,id:"local-"+String(item.id||item.name),name:item.name,nameEn:item.nameEn||"",
+   category:item.cat,categories:[item.cat],
+   address:[item.area,item.village,item.dist,item.gov].filter(Boolean).join("، "),
+   governorate:item.gov||"",district:item.dist||"",phone:item.phone||"",
+   lat:point?lat:null,lon:point?lon:null,
+   mapsUrl:item.mapsUrl||(point?"https://www.openstreetmap.org/?mlat="+lat+"&mlon="+lon+"#map=18/"+lat+"/"+lon:""),
+   source:"Dalilna local listing",verifiedAt:item.verifiedAt||null,assignmentQuality:"local-entry"};
+ });
+}
 function mergeLiveFallbackRows(localRows,remoteRows){
  const result=[...(localRows||[])];
- const names=new Set(result.map(item=>normalizeSearchPlace(item.name||"")).filter(Boolean));
  for(const remote of remoteRows||[]){
   const remoteName=normalizeSearchPlace(remote.name||"");
   if(!remoteName)continue;
   const lat=Number(remote.lat??remote.latitude),lon=Number(remote.lon??remote.lng??remote.longitude);
-  const duplicate=result.some(existing=>{
-   const name=normalizeSearchPlace(existing.name||"");
-   if(name!==remoteName)return false;
+  const duplicateIndex=result.findIndex(existing=>{
+   if(normalizeSearchPlace(existing.name||"")!==remoteName)return false;
    const aLat=Number(existing.lat??existing.latitude),aLon=Number(existing.lon??existing.lng??existing.longitude);
    if(!Number.isFinite(lat)||!Number.isFinite(lon)||!Number.isFinite(aLat)||!Number.isFinite(aLon))return true;
    const dy=(lat-aLat)*111000,dx=(lon-aLon)*111000*Math.cos(lat*Math.PI/180);
    return Math.hypot(dx,dy)<50;
   });
-  if(!duplicate){result.push(remote);names.add(remoteName);}
+  if(duplicateIndex>=0){
+   const current=result[duplicateIndex];
+   result[duplicateIndex]={...remote,...current,
+    phone:current.phone||remote.phone||"",address:current.address||remote.address||"",
+    website:current.website||remote.website||"",lat:current.lat??remote.lat,lon:current.lon??remote.lon,
+    mapsUrl:current.mapsUrl||remote.mapsUrl||"",source:current.source||remote.source};
+  }else result.push(remote);
  }
  return result;
 }
+
 async function runLiveDirectorySearch(force){
  const box=$("#liveDirectoryItems"),status=$("#liveDirectoryStatus");
  clearTimeout(liveDirectoryTimer);
@@ -4506,6 +4533,7 @@ async function runLiveDirectorySearch(force){
     const loaded=await warmUnifiedSearchIndex(false);
     manifest=loaded.manifest;
     rows=regionalCatalogMatches(loaded.items,context,query,category,productType);
+     rows=mergeLiveFallbackRows(localDirectoryCatalogMatches(query,context,category,productType),rows);
    }
    if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
    const responseData={items:rows,manifest,snapshotDate:manifest?.snapshotDate,regionName:context.gov||"اليمن",context,classifiedOnly,category,liveFallbackCount:0};
@@ -5231,11 +5259,8 @@ function render(){
   }
   const showTopSearch=searchActive;
   const topSection=$("#searchResultsTop"),topList=$("#searchResultList"),homeSlot=$("#homeListSlot");
-   if(topSection)topSection.hidden=!showTopSearch;
-   if(topList)topList.hidden=showTopSearch;
-   const nodes=[$("#latestT"),$("#list"),$("#more")].filter(Boolean);
-   if(showTopSearch&&topList)nodes.forEach(node=>topList.appendChild(node));
-   else if(homeSlot)nodes.forEach(node=>homeSlot.appendChild(node));
+  if(topSection)topSection.hidden=!showTopSearch;
+  if(topList)topList.hidden=showTopSearch;
   const nodes=[$("#latestT"),$("#list"),$("#more")].filter(Boolean);
   if(showTopSearch&&topList)nodes.forEach(node=>topList.appendChild(node));
   else if(homeSlot)nodes.forEach(node=>homeSlot.appendChild(node));
