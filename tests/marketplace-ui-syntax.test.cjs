@@ -104,12 +104,13 @@ test("catalogue category filters use multi-category memberships and searchable E
  assert.ok(html.includes("item.districtEn"));
  assert.ok(html.includes('requestedCategory&&requestedCategory!=="all"'));
 });
-test("Souq has no map-place restaurant directory and exposes only seven product groups",()=>{
+test("Souq displays shared product listings only and has no OSM restaurant directory",()=>{
  assert.ok(!html.includes('id="souqStoresPanel"'));
  assert.ok(!html.includes("runSouqStores"));
+ assert.ok(!html.includes('id="sqList"'));
+ assert.ok(!html.includes('id="souqStoreCategory"'));
  assert.ok(html.includes('id="sharedSouqPanel"'));
- for(const label of ["جوالات وإلكترونيات","سيارات ودراجات وقطع غيار","عقارات وأراضٍ","طاقة شمسية وبطاريات","أثاث وأجهزة منزلية","مواشي وزراعة ومعدات","ملابس وعطور ومستلزمات"])assert.ok(features.includes(label),label);
- assert.ok(!features.includes('["tools","معدات وأدوات"]'));
+ assert.ok(features.includes("souqCategoryTabs"));
 });
 test("Souq renders shared product cards with seller, WhatsApp and share actions",()=>{
  assert.ok(client.includes('category: "marketplace"'));
