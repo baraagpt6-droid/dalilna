@@ -4912,66 +4912,107 @@ function assistantSourceText(result){
 async function askAssistant(q){
  const serviceIntent=directoryMapSearchInfo(q);
  if(serviceIntent){
-  const localHits=localDirectorySearch(q,12).filter(item=>item.cat===serviceIntent.category&&(!scope||scopeMatchesItem(item)));
   const context=regionCurrentContext(),query=String(q||"");
+  const selectedContext={
+   ...context,
+   gov:serviceIntent.governorate||context.gov||"",
+   district:serviceIntent.district||context.district||"",
+   place:serviceIntent.place||context.place||"اليمن"
+  };
+  const localHits=localDirectorySearch(q,20).filter(item=>{
+   if(serviceIntent.category!=="all"&&item.cat!==serviceIntent.category&&!(serviceIntent.category==="vehicles"&&item.cat==="parts"))return false;
+   if(scope&&!scopeMatchesItem(item))return false;
+   if(selectedContext.gov&&normalizePlace(item.gov)!==normalizePlace(selectedContext.gov))return false;
+   if(selectedContext.district&&normalizePlace(item.dist)!==normalizePlace(selectedContext.district))return false;
+   return true;
+  });
   let places=[],approved=[];
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),22000);
   try{
-   const tasks=[loadLiveMarketplaceMatches(query,serviceIntent.category,serviceIntent.productType,controller.signal,true)];
-   if(context.gov&&!serviceIntent.productType&&!["jobs","souq","land"].includes(serviceIntent.category)){
-    tasks.push(loadRegionalCatalog(context.gov,false).then(result=>regionalCatalogMatches(result.data.items,context,query,serviceIntent.category,"")));
+   const tasks=[
+    loadLiveMarketplaceMatches(query,serviceIntent.category,serviceIntent.productType,controller.signal,true),
+    searchLiveDirectoryFallback(query,serviceIntent.category,selectedContext,controller.signal,true).catch(()=>[])
+   ];
+   if(selectedContext.gov&&!serviceIntent.productType&&![ "jobs","souq","land"].includes(serviceIntent.category)){
+    tasks.push(loadRegionalCatalog(selectedContext.gov,false).then(result=>regionalCatalogMatches(result.data.items,selectedContext,query,serviceIntent.category,"")).catch(()=>[]));
    }else tasks.push(Promise.resolve([]));
    const results=await Promise.allSettled(tasks);
    if(results[0].status==="fulfilled")approved=Array.isArray(results[0].value)?results[0].value.slice():liveSharedMatches.slice();
    if(results[1].status==="fulfilled")places=Array.isArray(results[1].value)?results[1].value:[];
+   if(results[2].status==="fulfilled"&&Array.isArray(results[2].value))places=mergeLiveFallbackRows(results[2].value,places);
   }finally{clearTimeout(timer);}
+  const cards=[],seen=new Set();
+  const mapFor=item=>{
+   const direct=String(item.mapsUrl||item.mapUrl||"").trim();
+   if(/^https:\/\//i.test(direct))return direct;
+   const lat=Number(item.lat??item.latitude),lon=Number(item.lon??item.lng??item.longitude);
+   if(Number.isFinite(lat)&&Number.isFinite(lon))return "https://www.openstreetmap.org/?mlat="+lat+"&mlon="+lon+"#map=18/"+lat+"/"+lon;
+   const search=[item.name||item.title,item.address,item.area,item.district,item.governorate||selectedContext.gov,"Yemen"].filter(Boolean).join(" ");
+   return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(search);
+  };
+  const addCard=item=>{
+   const name=String(item.name||item.title||"").trim();
+   if(!name)return;
+   const signature=normalizeSearchPlace(name)+"|"+normalizeSearchPlace(item.governorate||item.gov||selectedContext.gov||"")+"|"+normalizeSearchPlace(item.district||item.dist||"");
+   if(seen.has(signature))return;
+   seen.add(signature);
+   cards.push({
+    name,
+    category:String(item.category||CN[item.cat]||serviceIntent.label||""),
+    location:[item.address||item.area||item.village,item.district||item.dist,item.governorate||item.gov||selectedContext.gov].filter(Boolean).join("، "),
+    phone:String(item.phone||"").trim(),
+    mapUrl:mapFor(item),
+    source:String(item.source||"").trim()
+   });
+  };
+  localHits.forEach(item=>addCard({...item,category:CN[item.cat]||item.cat,source:"إدراج محلي"}));
+  places.forEach(addCard);
+  approved.forEach(item=>addCard({...item,name:item.title||item.name,category:item.category||serviceIntent.label,
+    location:[item.area,item.district,item.governorate].filter(Boolean).join("، "),source:"إعلان معتمد"}));
   const dataSources=[];
-  if(localHits.length)dataSources.push("إدراجات هذا الجهاز");
-  if(places.length)dataSources.push("فهرس الأماكن المفتوح (OpenStreetMap وOverture Maps)");
-  if(approved.length)dataSources.push("قاعدة بيانات الإعلانات المشتركة");
-  if(!dataSources.length)dataSources.push("لا توجد سجلات مطابقة في المصادر التي تم فحصها");
+  if(localHits.length)dataSources.push(curLang==="en"?"On-device listings":"الإدراجات المحلية على الجهاز");
+  if(places.length)dataSources.push("OpenStreetMap / Overture Maps");
+  if(approved.length)dataSources.push(curLang==="en"?"Shared approved listings":"الإعلانات المشتركة المعتمدة");
+  if(!dataSources.length)dataSources.push(curLang==="en"?"No matching records in checked sources":"لا توجد سجلات مطابقة في المصادر التي فُحصت");
   const assistantContext={
    liveSearch:{
     intent:serviceIntent.category,
-    selectedRegion:{governorate:context.gov||"",district:context.district||"",place:context.place||""},
-    localListings:localHits.slice(0,5).map(item=>({
+    selectedRegion:{governorate:selectedContext.gov||"",district:selectedContext.district||"",place:selectedContext.place||""},
+    localListings:localHits.slice(0,8).map(item=>({
      name:item.name,category:CN[item.cat]||item.cat,governorate:item.gov||"",district:item.dist||"",
      address:item.area||item.village||"",phone:item.phone||"",
      verificationStatus:item.verifiedAt?"verified_in_dalilna":"not_verified"
     })),
-    openDataPlaces:places.slice(0,8).map(item=>({
-     name:item.name,category:item.category||serviceIntent.category,
-     governorate:item.governorate||context.gov||"",district:item.district||"",
-     address:item.address||"",phone:item.phone||"",
-     source:"OpenStreetMap / Overture Maps",
-     verificationStatus:"not_field_verified_by_dalilna"
+    openDataPlaces:places.slice(0,10).map(item=>({
+     name:item.name,category:item.category||serviceIntent.category,governorate:item.governorate||selectedContext.gov||"",
+     district:item.district||"",address:item.address||"",phone:item.phone||"",
+     source:item.source||"OpenStreetMap / Overture Maps",verificationStatus:"not_field_verified_by_dalilna"
     })),
     approvedListings:approved.slice(0,8).map(item=>({
-     name:item.title||"",category:item.category||serviceIntent.category,
+     name:item.title||item.name||"",category:item.category||serviceIntent.category,
      governorate:item.governorate||"",district:item.district||"",address:item.area||"",
      phone:item.phone||"",price:item.price||"",currency:item.currency||"",
-     approvalStatus:"approved_by_dalilna_admin",
-     fieldVerificationStatus:"phone_and_address_not_field_verified"
+     approvalStatus:"approved_by_dalilna_admin",fieldVerificationStatus:"phone_and_address_not_field_verified"
     })),
-    dataQualityNotice:"وجود رقم أو عنوان في سجل لا يثبت صحته أو حداثته. لا تخترع قيماً. وضح حالة التحقق لكل سجل."
+    dataQualityNotice:"وجود رقم أو عنوان في سجل لا يثبت صحته أو حداثته. لا تخترع قيماً."
    }
   };
   if(S.aiCloudConsent===true&&navigator.onLine){
    const cloud=await requestCloudAssistant(q,assistantContext);
-   if(cloud)return {...cloud,dataSources};
+   if(cloud)return {...cloud,dataSources,assistantCards:cards};
   }
-  const parts=[];
-  if(localHits.length)parts.push("إدراجات محفوظة على هذا الجهاز:\n"+localHits.slice(0,5).map((item,n)=>(n+1)+". "+item.name+" — "+[item.area,item.dist,item.gov].filter(Boolean).join(" / ")+(item.phone?" — الهاتف: "+item.phone+(item.verifiedAt?" (راجع الرقم قبل الاستخدام)":" (غير مؤكد)"):"")+(item.verifiedAt?" — حالة الإدراج: موثّق لدى دليلنا":" — إدراج غير موثّق")).join("\n"));
-  if(places.length)parts.push("أماكن مسجلة في فهرس المصادر المفتوحة (OpenStreetMap وOverture Maps)، وليست إدراجات موثقة ميدانياً من دليلنا:\n"+places.slice(0,8).map((item,n)=>(n+1)+". "+item.name+" — "+[item.address,item.district,item.governorate].filter(Boolean).join(" / ")+(item.phone?" — هاتف غير مؤكد: "+item.phone:"") +" — البيانات تحتاج تحققاً ميدانياً").join("\n"));
-  if(approved.length)parts.push("إعلانات موجودة في قاعدة البيانات المشتركة ومعتمدة للنشر من الإدارة. الاعتماد لا يعني التحقق الميداني من الهاتف أو العنوان:\n"+approved.slice(0,8).map((item,n)=>(n+1)+". "+item.title+" — "+([item.area,item.district,item.governorate].filter(Boolean).join(" / ")||"الموقع غير مكتمل")+(item.price?" — "+item.price+" "+(item.currency||""):"")+(item.phone?" — رقم غير مؤكد: "+item.phone:"")).join("\n"));
-  if(!places.length&&!approved.length&&!localHits.length)parts.push(serviceIntent.productSearch||["jobs","souq","land"].includes(serviceIntent.category)
-   ?"لا توجد إعلانات معتمدة تطابق هذا البحث حالياً. أضف إعلانك ليصل إلى مراجعة المشرف."
-   :"لم نجد سجلات مطابقة في المصادر التي تم فحصها. هذا لا يثبت عدم وجود محلات أو خدمات في المنطقة. يمكنك إرسال بياناته إلى دليلنا لمراجعتها.");
+  const count=cards.length;
+  const answer=count
+   ?(curLang==="en"?"I found "+count+" matching places for "+serviceIntent.label+" in "+selectedContext.place+". Use the contact and map links where available. Details can change, so confirm before visiting.":"وجدت لك "+count+" نتائج تطابق "+serviceIntent.label+" في "+selectedContext.place+". استخدم رابط الاتصال والخريطة عند توفرهما. قد تتغير البيانات، فتحقق قبل الزيارة.")
+   :(serviceIntent.productSearch||["jobs","souq","land"].includes(serviceIntent.category)
+     ?(curLang==="en"?"There are no approved listings matching this search right now.":"لا توجد إعلانات معتمدة تطابق هذا البحث حالياً.")
+     :(curLang==="en"?"I couldn't find matching records in the local catalogue or the live map sources checked. This does not mean the place does not exist.":"لم أعثر على سجل مطابق في الفهرس المحلي أو مصادر الخرائط الحية التي فُحصت. هذا لا يعني أن المكان غير موجود."));
   return {
-   answer:parts.join("\n\n"),
+   answer,
    mode:places.length||approved.length?"live-directory":localHits.length?"directory":"reference",
-   referenceSource:"فهرس دليلنا وقاعدة البيانات المشتركة",
-   dataSources
+   referenceSource:"Dalilna directory and shared marketplace",
+   dataSources,
+   assistantCards:cards.slice(0,10)
   };
  }
  if(asksHubaishSubdistricts(q))return {answer:hubaishSubdistrictAnswer(),mode:"reference",referenceSource:"مرجع دليلنا الإداري",dataSources:["مرجع دليلنا الإداري"]};
@@ -4980,15 +5021,55 @@ async function askAssistant(q){
   if(cloud)return {...cloud,dataSources:["سياق بيانات دليلنا المرفق بالسؤال"]};
   return {answer:answerAI(q),mode:"local-fallback",dataSources:["بيانات محفوظة على هذا الجهاز"]};
  }
- return {
-  answer:answerAI(q),
-  mode:navigator.onLine?"local":"offline",
-  dataSources:["بيانات محفوظة على هذا الجهاز"]
- };
+ return {answer:answerAI(q),mode:navigator.onLine?"local":"offline",dataSources:["بيانات محفوظة على هذا الجهاز"]};
 }
 
 function isolateMixedDirectionText(value){
  return String(value??"").replace(/(?:\+?[0-9٠-٩۰-۹][0-9٠-٩۰-۹\s().,-]{4,}[0-9٠-٩۰-۹]|[A-Z0-9]{3,}\+[A-Z0-9]{2,})/gi,match=>"\u2066"+match.trim()+"\u2069");
+}
+function assistantMapUrl(item){
+ const direct=String(item?.mapUrl||item?.mapsUrl||"").trim();
+ if(/^https:\/\//i.test(direct))return direct;
+ const lat=Number(item?.lat??item?.latitude),lon=Number(item?.lon??item?.lng??item?.longitude);
+ if(Number.isFinite(lat)&&Number.isFinite(lon))return "https://www.openstreetmap.org/?mlat="+lat+"&mlon="+lon+"#map=18/"+lat+"/"+lon;
+ return "";
+}
+function renderAssistantResult(container,result){
+ container.replaceChildren();
+ const answer=document.createElement("div");
+ answer.className="assistant-answer-text";
+ answer.dir="auto";
+ answer.textContent=isolateMixedDirectionText(result?.answer||"");
+ container.appendChild(answer);
+ const cards=Array.isArray(result?.assistantCards)?result.assistantCards:[];
+ if(cards.length){
+  const list=document.createElement("div");
+  list.className="assistant-result-cards";
+  for(const item of cards){
+   const card=document.createElement("article");
+   card.className="assistant-result-card";
+   const title=document.createElement("b");title.dir="auto";title.textContent=item.name||"";
+   card.appendChild(title);
+   const meta=document.createElement("span");meta.className="assistant-result-meta";meta.dir="auto";
+   meta.textContent=[item.category,item.location,item.source].filter(Boolean).join(" · ");
+   card.appendChild(meta);
+   const actions=document.createElement("div");actions.className="assistant-result-actions";
+   if(item.phone){
+    const call=document.createElement("a");
+    call.href="tel:"+String(item.phone).replace(/[^+\d]/g,"");
+    call.textContent=curLang==="en"?"Call":"اتصال";
+    actions.appendChild(call);
+   }
+   const mapUrl=assistantMapUrl(item);
+   if(mapUrl){
+    const map=document.createElement("a");map.href=mapUrl;map.target="_blank";map.rel="noopener noreferrer";
+    map.textContent=curLang==="en"?"View map":"عرض على الخريطة";actions.appendChild(map);
+   }
+   if(actions.childNodes.length)card.appendChild(actions);
+   list.appendChild(card);
+  }
+  container.appendChild(list);
+ }
 }
 function appendChatMessage(type,text){
  const el=document.createElement("div");
@@ -5014,13 +5095,13 @@ $("#botf").addEventListener("submit",async e=>{
  if(sendButton)sendButton.disabled=true;
  try{
   const result=await askAssistant(q);
-  pending.textContent=isolateMixedDirectionText(result.answer);
+  renderAssistantResult(pending,result);
   const source=document.createElement("small");
   source.className="assistant-source";
   source.textContent=assistantSourceText(result);
   pending.appendChild(source);
  }catch(error){
-  pending.textContent=isolateMixedDirectionText(answerAI(q));
+  renderAssistantResult(pending,{answer:answerAI(q),assistantCards:[]});
   const source=document.createElement("small");
   source.className="assistant-source";
   source.textContent="المجيب: دليلنا المحلي · تعذرت معالجة الطلب عبر المسار السحابي";
