@@ -65,7 +65,7 @@ async function main(){
   assert.ok(Array.isArray(capitalSearch.payload.items));
   process.stdout.write("PASS governorate-name search for Amanat Al Asimah returned "+capitalSearch.payload.count+" results\n");
 
- process.stdout.write("PASS live Commons photo endpoint returned "+r.payload.count+" results\n");
+ process.stdout.write("PASS live Commons photo endpoint returned "+commons.payload.count+" results\n");
  process.stdout.write("RESULT: live free-source smoke tests passed\n");
 }
 main().catch(error=>{process.stderr.write((error&&error.stack)||String(error));process.exitCode=1;});
