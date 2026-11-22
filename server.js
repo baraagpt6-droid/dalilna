@@ -7,7 +7,7 @@ const { handleJobsRequest } = require("./jobs-api");
 const geminiAssistantHandler = require("./api/assistant");
 
 const PORT = Number(process.env.PORT || 10000);
-const VERSION = "2.6.0";
+const VERSION = require("./package.json").version;
 const ALLOWED_ORIGINS = new Set([
   "https://dalilna-yemen.onrender.com",
   "https://dalilna-live.onrender.com",
@@ -795,7 +795,7 @@ async function searchYemenNominatim(query, category="all") {
   try{
     const response=await fetch(url,{signal:controller.signal,headers:{
       "Accept":"application/json",
-      "User-Agent":"DalilnaDirectory/2.6.0 (+https://dalilna-live.onrender.com)",
+      "User-Agent":"DalilnaDirectory/"+VERSION+" (+https://dalilna-live.onrender.com)",
       "Referer":"https://dalilna-live.onrender.com/"
     }});
     if(response.status===429){const error=new Error("مصدر البحث المفتوح مزدحم. حاول مرة أخرى بعد قليل.");error.statusCode=503;throw error;}
