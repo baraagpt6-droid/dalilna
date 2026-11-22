@@ -310,11 +310,18 @@ def merge_feature(target, incoming):
             signature = (source.get("name"), source.get("dataset"), source.get("id"))
             if not any((x.get("name"), x.get("dataset"), x.get("id")) == signature for x in values):
                 values.append(source)
-    for key in ("__confidence",):
-        incoming_value = right.get(key)
-        current = left.get(key)
-        if incoming_value is not None and (current is None or float(incoming_value) > float(current)):
-            left[key] = incoming_value
+    incoming_confidence = right.get("__confidence")
+    current_confidence = left.get("__confidence")
+    try:
+        incoming_score = float(incoming_confidence) if incoming_confidence is not None else None
+        current_score = float(current_confidence) if current_confidence is not None else None
+    except (TypeError, ValueError):
+        incoming_score = current_score = None
+    if incoming_score is not None and (current_score is None or incoming_score > current_score):
+        left["__confidence"] = incoming_confidence
+        incoming_geometry = incoming.get("geometry")
+        if incoming_geometry:
+            target["geometry"] = incoming_geometry
     if right.get("__operating_status") and not left.get("__operating_status"):
         left["__operating_status"] = right["__operating_status"]
 
