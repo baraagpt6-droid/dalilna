@@ -401,6 +401,7 @@ def main():
     parser.add_argument("--fsq", default="")
     parser.add_argument("--fsq-url", default="")
     parser.add_argument("--fsq-categories", default="")
+    parser.add_argument("--fsq-categories-url", default="")
     parser.add_argument("--country-boundary", default="")
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
@@ -421,6 +422,10 @@ def main():
         temp = Path("fsq-yemen-download.geojson")
         download_fsq(args.fsq_url, os.environ.get("FSQ_OS_PLACES_ACCESS_TOKEN", ""), temp)
         args.fsq = str(temp)
+    if args.fsq_categories_url:
+        categories_temp = Path("fsq-categories-download.json")
+        download_fsq(args.fsq_categories_url, os.environ.get("FSQ_OS_PLACES_ACCESS_TOKEN", ""), categories_temp)
+        args.fsq_categories = str(categories_temp)
     if args.fsq and Path(args.fsq).exists() and Path(args.fsq).stat().st_size:
         groups.append(("fsq", read_geojson(args.fsq)))
     elif args.fsq:
