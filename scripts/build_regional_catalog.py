@@ -183,6 +183,10 @@ def _matches_rule(tags, rule):
 
 
 def categories_for_tags(tags, mapping=None):
+    # Public seating is mapped in OSM as amenity=bench, but it is not a
+    # directory business or service. Exclude it rather than inflating "other".
+    if str(tags.get("amenity") or "").strip().lower() in {"bench"}:
+        return []
     mapping = mapping or CATEGORY_MAPPING
     definitions = mapping.get("categories", {})
     matched = []
