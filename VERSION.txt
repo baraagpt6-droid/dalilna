@@ -1,34 +1,33 @@
-Dalilna 2.3.0
-Application release: PWA + Android WebView
-Android versionCode: 230
-Web app version: 2.3.0
+Dalilna 2.4.0
+Web application version: 2.4.0
+Android versionName: 2.4.0
+Android versionCode: 240
 
-Directory search:
-- A non-empty main search loads and searches all 22 governorate catalogue files, without requiring a governorate filter.
-- Selecting a category searches that category across Yemen; governorate and district scope filters remain optional.
-- Arabic search normalization folds Alif variants, ta marbuta/ha, ya/alif maqsura, removes diacritics and strips the leading definite article from search tokens.
-- The national catalogue is the 2026-11-22 OpenStreetMap snapshot: 14,886 records across 22 governorates and 335 districts.
-- Catalogue coverage is limited to mapped and named records. A missing result does not prove that a business exists nowhere.
+Directory:
+- One shared category-mapping.json is used by the regional catalogue builder and the live Overpass query filters.
+- OSM objects can belong to more than one matching section (including pharmacy in both health and pharmacy).
+- Searchable records retain Arabic/English names, aliases, activities/tags, district, governorate and neighbourhood fields.
+- Search normalizes Alif variants, taa marbuta/ha, ya/alif maqsura and removes the definite article from query tokens.
+- Yemen national catalogue remains built from named OSM records; counts are data-driven.
+- Yemen ADM2 polygons from geoBoundaries (335 polygons; CSO/OCHA Yemen; CC BY 3.0 IGO) are combined with OSM boundaries. Polygon assignments and nearest-centroid estimates are counted separately.
 
-Marketplace:
-- Approved user-submitted sale, wanted, barter, free and rental listings continue to come from the shared PostgreSQL marketplace.
-- The Souq screen also shows a separate directory of commercial locations recorded in the OpenStreetMap catalogue, filterable by governorate and business category.
-- A mapped business is not a claim that a product is currently in stock or available at a given price. Verified product inventory must come from a merchant feed or an approved listing.
-- New listings remain pending until server-side admin approval. Shared marketplace API secrets remain server-only.
+Souq:
+- Product marketplace uses the shared PostgreSQL listing service, not OSM place cards.
+- The visible product filters are seven groups: electronics, vehicles, property, solar, home, agriculture and clothing.
+- Merchant feeds use the authenticated POST /api/marketplace/feed-sync route. Source feeds must be HTTPS JSON arrays or { items: [] }, with real price, currency, seller contact, governorate and district.
+- Incomplete or malformed snapshots do not archive previously active products.
+- No merchant feed URLs or sync token are embedded in source code. Configure DALILNA_PRODUCT_FEED_URLS and DALILNA_PRODUCT_SYNC_TOKEN in GitHub Secrets/Variables and Render Environment before live merchant products can be ingested.
+- Product cards show seller, category, price/currency, location, description, WhatsApp and sharing when supplied.
+- User marketplace listings are free and expire after 60 days from listing creation. The application currently has no user registration/account identity model to calculate a 60-day free period from account registration.
+- Store/business listing lifetime policy is not a billing workflow in the current schema.
 
-Exchange rates and gold:
-- Current buy/sell indicators load from the public ye-rial.com REST API.
-- Sana'a and Aden markets are shown separately because they use different Yemeni banknote editions.
-- The app displays rates only when the source's last_verified_at or last_sync is within 24 hours and the required USD, SAR and 21K gold readings are present.
-- If the source cannot confirm a recent reading, values are hidden rather than reusing device-stored numbers.
-- Source attribution: https://ye-rial.com/ and API documentation: https://ye-rial.com/api/docs/.
-- Rates are indicative market data, not an official central-bank notice or a guaranteed exchange quote.
+Daily sync:
+- Regional places/catalogue: GitHub Actions daily, plus run on mapping/builder commits.
+- Jobs: GitHub Actions daily. YemenHR links are filtered to avoid Telegraph intermediaries; a direct official application URL is shown only when a verified direct source is available.
+- Merchant product feed: GitHub Actions and Render cron entry point; actual products require merchant JSON feed URLs and shared sync token.
+- FX/gold: live ye-rial.com API on app load, refreshes periodically, and hides readings older than 24 hours.
 
-Caching and Android:
-- PWA service-worker cache name is versioned to 2.3.0; old Dalilna PWA caches are deleted on activation.
-- Android version upgrades clear the WebView HTTP cache once per new version. User localStorage and user-created listings are preserved.
-- Android assets are synchronized from the PWA files during CI before the APK build.
-- Android APK is a debug-signed testing build, not a Google Play production release.
-
-OpenStreetMap data license: ODbL-1.0; attribution: © OpenStreetMap contributors.
-Administrative reference data: Open Admin Data Yemen, CC BY 4.0.
+Release:
+- PWA cache namespace v2.4.0 deletes previous Dalilna cache versions on service-worker activation.
+- Android versionCode 240/versionName 2.4.0. On upgrade Android clears WebView HTTP cache, not localStorage; user-created local data is retained.
+- APK remains a debug-signed test build; not a production Play Store signature.
