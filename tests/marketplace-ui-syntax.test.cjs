@@ -1,6 +1,6 @@
 "use strict";
 const fs=require("node:fs"),vm=require("node:vm"),assert=require("node:assert/strict"),test=require("node:test");
-const html=fs.readFileSync("index.html","utf8"),client=fs.readFileSync("marketplace-client.js","utf8"),features=fs.readFileSync("features-2.1.js","utf8"),quickCss=fs.readFileSync("features-2.1.css","utf8"),jobs=fs.readFileSync("scripts/refresh-jobs.cjs","utf8");
+const html=fs.readFileSync("index.html","utf8"),client=fs.readFileSync("marketplace-client.js","utf8"),features=fs.readFileSync("features-2.1.js","utf8"),quickCss=fs.readFileSync("features-2.1.css","utf8"),jobs=fs.readFileSync("scripts/refresh-jobs.cjs","utf8"),sw=fs.readFileSync("sw.js","utf8");
 const inline=html.split("<script").slice(1).map(part=>{const start=part.indexOf(">");const end=part.indexOf("</script>");return start>=0&&end>start?part.slice(start+1,end):"";}).filter(code=>code.trim());
 test("all inline JavaScript in PWA parses",()=>{assert.ok(inline.length>=2);inline.forEach((code,i)=>new vm.Script(code,{filename:"index.html:inline-"+i}));});
 test("marketplace client parses",()=>new vm.Script(client,{filename:"marketplace-client.js"}));
@@ -51,8 +51,32 @@ test("job cards only render apply buttons from approved official provider hosts"
  assert.ok(jobs.includes('function isOfficialApplicationUrl'));
 });
 
-test("PWA version metadata is 2.1.7",()=>{
- assert.ok(html.includes('content="2.1.7"'));
+test("PWA version metadata is 2.1.8",()=>{
+ assert.ok(html.includes('content="2.1.8"'));
+ assert.ok(html.includes('features-2.1.css?v=2.1.8'));
+ assert.ok(html.includes('features-2.1.js?v=2.1.8'));
+});
+
+test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black shapes",()=>{
+ const start=html.indexOf('<nav class="quick-jump-bar"'),end=html.indexOf('</nav>',start);
+ const bar=html.slice(start,end);
+ assert.equal((bar.match(/<svg width="18" height="18"/g)||[]).length,3);
+ assert.ok(html.includes(".quick-jump-bar{display:grid!important"));
+ assert.ok(html.includes(".quick-jump-icon svg{display:block!important;width:18px!important;height:18px!important"));
+ assert.ok(html.includes('.quick-jump-btn{display:flex;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:6px;padding:6px 5px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--ink);font:600 11.5px \'Readex Pro\',Tahoma,sans-serif;text-decoration:none;white-space:normal;text-align:center;overflow:hidden}'));
+});
+test("regional catalogue manifest loads at first visit and does not show a local-only count as the national total",()=>{
+ assert.ok(html.includes('loadRegionalCatalogManifest(false).catch'));
+ assert.ok(html.includes('جارٍ تحميل فهرس اليمن'));
+ assert.ok(html.includes('manifest.json?v=2.1.8'));
+ assert.ok(html.includes('cache:"no-store"'));
+ assert.ok(html.includes('districtCounts.length!==335'));
+});
+test("service worker refreshes regional data and critical CSS/JS from the network",()=>{
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.1.8"'));
+ assert.ok(sw.includes('url.pathname.includes("/regional-catalog/")'));
+ assert.ok(sw.includes('fetch(request, { cache: "no-store" })'));
+ assert.ok(sw.includes('features-2.1.css?v=2.1.8'));
 });
 
 test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});

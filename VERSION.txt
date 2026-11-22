@@ -1,7 +1,7 @@
-Dalilna 2.1.7
+Dalilna 2.1.8
 Application release: PWA + Android WebView
-Android versionCode: 217
-Web app version: 2.1.7
+Android versionCode: 218
+Web app version: 2.1.8
 Primary place discovery: a static per-governorate OpenStreetMap catalogue, refreshed weekly from Geofabrik extracts. The generated manifest includes district counts with separate boundary-match and centroid-estimate totals.
 OpenStreetMap data license: ODbL-1.0; attribution: © OpenStreetMap contributors.
 Administrative names and district centroids: Open Admin Data Yemen, CC BY 4.0.
@@ -12,3 +12,5 @@ The shared marketplace API filters by category, product group, governorate, dist
 Marketplace schema version: 2. The expires_at column is nullable so approved business/service listings can remain active indefinitely. Server secrets DATABASE_URL and DALILNA_ADMIN_TOKEN remain server-only.
 Android APK is a debug-signed testing build, not a Google Play production release.
 Quick service shortcuts wrap their Arabic labels inside each card on narrow mobile screens.
+
+Homepage bootstrap: the regional manifest loads on first visit; district and catalogue requests use a versioned network-first cache. Quick-jump SVG dimensions are intrinsic with inline CSS fallback to prevent oversized black icons when the extension stylesheet is unavailable.
