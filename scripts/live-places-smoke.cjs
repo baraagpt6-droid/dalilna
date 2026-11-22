@@ -1,5 +1,6 @@
 "use strict";
 const assert=require("node:assert/strict");
+const EXPECTED_VERSION=require("../package.json").version;
 const base=String(process.env.LIVE_API_BASE_URL||"https://dalilna-live.onrender.com").replace(/\/+$/,"");
 async function get(path,extraHeaders={}){
  const response=await fetch(base+path,{headers:{Accept:"application/json",...extraHeaders},cache:"no-store",signal:AbortSignal.timeout(90000)});
@@ -8,11 +9,11 @@ async function get(path,extraHeaders={}){
 async function main(){
  const deadline=Date.now()+180000;let health=null,last="no response";
  while(Date.now()<deadline){
-  try{const r=await get("/health");if(r.response.ok&&r.payload.ok&&r.payload.version==="2.6.0"){health=r.payload;break;}last="unexpected health: "+JSON.stringify(r.payload);}
+  try{const r=await get("/health");if(r.response.ok&&r.payload.ok&&r.payload.version===EXPECTED_VERSION){health=r.payload;break;}last="unexpected health: "+JSON.stringify(r.payload);}
   catch(e){last=e.message;}
   await new Promise(resolve=>setTimeout(resolve,5000));
  }
- assert.ok(health,"Render service did not become healthy on v2.6.0: "+last);
+ assert.ok(health,"Render service did not become healthy on v"+EXPECTED_VERSION+": "+last);
  process.stdout.write("PASS live Render health: "+health.version+"\n");
  let r=await get("/api/places/status",{Origin:"https://dalilna-yemen.onrender.com"});assert.equal(r.response.status,200);
  assert.equal(r.response.headers.get("access-control-allow-origin"),"*");
