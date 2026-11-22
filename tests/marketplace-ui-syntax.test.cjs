@@ -143,6 +143,8 @@ test("six-hour catalogue workflow imports OSM, Overture and Yemen country/admin 
  assert.ok(workflow.includes('cron: "0 */6 * * *"'));
  assert.ok(workflow.includes("YEM/ADM2") && workflow.includes("YEM/ADM0"));
  assert.ok(workflow.includes("geoBoundaries") && workflow.includes("overturemaps download") && workflow.includes("fuse_regional_catalog.py"));
+ assert.ok(workflow.includes("https://data.bbbike.org/osm/pbf/region/asia/yemen.osm.pbf"));
+ assert.ok(workflow.includes("osm-source.txt"));
 });
 
 test("merchant feed SQL maps latitude, longitude and source metadata to distinct parameters",()=>{
