@@ -151,7 +151,10 @@ def categories_for_tags(tags, mapping=None):
 
     # Retain named shops and public amenities even when OSM introduces a
     # previously unseen value. They appear under "other" and remain searchable.
-    if not matched and (str(tags.get("shop") or "").strip() or str(tags.get("amenity") or "").strip()):
+    fallback_keys = ("shop", "amenity", "office", "healthcare", "tourism", "craft",
+                     "leisure", "public_transport", "railway", "emergency", "delivery",
+                     "courier", "service", "government")
+    if not matched and any(str(tags.get(key) or "").strip() for key in fallback_keys):
         if "other" in definitions:
             matched.append("other")
 
