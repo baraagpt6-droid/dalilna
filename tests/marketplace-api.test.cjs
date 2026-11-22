@@ -1,7 +1,7 @@
 "use strict";
 const test=require("node:test"),assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {validate,PRODUCT_TYPES,CATEGORIES,GOVERNORATES}=require("../marketplace-api");
+const {validate,PRODUCT_TYPES,CATEGORIES,GOVERNORATES,PRODUCT_GROUPS}=require("../marketplace-api");
 test("taxonomy covers Yemen service categories and product types",()=>{assert.equal(GOVERNORATES.size,22);for(const x of ["phone","phone_accessories","watch","car","motorcycle","land","property","apartment","house","honey","coffee","stationery","perfume","cosmetics","solar_equipment","solar_panel","battery","inverter","power_system","screen","monitor","charger","audio_accessories","tools","baby_products","construction_equipment"])assert.ok(PRODUCT_TYPES.has(x));for(const x of ["jobs","souq","grocery","health","pharmacy"])assert.ok(CATEGORIES.has(x));});
 test("normalizes a used phone listing",()=>{const x=validate({title:"هاتف",category:"souq",productType:"phone",condition:"used",governorate:"إب",district:"حبيش",area:"ربع ظلمة",clientRef:"local-1"});assert.equal(x.productType,"phone");assert.equal(x.condition,"used");assert.equal(x.governorate,"إب");assert.equal(x.clientRef,"local-1");});
 test("accepts land and property as classified marketplace listings",()=>{
