@@ -96,7 +96,7 @@ async function syncConfiguredFeeds(){
    sourceStats.push({host:url.hostname,received:rawItems.length,accepted:normalized.length});
   }catch(error){failures.push(url.hostname+": "+clean(error.message,160));}
  }
- const snapshotComplete=failures.length===0&&rejected===0&&!oversized&&collected.length<=MAX_ITEMS;
+ const snapshotComplete=failures.length===0&&rejected===0&&!oversized&&collected.length>0&&collected.length<=MAX_ITEMS;
  if(!collected.length&&!snapshotComplete){
   if(failures.length)throw new Error("No usable products were returned. "+failures.join("; "));
   return {configured:configured.length,received:sourceStats.reduce((n,x)=>n+x.received,0),accepted:0,skipped:rejected,sources:sourceStats,snapshotComplete:false};
