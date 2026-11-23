@@ -84,12 +84,23 @@
   function makeCard(item) {
     const card = document.createElement("article");
     card.className = "shared-listing-card";
-    if (typeof item.imageData === "string" && item.imageData.length <= 400000 && /^data:image\/(?:jpeg|png|webp);base64,/.test(item.imageData)) {
+    const imageSource = typeof item.imageData === "string" ? item.imageData.trim() : "";
+    const inlineImage = imageSource.length <= 400000 && /^data:image\/(?:jpeg|png|webp);base64,/.test(imageSource);
+    let remoteImage = false;
+    if (imageSource.length <= 2048 && /^https:\/\//i.test(imageSource)) {
+      try {
+        const parsedImage = new URL(imageSource);
+        remoteImage = parsedImage.protocol === "https:" && !parsedImage.username && !parsedImage.password;
+      } catch (_) {}
+    }
+    if (inlineImage || remoteImage) {
       const img = document.createElement("img");
       img.className = "shared-listing-image";
-      img.src = item.imageData;
+      img.src = imageSource;
       img.alt = item.title || label("صورة الإعلان");
       img.loading = "lazy";
+      img.referrerPolicy = "no-referrer";
+      img.addEventListener("error", () => img.remove(), { once: true });
       card.appendChild(img);
     }
 
