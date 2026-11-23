@@ -4844,7 +4844,7 @@ async function searchLiveDirectoryFallback(query,category,context,signal,force){
  const abortParent=()=>timeoutController.abort();
  if(signal?.aborted)timeoutController.abort();
  else signal?.addEventListener("abort",abortParent,{once:true});
- const timer=setTimeout(()=>timeoutController.abort(),3000);
+ const timer=setTimeout(()=>timeoutController.abort(),6500);
  let response,payload;
  try{
   response=await fetch(LIVE_DIRECTORY_API+"/api/places/search?"+params.toString(),{
