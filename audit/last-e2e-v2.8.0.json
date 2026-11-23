@@ -1,12 +1,15 @@
 {
   "version": "2.8.0",
   "catalog": {
-    "records": 24563,
+    "bytes": 1111246,
+    "recordCount": 24563,
     "governorates": 22,
-    "compressedBytes": 1094206,
+    "schemaVersion": 2,
     "queries": {
       "الزوقري": {
         "matches": 2,
+        "searchMs": 2.26,
+        "within50ms": true,
         "examples": [
           {
             "name": "الزوقري للسفريات والسياحة",
@@ -24,6 +27,8 @@
       },
       "الناهي": {
         "matches": 1,
+        "searchMs": 2.025,
+        "within50ms": true,
         "examples": [
           {
             "name": "الناهي للإلكترونيات",
@@ -34,8 +39,9 @@
         ]
       },
       "صيدلية": {
-        "pharmacyRecords": 821,
-        "namedMatches": 706,
+        "matches": 697,
+        "searchMs": 1.861,
+        "within50ms": true,
         "examples": [
           {
             "name": "صيدلية",
@@ -77,16 +83,19 @@
             "governorate": "عدن",
             "district": "المعلا"
           }
-        ]
+        ],
+        "pharmacyCategoryRecords": 821,
+        "namedPharmacyMatches": 706,
+        "open24HoursRecords": 17
       }
     }
   },
   "live": {
-    "generatedAt": "2026-11-23T02:59:32.126Z",
+    "generatedAt": "2026-11-23T03:39:18.533Z",
     "health": {
       "ok": true,
       "version": "2.8.0",
-      "ms": 252,
+      "ms": 343,
       "status": 200
     },
     "marketplace": {
@@ -97,15 +106,16 @@
       "withImages": 0,
       "withPrice": 0,
       "withContact": 0,
-      "ms": 162,
+      "ms": 144,
       "status": 200,
       "error": ""
     },
     "pharmacyLiveSearch": {
       "ok": false,
       "status": 503,
-      "ms": 2943,
-      "within3Seconds": false,
+      "ms": 2920,
+      "respondedWithin3Seconds": true,
+      "successfulWithin3Seconds": false,
       "results": 0,
       "resultsWithHours": 0,
       "twentyFourHourResults": 0,
@@ -116,11 +126,27 @@
       "provider": "Gemini",
       "model": "gemini-3.8-flash",
       "ok": false,
-      "status": 502,
-      "ms": 1322,
+      "status": 429,
+      "ms": 227,
       "answerChars": 0,
       "mode": "",
-      "error": "provider_request_failed"
+      "error": "provider_rate_limit",
+      "providerStatus": 0,
+      "providerCode": ""
+    },
+    "publicSite": {
+      "ok": true,
+      "version": "2.8.0",
+      "bytes": 1111246,
+      "schemaVersion": 2,
+      "records": 24563,
+      "pharmacyRecords": 821,
+      "open24Pharmacies": 17,
+      "marketplaceReferenceItems": 0,
+      "pharmacy24Shortcut": true,
+      "craftCategory": true,
+      "directoryWhatsApp": true,
+      "productWhatsApp": true
     }
   }
 }
