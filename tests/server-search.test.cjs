@@ -75,3 +75,16 @@ test("classifies named stationery and vehicle places",()=>{
  assert.equal(classifyCategory({shop:"car"}),"vehicles");
  assert.equal(classifyCategory({shop:"watches"}),"gold");
 });
+
+test("Yemen Nominatim and Overpass requests use a three-second timeout",()=>{
+ const source=fs.readFileSync(require.resolve("../server"),"utf8");
+ assert.ok(source.includes("timeoutMs:3000"));
+ assert.ok(source.includes("setTimeout(()=>controller.abort(),3000)"));
+ assert.ok(source.includes("[out:json][timeout:3]"));
+});
+test("countrywide live search starts Nominatim and Overpass without serial waiting",()=>{
+ const source=fs.readFileSync(require.resolve("../server"),"utf8");
+ assert.ok(source.includes("const outcomes=await Promise.allSettled(["));
+ assert.ok(source.includes("searchYemenNominatim(query,category),"));
+ assert.ok(source.includes("searchYemenOverpass(query,category)"));
+});

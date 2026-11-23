@@ -8,7 +8,7 @@ test("builds a narrow grocery query for a supplied bounding box",()=>{
  const query=buildOverpassQuery({south:13.1,west:43.2,north:13.4,east:43.5},"grocery");
  assert.match(query,/shop/);assert.match(query,/convenience/);assert.match(query,/supermarket/);
  assert.match(query,/13\.100000,43\.200000,13\.400000,43\.500000/);
- assert.match(query,/timeout:12/);assert.match(query,/out center tags 80/);
+ assert.match(query,/timeout:3/);assert.match(query,/out center tags 80/);
 });
 test("infers map categories from Arabic search terms",()=>{
  assert.equal(inferCategoryFromQuery("بقال"),"grocery");

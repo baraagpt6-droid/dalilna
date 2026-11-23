@@ -72,8 +72,8 @@ test("Careers.sa parser retains exact job links, location, organization and fres
 
 test("daily refresh merges retained and freshly collected jobs without losing old records",()=>{
  const script=fs.readFileSync("scripts/refresh-jobs.cjs","utf8");
- assert.ok(script.includes("[...old,...fresh].forEach"));
- assert.ok(script.includes("map.set(key,item)"));
+ assert.ok(script.includes("dedupeJobs([...old,...fresh],now)"));
+ assert.ok(script.includes("selected.set(key"));
  assert.ok(script.includes("writeFileSync(OUT"));
 });
 

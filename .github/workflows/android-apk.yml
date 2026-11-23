@@ -50,6 +50,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Build compressed full-Yemen search index
+        run: python3 scripts/build_search_index_light.py --catalog-dir regional-catalog --output regional-catalog/search_index_light.json
       - name: Sync PWA and regional catalogue into Android WebView assets
         shell: bash
         run: |
@@ -65,6 +67,7 @@ jobs:
           cmp -s features-2.1.js android/app/src/main/assets/features-2.1.js
           cmp -s features-2.1.css android/app/src/main/assets/features-2.1.css
           cmp -s jobs-feed.json android/app/src/main/assets/jobs-feed.json
+          cmp -s regional-catalog/search_index_light.json android/app/src/main/assets/regional-catalog/search_index_light.json
       - name: Test application and shared marketplace validation
         run: npm test
       - name: Build signed debug APK

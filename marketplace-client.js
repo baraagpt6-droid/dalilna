@@ -91,12 +91,8 @@
       img.alt = item.title || label("صورة الإعلان");
       img.loading = "lazy";
       card.appendChild(img);
-    } else {
-      const placeholder = document.createElement("div");
-      placeholder.className = "shared-listing-image-fallback no-image";
-      placeholder.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3 3 3-4 5 6"/></svg><span>'+label("لا توجد صورة مرفقة")+'</span>';
-      card.appendChild(placeholder);
     }
+
     const title = document.createElement("h3");
     title.textContent = item.title || label("إعلان");
     card.appendChild(title);
@@ -112,7 +108,6 @@
     const product = PRODUCTS.find(x => x[0] === item.productType);
     const labels = [category ? label(category[1]) : item.category];
     if (item.category === "souq" || item.category === "land") labels.push(product ? label(product[1]) : ui("منتج آخر","Other product"));
-    if (item.catalogOnly) labels.push(label("كتالوج استرشادي · ليس إعلان بائع"));
     if (item.condition === "new") labels.push(label("جديد"));
     if (item.condition === "used") labels.push(label("مستعمل"));
     if (item.listingType === "sale") labels.push(label("للبيع"));
@@ -197,20 +192,22 @@
       expiry.textContent = !expiryDate || Number.isNaN(expiryDate.getTime()) ? label("إعلان مجاني · مدة الصلاحية 60 يوماً") : label("إعلان مجاني · ينتهي ") + expiryDate.toLocaleDateString(isEnglish()?"en":"ar");
       card.appendChild(expiry);
     }
-    if (!item.catalogOnly && (item.category === "souq" || item.category === "land")) {
-      const share = document.createElement("button"); share.type = "button"; share.dataset.shareId = item.id; share.textContent = label("مشاركة"); share._item = item; actions.appendChild(share);
+    if (item.category === "souq" || item.category === "land") {
+      const share = document.createElement("a");
+      const mapQuery = item.latitude != null && item.longitude != null
+        ? String(item.latitude) + "," + String(item.longitude)
+        : [item.title,item.area,item.district,item.governorate,"اليمن"].filter(Boolean).join(" ");
+      const mapUrl = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(mapQuery);
+      const message = [item.title,item.phone ? "التواصل: " + item.phone : "",item.price ? "السعر: " + item.price + " " + (item.currency || "") : "",[item.area,item.district,item.governorate].filter(Boolean).join("، "),"الخريطة: " + mapUrl].filter(Boolean).join("\\n");
+      share.href = "https://wa.me/?text=" + encodeURIComponent(message);
+      share.target = "_blank"; share.rel = "noopener noreferrer"; share.textContent = label("مشاركة واتساب");
+      actions.appendChild(share);
       let favs = []; try { favs = JSON.parse(localStorage.getItem("dalilna-marketplace-favs-v1") || "[]"); } catch (_) {}
       const favorite = document.createElement("button"); favorite.type = "button"; favorite.dataset.favId = item.id;
       favorite.setAttribute("aria-pressed",favs.includes(item.id)?"true":"false"); favorite.className = favs.includes(item.id)?"is-favorite":""; favorite.textContent = favs.includes(item.id)?label("★ مفضلة"):label("☆ مفضلة"); actions.appendChild(favorite);
     }
     card.appendChild(actions);
     if (mapElement) card.appendChild(mapElement);
-    if (item.catalogOnly) {
-      const note = document.createElement("p");
-      note.className = "shared-listing-meta catalog-reference-note";
-      note.textContent = label("هذا عنصر في كتالوج استرشادي فقط. لا يوجد بائع أو سعر أو رقم تواصل مرتبط به.");
-      card.appendChild(note);
-    }
     return card;
   }
   async function loadList(filters, statusId, listId) {
@@ -248,7 +245,6 @@
   async function loadSouq() {
     const selectedType = document.querySelector("#souqTransactionTabs [aria-pressed=true]");
     const selectedGroup = document.querySelector("#souqCategoryTabs [aria-pressed=true]");
-    const group = selectedGroup && selectedGroup.dataset.group !== "all" ? selectedGroup.dataset.group : "";
     const governorate = $("sharedSouqGovernorate") && $("sharedSouqGovernorate").value || "";
     const result = await loadList({
       category: "marketplace",
@@ -256,40 +252,11 @@
       productGroup: selectedGroup && selectedGroup.dataset.group !== "all" ? selectedGroup.dataset.group : "",
       governorate
     }, "sharedSouqStatus", "sharedSouqItems");
-    if (result && Array.isArray(result.items) && result.items.length) return result;
-
-    const status = $("sharedSouqStatus"), list = $("sharedSouqItems");
-    if (!list || !status) return result;
-    try {
-      const response = await fetch("./market_items.json?v=2.7.1", { cache: "no-store", headers: { Accept: "application/json" } });
-      if (!response.ok) throw new Error("HTTP " + response.status);
-      const payload = await response.json();
-      let items = Array.isArray(payload.items) ? payload.items : [];
-      if (group) items = items.filter(item => item.group === group);
-      if (governorate && governorate !== "all") items = items.filter(item => item.governorate === governorate);
-      if (selectedType && selectedType.dataset.transaction !== "all") {
-        // Reference-catalog entries describe product types, not seller transactions.
-        items = [];
-      }
-      list.replaceChildren();
-      if (!items.length) {
-        status.textContent = label("لا توجد إعلانات معتمدة أو عناصر كتالوج في هذا الاختيار حالياً.");
-        return { items: [], count: 0, source: "local-reference-catalog" };
-      }
-      const notice = document.createElement("p");
-      notice.className = "shared-marketplace-status catalog-reference-notice";
-      notice.textContent = label("هذه عناصر من كتالوج المنتجات للتصفح فقط، وليست إعلانات بيع حقيقية من بائعين. لا تعرض بائعاً أو سعراً أو رقم تواصل.");
-      list.appendChild(notice);
-      items.forEach(item => list.appendChild(makeCard({ ...item, catalogOnly: true })));
-      list.dataset.loaded = "true";
-      status.textContent = label("عرض ") + items.length + label(" عنصراً مرجعياً من الكتالوج المحلي · لا توجد إعلانات بائعين معتمدة مطابقة.");
-      return { items, count: items.length, source: "local-reference-catalog", fetchedAt: new Date().toISOString() };
-    } catch (error) {
-      if (!list.dataset.loaded || list.childElementCount === 0) {
-        status.textContent = label("تعذر تحميل كتالوج المنتجات المحلي. ") + String(error && error.message || "");
-      }
-      return result;
+    const status = $("sharedSouqStatus");
+    if (status && result && (!Array.isArray(result.items) || result.items.length === 0)) {
+      status.textContent = label("لا توجد إعلانات بيع أو شراء معتمدة حالياً. انشر إعلاناً ليظهر بعد مراجعة الإدارة.");
     }
+    return result;
   }
   function loadJobs() {
     return loadList({ category: "jobs" }, "sharedJobsStatus", "sharedJobsItems");
