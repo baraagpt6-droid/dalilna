@@ -133,3 +133,20 @@ test("local Yemen index provides Ibb pharmacy results when map mirrors are unava
  assert.ok(result.items.every(item=>item.verificationStatus==="not_field_verified_by_dalilna"));
  assert.ok(result.items.every(item=>item.source==="فهرس اليمن الوطني المحلي"));
 });
+
+test("searchPlaces falls back to the national index when geocoding fails",async()=>{
+ const originalFetch=global.fetch;
+ global.fetch=async input=>{
+  const host=new URL(String(input)).hostname;
+  if(host==="nominatim.openstreetmap.org")return new Response("upstream unavailable",{status:503});
+  if(host==="photon.komoot.io")return new Response(JSON.stringify({features:[]}),{status:200,headers:{"content-type":"application/json"}});
+  throw new Error("Unexpected provider request: "+host);
+ };
+ try{
+  const result=await searchPlaces({q:"صيدلية",place:"محافظة إب",category:"pharmacy"});
+  assert.equal(result.localCatalogFallback,true);
+  assert.ok(result.count>0);
+  assert.ok(result.items.every(item=>item.category==="pharmacy"));
+  assert.ok(result.items.every(item=>normalizeText(item.governorate)==="اب"));
+ }finally{global.fetch=originalFetch;}
+});

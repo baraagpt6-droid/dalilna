@@ -185,12 +185,15 @@ jobs:
             pharmacyLiveSearch:{ok:pharmacies.ok,status:pharmacies.status,ms:pharmacies.ms,
               respondedWithin3Seconds:pharmacies.ms<=3000,successfulWithin3Seconds:pharmacies.ok&&pharmacies.ms<=3000,
               results:Array.isArray(pharmacies.body?.items)?pharmacies.body.items.length:0,
+              localCatalogFallback:pharmacies.body?.localCatalogFallback===true,
+              resultSource:pharmacies.body?.source||"",
               resultsWithHours:(pharmacies.body?.items||[]).filter(x=>x.openingHours||x.opening_hours).length,
               twentyFourHourResults:(pharmacies.body?.items||[]).filter(x=>/24\s?[/]?\s?7|24\s?hours|24\s?ساعة|٢٤\s?ساعة/i.test(String(x.openingHours||x.opening_hours||""))).length,
               error:pharmacies.body?.error||pharmacies.error||""},
             assistant:{configured:assistantStatus.body?.configured===true,provider:assistantStatus.body?.provider||"",model:assistantStatus.body?.model||"",...assistant},
             publicSite
           };
+          if(!pharmacies.ok||!Array.isArray(pharmacies.body?.items)||pharmacies.body.items.length===0)throw new Error("Pharmacy API returned no live or local Yemen catalogue results.");
           console.log(JSON.stringify(report,null,2));
           NODE
       - name: Print live E2E audit results

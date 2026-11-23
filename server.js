@@ -1171,31 +1171,29 @@ async function searchPlaces(params) {
   let area = null;
   let scopeFallback = false;
   let usedPlace = place || "بالقرب من موقعك";
+  let geocodeError = null;
   if (hasCoordinates) {
     const latDelta = radius / 111000;
     const lonDelta = radius / (111000 * Math.max(0.2, Math.cos(lat * Math.PI / 180)));
     area = { bbox: { south: lat - latDelta, north: lat + latDelta, west: lon - lonDelta, east: lon + lonDelta }, label: "بالقرب من موقعك" };
   } else {
-    area = await geocodePlace(place,geocodeDeadlineAt);
+    try { area = await geocodePlace(place,geocodeDeadlineAt); }
+    catch(error) { geocodeError = error; }
   }
   if (!area && fallbackPlace && normalizeText(fallbackPlace) !== normalizeText(place)) {
-    area = await geocodePlace(fallbackPlace,geocodeDeadlineAt);
+    try { area = await geocodePlace(fallbackPlace,geocodeDeadlineAt); }
+    catch(error) { if(!geocodeError) geocodeError = error; }
     scopeFallback = true;
     usedPlace = fallbackPlace;
   }
-  if (!area) {
+  if (!area || !area.bbox) {
     const local=searchLocalYemenCatalog({query,category,place:usedPlace,lat:hasCoordinates?lat:null,lon:hasCoordinates?lon:null,radius});
     if(local&&local.count){
-      console.info(JSON.stringify({event:"places.local_catalog.fallback",count:local.count,category,reason:"geocoder_unavailable"}));
+      console.info(JSON.stringify({event:"places.local_catalog.fallback",count:local.count,category,reason:geocodeError?"geocoder_unavailable":"area_unavailable"}));
       return local;
     }
-    const error = new Error("لم نعثر على حدود هذه المديرية في بيانات الخريطة. اختر المحافظة أو افتح البحث في OpenStreetMap.");
-    error.statusCode = 404;
-    throw error;
-  }
-
-  if (!area.bbox) {
-    const error = new Error("تعذر تحديد نطاق المنطقة من مصادر الخرائط. افتح البحث مباشرة في OpenStreetMap.");
+    if(geocodeError) throw geocodeError;
+    const error = new Error("تعذر تحديد نطاق المنطقة من مصادر الخرائط. اختر محافظة أو افتح البحث في OpenStreetMap.");
     error.statusCode = 404;
     throw error;
   }
