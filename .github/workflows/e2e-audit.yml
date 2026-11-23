@@ -165,7 +165,7 @@ jobs:
               lat:row[6]===null?null:row[6]/100000,lon:row[7]===null?null:row[7]/100000,
               openingHours:row[8]||"",source:"فهرس اليمن الوطني",verificationStatus:"not_field_verified_by_dalilna"}));
             const context={liveSearch:{intent:"pharmacy",selectedRegion:{governorate:"إب",district:"",place:"محافظة إب، اليمن"},openDataPlaces}};
-            const call=await probe("/api/assistant",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:"أقرب صيدلية في إب",context})},10000);
+            const call=await probe("/api/assistant",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:"أقرب صيدلية في إب",context})},18000);
             assistant={ok:call.ok,status:call.status,ms:call.ms,answerChars:String(call.body?.answer||"").length,mode:call.body?.mode||"",error:call.body?.error||"",providerStatus:call.body?.providerStatus||0,providerCode:call.body?.providerCode||""};
           }
           const items=Array.isArray(listings.body?.items)?listings.body.items:[];

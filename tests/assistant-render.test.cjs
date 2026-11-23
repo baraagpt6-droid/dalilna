@@ -161,3 +161,15 @@ test("local assistant fallback renders before cloud requests, including HTTP 503
  assert.ok(genericImmediate>=0&&genericCloud>genericImmediate);
  assert.ok(web.includes("response.status===404||response.status===502||response.status===503"));
 });
+ 
+test("Gemini request budget allows slower responses while local answers render first",()=>{
+ const root=path.resolve(__dirname,"..");
+ const api=fs.readFileSync(path.join(root,"api/assistant.js"),"utf8");
+ const web=fs.readFileSync(path.join(root,"index.html"),"utf8");
+ assert.match(api,/AbortSignal\.timeout\(15_000\)/);
+ assert.match(web,/timer=setTimeout\(\(\)=>controller\.abort\(\),18000\)/);
+ const jobs=web.indexOf('const response=await fetch("./jobs-feed.json"');
+ const immediate=web.indexOf('if(typeof onImmediate==="function")onImmediate(result)',jobs);
+ const cloud=web.indexOf('requestCloudAssistant(q,{localJobs:',jobs);
+ assert.ok(jobs>=0&&immediate>jobs&&cloud>immediate,"local jobs result must render before cloud fallback");
+});
