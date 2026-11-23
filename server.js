@@ -15,6 +15,7 @@ const ALLOWED_ORIGINS = new Set([
   "https://dalilna-oavk.vercel.app",
   "https://dalilna-roan.vercel.app",
   "https://baraagpt6-droid.github.io",
+  "https://dalilna-ftny.netlify.app",
   "https://appassets.androidplatform.net",
   "http://localhost:3000",
   "http://127.0.0.1:5500"
