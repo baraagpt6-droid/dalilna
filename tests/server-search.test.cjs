@@ -80,7 +80,7 @@ test("Yemen Nominatim and Overpass requests stay within one bounded three-second
  const source=fs.readFileSync(require.resolve("../server"),"utf8");
  assert.ok(source.includes("timeoutMs:3000"));
  assert.ok(source.includes("const deadlineAt=Date.now()+2800"));
- assert.ok(source.includes("Math.min(provider.timeoutMs,remaining)"));
+ assert.ok(source.includes("Math.min(provider.timeoutMs,Math.max(450,remaining-1100),remaining)"));
  assert.ok(source.includes("Math.min(1250,remaining)"));
  assert.ok(source.includes("[out:json][timeout:3]"));
 });
