@@ -122,6 +122,7 @@ test("merchant profile, shop submission and directory favourites work in a real 
     await page.locator('#pickerList [data-pval="حبيش"]').click();
     await page.locator('#f input[name="name"]').fill(shopName);
     await page.locator('#f input[name="phone"]').fill(merchantPhone);
+    await page.locator("#ugcTermsAccept").check();
     await page.locator("#save").click();
 
     await page.waitForFunction(name => {
