@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: dalilna-market-reference-prices
@@ -29,7 +30,7 @@ jobs:
         run: node scripts/refresh-market-prices.cjs
       - name: Validate data and commit the weekly price snapshot
         run: |
-          npm test -- --test-name-pattern="market reference|price-page parser|weekly price guide"
+          node --test tests/market-price-guide.test.cjs
           if git diff --quiet -- market_prices_yemen.json; then
             echo "No validated price changes were available; preserving the previous snapshot."
             exit 0
@@ -39,3 +40,4 @@ jobs:
           git add market_prices_yemen.json
           git commit -m "data(prices): refresh Yemen market reference prices"
           git push origin HEAD:main
+          gh api --method POST "/repos/$GITHUB_REPOSITORY/actions/workflows/deploy-pages.yml/dispatches" -f ref=main
