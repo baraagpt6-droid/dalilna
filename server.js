@@ -728,7 +728,7 @@ async function fetchOverpass(bbox,category,label,deadlineAt=Date.now()+2700){
     const remaining=deadlineAt-Date.now();
     if(remaining<=120)break;
     lastOverpassAt=Date.now();
-    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(provider.timeoutMs,remaining)),startedAt=Date.now();
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(provider.timeoutMs,Math.max(450,remaining-1100),remaining)),startedAt=Date.now();
     try{
       const response=await fetch(provider.url,{
         method:"POST",
@@ -911,7 +911,7 @@ async function searchYemenOverpass(query,category="all",deadlineAt=Date.now()+27
     const remaining=deadlineAt-Date.now();
     if(remaining<=120)break;
     lastOverpassAt=Date.now();
-    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(provider.timeoutMs,remaining)),startedAt=Date.now();
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(provider.timeoutMs,Math.max(450,remaining-1100),remaining)),startedAt=Date.now();
     try{
       const response=await fetch(provider.url,{method:"POST",signal:controller.signal,
         headers:{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8","Accept":"application/json",
