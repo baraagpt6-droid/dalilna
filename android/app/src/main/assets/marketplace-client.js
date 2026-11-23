@@ -253,7 +253,7 @@
     const result = await loadList({
       category: "marketplace",
       listingType: selectedType && selectedType.dataset.transaction !== "all" ? selectedType.dataset.transaction : "",
-      productGroup: group,
+      productGroup: selectedGroup && selectedGroup.dataset.group !== "all" ? selectedGroup.dataset.group : "",
       governorate
     }, "sharedSouqStatus", "sharedSouqItems");
     if (result && Array.isArray(result.items) && result.items.length) return result;
