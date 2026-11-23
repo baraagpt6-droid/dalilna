@@ -58,40 +58,70 @@ jobs:
         with:
           ref: main
           persist-credentials: true
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
       - name: Install Node.js dependencies
         run: npm install
+
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Decode and validate persistent Android signing key
+
+      - name: Configure optional Android signing key
+        id: signing
         shell: bash
         run: |
-          for name in ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
-            if [ -z "${!name}" ]; then
-              echo "::error::Missing GitHub Actions secret $name. Add the persistent v2.9.0 keystore secrets before building an updatable APK."
-              exit 1
+          set -euo pipefail
+          secret_names=(
+            ANDROID_KEYSTORE_BASE64
+            ANDROID_KEYSTORE_PASSWORD
+            ANDROID_KEY_ALIAS
+            ANDROID_KEY_PASSWORD
+          )
+          present=0
+          for name in "${secret_names[@]}"; do
+            if [[ -n "${!name:-}" ]]; then
+              present=$((present + 1))
             fi
           done
-          KEYSTORE="$RUNNER_TEMP/dalilna-persistent.keystore"
-          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE"
-          test -s "$KEYSTORE"
-          keytool -list -keystore "$KEYSTORE" -storepass "$ANDROID_KEYSTORE_PASSWORD" -alias "$ANDROID_KEY_ALIAS" >/dev/null
-          echo "ANDROID_KEYSTORE_FILE=$KEYSTORE" >> "$GITHUB_ENV"
+
+          if [[ "$present" -eq 4 ]]; then
+            KEYSTORE="$RUNNER_TEMP/dalilna-persistent.keystore"
+            printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE"
+            test -s "$KEYSTORE"
+            keytool -list -keystore "$KEYSTORE" \
+              -storepass "$ANDROID_KEYSTORE_PASSWORD" \
+              -alias "$ANDROID_KEY_ALIAS" >/dev/null
+            echo "ANDROID_KEYSTORE_FILE=$KEYSTORE" >> "$GITHUB_ENV"
+            echo "mode=persistent" >> "$GITHUB_OUTPUT"
+            echo "Persistent Android signing key configured."
+          else
+            if [[ "$present" -eq 0 ]]; then
+              echo "No persistent signing secrets found; Gradle will use its standard debug keystore."
+            else
+              echo "::warning::Only $present of 4 Android signing secrets are configured. Falling back to the standard debug keystore until all four are present."
+            fi
+            echo "mode=default-debug" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build compressed full-Yemen search index
         run: python3 scripts/build_search_index_light.py --catalog-dir regional-catalog --output regional-catalog/search_index_light.json
+
       - name: Sync PWA, OTA bridge, price guide and Yemen catalogue into Android assets
         shell: bash
         run: |
+          set -euo pipefail
           mkdir -p android/app/src/main/assets/icons android/app/src/main/assets/regional-catalog android/app/src/main/assets/market-price-images
           cp index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json regional-catalog-runtime.js marketplace-client.js market_items.json features-2.1.js features-2.1.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html android/app/src/main/assets/
           cp icons/* android/app/src/main/assets/icons/
@@ -102,59 +132,87 @@ jobs:
           done
           cmp -s regional-catalog/search_index_light.json android/app/src/main/assets/regional-catalog/search_index_light.json
           test -f android/app/src/main/assets/market-price-images/solar-panel.svg
+
       - name: Run application, market-guide and OTA checks
         run: npm test
-      - name: Build APK with persistent signing key
+
+      - name: Build APK
         run: gradle --no-daemon :android:app:assembleDebug
-      - name: Verify APK signature and increasing Android versionCode
+
+      - name: Verify APK version and signature
         id: app-version
         shell: bash
         run: |
+          set -euo pipefail
           VERSION="$(sed -n 's/^[[:space:]]*versionName = "\([^"]*\)".*/\1/p' android/app/build.gradle.kts | head -n 1)"
           VERSION_CODE="$((2900000 + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))"
-          if [ "$VERSION" != "2.9.0" ]; then echo "Expected versionName 2.9.0, got $VERSION"; exit 1; fi
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+          if [[ "$VERSION" != "2.9.0" ]]; then
+            echo "Expected versionName 2.9.0, got $VERSION"
+            exit 1
+          fi
+          test -s "$APK"
+
           SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
-          if [ -z "$SDK_ROOT" ] || [ ! -d "$SDK_ROOT/build-tools" ]; then
+          if [[ -z "$SDK_ROOT" || ! -d "$SDK_ROOT/build-tools" ]]; then
             echo "Android SDK build-tools were not found."
             exit 1
           fi
           BUILD_TOOLS_VERSION="$(ls -1 "$SDK_ROOT/build-tools" | sort -V | tail -n 1)"
           BUILD_TOOLS="$SDK_ROOT/build-tools/$BUILD_TOOLS_VERSION"
-          ACTUAL_VERSION_CODE="$("$BUILD_TOOLS/aapt" dump badging android/app/build/outputs/apk/debug/app-debug.apk | sed -n "s/.*versionCode='\([0-9]*\)'.*/\1/p" | head -n 1)"
-          if [ "$ACTUAL_VERSION_CODE" != "$VERSION_CODE" ]; then
+          ACTUAL_VERSION_CODE="$("$BUILD_TOOLS/aapt" dump badging "$APK" | sed -n "s/.*versionCode='\([0-9]*\)'.*/\1/p" | head -n 1)"
+          if [[ "$ACTUAL_VERSION_CODE" != "$VERSION_CODE" ]]; then
             echo "APK versionCode $ACTUAL_VERSION_CODE does not match expected $VERSION_CODE."
             exit 1
           fi
-          "$BUILD_TOOLS/apksigner" verify --verbose android/app/build/outputs/apk/debug/app-debug.apk
-          "$BUILD_TOOLS/apksigner" verify --print-certs android/app/build/outputs/apk/debug/app-debug.apk
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
+          CERT_SHA256="$("$BUILD_TOOLS/apksigner" verify --print-certs "$APK" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -n 1)"
+          if [[ -z "$CERT_SHA256" ]]; then
+            echo "APK signer certificate fingerprint could not be read."
+            exit 1
+          fi
+          echo "APK signing mode: ${{ steps.signing.outputs.mode }}"
+          echo "APK signer SHA-256: $CERT_SHA256"
+          echo "version=2.9.0" >> "$GITHUB_OUTPUT"
           echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
-      - name: Upload APK artifact
+          echo "signer_sha256=$CERT_SHA256" >> "$GITHUB_OUTPUT"
+
+      - name: Upload APK workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dalilna-${{ steps.app-version.outputs.version }}-android-signed
+          name: dalilna-2.9.0-android-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
-      - name: Publish signed APK as GitHub release
+
+      - name: Publish APK to GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.app-version.outputs.version }}
-          name: Dalilna ${{ steps.app-version.outputs.version }} Android APK
+          tag_name: v2.9.0
+          name: Dalilna 2.9.0 Android APK
           prerelease: true
           make_latest: false
           overwrite_files: true
           files: android/app/build/outputs/apk/debug/app-debug.apk
           body: |
             Dalilna 2.9.0 Android APK.
-            Signed with the persistent Dalilna Android signing key.
+            Signing mode: ${{ steps.signing.outputs.mode }}
+            Signer certificate SHA-256: ${{ steps.app-version.outputs.signer_sha256 }}
             versionCode: ${{ steps.app-version.outputs.version_code }}
+
+            With all four persistent signing secrets configured, this APK uses the persistent Dalilna keystore for in-place updates.
+            Without those secrets, this APK uses the runner's default Android debug keystore. It installs as a test build, but a later build signed with a different key will require uninstalling the earlier test build first.
             This is a direct APK test release, not a Google Play production release.
+
       - name: Publish exact Android versionCode for OTA clients
         env:
           GH_TOKEN: ${{ github.token }}
+          APK_VERSION_CODE: ${{ steps.app-version.outputs.version_code }}
+          APK_SIGNING_MODE: ${{ steps.signing.outputs.mode }}
         shell: bash
         run: |
+          set -euo pipefail
           node - <<'NODE'
           const fs = require("node:fs");
           const file = "version.json";
@@ -162,8 +220,9 @@ jobs:
           v.version = "2.9.0";
           v.webVersion = "2.9.0";
           v.androidVersion = "2.9.0";
-          v.versionCode = Number(process.env.APK_VERSION_CODE || (2900000 + Number(process.env.GITHUB_RUN_NUMBER) * 100 + Number(process.env.GITHUB_RUN_ATTEMPT || 1)));
-          v.androidVersionCode = v.versionCode;
+          v.versionCode = Number(process.env.APK_VERSION_CODE);
+          v.androidVersionCode = Number(process.env.APK_VERSION_CODE);
+          v.androidSigningMode = process.env.APK_SIGNING_MODE;
           v.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v2.9.0/app-debug.apk";
           v.updatedAt = new Date().toISOString();
           fs.writeFileSync(file, JSON.stringify(v, null, 2) + "\n");
@@ -171,5 +230,21 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add version.json
-          git commit -m "chore(release): publish v2.9.0 Android update code"
-          git push origin HEAD:main
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(release): publish v2.9.0 Android update code"
+            git push origin HEAD:main
+          fi
+
+      - name: Trigger GitHub Pages refresh with the published OTA versionCode
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/deploy-pages.yml/dispatches" \
+            -d '{"ref":"main"}'
