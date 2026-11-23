@@ -4,6 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  DALILNA_NETLIFY_BADGE_GUARD = "true"
 
 [[headers]]
   for = "/*"
