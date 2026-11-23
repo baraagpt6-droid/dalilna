@@ -4425,7 +4425,7 @@ const LIVE_LOCAL_KEY="dalilna_live_places_159";
 let liveGeoapifyEnabled=false;
 let liveDirectoryTimer=null,liveDirectoryController=null,liveDirectorySeq=0,liveDirectoryCache=new Map(),liveDirectoryLast={query:"",category:"all"};
 let liveDirectoryCategoryOverride="",liveDirectoryListingTypeOverride="";
-let liveDirectoryLastData=null,liveDirectoryVisibleCount=30,liveDirectoryCoords=null,liveSharedMatches=[],liveSharedCache=new Map();
+let liveDirectoryLastData=null,liveDirectoryVisibleCount=50,liveDirectoryCoords=null,liveSharedMatches=[],liveSharedCache=new Map();
 function liveLocalData(){
  try{const value=JSON.parse(localStorage.getItem(LIVE_LOCAL_KEY)||"{}");const data=value&&typeof value==="object"&&!Array.isArray(value)?value:{};return {ratings:data.ratings&&typeof data.ratings==="object"&&!Array.isArray(data.ratings)?data.ratings:{},photos:data.photos&&typeof data.photos==="object"&&!Array.isArray(data.photos)?data.photos:{}};}catch(_){return {ratings:{},photos:{}};}
 }
@@ -4879,9 +4879,10 @@ async function runLiveDirectorySearch(force){
  const seq=++liveDirectorySeq;
  if(!box||!status)return;
  const context=regionCurrentContext(),query=String(liveDirectoryLast.query||"").trim(),category=liveDirectoryLast.category||"all",productType=liveDirectoryLast.productType||"",listingType=liveDirectoryLast.listingType||"";
- liveDirectoryVisibleCount=30;liveDirectoryLastData=null;
+ liveDirectoryVisibleCount=50;liveDirectoryLastData=null;
  const controller=new AbortController();liveDirectoryController=controller;
  const requestTimer=setTimeout(()=>controller.abort(),30000);
+ const finishRequest=()=>{clearTimeout(requestTimer);if(liveDirectoryController===controller)liveDirectoryController=null;};
  const classifiedOnly=["jobs","souq","land","marketplace"].includes(category);
  const responseData={items:[],manifest:liveCatalogManifest,snapshotDate:liveCatalogManifest?.snapshotDate,regionName:context.gov||"اليمن",context,classifiedOnly,category,liveFallbackCount:0,pending:true};
  const isCurrent=()=>seq===liveDirectorySeq&&!controller.signal.aborted&&$("#liveDirectoryItems");
@@ -4896,18 +4897,20 @@ async function runLiveDirectorySearch(force){
  if(!context.gov&&!query&&category==="all"&&!Object.values(flt).some(Boolean)){
   try{
    const manifest=await loadRegionalCatalogManifest(false);
-   if(!isCurrent())return;
+   if(!isCurrent()){finishRequest();return;}
    liveDirectoryLocationPrompt(manifest);
    responseData.pending=false;
    loadLiveMarketplaceMatches(query,category,productType,controller.signal,force,listingType).then(()=>{
     if(isCurrent())liveDirectoryLocationPrompt(manifest);
    });
+   finishRequest();
    return;
   }catch(error){
    if(isCurrent()){
     status.textContent=curLang==="en"?"The regional catalogue manifest is temporarily unavailable.":"تعذر تحميل فهرس المحافظات حالياً.";
     box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">'+esc(error?.message||"")+'</div>';
    }
+   finishRequest();
    return;
   }
  }
@@ -4958,8 +4961,7 @@ async function runLiveDirectorySearch(force){
    renderLiveDirectoryResponse(responseData);
   }
  }finally{
-  clearTimeout(requestTimer);
-  if(liveDirectoryController===controller)liveDirectoryController=null;
+  finishRequest();
  }
 }
 async function loadLiveCommonsPhotos(button){
