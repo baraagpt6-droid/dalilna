@@ -86,6 +86,7 @@ async function schema(db){
      reviewed_at TIMESTAMPTZ
    )`);
    await db.query("CREATE INDEX IF NOT EXISTS marketplace_ugc_reports_pending_idx ON marketplace_ugc_reports(status,created_at DESC)");
+   await db.query("ALTER TABLE marketplace_ugc_reports ADD COLUMN IF NOT EXISTS candidate_id UUID");
    await db.query(`CREATE TABLE IF NOT EXISTS marketplace_seller_blocks (
      phone_hash CHAR(64) PRIMARY KEY,
      reason VARCHAR(500) NOT NULL DEFAULT '',
@@ -112,13 +113,16 @@ function sellerFingerprint(value){
 async function submitUgcReport(req,res){
  if(!limit(req,"ugc-report",5,60*60*1000))return send(res,429,{ok:false,error:"وصلت إلى الحد المؤقت للبلاغات. حاول لاحقاً."});
  const b=await body(req,10000),reportType=clean(b.reportType,16),reason=clean(b.reason,32);
- const allowedTypes=new Set(["listing","seller","assistant"]);
+ const allowedTypes=new Set(["listing","seller","candidate","assistant"]);
  const allowedReasons=new Set(["spam","scam","prohibited","harassment","fake","unsafe","other"]);
  if(!allowedTypes.has(reportType)||!allowedReasons.has(reason))throw error("INVALID_REPORT","نوع البلاغ أو سببه غير صالح.");
  const details=clean(b.details,800),snapshot=clean(b.contentSnapshot,4000);
- let listingId=clean(b.listingId,50);
+ let listingId=clean(b.listingId,50),candidateId=clean(b.candidateId,50);
  if(reportType==="assistant"){
   if(!snapshot)throw error("REPORT_CONTENT_REQUIRED","أرسل جزءاً من الرد حتى تتم مراجعته.");
+  listingId="";candidateId="";
+ }else if(reportType==="candidate"){
+  if(!/^[0-9a-f-]{36}$/i.test(candidateId))throw error("INVALID_CANDIDATE_ID","معرّف ملف الباحث عن عمل غير صالح.");
   listingId="";
  }else{
   if(!/^[0-9a-f-]{36}$/i.test(listingId))throw error("INVALID_LISTING_ID","معرّف الإعلان غير صالح.");
@@ -127,13 +131,17 @@ async function submitUgcReport(req,res){
  let listing=null;
  if(listingId){
   const found=await db.query("SELECT id,title,phone,status FROM marketplace_listings WHERE id=$1",[listingId]);
-  if(!found.rows.length)throw error("LISTING_NOT_FOUND","الإعلان غير موجود.",404);
+  if(!found.rows.length||found.rows[0].status!=="approved")throw error("LISTING_NOT_FOUND","الإعلان غير متاح للبلاغ.",404);
   listing=found.rows[0];
+ }
+ if(candidateId){
+  const found=await db.query("SELECT id,full_name,phone FROM job_seekers WHERE id=$1 AND status='approved' AND consent_public=TRUE AND expires_at>NOW()",[candidateId]);
+  if(!found.rows.length)throw error("CANDIDATE_NOT_FOUND","ملف الباحث عن عمل غير متاح للبلاغ.",404);
  }
  const id=crypto.randomUUID();
  await db.query(
-  "INSERT INTO marketplace_ugc_reports(id,report_type,listing_id,reason,details,content_snapshot) VALUES($1,$2,$3,$4,$5,$6)",
-  [id,reportType,listingId||null,reason,details,snapshot]
+  "INSERT INTO marketplace_ugc_reports(id,report_type,listing_id,candidate_id,reason,details,content_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7)",
+  [id,reportType,listingId||null,candidateId||null,reason,details,snapshot]
  );
  console.info(JSON.stringify({event:"marketplace.ugc_report.created",id,reportType,reason}));
  return send(res,201,{ok:true,id,status:"pending",message:"تم إرسال البلاغ إلى فريق المراجعة."});
@@ -143,12 +151,13 @@ async function adminUgcReports(req,res){
  if(!limit(req,"admin-reports",60,60000))return send(res,429,{ok:false,error:"طلبات كثيرة. حاول لاحقاً."});
  const db=getPool();await schema(db);
  const r=await db.query(
-  "SELECT r.id,r.report_type,r.listing_id,r.reason,r.details,r.content_snapshot,r.status,r.created_at,l.title AS listing_title,l.phone AS seller_phone,l.seller_name,l.status AS listing_status FROM marketplace_ugc_reports r LEFT JOIN marketplace_listings l ON l.id=r.listing_id WHERE r.status='pending' ORDER BY r.created_at ASC LIMIT 100"
+  "SELECT r.id,r.report_type,r.listing_id,r.candidate_id,r.reason,r.details,r.content_snapshot,r.status,r.created_at,l.title AS listing_title,l.phone AS seller_phone,l.seller_name,l.status AS listing_status,c.full_name AS candidate_name,c.phone AS candidate_phone,c.status AS candidate_status FROM marketplace_ugc_reports r LEFT JOIN marketplace_listings l ON l.id=r.listing_id LEFT JOIN job_seekers c ON c.id=r.candidate_id WHERE r.status='pending' ORDER BY r.created_at ASC LIMIT 100"
  );
  return send(res,200,{ok:true,items:r.rows.map(row=>({
-  id:row.id,reportType:row.report_type,listingId:row.listing_id,reason:row.reason,details:row.details,
+  id:row.id,reportType:row.report_type,listingId:row.listing_id,candidateId:row.candidate_id,reason:row.reason,details:row.details,
   contentSnapshot:row.content_snapshot,status:row.status,createdAt:row.created_at,
-  listingTitle:row.listing_title,sellerPhone:row.seller_phone,sellerName:row.seller_name,listingStatus:row.listing_status
+  listingTitle:row.listing_title,sellerPhone:row.seller_phone,sellerName:row.seller_name,listingStatus:row.listing_status,
+  candidateName:row.candidate_name,candidatePhone:row.candidate_phone,candidateStatus:row.candidate_status
  })),count:r.rows.length});
 }
 async function reviewUgcReport(req,res){
@@ -159,28 +168,38 @@ async function reviewUgcReport(req,res){
  try{
   await client.query("BEGIN");
   const found=await client.query(
-   "SELECT r.id,r.report_type,r.listing_id,l.phone AS seller_phone FROM marketplace_ugc_reports r LEFT JOIN marketplace_listings l ON l.id=r.listing_id WHERE r.id=$1 AND r.status='pending' FOR UPDATE OF r",
+   "SELECT r.id,r.report_type,r.listing_id,r.candidate_id,l.phone AS seller_phone,c.phone AS candidate_phone FROM marketplace_ugc_reports r LEFT JOIN marketplace_listings l ON l.id=r.listing_id LEFT JOIN job_seekers c ON c.id=r.candidate_id WHERE r.id=$1 AND r.status='pending' FOR UPDATE OF r",
    [id]
   );
   if(!found.rows.length){await client.query("ROLLBACK");return send(res,404,{ok:false,error:"البلاغ غير موجود أو تمت مراجعته."});}
   const report=found.rows[0];
   let result="dismissed";
   if(decision==="remove_listing"){
-   if(!report.listing_id)throw error("LISTING_REQUIRED","هذا البلاغ لا يرتبط بإعلان.");
-   await client.query("UPDATE marketplace_listings SET status='archived',updated_at=NOW() WHERE id=$1",[report.listing_id]);
+   if(report.listing_id){
+    await client.query("UPDATE marketplace_listings SET status='archived',updated_at=NOW() WHERE id=$1",[report.listing_id]);
+   }else if(report.candidate_id){
+    await client.query("UPDATE job_seekers SET status='rejected',consent_public=FALSE WHERE id=$1",[report.candidate_id]);
+   }else throw error("CONTENT_REQUIRED","هذا البلاغ لا يرتبط بمحتوى قابل للإزالة.");
    result="actioned";
   }else if(decision==="block_seller"){
-   if(report.report_type!=="seller"||!report.seller_phone)throw error("SELLER_REQUIRED","هذا البلاغ لا يحتوي على بيانات بائع قابلة للحظر.");
-   const digits=normalizedSellerPhone(report.seller_phone);
-   if(!digits)throw error("SELLER_PHONE_INVALID","رقم البائع غير صالح للحظر.");
-   const fingerprint=sellerFingerprint(report.seller_phone);
+   if(!["seller","candidate"].includes(report.report_type))throw error("SELLER_REQUIRED","هذا البلاغ لا يحتوي على بيانات مستخدم قابلة للحظر.");
+   const targetPhone=report.seller_phone||report.candidate_phone;
+   if(!targetPhone)throw error("SELLER_REQUIRED","رقم صاحب الملف غير متاح للحظر.");
+   const digits=normalizedSellerPhone(targetPhone);
+   if(!digits)throw error("SELLER_PHONE_INVALID","رقم صاحب الملف غير صالح للحظر.");
+   const fingerprint=sellerFingerprint(targetPhone);
    await client.query(
     "INSERT INTO marketplace_seller_blocks(phone_hash,reason,source_listing_id) VALUES($1,$2,$3) ON CONFLICT(phone_hash) DO UPDATE SET reason=EXCLUDED.reason,source_listing_id=EXCLUDED.source_listing_id",
-    [fingerprint,note||"تم الحظر بعد مراجعة بلاغ مستخدم",report.listing_id]
+    [fingerprint,note||"تم الحظر بعد مراجعة بلاغ مستخدم",report.listing_id||null]
    );
+   const phoneVariants=[digits,"967"+digits,"00967"+digits,"0"+digits];
    await client.query(
     "UPDATE marketplace_listings SET status='archived',updated_at=NOW() WHERE regexp_replace(phone,'[^0-9]','','g')=ANY($1::text[])",
-    [[digits,"967"+digits,"00967"+digits,"0"+digits]]
+    [phoneVariants]
+   );
+   await client.query(
+    "UPDATE job_seekers SET status='rejected',consent_public=FALSE WHERE regexp_replace(phone,'[^0-9]','','g')=ANY($1::text[])",
+    [phoneVariants]
    );
    result="actioned";
   }else if(decision==="resolve"){
@@ -307,4 +326,11 @@ async function handleMarketplaceRequest(req,res,url){
  }catch(e){send(res,e.statusCode||500,{ok:false,code:e.code||"INTERNAL_ERROR",error:clean(e.message,240)||"تعذر تنفيذ الطلب."});}
  return true;
 }
-module.exports={handleMarketplaceRequest,validate,CATEGORIES,PRODUCT_TYPES,GOVERNORATES,PRODUCT_GROUPS};
+async function isSellerPhoneBlocked(phone){
+ const fingerprint=sellerFingerprint(phone);
+ if(!fingerprint)return false;
+ const db=getPool();await schema(db);
+ const result=await db.query("SELECT 1 FROM marketplace_seller_blocks WHERE phone_hash=$1",[fingerprint]);
+ return result.rows.length>0;
+}
+module.exports={handleMarketplaceRequest,validate,CATEGORIES,PRODUCT_TYPES,GOVERNORATES,PRODUCT_GROUPS,isSellerPhoneBlocked};
