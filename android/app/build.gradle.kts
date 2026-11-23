@@ -18,6 +18,13 @@ val testAdMobAppId = adsValue("DALILNA_TEST_ADMOB_APP_ID", "test.appId", "ca-app
 val testBannerAdUnitId = adsValue("DALILNA_TEST_ADMOB_BANNER_AD_UNIT_ID", "test.bannerAdUnitId", "ca-app-pub-3940256099942544/9214589741")
 val releaseAdMobAppId = adsValue("ADMOB_APP_ID", "release.appId")
 val releaseBannerAdUnitId = adsValue("ADMOB_BANNER_AD_UNIT_ID", "release.bannerAdUnitId")
+val persistentKeystorePath = System.getenv("ANDROID_KEYSTORE_FILE")
+val persistentSigningConfigured = listOf(
+    persistentKeystorePath,
+    System.getenv("ANDROID_KEYSTORE_PASSWORD"),
+    System.getenv("ANDROID_KEY_ALIAS"),
+    System.getenv("ANDROID_KEY_PASSWORD")
+).all { !it.isNullOrBlank() }
 
 android {
     namespace = "ye.dalilna.app"
@@ -26,8 +33,7 @@ android {
     val workflowRunNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 0
     val workflowAttempt = System.getenv("GITHUB_RUN_ATTEMPT")?.toIntOrNull() ?: 1
     val versionCodeForBuild = 3_100_000 + (workflowRunNumber * 100) + workflowAttempt
-    val persistentKeystorePath = System.getenv("ANDROID_KEYSTORE_FILE")
-    val persistentSigning = if (!persistentKeystorePath.isNullOrBlank()) {
+    val persistentSigning = if (persistentSigningConfigured) {
         signingConfigs.create("persistent") {
             storeFile = file(persistentKeystorePath)
             storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
@@ -86,7 +92,7 @@ tasks.configureEach {
             check(releaseBannerAdUnitId.matches(Regex("ca-app-pub-[0-9]{16}/[0-9]{10}"))) {
                 "A real ADMOB_BANNER_AD_UNIT_ID must be configured before building a release."
             }
-            check(persistentSigning != null) {
+            check(persistentSigningConfigured) {
                 "The persistent Android release keystore is required for a signed release."
             }
         }
