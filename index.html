@@ -5422,8 +5422,7 @@ async function requestCloudAssistant(q,context){
      referenceSource:typeof data.source==="string"?data.source:""
     };
    }
-   const canFallback=response.status===404||response.status===502||
-    (response.status===503&&data.error==="cloud_ai_not_configured");
+   const canFallback=response.status===404||response.status===502||response.status===503;
    if(!canFallback)break;
   }catch(error){
    // Try the alternate server-side endpoint before using the local catalogue.
@@ -5510,6 +5509,13 @@ async function askAssistant(q,onImmediate){
    });
    onImmediate({answer:curLang==="en"?"I found "+fastCards.length+" matches in the nationwide Yemen directory.":"وجدت "+fastCards.length+" نتائج في فهرس اليمن الوطني.",
     mode:"directory",dataSources:["فهرس اليمن الوطني"],assistantCards:fastCards});
+  }
+  if(!localHits.length&&typeof onImmediate==="function"){
+   onImmediate({
+    answer:curLang==="en"?"No immediate match is stored on this device. Checking connected directory sources...":"لم أعثر على تطابق فوري في بيانات هذا الجهاز. أتحقق من مصادر الدليل المتصلة الآن...",
+    mode:navigator.onLine?"local-fallback":"offline",
+    dataSources:["فهرس اليمن الوطني"]
+   });
   }
   let places=[],approved=[];
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),22000);
@@ -5623,12 +5629,14 @@ async function askAssistant(q,onImmediate){
   }
  }
  if(asksHubaishSubdistricts(q))return {answer:hubaishSubdistrictAnswer(),mode:"reference",referenceSource:"مرجع دليلنا الإداري",dataSources:["مرجع دليلنا الإداري"]};
+ const localFallback={answer:answerAI(q),mode:navigator.onLine?"local-fallback":"offline",dataSources:["بيانات محفوظة على هذا الجهاز"]};
+ if(typeof onImmediate==="function")onImmediate(localFallback);
  if(S.aiCloudConsent===true&&navigator.onLine){
   const cloud=await requestCloudAssistant(q,buildAssistantContext(q));
   if(cloud)return {...cloud,dataSources:["سياق بيانات دليلنا المرفق بالسؤال"]};
-  return {answer:answerAI(q),mode:"local-fallback",dataSources:["بيانات محفوظة على هذا الجهاز"]};
+  return localFallback;
  }
- return {answer:answerAI(q),mode:navigator.onLine?"local":"offline",dataSources:["بيانات محفوظة على هذا الجهاز"]};
+ return {...localFallback,mode:navigator.onLine?"local":"offline"};
 }
 
 function isolateMixedDirectionText(value){
