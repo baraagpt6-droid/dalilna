@@ -2,7 +2,7 @@
 const test=require("node:test");
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {inferCategoryFromQuery,buildOverpassQuery,classifyCategory,searchPlaces,overpassAttemptTimeout}=require("../server");
+const {inferCategoryFromQuery,buildOverpassQuery,classifyCategory,searchPlaces,overpassAttemptTimeout,createIntervalGate}=require("../server");
 
 
 test("global fallback searches Nominatim then the Yemen-bounded Overpass mirror",async()=>{
