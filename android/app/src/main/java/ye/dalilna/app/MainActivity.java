@@ -19,11 +19,10 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -54,11 +53,14 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private WebViewAssetLoader assetLoader;
-    private LinearLayout adsFooter;
+    private FrameLayout rootLayout;
     private AdView adView;
-    private TextView privacyOptionsButton;
     private ConsentInformation consentInformation;
     private boolean adsInitialized = false;
+    private boolean adsSdkReady = false;
+    private boolean adRequested = false;
+    private boolean adLoaded = false;
+    private boolean homeAdSlotVisible = false;
     private android.content.SharedPreferences preferences;
     private boolean fallbackLoading = false;
     private PermissionRequest pendingWebPermission;
@@ -109,6 +111,17 @@ public class MainActivity extends Activity {
                 webView.loadUrl(REMOTE_APP_URL);
             });
         }
+
+        @JavascriptInterface
+        public void updateHomeBannerPosition(double leftCss, double topCss, double widthCss,
+                                             double heightCss, boolean visible) {
+            runOnUiThread(() -> positionHomeBanner(leftCss, topCss, widthCss, heightCss, visible));
+        }
+
+        @JavascriptInterface
+        public void showPrivacyOptionsForm() {
+            runOnUiThread(MainActivity.this::openPrivacyOptionsForm);
+        }
     }
 
     @SuppressLint({"SetJavaScriptEnabled", "JavascriptInterface"})
@@ -124,45 +137,23 @@ public class MainActivity extends Activity {
                 .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
                 .build();
 
-        LinearLayout rootLayout = new LinearLayout(this);
-        rootLayout.setOrientation(LinearLayout.VERTICAL);
+        rootLayout = new FrameLayout(this);
         rootLayout.setBackgroundColor(android.graphics.Color.rgb(24, 20, 17));
 
         webView = new WebView(this);
-        rootLayout.addView(webView, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f));
+        rootLayout.addView(webView, new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 
-        adsFooter = new LinearLayout(this);
-        adsFooter.setOrientation(LinearLayout.VERTICAL);
-        adsFooter.setGravity(Gravity.CENTER_HORIZONTAL);
-        adsFooter.setPadding(dp(6), dp(2), dp(6), dp(2));
-        adsFooter.setBackgroundColor(android.graphics.Color.rgb(24, 20, 17));
-        adsFooter.setVisibility(View.GONE);
-
-        privacyOptionsButton = new TextView(this);
-        privacyOptionsButton.setText("خصوصية الإعلانات");
-        privacyOptionsButton.setTextColor(android.graphics.Color.rgb(242, 198, 109));
-        privacyOptionsButton.setTextSize(11);
-        privacyOptionsButton.setGravity(Gravity.END);
-        privacyOptionsButton.setPadding(dp(8), dp(8), dp(8), dp(8));
-        privacyOptionsButton.setVisibility(View.GONE);
-        privacyOptionsButton.setOnClickListener(v -> {
-            if (consentInformation == null) return;
-            UserMessagingPlatform.showPrivacyOptionsForm(this, formError -> {
-                updatePrivacyOptionsVisibility();
-                requestAdsIfAllowed();
-            });
-        });
-
+        // The native banner overlays the 320x50 slot at the end of the home view.
+        // It remains hidden until that slot enters the visible viewport.
         adView = new AdView(this);
         adView.setAdUnitId(BuildConfig.ADMOB_BANNER_AD_UNIT_ID);
+        adView.setAdSize(AdSize.BANNER);
+        adView.setBackgroundColor(android.graphics.Color.rgb(24, 20, 17));
         adView.setVisibility(View.GONE);
-        adsFooter.addView(adView, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        adsFooter.addView(privacyOptionsButton, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        rootLayout.addView(adsFooter, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        FrameLayout.LayoutParams adParams = new FrameLayout.LayoutParams(
+                dp(320), dp(50), Gravity.TOP | Gravity.LEFT);
+        rootLayout.addView(adView, adParams);
         setContentView(rootLayout);
         beginAdsConsentFlow();
         WebSettings settings = webView.getSettings();
@@ -243,6 +234,7 @@ public class MainActivity extends Activity {
                 } else if (url.startsWith("https://appassets.androidplatform.net/assets/")) {
                     fallbackLoading = false;
                 }
+                updatePrivacyOptionsVisibility();
             }
         });
 
@@ -338,39 +330,89 @@ public class MainActivity extends Activity {
     }
 
     private void updatePrivacyOptionsVisibility() {
-        if (privacyOptionsButton == null || adsFooter == null) return;
+        if (webView == null) return;
         boolean required = consentInformation != null
                 && consentInformation.getPrivacyOptionsRequirementStatus()
                 == ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED;
-        privacyOptionsButton.setVisibility(required ? View.VISIBLE : View.GONE);
-        boolean bannerVisible = adView != null && adView.getVisibility() == View.VISIBLE;
-        adsFooter.setVisibility(required || bannerVisible ? View.VISIBLE : View.GONE);
+        String script = "(function(){var button=document.getElementById('privacyOptionsEntry');"
+                + "if(button)button.hidden=" + (!required) + ";})();";
+        webView.evaluateJavascript(script, null);
+    }
+
+    private void openPrivacyOptionsForm() {
+        if (consentInformation == null) return;
+        UserMessagingPlatform.showPrivacyOptionsForm(this, formError -> {
+            updatePrivacyOptionsVisibility();
+            requestAdsIfAllowed();
+        });
     }
 
     private void requestAdsIfAllowed() {
         if (adsInitialized || consentInformation == null || !consentInformation.canRequestAds()) return;
         adsInitialized = true;
-        MobileAds.initialize(this, initializationStatus -> runOnUiThread(this::loadBannerAd));
+        MobileAds.initialize(this, initializationStatus -> runOnUiThread(() -> {
+            adsSdkReady = true;
+            if (homeAdSlotVisible) loadBannerAd();
+        }));
+    }
+
+    private void positionHomeBanner(double leftCss, double topCss, double widthCss,
+                                    double heightCss, boolean visible) {
+        if (rootLayout == null || webView == null || adView == null) return;
+        homeAdSlotVisible = visible && heightCss >= 50.0;
+        if (!homeAdSlotVisible || !adsSdkReady || isFinishing()) {
+            adView.setVisibility(View.GONE);
+            return;
+        }
+
+        float density = getResources().getDisplayMetrics().density;
+        int bannerWidth = dp(320);
+        int bannerHeight = dp(50);
+        int slotLeft = webView.getLeft() + Math.round((float) leftCss * density);
+        int slotWidth = Math.round((float) widthCss * density);
+        int left = slotLeft + Math.max(0, (slotWidth - bannerWidth) / 2);
+        int top = webView.getTop() + Math.round((float) topCss * density);
+        int rootWidth = rootLayout.getWidth();
+        if (rootWidth > 0) left = Math.max(0, Math.min(left, Math.max(0, rootWidth - bannerWidth)));
+        else left = Math.max(0, left);
+
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) adView.getLayoutParams();
+        params.width = bannerWidth;
+        params.height = bannerHeight;
+        params.leftMargin = left;
+        params.topMargin = top;
+        params.gravity = Gravity.TOP | Gravity.LEFT;
+        adView.setLayoutParams(params);
+
+        if (adLoaded) {
+            adView.setVisibility(View.VISIBLE);
+        } else if (!adRequested) {
+            loadBannerAd();
+        }
     }
 
     private void loadBannerAd() {
-        if (adView == null || isFinishing()) return;
-        int widthDp = (int) (getResources().getDisplayMetrics().widthPixels
-                / getResources().getDisplayMetrics().density);
-        AdSize adaptiveSize = AdSize.getLargeAnchoredAdaptiveBannerAdSize(this, widthDp);
-        if (adaptiveSize == null) return;
-        adView.setAdSize(adaptiveSize);
+        if (adView == null || isFinishing() || !adsSdkReady || !homeAdSlotVisible || adRequested) return;
+        adRequested = true;
+        adView.setAdSize(AdSize.BANNER);
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-                adView.setVisibility(View.VISIBLE);
-                updatePrivacyOptionsVisibility();
+                runOnUiThread(() -> {
+                    if (adView == null) return;
+                    adLoaded = true;
+                    adView.setVisibility(homeAdSlotVisible ? View.VISIBLE : View.GONE);
+                });
             }
 
             @Override
             public void onAdFailedToLoad(LoadAdError error) {
-                adView.setVisibility(View.GONE);
-                updatePrivacyOptionsVisibility();
+                runOnUiThread(() -> {
+                    if (adView == null) return;
+                    adLoaded = false;
+                    adRequested = false;
+                    adView.setVisibility(View.GONE);
+                });
             }
         });
         adView.loadAd(new AdRequest.Builder().build());

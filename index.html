@@ -344,20 +344,18 @@ body.light .bottom{background:rgba(255,255,255,.97)}
 .sheet-opt .cnt{font-size:12px;color:var(--mute);background:var(--chip);padding:2px 8px;border-radius:999px}
 .sheet-opt[aria-selected=true] .cnt{background:var(--acc);color:#181411;font-weight:700}
 
-/* Compact Floating AI Assistant Shortcut */
-.ai-fab{
-  position:fixed;inset-inline-end:14px;bottom:76px;z-index:25;
-  background:linear-gradient(135deg,var(--acc),var(--turq));color:#fff;
-  width:46px;height:46px;min-height:46px;border-radius:50%;padding:0;
-  display:grid;place-items:center;
-  box-shadow:0 8px 20px -4px rgba(56,182,166,.55);border:1px solid #ffffff33;
+.home-ad-slot{
+  display:none;width:min(320px,100%);height:50px;min-height:50px;
+  margin:18px auto 14px;border-radius:8px;overflow:hidden;
+  background:#181411;box-sizing:border-box;
 }
-.ai-fab svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.ai-fab span{display:none}
-@media(min-width:900px){
-  .ai-fab{width:auto;height:44px;border-radius:999px;padding:0 16px;display:flex;align-items:center;gap:8px;bottom:24px}
-  .ai-fab span{display:inline;font-weight:700;font-size:13.5px}
+.home-ad-slot.native-ad-slot-active{display:block}
+.privacy-options-entry{
+  display:inline-flex;align-items:center;justify-content:center;min-height:28px;
+  margin:7px auto 0;padding:4px 10px;border:0;border-radius:8px;
+  background:transparent;color:var(--mute);font-size:11px;
 }
+.privacy-options-entry[hidden]{display:none}
 
 /* Dialogs */
 dialog{border:1px solid var(--line);border-radius:20px;padding:0;width:min(560px,94vw);max-height:90vh;background:var(--card);color:var(--ink);box-shadow:0 24px 60px rgba(0,0,0,.75)}
@@ -949,6 +947,7 @@ img[alt*="Powered by Netlify" i],img[alt*="Made with Netlify" i] {
       <h2 class="emergency-heading"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 19 6v5c0 4.7-2.7 7.9-7 10.2C7.7 18.9 5 15.7 5 11V6l7-3.2Z"/><path d="M12 7.3v5.2M12 16.1h.01"/></svg><span>أرقام الطوارئ والخدمات</span></h2>
       <div class="links" id="emList"></div>
     </section>
+    <div id="homeAdSlot" class="home-ad-slot" aria-label="إعلان"></div>
   </section>
 
   <!-- Category View -->
@@ -1047,14 +1046,9 @@ img[alt*="Powered by Netlify" i],img[alt*="Made with Netlify" i] {
 </main>
 <footer class="live-directory-attribution" style="padding:18px 16px 92px;text-align:center;line-height:1.8;font-size:10px;color:var(--mute)">
  <div id="liveDirectoryAttribution">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · <a href="https://docs.overturemaps.org/guides/places/" target="_blank" rel="noopener noreferrer">Overture Maps</a> · <a href="https://docs.foursquare.com/data-products/docs/fsq-places-open-source" target="_blank" rel="noopener noreferrer">Foursquare Open Places</a> · Open Admin Data Yemen · geoBoundaries.</div>
+ <button type="button" class="privacy-options-entry" id="privacyOptionsEntry" hidden>خيارات خصوصية الإعلانات</button>
  <div><a href="./privacy.html">سياسة الخصوصية</a> · <a href="./terms.html">شروط الاستخدام</a></div>
 </footer>
-
-<!-- Compact Floating AI Shortcut -->
-<button type="button" class="ai-fab" id="aiFab" title="اسأل الذكاء الاصطناعي">
-  <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/></svg>
-  <span>المساعد الذكي</span>
-</button>
 
 <!-- Bottom Navigation Bar -->
 <nav class="bottom" aria-label="التنقل الرئيسي">
@@ -2605,7 +2599,7 @@ const I18N={
     recentTitle:"شاهدته مؤخراً",clear:"مسح",latestTitle:"الخدمات والمحلات",searchRes:"نتائج البحث",moreBtn:"عرض المزيد",
     fxTitle:"أسعار الصرف والذهب اليوم",fxUpdated:"محدّث",fxCalcTitle:"حاسبة تحويل العملات الفورية",fxAmtPh:"المبلغ",
     emTitle:"أرقام الطوارئ والخدمات",
-    navHome:"الرئيسية",navSouq:"السوق",navAdd:"أضف",navJobs:"الوظائف",navAi:"المساعد",aiFab:"المساعد الذكي",
+    navHome:"الرئيسية",navSouq:"السوق",navAdd:"أضف",navJobs:"الوظائف",navAi:"المساعد",
     back:"رجوع",jobsTitle:"بوابة الوظائف",addJob:"+ أضف وظيفة",
     souqTitle:"سوق البيع والشراء",sqSell:"+ اعرض غرضاً للبيع",sqBuy:"+ اطلب غرضاً",
     aiTitle:"مساعد دليلنا الذكي",aiSub:"مساعد محلي يبحث في بيانات الدليل، ويمكن ربطه بخدمة سحابية عند إعداد الخادم.",
@@ -2628,7 +2622,7 @@ const I18N={
     recentTitle:"Recently Viewed",clear:"Clear",latestTitle:"Services & Shops",searchRes:"Search Results",moreBtn:"Load More",
     fxTitle:"Exchange & Gold Rates Today",fxUpdated:"Updated",fxCalcTitle:"Instant Currency Converter",fxAmtPh:"Amount",
     emTitle:"Emergency & Important Numbers",
-    navHome:"Home",navSouq:"Souq",navAdd:"Add",navJobs:"Jobs",navAi:"Assistant",aiFab:"AI Assistant",
+    navHome:"Home",navSouq:"Souq",navAdd:"Add",navJobs:"Jobs",navAi:"Assistant",
     back:"Back",jobsTitle:"Jobs Portal",addJob:"+ Post a Job",
     souqTitle:"Buy & Sell Marketplace",sqSell:"+ Sell an Item",sqBuy:"+ Request an Item",
     aiTitle:"Dalilna Smart AI Assistant",aiSub:"Offline-first assistant searches the local directory. Cloud AI requires server configuration.",
@@ -3213,7 +3207,7 @@ function applyLang(){
   if($("#aiCloudConsent"))$("#aiCloudConsent").checked=S.aiCloudConsent===true;
   $("#botq").placeholder=T("aiPh");
   $("#botf button").textContent=T("send");
-  $("#aiFab span").textContent=T("aiFab");
+
   const navMap={home:"navHome",souq:"navSouq",jobs:"navJobs",fb:"navAi"};
   document.querySelectorAll(".bottom [data-go]").forEach(b=>{const span=b.querySelector("span");if(span)span.textContent=T(navMap[b.dataset.go]);});
   $("#navAdd span").textContent=T("navAdd");
@@ -3456,6 +3450,34 @@ $("#toggleAdmPass").addEventListener("click",()=>{
   $("#toggleAdmPass").textContent=input.type==="password"?"إظهار":"إخفاء";
 });
 
+/* Home-only native AdMob banner positioning. The slot stays hidden outside Android WebView. */
+let homeAdPositionFrame=0;
+function scheduleHomeAdPosition(){
+  if(homeAdPositionFrame)return;
+  homeAdPositionFrame=window.requestAnimationFrame(()=>{
+    homeAdPositionFrame=0;
+    const slot=$("#homeAdSlot"),home=$("#vHome"),nativeBridge=window.DalilnaNative;
+    if(!slot||!home||!nativeBridge||typeof nativeBridge.updateHomeBannerPosition!=="function")return;
+    slot.classList.add("native-ad-slot-active");
+    const rect=slot.getBoundingClientRect();
+    const visible=!home.hidden&&!slot.hidden&&rect.width>0&&rect.height>=50
+      &&rect.top>=0&&rect.bottom<=window.innerHeight;
+    nativeBridge.updateHomeBannerPosition(rect.left,rect.top,rect.width,rect.height,visible);
+  });
+}
+window.addEventListener("scroll",scheduleHomeAdPosition,{passive:true});
+document.addEventListener("scroll",scheduleHomeAdPosition,{passive:true,capture:true});
+window.addEventListener("resize",scheduleHomeAdPosition,{passive:true});
+const homeAdObservedView=$("#vHome");
+if(homeAdObservedView){
+  const homeAdMutationObserver=new MutationObserver(scheduleHomeAdPosition);
+  homeAdMutationObserver.observe(homeAdObservedView,{attributes:true,childList:true,subtree:true,attributeFilter:["hidden","style","class"]});
+  if(typeof ResizeObserver!=="undefined"){
+    const homeAdResizeObserver=new ResizeObserver(scheduleHomeAdPosition);
+    homeAdResizeObserver.observe(homeAdObservedView);
+  }
+}
+
 /* Navigation & Smart Shortcuts */
 let view="home",curCat="",scope=S.defaultGovernorate?"gov:"+S.defaultGovernorate:"",catGroup="all",catExpanded=false,homeLim=24;
 let flt={open:false,ver:false,fav:false,near:false,open24:false};
@@ -3470,19 +3492,20 @@ function go(v,c){
   $("#vJobs").hidden=v!=="jobs";
   $("#vSouq").hidden=v!=="souq";
   $("#vFb").hidden=v!=="fb";
-  $("#aiFab").hidden=(v==="fb");
+
   document.querySelectorAll(".bottom [data-go]").forEach(b=>{
     b.toggleAttribute("aria-current",b.dataset.go===(v==="cat"?"home":v));
   });
   if(v==="cat"){$("#catT").textContent=catLabel(c);$("#area").value="";$("#areaLbl").textContent=curLang==="en"?"All Areas":"كل المناطق";}
   window.scrollTo(0,0);
   render();
+  scheduleHomeAdPosition();
 }
 $("#logoHome").addEventListener("click",e=>{
   e.preventDefault();
   $("#q").value="";liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";flt={open:false,ver:false,fav:false,near:false,open24:false};scope="";buildScopeSelector();go("home");
 });
-$("#aiFab").addEventListener("click",()=>go("fb"));
+
 document.querySelector(".bottom").addEventListener("click",e=>{
   const b=e.target.closest("[data-go]");if(b)go(b.dataset.go);
 });
@@ -3490,6 +3513,10 @@ document.addEventListener("click",e=>{
   const g=e.target.closest("[data-go]");if(g&&!g.closest(".bottom"))go(g.dataset.go);
 });
 $("#back").addEventListener("click",()=>go("home"));
+$("#privacyOptionsEntry").addEventListener("click",()=>{
+  const nativeBridge=window.DalilnaNative;
+  if(nativeBridge&&typeof nativeBridge.showPrivacyOptionsForm==="function")nativeBridge.showPrivacyOptionsForm();
+});
 
 /* Yemen administrative hierarchy: 22 governorates, 335 districts, and Hubaish 22 local sub-districts. */
 function normalizePlace(s){
