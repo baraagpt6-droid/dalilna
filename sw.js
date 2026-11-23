@@ -1,6 +1,6 @@
 const CACHE_PREFIX = "dalilna-pwa-";
 const CACHE_NAME = CACHE_PREFIX + "v2.9.0";
-const APP_SHELL = ["./", "./index.html", "./manifest.json", "./regions-yemen.js", "./regions-profiles.js", "./regional-catalog-runtime.js", "./marketplace-client.js", "./features-2.1.js?v=2.8.0", "./features-2.1.css?v=2.8.0", "./jobs-feed.json", "./version.json", "./market_items.json", "./regional-catalog/manifest.json?v=2.8.0", "./privacy.html", "./terms.html", "./icons/icon.svg"];
+const APP_SHELL = ["./", "./index.html", "./manifest.json", "./app-native-bridge.js?v=2.9.0", "./app-update.js?v=2.9.0", "./market-price-guide.js?v=2.9.0", "./market-price-guide.css?v=2.9.0", "./market_prices_yemen.json", "./regions-yemen.js", "./regions-profiles.js", "./regional-catalog-runtime.js", "./marketplace-client.js", "./features-2.1.js?v=2.9.0", "./features-2.1.css?v=2.9.0", "./jobs-feed.json", "./version.json", "./market_items.json", "./regional-catalog/manifest.json?v=2.9.0", "./privacy.html", "./terms.html", "./icons/icon.svg", "./market-price-images/solar-panel.svg", "./market-price-images/solar-inverter.svg", "./market-price-images/solar-battery.svg", "./market-price-images/gel-battery.svg", "./market-price-images/phone-samsung.svg", "./market-price-images/phone-xiaomi.svg", "./market-price-images/phone-iphone.svg", "./market-price-images/vehicle-hilux.svg", "./market-price-images/property-apartment.svg", "./market-price-images/property-shop.svg"];
 
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
