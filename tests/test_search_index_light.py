@@ -9,7 +9,7 @@ from pathlib import Path
 import unittest
 
 class SearchIndexGeneratorTests(unittest.TestCase):
-    def test_builds_a_compressed_yemen_index_with_eight_fields_per_record(self):
+    def test_builds_a_compressed_yemen_index_with_nine_fields_per_record(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             catalog = root / "catalog"
@@ -58,11 +58,14 @@ class SearchIndexGeneratorTests(unittest.TestCase):
             self.assertEqual(envelope["encoding"], "gzip+base64")
             payload = json.loads(gzip.decompress(base64.b64decode(envelope["data"])).decode("utf-8"))
             self.assertEqual(len(payload["i"]), 23)
-            self.assertTrue(all(len(row) == 8 for row in payload["i"]))
+            self.assertTrue(all(len(row) == 9 for row in payload["i"]))
+            self.assertEqual(envelope["schemaVersion"], 2)
+            self.assertEqual(payload["v"], 2)
+            self.assertTrue(all(row[8] == "24/7" for row in payload["i"]))
             self.assertEqual(len({row[0] for row in payload["i"]}), 23)
             self.assertEqual(payload["c"], ["craft"])
             self.assertEqual(payload["g"], [row["name"] for row in governors])
-            self.assertNotIn("openingHours", payload)
+            self.assertNotIn("address", payload)
             self.assertNotIn("address", payload)
 
 if __name__ == "__main__":
