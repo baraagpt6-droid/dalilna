@@ -8,7 +8,7 @@
     "queries": {
       "الزوقري": {
         "matches": 2,
-        "searchMs": 1.915,
+        "searchMs": 2.284,
         "within50ms": true,
         "examples": [
           {
@@ -27,7 +27,7 @@
       },
       "الناهي": {
         "matches": 1,
-        "searchMs": 1.7,
+        "searchMs": 1.823,
         "within50ms": true,
         "examples": [
           {
@@ -40,7 +40,7 @@
       },
       "صيدلية": {
         "matches": 697,
-        "searchMs": 1.721,
+        "searchMs": 1.741,
         "within50ms": true,
         "examples": [
           {
@@ -91,11 +91,11 @@
     }
   },
   "live": {
-    "generatedAt": "2026-11-23T08:16:01.140Z",
+    "generatedAt": "2026-11-23T08:25:34.144Z",
     "health": {
       "ok": true,
       "version": "3.0.0",
-      "ms": 238,
+      "ms": 294,
       "status": 200
     },
     "marketplace": {
@@ -106,21 +106,21 @@
       "withImages": 0,
       "withPrice": 0,
       "withContact": 0,
-      "ms": 370,
+      "ms": 204,
       "status": 200,
       "error": ""
     },
     "pharmacyLiveSearch": {
       "ok": true,
       "status": 200,
-      "ms": 1058,
-      "respondedWithin3Seconds": true,
-      "successfulWithin3Seconds": true,
-      "results": 10,
-      "localCatalogFallback": false,
-      "resultSource": "OpenStreetMap",
-      "resultsWithHours": 4,
-      "twentyFourHourResults": 1,
+      "ms": 5685,
+      "respondedWithin3Seconds": false,
+      "successfulWithin3Seconds": false,
+      "results": 7,
+      "localCatalogFallback": true,
+      "resultSource": "فهرس اليمن الوطني المحلي (OSM + Overture)",
+      "resultsWithHours": 2,
+      "twentyFourHourResults": 0,
       "error": ""
     },
     "assistant": {
@@ -129,8 +129,8 @@
       "model": "gemini-3.8-flash",
       "ok": true,
       "status": 200,
-      "ms": 16279,
-      "answerChars": 984,
+      "ms": 16136,
+      "answerChars": 553,
       "mode": "gemini",
       "error": "",
       "providerStatus": 0,
@@ -140,7 +140,7 @@
       "ok": true,
       "version": "3.0.0",
       "signingMode": "persistent",
-      "androidVersionCode": 3022501,
+      "androidVersionCode": 3022601,
       "v3SavedHub": true,
       "v3FlyAnimation": true,
       "v3JobSearch": true,
@@ -161,9 +161,9 @@
       "productWhatsApp": true,
       "androidRelease": {
         "ok": true,
-        "versionCode": 3022501,
-        "size": 7517799,
-        "digest": "sha256:bbf1795e5cd33ef147f121327ad711ce2b0890b5b318cdad146864f73e627824",
+        "versionCode": 3022601,
+        "size": 7517795,
+        "digest": "sha256:59e9dd6f0c995547fb030b9257d83b90d1c94a4d5daaf23b5a15edaffe2dbb01",
         "downloadUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.0.0/app-debug.apk"
       }
     }
