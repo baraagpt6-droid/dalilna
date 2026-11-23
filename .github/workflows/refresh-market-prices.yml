@@ -28,6 +28,8 @@ jobs:
           node-version: "20"
       - name: Refresh allowlisted public price sources
         run: node scripts/refresh-market-prices.cjs
+      - name: Sync refreshed reference prices into Android offline assets
+        run: cp market_prices_yemen.json android/app/src/main/assets/market_prices_yemen.json
       - name: Validate data and commit the weekly price snapshot
         run: |
           node --test tests/market-price-guide.test.cjs
@@ -37,7 +39,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add market_prices_yemen.json
+          git add market_prices_yemen.json android/app/src/main/assets/market_prices_yemen.json
           git commit -m "data(prices): refresh Yemen market reference prices"
           git push origin HEAD:main
           gh api --method POST "/repos/$GITHUB_REPOSITORY/actions/workflows/deploy-pages.yml/dispatches" -f ref=main
