@@ -1,8 +1,7 @@
 "use strict";
 (() => {
   const DATA_URL="./market_prices_yemen.json";
-  const API=window.DALILNA_API_BASE||"https://dalilna-live.onrender.com";
-  const $=id=>document.getElementById(id);
+    const $=id=>document.getElementById(id);
   let data=null,activeCategory="all";
   const number=value=>Number(value).toLocaleString("en-US",{maximumFractionDigits:0});
   const money=value=>number(Math.round(value));
@@ -24,12 +23,12 @@
   function converted(item,zone){
     const p=item.pricing||{},usd=baseUsd(item);
     if(!usd)return null;
-    const yer=usd*mid(zone,"USD"),sar=usd*Number(data.exchangeRates.sarPerUsd||3.75);
-    const sourceZone=p.sourceZone||"sanaa",native=String(p.currency||"YER")==="YER"&&zone===sourceZone;
+    const yer=usd*mid(zone,"USD"),sar=usd*mid(zone,"SAR");
+    const sourceZone=p.sourceZone||"sanaa";
     const low=Number(p.min||p.amount||0),high=Number(p.max||p.amount||0);
-    const factor= p.currency==="USD" ? mid(zone,"USD")/Number(data.exchangeRates[sourceZone]?.usd?.mid||mid(zone,"USD")) : mid(zone,"USD")/Number(data.exchangeRates[sourceZone]?.usd?.mid||mid(zone,"USD"));
+    const factor=mid(zone,"USD")/Number(data.exchangeRates[sourceZone]?.usd?.mid||mid(zone,"USD"));
     const sourceRange=high>low;
-    return {yer:yer,sar:sar,usd:usd,native:native,low:sourceRange?low*factor:null,high:sourceRange?high*factor:null};
+    return {yer:yer,sar:sar,usd:usd,low:sourceRange?low*factor:null,high:sourceRange?high*factor:null};
   }
   function formatPrice(item,zone){
     const v=converted(item,zone);
@@ -69,7 +68,8 @@
     }
     body.appendChild(priceGrid);
     const usd=baseUsd(item);
-    const foreign=html("p","price-guide-foreign",usd?("$"+money(usd)+" USD · "+money(usd*data.exchangeRates.sarPerUsd)+" SAR · "+item.priceUnit):"القيمة بالعملات الأخرى غير متاحة");
+    const sanaa=converted(item,"sanaa"),aden=converted(item,"aden");
+    const foreign=html("p","price-guide-foreign",usd?("صنعاء: "+money(sanaa.usd)+" USD · "+money(sanaa.sar)+" SAR | عدن: "+money(aden.usd)+" USD · "+money(aden.sar)+" SAR"):"لا يتوفر متوسط موثق بالدولار أو الريال السعودي");
     body.appendChild(foreign);
     body.appendChild(html("p","price-guide-date","آخر مراجعة للمصدر: "+(item.sourceCheckedAt||data.lastChecked)));
     const actions=html("div","price-guide-actions");
@@ -117,7 +117,7 @@
     title.appendChild(html("h3","","أسعار السوق اليمنية الاسترشادية"));
     title.appendChild(html("p","price-guide-note",data.priceDisclosure));
     head.appendChild(title);
-    head.appendChild(html("span","price-guide-live-tag","مراجعة أسبوعية"));
+    head.appendChild(html("span","price-guide-live-tag","فحص أسعار الهواتف والطاقة أسبوعياً"));
     panel.appendChild(head);
     const rates=data.exchangeRates;
     panel.appendChild(html("p","price-guide-fx-note","مرجع الصرف "+data.exchangeRates.asOf+" · صنعاء USD "+rates.sanaa.usd.mid+" / SAR "+rates.sanaa.sar.mid+" · عدن USD "+rates.aden.usd.mid+" / SAR "+rates.aden.sar.mid));
@@ -134,7 +134,7 @@
     const items=data.items.filter(item=>activeCategory==="all"||item.category===activeCategory);
     items.forEach(item=>grid.appendChild(renderCard(item)));
     panel.appendChild(grid);
-    const footer=html("p","price-guide-footer","بيانات العروض التي يضيفها البائعون تظهر أولاً في القسم أعلاه. أسعار هذا القسم للمقارنة والبحث فقط.");
+    const footer=html("p","price-guide-footer","الأسعار المنشورة من متاجر أو أدلة أسعار تُعرض كمراجع. أسعار السيارات والعقارات المعروضة عينات إعلانات أفراد وليست متوسطات سوق. لا يوجد سعر موثق لبعض الأصناف حتى الآن. إعلانات البائعين الحقيقية تظهر أولاً في الأعلى.");
     panel.appendChild(footer);
     mount.replaceChildren(panel);
   }
