@@ -59,8 +59,9 @@ jobs:
       ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
       ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
       ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-      ADMOB_APP_ID: ${{ secrets.ADMOB_APP_ID }}
-      ADMOB_BANNER_AD_UNIT_ID: ${{ secrets.ADMOB_BANNER_AD_UNIT_ID }}
+      # AdMob identifiers are public app configuration values, not credentials.
+      ADMOB_APP_ID: ca-app-pub-7435095568109483~2348618581
+      ADMOB_BANNER_AD_UNIT_ID: ca-app-pub-7435095568109483/4522200831
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -171,20 +172,30 @@ jobs:
       - name: Build APK
         run: gradle --no-daemon :android:app:assembleDebug
 
-      - name: Check production AdMob identifiers
+      - name: Normalize and validate production AdMob identifiers
         id: release-ads
         shell: bash
         run: |
           set -euo pipefail
-          app_id="${ADMOB_APP_ID:-}"
-          banner_id="${ADMOB_BANNER_AD_UNIT_ID:-}"
-          if [[ "$app_id" =~ ^ca-app-pub-[0-9]{16}~[0-9]{10}$ && "$banner_id" =~ ^ca-app-pub-[0-9]{16}/[0-9]{10}$ ]]; then
-            echo "ready=true" >> "$GITHUB_OUTPUT"
-            echo "Production AdMob identifiers are configured."
-          else
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::AAB release is blocked until real ADMOB_APP_ID and ADMOB_BANNER_AD_UNIT_ID repository secrets are configured. Debug APK keeps Google's test IDs."
+          app_id="$(printf '%s' "${ADMOB_APP_ID:-}" | tr -d '[:space:]')"
+          banner_id="$(printf '%s' "${ADMOB_BANNER_AD_UNIT_ID:-}" | tr -d '[:space:]')"
+
+          if [[ ! "$app_id" =~ ^ca-app-pub-[0-9]{16}~[0-9]{10}$ ]]; then
+            echo "::error::ADMOB_APP_ID is not a valid production AdMob App ID."
+            exit 1
           fi
+          if [[ ! "$banner_id" =~ ^ca-app-pub-[0-9]{16}/[0-9]{10}$ ]]; then
+            echo "::error::ADMOB_BANNER_AD_UNIT_ID is not a valid production banner Ad Unit ID."
+            exit 1
+          fi
+
+          # Export the whitespace-normalized values for Gradle's Release build.
+          {
+            printf 'ADMOB_APP_ID=%s\n' "$app_id"
+            printf 'ADMOB_BANNER_AD_UNIT_ID=%s\n' "$banner_id"
+          } >> "$GITHUB_ENV"
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+          echo "Production AdMob identifiers validated and normalized."
 
       - name: Build signed Release AAB
         if: steps.release-ads.outputs.ready == 'true'
