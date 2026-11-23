@@ -30,6 +30,7 @@ on:
       - 'DATA_SOURCES.md'
       - 'icons/**'
       - 'android/**'
+      - '!android/app/src/main/assets/version.json'
       - 'tests/**'
       - 'api/**'
       - 'db/**'
@@ -49,8 +50,6 @@ concurrency:
 
 jobs:
   build-debug-apk:
-    # The OTA metadata commit must not start another APK build.
-    if: ${{ github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'chore(release): publish v3.0.0 Android update code') }}
     runs-on: ubuntu-latest
     env:
       ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
