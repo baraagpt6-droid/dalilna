@@ -8,6 +8,8 @@ on:
       - "server.js"
       - "api/assistant.js"
       - "index.html"
+      - "version.json"
+      - "regional-catalog/**"
   workflow_dispatch:
 
 permissions:
