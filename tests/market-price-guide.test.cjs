@@ -32,7 +32,7 @@ test("weekly price guide does not invent missing prices",()=>{
  assert.equal(guide.parseProductMoney(text),75000);
  assert.equal(guide.parseProductMoney("غير متوفر"),null);
 });
-test("v2.9 offline assistant reads active jobs locally and returns interactive source links",()=>{
+test("v3.0 offline assistant reads active jobs locally and returns interactive source links",()=>{
  const app=fs.readFileSync(path.join(root,"index.html"),"utf8");
  const feed=JSON.parse(fs.readFileSync(path.join(root,"jobs-feed.json"),"utf8"));
  assert.match(app,/fetch\("\.\/jobs-feed\.json"/);
@@ -43,7 +43,7 @@ test("v2.9 offline assistant reads active jobs locally and returns interactive s
  assert.ok(feed.items.some(item=>item.countryCode==="YE"));
  assert.ok(feed.items.some(item=>item.countryCode==="SA"));
 });
-test("v2.9 app, PWA manifest, Android Gradle and metadata versions match",()=>{
+test("v3.0 app, PWA manifest, Android Gradle and metadata versions match",()=>{
  const app=fs.readFileSync(path.join(root,"index.html"),"utf8");
  const version=JSON.parse(fs.readFileSync(path.join(root,"version.json"),"utf8"));
  const manifest=JSON.parse(fs.readFileSync(path.join(root,"manifest.json"),"utf8"));
@@ -51,9 +51,9 @@ test("v2.9 app, PWA manifest, Android Gradle and metadata versions match",()=>{
  const gradle=fs.readFileSync(path.join(root,"android/app/build.gradle.kts"),"utf8");
  assert.match(app,/meta name="app-version" content="2\.9\.0"/);
  assert.match(app,/const APP_VERSION="2\.9\.0"/);
- assert.equal(version.version,"2.9.0");
- assert.equal(manifest.version,"2.9.0");
- assert.equal(pkg.version,"2.9.0");
+ assert.equal(version.version,"3.0.0");
+ assert.equal(manifest.version,"3.0.0");
+ assert.equal(pkg.version,"3.0.0");
  assert.match(gradle,/versionName = "2\.9\.0"/);
 });
 test("OTA worker activates immediately and removes only older Dalilna caches",()=>{

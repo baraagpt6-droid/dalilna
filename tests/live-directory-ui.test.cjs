@@ -166,7 +166,7 @@ test("manual price refresh is removed while automatic rate polling remains",()=>
 });
 
 test("full-Yemen light index loads at startup and drives local directory search",()=>{
- for(const token of ["search_index_light.json?v=2.9.0","async function ensureLightSearchIndex()","function searchLightIndex(index,query,context,category,productType)","void ensureLightSearchIndex()","mode:\"full-yemen-light\""])assert.ok(html.includes(token),token);
+ for(const token of ["search_index_light.json?v=3.0.0","async function ensureLightSearchIndex()","function searchLightIndex(index,query,context,category,productType)","void ensureLightSearchIndex()","mode:\"full-yemen-light\""])assert.ok(html.includes(token),token);
  assert.ok(html.includes("searchRegionalCatalogProgressive"));
  assert.ok(html.includes("responseData.suggestions=result.suggestions"));
  assert.ok(html.includes("data-search-suggestion"));
