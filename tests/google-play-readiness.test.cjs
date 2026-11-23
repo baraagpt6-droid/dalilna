@@ -14,7 +14,7 @@ test("Android production configuration targets API 36 and enables safe R8 shrink
   assert.match(gradle, /isMinifyEnabled\s*=\s*true/);
   assert.match(gradle, /proguard-rules\.pro/);
   assert.match(gradle, /play-services-ads:25\.5\.0/);
-  assert.match(gradle, /user-messaging-platform:/);
+  assert.match(gradle, /user-messaging-platform:4\.0\.0/);
 });
 
 test("Android manifest uses configurable AdMob app ID and explicit permissions", () => {
