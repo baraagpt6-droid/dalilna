@@ -44,6 +44,7 @@ def main() -> None:
     district_index: dict[tuple[str, int], int] = {}
     rows: list[list[object]] = []
     seen_ids: set[str] = set()
+    identity_occurrences: dict[str, int] = {}
 
     for region in governorates:
         gov = str(region.get("name") or "").strip()
@@ -106,7 +107,8 @@ def main() -> None:
                 source_id, row_gov, row_district, name, category,
                 str(lat), str(lng), phone
             ])
-            duplicate_number = sum(1 for row in rows if row[0] == compact_id(identity))
+            duplicate_number = identity_occurrences.get(identity, 0)
+            identity_occurrences[identity] = duplicate_number + 1
             compact = compact_id(identity if duplicate_number == 0 else identity + "|duplicate:" + str(duplicate_number))
             while compact in seen_ids:
                 duplicate_number += 1
