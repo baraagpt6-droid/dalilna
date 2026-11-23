@@ -2,7 +2,7 @@
 const test=require("node:test");
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {inferCategoryFromQuery,buildOverpassQuery,classifyCategory,searchPlaces}=require("../server");
+const {inferCategoryFromQuery,buildOverpassQuery,classifyCategory,searchPlaces,overpassAttemptTimeout}=require("../server");
 
 
 test("global fallback searches Nominatim then the Yemen-bounded Overpass mirror",async()=>{
@@ -80,7 +80,8 @@ test("Yemen Nominatim and Overpass requests stay within one bounded three-second
  const source=fs.readFileSync(require.resolve("../server"),"utf8");
  assert.ok(source.includes("timeoutMs:3000"));
  assert.ok(source.includes("const deadlineAt=Date.now()+2800"));
- assert.ok(source.includes("Math.min(provider.timeoutMs,Math.max(450,remaining-1100),remaining)"));
+ assert.ok(source.includes("overpassAttemptTimeout(remaining,providerIndex,endpoints.length)"));
+ assert.equal((source.match(/overpassAttemptTimeout\\(remaining,providerIndex,endpoints.length\\)/g)||[]).length,2);
  assert.ok(source.includes("Math.min(1250,remaining)"));
  assert.ok(source.includes("[out:json][timeout:3]"));
 });
@@ -89,4 +90,12 @@ test("countrywide live search starts Nominatim and Overpass without serial waiti
  assert.ok(source.includes("const outcomes=await Promise.allSettled(["));
  assert.ok(source.includes("searchYemenNominatim(query,category,deadlineAt)"));
  assert.ok(source.includes("searchYemenOverpass(query,category,deadlineAt)"));
+});
+
+test("Overpass retry budgets preserve time for all three provider starts",()=>{
+ assert.equal(overpassAttemptTimeout(2800,0,3),1100);
+ assert.equal(overpassAttemptTimeout(1700,1,3),600);
+ assert.equal(overpassAttemptTimeout(600,2,3),600);
+ assert.equal(overpassAttemptTimeout(500,2,3),500);
+ assert.equal(overpassAttemptTimeout(300,1,3),0);
 });
