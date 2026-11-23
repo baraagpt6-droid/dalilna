@@ -22,7 +22,8 @@ function parseMoneyNear(text,terms){
  const normalized=String(text||"");
  let at=-1;
  for(const term of terms||[]){at=normalized.toLowerCase().indexOf(term.toLowerCase());if(at>=0)break;}
- const fragment=at>=0?normalized.slice(at,Math.min(normalized.length,at+1800)):normalized.slice(0,1800);
+ if(at<0)return null;
+ const fragment=normalized.slice(at,Math.min(normalized.length,at+1800));
  const matches=[...fragment.matchAll(/(?:([0-9]{1,3}(?:,[0-9]{3})+|[0-9]{5,})\s*(?:﷼|ريال(?:\s*يمني)?))/g)];
  if(matches.length){
   const n=Number(matches[matches.length-1][1].replace(/,/g,""));
