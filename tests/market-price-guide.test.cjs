@@ -63,3 +63,18 @@ test("OTA worker activates immediately and removes only older Dalilna caches",()
  assert.match(sw,/key\.startsWith\(CACHE_PREFIX\)/);
  assert.match(sw,/market-price-images\/laptop\.svg/);
 });
+
+test("Android WebView package includes the same OTA and price assets as the PWA",()=>{
+ const files=["index.html","app-native-bridge.js","app-update.js","market-price-guide.js","market-price-guide.css","market_prices_yemen.json","sw.js","marketplace-client.js","manifest.json","version.json","jobs-feed.json"];
+ for(const file of files){
+  const source=fs.readFileSync(path.join(root,file));
+  const bundled=fs.readFileSync(path.join(root,"android/app/src/main/assets",file));
+  assert.deepEqual(bundled,source,file+" Android asset is stale");
+ }
+ const guide=JSON.parse(fs.readFileSync(path.join(root,"market_prices_yemen.json"),"utf8"));
+ for(const item of guide.items){
+  const source=fs.readFileSync(path.join(root,"market-price-images",item.image));
+  const bundled=fs.readFileSync(path.join(root,"android/app/src/main/assets/market-price-images",item.image));
+  assert.deepEqual(bundled,source,item.image+" Android illustration is stale");
+ }
+});
