@@ -112,7 +112,7 @@ jobs:
           try {
             async function getPublic(path) {
               let lastError;
-              for(let attempt=0;attempt<12;attempt++) {
+              for(let attempt=0;attempt<30;attempt++) {
                 try {
                   const response=await fetch("https://baraagpt6-droid.github.io/dalilna/"+path,{cache:"no-store"});
                   if(response.ok)return response;
@@ -146,7 +146,12 @@ jobs:
               craftCategory:pageText.includes("craft:")||pageText.includes('"craft"'),
               directoryWhatsApp:pageText.includes("مشاركة واتساب"),
               productWhatsApp:clientText.includes("مشاركة واتساب")};
+            const releaseResponse=await fetch("https://api.github.com/repos/baraagpt6-droid/dalilna/releases/tags/v3.0.0",{headers:{Accept:"application/vnd.github+json"}});
+            if(!releaseResponse.ok)throw new Error("GitHub v3.0.0 release could not be loaded.");
+            const release=await releaseResponse.json(),apk=release.assets?.find(asset=>asset.name==="app-debug.apk");
+            if(!apk||apk.browser_download_url!==version.androidReleaseUrl||!String(release.body||"").includes("Signing mode: persistent"))throw new Error("The persistent v3.0.0 Android APK release asset is missing or its URL does not match version.json.");
             if(publicSite.version!=="3.0.0"||publicSite.signingMode!=="persistent")throw new Error("Published Pages version or Android signing mode is not v3.0.0 persistent.");
+            publicSite.androidRelease={ok:true,versionCode:version.androidVersionCode,size:apk.size,digest:apk.digest,downloadUrl:apk.browser_download_url};
             if(!publicSite.v3SavedHub||!publicSite.v3FlyAnimation||!publicSite.v3JobSearch||!publicSite.v3Styles)throw new Error("A v3 saved hub, animation, job filter or stylesheet asset is missing.");
             if(!health.ok||health.body?.version!=="3.0.0")throw new Error("Render health did not confirm Dalilna v3.0.0 after waiting.");
           } catch(error) {publicSite={ok:false,error:String(error?.message||error)};}
@@ -219,8 +224,8 @@ jobs:
               # Concurrent audit runs may update the same report. Keep this
               # run's completed report while retaining every other main change.
               if [ "$(git diff --name-only --diff-filter=U)" = "audit/last-e2e-v3.0.0.json" ]; then
-                git checkout --theirs audit/last-e2e-v2.8.0.json
-                git add audit/last-e2e-v2.8.0.json
+                git checkout --theirs audit/last-e2e-v3.0.0.json
+                git add audit/last-e2e-v3.0.0.json
                 GIT_EDITOR=true git rebase --continue
               else
                 git rebase --abort
