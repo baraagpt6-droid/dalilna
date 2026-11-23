@@ -6,6 +6,12 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'app-native-bridge.js'
+      - 'app-update.js'
+      - 'market-price-guide.js'
+      - 'market-price-guide.css'
+      - 'market_prices_yemen.json'
+      - 'market-price-images/**'
       - 'regional-catalog-runtime.js'
       - 'marketplace-client.js'
       - 'features-2.1.js'
@@ -49,9 +55,10 @@ jobs:
         run: python3 scripts/build_search_index_light.py --catalog-dir regional-catalog --output regional-catalog/search_index_light.json
       - name: Prepare website files
         run: |
-          mkdir -p _site/icons _site/regional-catalog
-          cp index.html regional-catalog-runtime.js marketplace-client.js market_items.json features-2.1.js features-2.1.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html _site/
+          mkdir -p _site/icons _site/regional-catalog _site/market-price-images
+          cp index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json regional-catalog-runtime.js marketplace-client.js market_items.json features-2.1.js features-2.1.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html _site/
           cp icons/* _site/icons/
+          cp market-price-images/*.svg _site/market-price-images/
           cp regional-catalog/*.json _site/regional-catalog/
           touch _site/.nojekyll
           test -s _site/index.html
@@ -90,32 +97,46 @@ jobs:
             }
             throw lastError;
           }
-          const [page, css, js, swResponse, manifestResponse, versionResponse, marketItemsResponse, lightIndexResponse] = await Promise.all([
+          const [page, css, js, swResponse, manifestResponse, versionResponse, marketItemsResponse, lightIndexResponse, priceGuideResponse, priceGuideJsResponse, nativeBridgeResponse, appUpdateResponse] = await Promise.all([
             get("./index.html"),
-            get("./features-2.1.css?v=2.8.0"),
-            get("./features-2.1.js?v=2.8.0"),
+            get("./features-2.1.css?v=2.9.0"),
+            get("./features-2.1.js?v=2.9.0"),
             get("./sw.js"),
-            get("./regional-catalog/manifest.json?v=2.8.0"),
+            get("./regional-catalog/manifest.json?v=2.9.0"),
             get("./version.json"),
             get("./market_items.json"),
-            get("./regional-catalog/search_index_light.json?v=2.8.0")
+            get("./regional-catalog/search_index_light.json?v=2.9.0"),
+            get("./market_prices_yemen.json"),
+            get("./market-price-guide.js?v=2.9.0"),
+            get("./app-native-bridge.js?v=2.9.0"),
+            get("./app-update.js?v=2.9.0")
           ]);
           const html = await page.text();
           const manifest = await manifestResponse.json();
           const version = await versionResponse.json();
           const marketItems = await marketItemsResponse.json();
+          const priceGuide = await priceGuideResponse.json();
+          const priceGuideJs = await priceGuideJsResponse.text();
+          const nativeBridge = await nativeBridgeResponse.text();
+          const appUpdate = await appUpdateResponse.text();
           const lightBytes = await lightIndexResponse.arrayBuffer();
           const lightEnvelope = JSON.parse(new TextDecoder().decode(lightBytes));
           if (lightBytes.byteLength > 1500000 || lightEnvelope.encoding !== "gzip+base64") throw new Error("Full-Yemen light search index is too large or uncompressed.");
           const { gunzipSync } = await import("node:zlib");
           const lightPayload = JSON.parse(gunzipSync(Buffer.from(lightEnvelope.data, "base64")).toString("utf8"));
           if (!Array.isArray(lightPayload.i) || lightPayload.i.length !== manifest.totalCount || lightEnvelope.recordCount !== manifest.totalCount) throw new Error("Full-Yemen search index is incomplete.");
-          if (version.webVersion !== "2.8.0" || version.versionCode !== 280) throw new Error("version.json does not describe Dalilna 2.8.0.");
-          if (!html.includes('content="2.8.0"')) throw new Error("Deployed homepage version is not 2.8.0.");
+          if (version.webVersion !== "2.9.0" || version.version !== "2.9.0" || Number(version.versionCode) < 2900000 || Number(version.androidVersionCode) < 2900000) throw new Error("version.json does not describe Dalilna 2.8.0.");
+          if (!html.includes('content="2.9.0"')) throw new Error("Deployed homepage version is not 2.8.0.");
           if (!(await css.text()).includes(".quick-jump-btn")) throw new Error("Quick-access stylesheet was not published.");
           if (!(await js.text()).includes("officialApplicationUrl")) throw new Error("Feature JavaScript is incomplete.");
-          if (!(await swResponse.text()).includes("v2.8.0")) throw new Error("Updated service worker was not published.");
+          if (!(await swResponse.text()).includes("v2.9.0")) throw new Error("Updated service worker was not published.");
           if (!Array.isArray(marketItems.items) || marketItems.items.length !== 0 || !marketItems.groupNames || marketItems.groupNames.length !== 7) throw new Error("Marketplace must not publish synthetic reference listings.");
+          if (!Array.isArray(priceGuide.items) || priceGuide.items.length < 10 || priceGuide.updateFrequencyDays !== 7) throw new Error("Weekly reference price guide is incomplete.");
+          for (const item of priceGuide.items) {
+            if (!item.sourceUrl?.startsWith("https://") || !item.image || !(await fetch(new URL("./market-price-images/" + item.image, base))).ok) throw new Error("A market-price card is missing its source or local illustration: " + item.id);
+          }
+          if (!priceGuideJs.includes("DalilnaPriceGuide") || !nativeBridge.includes("switchToRemote") || !appUpdate.includes("androidVersionCode")) throw new Error("Price guide, OTA bridge or update notice was not published.");
+          if (!version.androidReleaseUrl?.startsWith("https://")) throw new Error("Android release URL is missing from version.json.");
           if (!Array.isArray(manifest.governorates) || manifest.governorates.length !== 22) throw new Error("Published regional manifest does not contain all 22 governorates.");
           if (!Array.isArray(manifest.districtCounts) || manifest.districtCounts.length !== 335) throw new Error("Published regional manifest does not contain all 335 districts.");
           const governorateTotal = manifest.governorates.reduce((sum, item) => sum + Number(item.count || 0), 0);
