@@ -117,6 +117,31 @@ jobs:
       - name: Build compressed full-Yemen search index
         run: python3 scripts/build_search_index_light.py --catalog-dir regional-catalog --output regional-catalog/search_index_light.json
 
+      - name: Prepare Android OTA metadata before packaging
+        env:
+          APK_SIGNING_MODE: ${{ steps.signing.outputs.mode }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require("node:fs");
+          const file = "version.json";
+          const runNumber = Number(process.env.GITHUB_RUN_NUMBER);
+          const attempt = Number(process.env.GITHUB_RUN_ATTEMPT || 1);
+          const versionCode = 3000000 + runNumber * 100 + attempt;
+          if (!Number.isSafeInteger(versionCode) || versionCode <= 0) throw new Error("Invalid Android OTA versionCode");
+          const version = JSON.parse(fs.readFileSync(file, "utf8"));
+          version.version = "3.0.0";
+          version.webVersion = "3.0.0";
+          version.androidVersion = "3.0.0";
+          version.versionCode = versionCode;
+          version.androidVersionCode = versionCode;
+          version.androidSigningMode = process.env.APK_SIGNING_MODE || "persistent";
+          version.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.0.0/app-debug.apk";
+          version.updatedAt = new Date().toISOString();
+          fs.writeFileSync(file, JSON.stringify(version, null, 2));
+          NODE
+
       - name: Sync PWA, OTA bridge, price guide and Yemen catalogue into Android assets
         shell: bash
         run: |
@@ -164,6 +189,13 @@ jobs:
           ACTUAL_VERSION_CODE="$("$BUILD_TOOLS/aapt" dump badging "$APK" | sed -n "s/.*versionCode='\([0-9]*\)'.*/\1/p" | head -n 1)"
           if [[ "$ACTUAL_VERSION_CODE" != "$VERSION_CODE" ]]; then
             echo "APK versionCode $ACTUAL_VERSION_CODE does not match expected $VERSION_CODE."
+            exit 1
+          fi
+
+          EMBEDDED_VERSION_JSON="$(unzip -p "$APK" assets/version.json)"
+          EMBEDDED_VERSION_CODE="$(printf '%s' "$EMBEDDED_VERSION_JSON" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>process.stdout.write(String(JSON.parse(s).androidVersionCode||0)))')"
+          if [[ "$EMBEDDED_VERSION_CODE" != "$VERSION_CODE" ]]; then
+            echo "Embedded OTA versionCode $EMBEDDED_VERSION_CODE does not match APK versionCode $VERSION_CODE."
             exit 1
           fi
 

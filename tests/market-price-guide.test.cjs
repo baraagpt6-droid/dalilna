@@ -44,6 +44,18 @@ test("v3.0 offline assistant reads active jobs locally and returns interactive s
  assert.ok(feed.items.some(item=>item.countryCode==="YE"));
  assert.ok(feed.items.some(item=>item.countryCode==="SA"));
 });
+test("Android APK build prepares matching OTA metadata before asset sync and verifies embedded code",()=>{
+ const workflow=fs.readFileSync(path.join(root,".github/workflows/android-apk.yml"),"utf8");
+ const prepare=workflow.indexOf("Prepare Android OTA metadata before packaging");
+ const sync=workflow.indexOf("Sync PWA, OTA bridge, price guide and Yemen catalogue into Android assets");
+ const build=workflow.indexOf("Build APK");
+ const verify=workflow.indexOf("Verify APK version and signature");
+ assert.ok(prepare>=0&&prepare<sync&&sync<build&&build<verify);
+ assert.match(workflow,/3000000 \+ runNumber \* 100 \+ attempt/);
+ assert.ok(workflow.includes('unzip -p "$APK" assets/version.json'));
+ assert.ok(workflow.includes('EMBEDDED_VERSION_CODE'));
+});
+
 test("v3.0 app, PWA manifest, Android Gradle and metadata versions match",()=>{
  const app=fs.readFileSync(path.join(root,"index.html"),"utf8");
  const version=JSON.parse(fs.readFileSync(path.join(root,"version.json"),"utf8"));
