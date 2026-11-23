@@ -55,16 +55,22 @@ test("job cards only render apply buttons from approved official provider hosts"
  assert.ok(jobs.includes('function isOfficialApplicationUrl'));
 });
 
-test("PWA version metadata and asset cache tags are 2.7.0",()=>{
- assert.ok(html.includes('content="2.7.0"'));
- assert.ok(html.includes('features-2.1.css?v=2.7.0'));
- assert.ok(html.includes('features-2.1.js?v=2.7.0'));
- assert.ok(sw.includes('CACHE_PREFIX + "v2.7.0"'));
+test("PWA version metadata and asset cache tags are 2.7.1",()=>{
+ assert.ok(html.includes('content="2.7.1"'));
+ assert.ok(html.includes('features-2.1.css?v=2.7.1'));
+ assert.ok(html.includes('features-2.1.js?v=2.7.1'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.7.1"'));
+ assert.ok(sw.includes('"./market_items.json"'));
 });
-test("main directory search loads all 22 governorate files without requiring a selected governorate",()=>{
- assert.ok(html.includes("async function loadAllRegionalCatalog(force)"));
- assert.ok(html.includes("regionalCatalogMatches(loaded.items,context,query,category,productType)"));
- assert.ok(html.includes("جارٍ تحميل سجلات المحافظات الـ22 في الخلفية"));
+test("main directory search loads regional data progressively and persists small chunks",()=>{
+ assert.ok(html.includes("async function searchRegionalCatalogProgressive"));
+ assert.ok(html.includes("async function loadRegionalCatalog(gov,force,signal)"));
+ assert.ok(html.includes("openLiveCatalogDB"));
+ assert.ok(html.includes("readRegionalCatalogCache"));
+ assert.ok(html.includes("writeRegionalCatalogCache"));
+ assert.ok(html.includes("batchSize=2"));
+ assert.ok(html.includes("regionalCatalogMatches(result.data.items,context,query,category,productType)"));
+ assert.ok(!html.includes("async function loadAllRegionalCatalog(force)"));
  assert.ok(html.includes("normalizeSearchPlace"));
 });
 test("Souq renders only shared PostgreSQL product listings and excludes map restaurants and local ratings",()=>{
@@ -100,11 +106,11 @@ test("exchange rates use fresh public quotes and do not display saved device pri
  assert.ok(!html.includes("S.fx.s.usdB"));
  assert.ok(!html.includes("S.fx.a.usdB"));
 });
-test("Android 2.7.0 updates app version and clears only the WebView HTTP cache",()=>{
+test("Android 2.7.1 updates app version and clears only the WebView HTTP cache",()=>{
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
  const activity=fs.readFileSync("android/app/src/main/java/ye/dalilna/app/MainActivity.java","utf8");
  assert.ok(gradle.includes("versionCode = 270"));
- assert.ok(gradle.includes('versionName = "2.7.0"'));
+ assert.ok(gradle.includes('versionName = "2.7.1"'));
  assert.ok(activity.includes("webView.clearCache(true)"));
  assert.ok(activity.includes("installed_version_code"));
  assert.ok(activity.includes("Keep DOM storage/localStorage intact"));
@@ -155,12 +161,12 @@ test("merchant feed SQL maps latitude, longitude and source metadata to distinct
  assert.ok(feed.includes("ON CONFLICT(client_ref) DO UPDATE"));
  assert.ok(feed.includes("completeSnapshot&&skipped===0"));
 });
-test("Android 2.7.0 cache and version metadata remain synchronized",()=>{
- assert.ok(sw.includes('CACHE_PREFIX + "v2.7.0"'));
- assert.ok(html.includes('content="2.7.0"'));
+test("Android 2.7.1 cache and version metadata remain synchronized",()=>{
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.7.1"'));
+ assert.ok(html.includes('content="2.7.1"'));
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
  assert.ok(gradle.includes("versionCode = 270"));
- assert.ok(gradle.includes('versionName = "2.7.0"'));
+ assert.ok(gradle.includes('versionName = "2.7.1"'));
 });
 
 test("daily sync workflow checks jobs, marketplace, exchange and configured merchant feeds",()=>{
@@ -188,18 +194,18 @@ test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black 
  assert.ok(html.includes(".quick-jump-icon svg{display:block!important;width:18px!important;height:18px!important"));
  assert.ok(html.includes('.quick-jump-btn{display:flex;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:6px;padding:6px 5px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--ink);font:600 11.5px \'Readex Pro\',Tahoma,sans-serif;text-decoration:none;white-space:normal;text-align:center;overflow:hidden}'));
 });
-test("regional catalogue manifest loads at first visit and does not show a local-only count as the national total",()=>{
- assert.ok(html.includes('loadRegionalCatalogManifest(false).then(()=>warmUnifiedSearchIndex(false))'));
- assert.ok(html.includes('جارٍ تجهيز فهرس البحث الموحد'));
- assert.ok(html.includes('manifest.json?v=2.7.0'));
+test("regional catalogue manifest loads at first visit without warming all governorate files",()=>{
+ assert.ok(html.includes('loadRegionalCatalogManifest(false).then(()=>checkRemoteVersionSilently())'));
+ assert.ok(html.includes('manifest.json?v=2.7.1'));
  assert.ok(html.includes('cache:"no-store"'));
  assert.ok(html.includes('districtCounts.length!==335'));
+ assert.ok(!html.includes('loadRegionalCatalogManifest(false).then(()=>warmUnifiedSearchIndex(false))'));
 });
 test("service worker refreshes regional data and critical CSS/JS from the network",()=>{
- assert.ok(sw.includes('CACHE_PREFIX + "v2.7.0"'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v2.7.1"'));
  assert.ok(sw.includes('url.pathname.includes("/regional-catalog/")'));
  assert.ok(sw.includes('fetch(request, { cache: "no-store" })'));
- assert.ok(sw.includes('features-2.1.css?v=2.7.0'));
+ assert.ok(sw.includes('features-2.1.css?v=2.7.1'));
 });
 
 test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});
@@ -237,7 +243,8 @@ test("search state observer cannot recursively observe its own hidden updates",(
 test("regional catalogue requests are cancelled before a newer search starts",()=>{
  assert.ok(html.includes("liveDirectoryController.abort()"));
  assert.ok(html.includes("controller.signal.aborted"));
- assert.ok(html.includes("},45);"));
+ assert.ok(html.includes("searchRegionalCatalogProgressive"));
+ assert.ok(html.includes("fetchCatalogAsset(encodeURIComponent(region.file)+\"?v=2.7.1\",signal)"));
 });
 
 test("Dalilna quick jump buttons use SVG icons and native anchor targets",()=>{
