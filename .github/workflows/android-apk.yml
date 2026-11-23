@@ -209,23 +209,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          node - <<'NODE'
-          const fs = require("node:fs");
-          const file = "version.json";
-          const v = JSON.parse(fs.readFileSync(file, "utf8"));
-          v.version = "3.0.0";
-          v.webVersion = "3.0.0";
-          v.androidVersion = "3.0.0";
-          const versionCode = Number(process.env.APK_VERSION_CODE);
-          if (!Number.isSafeInteger(versionCode) || versionCode <= 0) throw new Error("Invalid APK versionCode");
-          v.versionCode = versionCode;
-          v.androidVersionCode = versionCode;
-          v.androidSigningMode = process.env.APK_SIGNING_MODE;
-          v.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.0.0/app-debug.apk";
-          v.updatedAt = new Date().toISOString();
-          fs.writeFileSync(file, JSON.stringify(v, null, 2));
-          fs.copyFileSync(file, "android/app/src/main/assets/version.json");
-          NODE
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           pushed=false
@@ -241,12 +225,14 @@ jobs:
           v.version = "3.0.0";
           v.webVersion = "3.0.0";
           v.androidVersion = "3.0.0";
-          v.versionCode = Number(process.env.APK_VERSION_CODE);
-          v.androidVersionCode = Number(process.env.APK_VERSION_CODE);
+          const versionCode = Number(process.env.APK_VERSION_CODE);
+          if (!Number.isSafeInteger(versionCode) || versionCode <= 0) throw new Error("Invalid APK versionCode");
+          v.versionCode = versionCode;
+          v.androidVersionCode = versionCode;
           v.androidSigningMode = process.env.APK_SIGNING_MODE;
           v.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.0.0/app-debug.apk";
           v.updatedAt = new Date().toISOString();
-          fs.writeFileSync(file, JSON.stringify(v, null, 2) + "\\n");
+          fs.writeFileSync(file, JSON.stringify(v, null, 2));
           fs.copyFileSync(file, "android/app/src/main/assets/version.json");
           NODE
             git add version.json android/app/src/main/assets/version.json
