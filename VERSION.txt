@@ -8,4 +8,10 @@ Release date: 2026-11-23
 - Adds a one-time Android WebView storage migration from the previous Netlify origin before returning to the official origin.
 - Publishes Android version 3.1.0 with a higher versionCode and the existing persistent signing key.
 
-The Android APK is a persistent-key-signed debug/test build for direct installation. It is not a Google Play production release.
+- Targets compileSdk/targetSdk 36 and uses Android Gradle Plugin 8.9.1 with Gradle 8.11.1.
+- Adds Google Mobile Ads 25.5.0 and UMP 4.0.0 with test IDs in debug and a production-ID gate for release.
+- Adds an R8-minified, persistently signed app-release.aab release pipeline, gated on both AdMob production IDs and the four existing keystore secrets.
+- Adds bilingual privacy disclosures, a Play Data safety worksheet, and profile settings link.
+- Adds Node contract tests and a Playwright browser journey for merchant profile, local shop creation, marketplace submission and local favourites.
+
+The direct-install APK remains a debug/test build. The Google Play AAB is built only when real AdMob IDs and the persistent release keystore are available in GitHub Actions secrets.
