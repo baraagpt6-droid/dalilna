@@ -58,9 +58,11 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            manifestPlaceholders["adMobAppId"] = releaseAdMobAppId.ifBlank { testAdMobAppId }
-            buildConfigField("String", "ADMOB_APP_ID", "\"\${releaseAdMobAppId.ifBlank { testAdMobAppId }}\"")
-            buildConfigField("String", "ADMOB_BANNER_AD_UNIT_ID", "\"\${releaseBannerAdUnitId.ifBlank { testBannerAdUnitId }}\"")
+            val configuredReleaseAppId = releaseAdMobAppId.ifBlank { testAdMobAppId }
+            val configuredReleaseBannerId = releaseBannerAdUnitId.ifBlank { testBannerAdUnitId }
+            manifestPlaceholders["adMobAppId"] = configuredReleaseAppId
+            buildConfigField("String", "ADMOB_APP_ID", "\\"$configuredReleaseAppId\\"")
+            buildConfigField("String", "ADMOB_BANNER_AD_UNIT_ID", "\\"$configuredReleaseBannerId\\"")
             if (persistentSigning != null) signingConfig = persistentSigning
         }
     }
