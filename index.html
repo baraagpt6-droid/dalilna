@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="3.0.2">
+<meta name="app-version" content="3.1.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <link rel="canonical" href="https://baraagpt6-droid.github.io/dalilna/">
 <meta property="og:url" content="https://baraagpt6-droid.github.io/dalilna/">
@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="دليلنا">
 <link rel="manifest" href="./manifest.json">
-<script src="./app-native-bridge.js?v=3.0.2"></script>
+<script src="./app-native-bridge.js?v=3.1.0"></script>
 <script src="./regions-yemen.js"></script>
 <script src="./regions-profiles.js"></script>
 <script src="./regional-catalog-runtime.js"></script>
@@ -21,9 +21,9 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23181411'/%3E%3Cpath d='M18 54 A32 32 0 0 1 82 54 Z' fill='none' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M22 54 L36 54 A14 14 0 0 1 42 42 L29 33 A28 28 0 0 0 22 54 Z' fill='%233A7EC2'/%3E%3Cpath d='M29 33 L42 42 A14 14 0 0 1 50 40 L50 26 A28 28 0 0 0 29 33 Z' fill='%23E8A025'/%3E%3Cpath d='M50 26 L50 40 A14 14 0 0 1 58 42 L71 33 A28 28 0 0 0 50 26 Z' fill='%23D6455D'/%3E%3Cpath d='M71 33 L58 42 A14 14 0 0 1 64 54 L78 54 A28 28 0 0 0 71 33 Z' fill='%23E8A025'/%3E%3Ccircle cx='50' cy='54' r='11' fill='%23F2B949' stroke='%23F4EFE6' stroke-width='3'/%3E%3Crect x='18' y='54' width='64' height='24' rx='4' fill='%23181411' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M50 54 v24 M18 66 h64' stroke='%23F4EFE6' stroke-width='3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./features-2.1.css?v=3.0.2">
-<link rel="stylesheet" href="./market-price-guide.css?v=3.0.2">
-<link rel="stylesheet" href="./v3.0.0.css?v=3.0.2">
+<link rel="stylesheet" href="./features-2.1.css?v=3.1.0">
+<link rel="stylesheet" href="./market-price-guide.css?v=3.1.0">
+<link rel="stylesheet" href="./v3.0.0.css?v=3.1.0">
 <style>
 :root{
   color-scheme:dark;
@@ -589,7 +589,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 @media(max-width:420px){.shared-marketplace-controls{grid-template-columns:1fr}.shared-marketplace-controls .wide{grid-column:auto}}
 .add-lifetime-intro{display:grid;gap:7px;margin:0 0 12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card2);font-size:13px;line-height:1.7}.add-lifetime-intro ol{margin:0;padding-inline-start:22px;display:grid;gap:3px}.dalilna-map{height:230px;min-height:230px;margin:8px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card2)}[data-map-toggle]{min-height:34px;padding:7px 12px;border:1px solid var(--line);border-radius:9px;background:var(--card2);color:var(--ink);font:inherit;cursor:pointer}.region-sources summary{cursor:pointer;font-weight:700}
 
-/* 3.0.2 critical quick-access fallback. */
+/* 3.1.0 critical quick-access fallback. */
 .quick-jump-bar{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:7px;padding:9px 14px 7px;max-width:1160px;margin:0 auto}
 .quick-jump-btn{display:flex;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:6px;padding:6px 5px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--ink);font:600 11.5px 'Readex Pro',Tahoma,sans-serif;text-decoration:none;white-space:normal;text-align:center;overflow:hidden}
 .quick-jump-icon{display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:8px;background:var(--chip);color:var(--acc)}
@@ -791,6 +791,11 @@ img[alt*="Powered by Netlify" i],img[alt*="Made with Netlify" i] {
       <div class="shared-marketplace-head"><h3>مراجعة الإعلانات المشتركة</h3><button type="button" class="ghost" id="sharedAdminReviewButton">تحميل طلبات المراجعة</button></div>
       <div class="shared-marketplace-status" id="sharedAdminStatus">يتطلب ربط PostgreSQL ورمز إدارة الخادم.</div>
       <div class="shared-admin-box" id="sharedAdminQueue"></div>
+    </section>
+    <section class="panel" id="sharedAdminReportsPanel">
+      <div class="shared-marketplace-head"><h3>بلاغات المحتوى والمستخدمين</h3><button type="button" class="ghost" id="sharedAdminReportsButton">تحميل البلاغات</button></div>
+      <div class="shared-marketplace-status" id="sharedAdminReportsStatus">تظهر هنا بلاغات المستخدمين عن الإعلانات والبائعين وردود مساعد نور.</div>
+      <div class="shared-admin-box" id="sharedAdminReportsQueue"></div>
     </section>
     <div class="adm-tabs" id="admTabs">
       <button type="button" data-atab="overview" aria-selected="true">نظرة عامة</button>
@@ -1106,6 +1111,7 @@ img[alt*="Powered by Netlify" i],img[alt*="Made with Netlify" i] {
       </div>
       <div id="v3RoleSwitcher" class="v3-role-switcher" aria-label="تبديل صفة الحساب"><span>صفة الاستخدام</span><div><button type="button" data-v3-role="client">عميل</button><button type="button" data-v3-role="merchant">بائع</button><button type="button" data-v3-role="admin">مشرف</button></div></div>
       <button type="button" class="v3-profile-saved" id="profileSavedHub">♥ المفضلة والمحفوظات <span id="profileSavedHubCount">0</span></button>
+      <button type="button" class="ghost" id="profileBlockedSellersBtn">إدارة البائعين المحظورين على هذا الجهاز</button>
       <div class="profile-metrics">
         <div><b id="profileAdsCount">0</b><span id="profileAdsLabel">إعلاناتي</span></div>
         <div><b id="profileShopsCount">0</b><span id="profileShopsLabel">محلات أضفتها</span></div>
@@ -1120,6 +1126,7 @@ img[alt*="Powered by Netlify" i],img[alt*="Made with Netlify" i] {
         <button type="button" class="ghost" id="profileThemeBtn">تبديل المظهر</button>
         <button type="button" class="ghost" id="profileNotificationsBtn">إدارة الإشعارات</button>
         <button type="button" class="ghost" id="profileLogoutBtn">تسجيل الخروج</button>
+        <a class="ghost" id="profilePrivacyLink" href="./privacy.html">سياسة الخصوصية</a>
       </div>
       <p id="profileLocalNote" class="where" style="margin:8px 0 0">الملف المحلي محفوظ على هذا الجهاز، ولا يمثل حساباً مركزياً موثقاً.</p>
     </section>
@@ -1266,6 +1273,10 @@ img[alt*="Powered by Netlify" i],img[alt*="Made with Netlify" i] {
       <button type="button" class="ghost" id="imgClearBtn" style="min-height:34px;font-size:12.5px">إزالة الصورة</button>
     </div>
     <label>وصف مختصر<textarea name="desc" rows="2" maxlength="300" placeholder="الخدمات أو المنتجات المتوفرة"></textarea></label>
+    <label class="ugc-terms-consent" style="display:flex;align-items:flex-start;gap:9px;margin:10px 0;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:13px">
+      <input type="checkbox" id="ugcTermsAccept" required style="width:18px;height:18px;flex:none;margin-top:3px">
+      <span>أؤكد أن المعلومات والصورة التي أرسلها تخصني أو لدي إذن بنشرها، وأوافق على <a href="./terms.html" target="_blank" rel="noopener noreferrer">شروط الاستخدام وسياسة المحتوى</a>. أفهم أن الإعلان ينتظر مراجعة الإدارة، ويمكن للمستخدمين الإبلاغ عنه أو حظر البائع.</span>
+    </label>
     <p class="err" id="ferr"></p>
     <div class="fbtn">
       <button class="add" type="submit" id="save">حفظ ونشر</button>
@@ -2557,7 +2568,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="3.0.2";
+const APP_VERSION="3.1.0";
 const OFFICIAL_WEB_URL="https://baraagpt6-droid.github.io/dalilna/";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
@@ -3370,6 +3381,21 @@ $("#profileNotificationsBtn").addEventListener("click",async()=>{
  saveState();renderProfilePanel();
  toast(S.notificationsEnabled?(curLang==="en"?"Notifications permission enabled on this device.":"تم السماح بالإشعارات على هذا الجهاز."):(curLang==="en"?"Notifications permission was not granted.":"لم يتم منح إذن الإشعارات."));
 });
+$("#profileBlockedSellersBtn").addEventListener("click",()=>{
+ let blocked=[];
+ try{const raw=JSON.parse(localStorage.getItem("dalilna-blocked-sellers-v1")||"[]");blocked=Array.isArray(raw)?raw:[];}catch(_){}
+ if(!blocked.length){toast("لا يوجد بائعون محظورون على هذا الجهاز.");return;}
+ const selected=String(window.prompt("أدخل رقم البائع الذي تريد إلغاء حظره:\n"+blocked.join("\n"),"")||"").replace(/\\D/g,"");
+ if(!selected)return;
+ const key=phoneKey(selected);
+ const before=blocked.length;
+ blocked=blocked.filter(phone=>phoneKey(phone)!==key);
+ if(blocked.length===before){toast("لم يتم العثور على الرقم في قائمة الحظر.");return;}
+ try{localStorage.setItem("dalilna-blocked-sellers-v1",JSON.stringify(blocked));}catch(_){}
+ window.dispatchEvent(new CustomEvent("dalilna:seller-block-change",{detail:{phone:selected,saved:false}}));
+ window.DalilnaShared?.loadHome?.();window.DalilnaShared?.loadSouq?.();window.DalilnaShared?.loadJobs?.();
+ toast("تم إلغاء حظر البائع على هذا الجهاز.");
+});
 $("#profileLogoutBtn").addEventListener("click",()=>{
  S.session={role:"client",adminEmail:"",merchant:null};
  S.onboarded=false;
@@ -4179,6 +4205,7 @@ $("#f").addEventListener("submit",e=>{
   const area=String(fd.area||"").trim()||district;
   if(!name||!fd.gov||!district){$("#ferr").textContent="أدخل اسم المحل والمحافظة والمديرية.";return;}
   const isAdm=S.session.role==="admin";
+  if(!$("#ugcTermsAccept").checked){$("#ferr").textContent="وافق على شروط الاستخدام وسياسة المحتوى قبل إرسال الإعلان.";return;}
   if(!isAdm&&(isPhoneBlocked(fd.phone)||(S.session.merchant?.phone&&isPhoneBlocked(S.session.merchant.phone)))){toast("لا يمكن النشر من رقم موقوف. تواصل مع الإدارة إذا كان الإيقاف بالخطأ.");return;}
   if(editingId){const current=S.items.find(x=>x.id===editingId);if(!current||!canManage(current)){toast("ليست لديك صلاحية تعديل هذا الإدراج.");return;}}
   if(isAdm&&!hasPerm(editingId?"edit":"add")){toast("ليست لديك صلاحية تنفيذ العملية.");return;}
@@ -4197,6 +4224,7 @@ $("#f").addEventListener("submit",e=>{
     img:pendingImgData||"",
     ownerPhone:S.session.merchant?.phone||phoneKey(fd.phone)||"",
     aiChecked:true,
+    termsAccepted:$("#ugcTermsAccept").checked===true,
     verifiedAt:isAdm?Date.now():null,
     createdAt:Date.now()
   };
@@ -4657,8 +4685,8 @@ function getMarketplaceCount(category){const ctx=regionCurrentContext(),counts=c
 function getDirectoryCategoryCount(category){const stats=catalogStatsForScope(),categories=stats?.categories||{};const aliases=category==="land"?["real_estate"]:[];return Number(categories?.[category]||0)+aliases.reduce((sum,key)=>sum+Number(categories?.[key]||0),0)+getMarketplaceCount(category);}
 async function loadRegionalCatalogManifest(force){
  if(!force&&liveCatalogManifestPromise)return liveCatalogManifestPromise;
- const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=3.0.2";
- liveCatalogManifestPromise=fetchCatalogAsset("manifest.json?v=3.0.2").then(async response=>{
+ const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=3.1.0";
+ liveCatalogManifestPromise=fetchCatalogAsset("manifest.json?v=3.1.0").then(async response=>{
   if(!response.ok)throw new Error("ملف فهرس المحافظات غير متاح حالياً (HTTP "+response.status+").");
   const data=await response.json();if(!data||!Array.isArray(data.governorates))throw new Error("صيغة فهرس المحافظات غير صالحة.");
   if(Number(data.totalCount||0)<1||!Array.isArray(data.districtCounts)||data.districtCounts.length!==335)throw new Error("فهرس المحافظات لا يحتوي إحصاءات المديريات الـ335.");
@@ -4715,7 +4743,7 @@ async function loadRegionalCatalog(gov,force,signal){
  let data=null;
  if(!force)data=await readRegionalCatalogCache(region.file,manifest.snapshotDate);
  if(!data){
-  const response=await fetchCatalogAsset(encodeURIComponent(region.file)+"?v=3.0.2",signal);
+  const response=await fetchCatalogAsset(encodeURIComponent(region.file)+"?v=3.1.0",signal);
   if(!response.ok)throw new Error("تعذر تحميل سجل المحافظة ("+region.name+").");
   const payload=await response.json();
   const items=normalizeRegionalCatalogItems(payload);
@@ -4946,7 +4974,7 @@ async function ensureLightSearchIndex(){
  if(liveLightSearchIndex)return liveLightSearchIndex;
  if(liveLightSearchPromise)return liveLightSearchPromise;
  liveLightSearchPromise=(async()=>{
-  const response=await fetchCatalogAsset("search_index_light.json?v=3.0.2-pharmacy24");
+  const response=await fetchCatalogAsset("search_index_light.json?v=3.1.0-pharmacy24");
   const envelope=await response.json();
   if(!envelope||envelope.schemaVersion!==2||envelope.encoding!=="gzip+base64"||typeof envelope.data!=="string")throw new Error("ملف فهرس البحث الوطني غير صالح.");
   if(typeof DecompressionStream!=="function")throw new Error("المتصفح لا يدعم فك ضغط فهرس البحث.");
@@ -5871,6 +5899,17 @@ function renderAssistantResult(container,result){
  answer.dir="auto";
  answer.textContent=isolateMixedDirectionText(result?.answer||"");
  container.appendChild(answer);
+ if(String(result?.answer||"").trim()){
+  const reportResponse=document.createElement("button");
+  reportResponse.type="button";
+  reportResponse.className="assistant-report-response";
+  reportResponse.textContent=curLang==="en"?"Report this assistant response":"الإبلاغ عن رد المساعد";
+  reportResponse.addEventListener("click",()=>{
+   if(window.DalilnaShared&&typeof window.DalilnaShared.reportAssistant==="function")window.DalilnaShared.reportAssistant(answer.textContent);
+   else toast("تعذر الاتصال بخدمة البلاغات. حاول عند توفر الإنترنت.");
+  });
+  container.appendChild(reportResponse);
+ }
  const cards=Array.isArray(result?.assistantCards)?result.assistantCards:[];
  if(cards.length){
   const contextType=result?.contextType||(cards.some(item=>item.kind==="job")?"job":"place");
@@ -6352,7 +6391,7 @@ else if(location.hash==="#jobs")window.setTimeout(()=>go("jobs"),0);
 applyLang();
 buildScopeSelector();
 async function checkRemoteVersionSilently(){
- const localVersion=document.querySelector('meta[name="app-version"]')?.content||"3.0.2";
+ const localVersion=document.querySelector('meta[name="app-version"]')?.content||"3.1.0";
  const remoteUrl=location.hostname==="appassets.androidplatform.net"
   ?OFFICIAL_WEB_URL+"version.json"
   :"./version.json";
@@ -6472,9 +6511,9 @@ window.DalilnaMarketplaceBridge={
 })();
 </script>
 <script src="./marketplace-client.js"></script>
-<script src="./market-price-guide.js?v=3.0.2" defer></script>
-<script src="./app-update.js?v=3.0.2" defer></script>
-<script src="./features-2.1.js?v=3.0.2" defer></script>
-<script src="./v3.0.0.js?v=3.0.2" defer></script>
+<script src="./market-price-guide.js?v=3.1.0" defer></script>
+<script src="./app-update.js?v=3.1.0" defer></script>
+<script src="./features-2.1.js?v=3.1.0" defer></script>
+<script src="./v3.0.0.js?v=3.1.0" defer></script>
 </body>
 </html>

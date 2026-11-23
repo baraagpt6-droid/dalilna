@@ -1,16 +1,52 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
 }
 
+val adsConfig = Properties().apply {
+    val configFile = rootProject.file("android/ads.properties")
+    if (configFile.exists()) configFile.inputStream().use { load(it) }
+}
+
+fun adsValue(envName: String, propertyName: String, fallback: String = ""): String {
+    val fromEnvironment = System.getenv(envName)?.trim().orEmpty()
+    if (fromEnvironment.isNotEmpty()) return fromEnvironment
+    return adsConfig.getProperty(propertyName, fallback).trim()
+}
+
+val testAdMobAppId = adsValue(
+    "DALILNA_TEST_ADMOB_APP_ID",
+    "test.appId",
+    "ca-app-pub-3940256099942544~3347511713"
+)
+val testBannerAdUnitId = adsValue(
+    "DALILNA_TEST_ADMOB_BANNER_AD_UNIT_ID",
+    "test.bannerAdUnitId",
+    "ca-app-pub-3940256099942544/9214589741"
+)
+val releaseAdMobAppId = adsValue("ADMOB_APP_ID", "release.appId")
+val releaseBannerAdUnitId = adsValue("ADMOB_BANNER_AD_UNIT_ID", "release.bannerAdUnitId")
+
+val persistentKeystorePath = System.getenv("ANDROID_KEYSTORE_FILE")
+val persistentSigningConfigured = listOf(
+    persistentKeystorePath,
+    System.getenv("ANDROID_KEYSTORE_PASSWORD"),
+    System.getenv("ANDROID_KEY_ALIAS"),
+    System.getenv("ANDROID_KEY_PASSWORD")
+).all { !it.isNullOrBlank() }
+
 android {
     namespace = "ye.dalilna.app"
-    compileSdk = 35
+    compileSdk = 36
 
     val workflowRunNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 0
-    val persistentKeystorePath = System.getenv("ANDROID_KEYSTORE_FILE")
-    val persistentSigning = if (!persistentKeystorePath.isNullOrBlank()) {
+    val workflowAttempt = System.getenv("GITHUB_RUN_ATTEMPT")?.toIntOrNull() ?: 1
+    val versionCodeForBuild = 3_100_000 + (workflowRunNumber * 100) + workflowAttempt
+
+    val persistentSigning = if (persistentSigningConfigured) {
         signingConfigs.create("persistent") {
-            storeFile = file(persistentKeystorePath)
+            storeFile = file(persistentKeystorePath!!)
             storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
             keyAlias = System.getenv("ANDROID_KEY_ALIAS")
             keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
@@ -20,19 +56,34 @@ android {
     defaultConfig {
         applicationId = "ye.dalilna.app"
         minSdk = 24
-        targetSdk = 35
-        versionCode = 3_000_000 + (workflowRunNumber * 100) + (System.getenv("GITHUB_RUN_ATTEMPT")?.toIntOrNull() ?: 1)
-        versionName = "3.0.2"
+        targetSdk = 36
+        versionCode = versionCodeForBuild
+        versionName = "3.1.0"
+        manifestPlaceholders["adMobAppId"] = testAdMobAppId
     }
 
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
+            manifestPlaceholders["adMobAppId"] = testAdMobAppId
+            buildConfigField("String", "ADMOB_APP_ID", "\"$testAdMobAppId\"")
+            buildConfigField("String", "ADMOB_BANNER_AD_UNIT_ID", "\"$testBannerAdUnitId\"")
             if (persistentSigning != null) signingConfig = persistentSigning
         }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+
+            val configuredReleaseAppId = releaseAdMobAppId.ifBlank { testAdMobAppId }
+            val configuredReleaseBannerId = releaseBannerAdUnitId.ifBlank { testBannerAdUnitId }
+            manifestPlaceholders["adMobAppId"] = configuredReleaseAppId
+            buildConfigField("String", "ADMOB_APP_ID", "\"$configuredReleaseAppId\"")
+            buildConfigField("String", "ADMOB_BANNER_AD_UNIT_ID", "\"$configuredReleaseBannerId\"")
             if (persistentSigning != null) signingConfig = persistentSigning
         }
     }
@@ -47,7 +98,25 @@ android {
     }
 }
 
+tasks.configureEach {
+    if (name == "preReleaseBuild") {
+        doFirst {
+            check(releaseAdMobAppId.matches(Regex("ca-app-pub-[0-9]{16}~[0-9]{10}"))) {
+                "A real ADMOB_APP_ID must be configured before building a release."
+            }
+            check(releaseBannerAdUnitId.matches(Regex("ca-app-pub-[0-9]{16}/[0-9]{10}"))) {
+                "A real ADMOB_BANNER_AD_UNIT_ID must be configured before building a release."
+            }
+            check(persistentSigningConfigured) {
+                "The persistent Android release keystore is required for a signed release."
+            }
+        }
+    }
+}
+
 dependencies {
     implementation("androidx.webkit:webkit:1.12.1")
     implementation("androidx.core:core:1.15.0")
+    implementation("com.google.android.gms:play-services-ads:25.5.0")
+    implementation("com.google.android.ump:user-messaging-platform:4.0.0")
 }

@@ -55,7 +55,7 @@ test("Android APK build prepares matching OTA metadata before asset sync and ver
  const build=workflow.indexOf("Build APK");
  const verify=workflow.indexOf("Verify APK version and signature");
  assert.ok(prepare>=0&&prepare<sync&&sync<build&&build<verify);
- assert.match(workflow,/3000000 \+ runNumber \* 100 \+ attempt/);
+ assert.match(workflow,/3100000 \+ runNumber \* 100 \+ attempt/);
  assert.ok(workflow.includes('unzip -p "$APK" assets/version.json'));
  assert.ok(workflow.includes('EMBEDDED_VERSION_CODE'));
 });
@@ -66,12 +66,12 @@ test("v3.0 app, PWA manifest, Android Gradle and metadata versions match",()=>{
  const manifest=JSON.parse(fs.readFileSync(path.join(root,"manifest.json"),"utf8"));
  const pkg=JSON.parse(fs.readFileSync(path.join(root,"package.json"),"utf8"));
  const gradle=fs.readFileSync(path.join(root,"android/app/build.gradle.kts"),"utf8");
- assert.match(app,/meta name="app-version" content="3.0.2"/);
- assert.match(app,/const APP_VERSION="3.0.2"/);
- assert.equal(version.version,"3.0.2");
- assert.equal(manifest.version,"3.0.2");
- assert.equal(pkg.version,"3.0.2");
- assert.match(gradle,/versionName = "3.0.2"/);
+ assert.match(app,/meta name="app-version" content="3.1.0"/);
+ assert.match(app,/const APP_VERSION="3.1.0"/);
+ assert.equal(version.version,"3.1.0");
+ assert.equal(manifest.version,"3.1.0");
+ assert.equal(pkg.version,"3.1.0");
+ assert.match(gradle,/versionName = "3.1.0"/);
 });
 test("OTA worker activates immediately and removes only older Dalilna caches",()=>{
  const sw=fs.readFileSync(path.join(root,"sw.js"),"utf8");

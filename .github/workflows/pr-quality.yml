@@ -1,4 +1,4 @@
-name: Dalilna 3.0.0 quality checks
+name: Dalilna 3.1.0 quality checks
 
 on:
   pull_request:
@@ -92,6 +92,12 @@ jobs:
       - name: Run JavaScript tests
         run: npm test
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run real-browser profile, shop and favourites journey
+        run: npm run test:e2e
+
       - name: Run Yemen regional catalog tests
         run: python scripts/test_regional_catalog.py
 
@@ -104,7 +110,7 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.9'
+          gradle-version: '8.11.1'
 
       - name: Build Android debug APK
         run: gradle --no-daemon :android:app:assembleDebug

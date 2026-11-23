@@ -73,9 +73,145 @@ async function schema(db){
    const r=await db.query("SELECT to_regclass('public.marketplace_listings') AS listings,to_regclass('public.marketplace_moderation_log') AS moderation");
    if(!r.rows[0]||!r.rows[0].listings||!r.rows[0].moderation)throw error("DATABASE_SCHEMA_MISSING","جداول السوق المشترك لم تُنشأ بعد.",503);
    await db.query("ALTER TABLE marketplace_listings ALTER COLUMN expires_at DROP NOT NULL");
+   await db.query(`CREATE TABLE IF NOT EXISTS marketplace_ugc_reports (
+     id UUID PRIMARY KEY,
+     report_type VARCHAR(16) NOT NULL CHECK(report_type IN ('listing','seller','candidate','assistant')),
+     listing_id UUID REFERENCES marketplace_listings(id) ON DELETE SET NULL,
+     reason VARCHAR(32) NOT NULL,
+     details VARCHAR(800) NOT NULL DEFAULT '',
+     content_snapshot VARCHAR(4000) NOT NULL DEFAULT '',
+     status VARCHAR(16) NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','dismissed','resolved','actioned')),
+     resolution_note VARCHAR(500) NOT NULL DEFAULT '',
+     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+     reviewed_at TIMESTAMPTZ
+   )`);
+   await db.query("CREATE INDEX IF NOT EXISTS marketplace_ugc_reports_pending_idx ON marketplace_ugc_reports(status,created_at DESC)");
+   await db.query("ALTER TABLE marketplace_ugc_reports ADD COLUMN IF NOT EXISTS candidate_id UUID");
+   await db.query("ALTER TABLE marketplace_ugc_reports DROP CONSTRAINT IF EXISTS marketplace_ugc_reports_report_type_check");
+   await db.query("ALTER TABLE marketplace_ugc_reports ADD CONSTRAINT marketplace_ugc_reports_report_type_check CHECK(report_type IN ('listing','seller','candidate','assistant'))");
+   await db.query(`CREATE TABLE IF NOT EXISTS marketplace_seller_blocks (
+     phone_hash CHAR(64) PRIMARY KEY,
+     reason VARCHAR(500) NOT NULL DEFAULT '',
+     source_listing_id UUID REFERENCES marketplace_listings(id) ON DELETE SET NULL,
+     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+   )`);
   })().catch(e=>{schemaPromise=null;throw e;});
  }
  return schemaPromise;
+}
+function normalizedSellerPhone(value){
+ let digits=String(value||"").replace(/\D/g,"");
+ if(digits.startsWith("00"))digits=digits.slice(2);
+ if(digits.startsWith("967")&&digits.length===12)digits=digits.slice(3);
+ if(digits.startsWith("0")&&digits.length===10)digits=digits.slice(1);
+ return digits.length>=9&&digits.length<=15?digits:"";
+}
+function sellerFingerprint(value){
+ const phone=normalizedSellerPhone(value),key=String(process.env.DALILNA_ADMIN_TOKEN||"");
+ if(!phone)return "";
+ if(key.length<32)throw error("ADMIN_TOKEN_NOT_CONFIGURED","تعذر تفعيل حظر البائعين على الخادم.",503);
+ return crypto.createHmac("sha256",key).update(phone).digest("hex");
+}
+async function submitUgcReport(req,res){
+ if(!limit(req,"ugc-report",5,60*60*1000))return send(res,429,{ok:false,error:"وصلت إلى الحد المؤقت للبلاغات. حاول لاحقاً."});
+ const b=await body(req,10000),reportType=clean(b.reportType,16),reason=clean(b.reason,32);
+ const allowedTypes=new Set(["listing","seller","candidate","assistant"]);
+ const allowedReasons=new Set(["spam","scam","prohibited","harassment","fake","unsafe","other"]);
+ if(!allowedTypes.has(reportType)||!allowedReasons.has(reason))throw error("INVALID_REPORT","نوع البلاغ أو سببه غير صالح.");
+ const details=clean(b.details,800),snapshot=clean(b.contentSnapshot,4000);
+ let listingId=clean(b.listingId,50),candidateId=clean(b.candidateId,50);
+ if(reportType==="assistant"){
+  if(!snapshot)throw error("REPORT_CONTENT_REQUIRED","أرسل جزءاً من الرد حتى تتم مراجعته.");
+  listingId="";candidateId="";
+ }else if(reportType==="candidate"){
+  if(!/^[0-9a-f-]{36}$/i.test(candidateId))throw error("INVALID_CANDIDATE_ID","معرّف ملف الباحث عن عمل غير صالح.");
+  listingId="";
+ }else{
+  if(!/^[0-9a-f-]{36}$/i.test(listingId))throw error("INVALID_LISTING_ID","معرّف الإعلان غير صالح.");
+ }
+ const db=getPool();await schema(db);
+ let listing=null;
+ if(listingId){
+  const found=await db.query("SELECT id,title,phone,status FROM marketplace_listings WHERE id=$1",[listingId]);
+  if(!found.rows.length||found.rows[0].status!=="approved")throw error("LISTING_NOT_FOUND","الإعلان غير متاح للبلاغ.",404);
+  listing=found.rows[0];
+ }
+ if(candidateId){
+  const found=await db.query("SELECT id,full_name,phone FROM job_seekers WHERE id=$1 AND status='approved' AND consent_public=TRUE AND expires_at>NOW()",[candidateId]);
+  if(!found.rows.length)throw error("CANDIDATE_NOT_FOUND","ملف الباحث عن عمل غير متاح للبلاغ.",404);
+ }
+ const id=crypto.randomUUID();
+ await db.query(
+  "INSERT INTO marketplace_ugc_reports(id,report_type,listing_id,candidate_id,reason,details,content_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7)",
+  [id,reportType,listingId||null,candidateId||null,reason,details,snapshot]
+ );
+ console.info(JSON.stringify({event:"marketplace.ugc_report.created",id,reportType,reason}));
+ return send(res,201,{ok:true,id,status:"pending",message:"تم إرسال البلاغ إلى فريق المراجعة."});
+}
+async function adminUgcReports(req,res){
+ admin(req);
+ if(!limit(req,"admin-reports",60,60000))return send(res,429,{ok:false,error:"طلبات كثيرة. حاول لاحقاً."});
+ const db=getPool();await schema(db);
+ const r=await db.query(
+  "SELECT r.id,r.report_type,r.listing_id,r.candidate_id,r.reason,r.details,r.content_snapshot,r.status,r.created_at,l.title AS listing_title,l.phone AS seller_phone,l.seller_name,l.status AS listing_status,c.full_name AS candidate_name,c.phone AS candidate_phone,c.status AS candidate_status FROM marketplace_ugc_reports r LEFT JOIN marketplace_listings l ON l.id=r.listing_id LEFT JOIN job_seekers c ON c.id=r.candidate_id WHERE r.status='pending' ORDER BY r.created_at ASC LIMIT 100"
+ );
+ return send(res,200,{ok:true,items:r.rows.map(row=>({
+  id:row.id,reportType:row.report_type,listingId:row.listing_id,candidateId:row.candidate_id,reason:row.reason,details:row.details,
+  contentSnapshot:row.content_snapshot,status:row.status,createdAt:row.created_at,
+  listingTitle:row.listing_title,sellerPhone:row.seller_phone,sellerName:row.seller_name,listingStatus:row.listing_status,
+  candidateName:row.candidate_name,candidatePhone:row.candidate_phone,candidateStatus:row.candidate_status
+ })),count:r.rows.length});
+}
+async function reviewUgcReport(req,res){
+ admin(req);
+ const b=await body(req,4000),id=clean(b.id,50),decision=clean(b.decision,24),note=clean(b.note,500);
+ if(!/^[0-9a-f-]{36}$/i.test(id)||!["dismiss","remove_listing","block_seller","resolve"].includes(decision))throw error("INVALID_REPORT_REVIEW","قرار مراجعة البلاغ غير صالح.");
+ const db=getPool();await schema(db);const client=await db.connect();
+ try{
+  await client.query("BEGIN");
+  const found=await client.query(
+   "SELECT r.id,r.report_type,r.listing_id,r.candidate_id,l.phone AS seller_phone,c.phone AS candidate_phone FROM marketplace_ugc_reports r LEFT JOIN marketplace_listings l ON l.id=r.listing_id LEFT JOIN job_seekers c ON c.id=r.candidate_id WHERE r.id=$1 AND r.status='pending' FOR UPDATE OF r",
+   [id]
+  );
+  if(!found.rows.length){await client.query("ROLLBACK");return send(res,404,{ok:false,error:"البلاغ غير موجود أو تمت مراجعته."});}
+  const report=found.rows[0];
+  let result="dismissed";
+  if(decision==="remove_listing"){
+   if(report.listing_id){
+    await client.query("UPDATE marketplace_listings SET status='archived',updated_at=NOW() WHERE id=$1",[report.listing_id]);
+   }else if(report.candidate_id){
+    await client.query("UPDATE job_seekers SET status='rejected',consent_public=FALSE WHERE id=$1",[report.candidate_id]);
+   }else throw error("CONTENT_REQUIRED","هذا البلاغ لا يرتبط بمحتوى قابل للإزالة.");
+   result="actioned";
+  }else if(decision==="block_seller"){
+   if(!["seller","candidate"].includes(report.report_type))throw error("SELLER_REQUIRED","هذا البلاغ لا يحتوي على بيانات مستخدم قابلة للحظر.");
+   const targetPhone=report.seller_phone||report.candidate_phone;
+   if(!targetPhone)throw error("SELLER_REQUIRED","رقم صاحب الملف غير متاح للحظر.");
+   const digits=normalizedSellerPhone(targetPhone);
+   if(!digits)throw error("SELLER_PHONE_INVALID","رقم صاحب الملف غير صالح للحظر.");
+   const fingerprint=sellerFingerprint(targetPhone);
+   await client.query(
+    "INSERT INTO marketplace_seller_blocks(phone_hash,reason,source_listing_id) VALUES($1,$2,$3) ON CONFLICT(phone_hash) DO UPDATE SET reason=EXCLUDED.reason,source_listing_id=EXCLUDED.source_listing_id",
+    [fingerprint,note||"تم الحظر بعد مراجعة بلاغ مستخدم",report.listing_id||null]
+   );
+   const phoneVariants=[digits,"967"+digits,"00967"+digits,"0"+digits];
+   await client.query(
+    "UPDATE marketplace_listings SET status='archived',updated_at=NOW() WHERE regexp_replace(phone,'[^0-9]','','g')=ANY($1::text[])",
+    [phoneVariants]
+   );
+   await client.query(
+    "UPDATE job_seekers SET status='rejected',consent_public=FALSE WHERE regexp_replace(phone,'[^0-9]','','g')=ANY($1::text[])",
+    [phoneVariants]
+   );
+   result="actioned";
+  }else if(decision==="resolve"){
+   result="resolved";
+  }
+  await client.query("UPDATE marketplace_ugc_reports SET status=$2,resolution_note=$3,reviewed_at=NOW() WHERE id=$1",[id,result,note]);
+  await client.query("COMMIT");
+  return send(res,200,{ok:true,id,status:result});
+ }catch(e){try{await client.query("ROLLBACK");}catch(_){}throw e;}
+ finally{client.release();}
 }
 function admin(req){const expected=String(process.env.DALILNA_ADMIN_TOKEN||""),auth=String(req.headers.authorization||""),token=auth.startsWith("Bearer ")?auth.slice(7).trim():"";if(!expected||!token)throw error("ADMIN_AUTH_REQUIRED","يلزم رمز إدارة الخادم.",401);const a=Buffer.from(expected),b=Buffer.from(token);if(a.length!==b.length||!crypto.timingSafeEqual(a,b))throw error("ADMIN_AUTH_FAILED","رمز الإدارة غير صحيح.",403);}
 function map(row,withImage){const o={id:row.id,clientRef:row.client_ref,title:row.title,category:row.category,productType:row.product_type,listingType:row.listing_type,condition:row.condition,governorate:row.governorate,district:row.district,area:row.area,village:row.village,country:row.country,description:row.description,phone:row.phone,openingHours:row.opening_hours||"",website:row.website||"",sellerName:row.seller_name,price:row.price,currency:row.currency,latitude:row.latitude,longitude:row.longitude,deadline:row.deadline?String(row.deadline).slice(0,10):"",status:row.status,submittedAt:row.created_at,approvedAt:row.approved_at,updatedAt:row.updated_at,expiresAt:row.expires_at||null};if(withImage&&row.image_data)o.imageData=row.image_data;return o;}
@@ -106,7 +242,17 @@ async function list(req,res,url){if(!limit(req,"list",45,60000))return send(res,
  const sql="SELECT id,client_ref,title,category,product_type,listing_type,condition,governorate,district,area,village,country,description,phone,opening_hours,website,seller_name,price,currency,"+col+",latitude,longitude,deadline,status,created_at,approved_at,updated_at,expires_at,COUNT(*) OVER() AS total_count FROM marketplace_listings WHERE "+where.join(" AND ")+" ORDER BY created_at DESC LIMIT $"+lp+" OFFSET $"+op;
  const r=await db.query(sql,params);return send(res,200,{ok:true,items:r.rows.map(x=>map(x,images)),count:r.rows.length?Number(r.rows[0].total_count):0,fetchedAt:new Date().toISOString(),refreshAfterSeconds:120,limit:max,offset});
 }
-async function submit(req,res){if(!limit(req,"submit",60,3600000))return send(res,429,{ok:false,error:"وصلت إلى حد الإعلانات المؤقت."});const item=validate(await body(req,450000)),db=getPool();await schema(db);if(item.clientRef){const existing=await db.query("SELECT id,status FROM marketplace_listings WHERE client_ref=$1",[item.clientRef]);if(existing.rows.length)return send(res,200,{ok:true,duplicate:true,id:existing.rows[0].id,status:existing.rows[0].status});}
+async function submit(req,res){
+ if(!limit(req,"submit",60,3600000))return send(res,429,{ok:false,error:"وصلت إلى حد الإعلانات المؤقت."});
+ const requestBody=await body(req,450000);
+ if(requestBody.termsAccepted!==true)throw error("TERMS_REQUIRED","يجب الموافقة على شروط المحتوى قبل إرسال الإعلان.");
+ const item=validate(requestBody),db=getPool();await schema(db);
+ if(item.phone){
+  const fingerprint=sellerFingerprint(item.phone);
+  const blocked=await db.query("SELECT 1 FROM marketplace_seller_blocks WHERE phone_hash=$1",[fingerprint]);
+  if(blocked.rows.length)throw error("SELLER_BLOCKED","لا يمكن استقبال إعلانات جديدة من هذا البائع.",403);
+ }
+ if(item.clientRef){const existing=await db.query("SELECT id,status FROM marketplace_listings WHERE client_ref=$1",[item.clientRef]);if(existing.rows.length)return send(res,200,{ok:true,duplicate:true,id:existing.rows[0].id,status:existing.rows[0].status});}
   const sql="INSERT INTO marketplace_listings (id,client_ref,title,category,product_type,listing_type,condition,governorate,district,area,village,country,description,phone,opening_hours,website,seller_name,price,currency,image_data,latitude,longitude,deadline,status,expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,'pending',NULL) ON CONFLICT(client_ref) DO NOTHING RETURNING id";
  const values=[item.id,item.clientRef,item.title,item.category,item.productType,item.listingType,item.condition,item.governorate,item.district,item.area,item.village,item.country,item.description,item.phone,item.openingHours,item.website,item.sellerName,item.price,item.currency,item.image,item.latitude,item.longitude,item.deadline,item.deadline],r=await db.query(sql,values);
  if(!r.rows.length)return send(res,200,{ok:true,duplicate:true,status:"pending"});
@@ -164,5 +310,29 @@ async function syncMerchantFeed(req,res){
  }catch(e){await client.query("ROLLBACK");throw e;}
  finally{client.release();}
 }
-async function handleMarketplaceRequest(req,res,url){if(!url.pathname.startsWith("/api/marketplace/"))return false;try{const r=url.pathname.slice("/api/marketplace/".length);if(r==="status"&&req.method==="GET")await status(res);else if(r==="counts"&&req.method==="GET")await counts(req,res);else if(r==="listings"&&req.method==="GET")await list(req,res,url);else if(r==="listings"&&req.method==="POST")await submit(req,res);else if(r==="feed-sync"&&req.method==="POST")await syncMerchantFeed(req,res);else if(r==="admin/pending"&&req.method==="GET")await pending(req,res);else if(r==="admin/review"&&req.method==="POST")await review(req,res);else send(res,404,{ok:false,error:"المسار غير موجود."});}catch(e){send(res,e.statusCode||500,{ok:false,code:e.code||"INTERNAL_ERROR",error:clean(e.message,240)||"تعذر تنفيذ الطلب."});}return true;}
-module.exports={handleMarketplaceRequest,validate,CATEGORIES,PRODUCT_TYPES,GOVERNORATES,PRODUCT_GROUPS};
+async function handleMarketplaceRequest(req,res,url){
+ if(!url.pathname.startsWith("/api/marketplace/"))return false;
+ try{
+  const r=url.pathname.slice("/api/marketplace/".length);
+  if(r==="status"&&req.method==="GET")await status(res);
+  else if(r==="counts"&&req.method==="GET")await counts(req,res);
+  else if(r==="listings"&&req.method==="GET")await list(req,res,url);
+  else if(r==="listings"&&req.method==="POST")await submit(req,res);
+  else if(r==="reports"&&req.method==="POST")await submitUgcReport(req,res);
+  else if(r==="feed-sync"&&req.method==="POST")await syncMerchantFeed(req,res);
+  else if(r==="admin/pending"&&req.method==="GET")await pending(req,res);
+  else if(r==="admin/review"&&req.method==="POST")await review(req,res);
+  else if(r==="admin/reports"&&req.method==="GET")await adminUgcReports(req,res);
+  else if(r==="admin/report-review"&&req.method==="POST")await reviewUgcReport(req,res);
+  else send(res,404,{ok:false,error:"المسار غير موجود."});
+ }catch(e){send(res,e.statusCode||500,{ok:false,code:e.code||"INTERNAL_ERROR",error:clean(e.message,240)||"تعذر تنفيذ الطلب."});}
+ return true;
+}
+async function isSellerPhoneBlocked(phone){
+ const fingerprint=sellerFingerprint(phone);
+ if(!fingerprint)return false;
+ const db=getPool();await schema(db);
+ const result=await db.query("SELECT 1 FROM marketplace_seller_blocks WHERE phone_hash=$1",[fingerprint]);
+ return result.rows.length>0;
+}
+module.exports={handleMarketplaceRequest,validate,CATEGORIES,PRODUCT_TYPES,GOVERNORATES,PRODUCT_GROUPS,isSellerPhoneBlocked};

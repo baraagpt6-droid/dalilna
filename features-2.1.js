@@ -99,7 +99,7 @@
   }
   if(!$("jobSeekerDlg")){
    const dialog=el("dialog",{id:"jobSeekerDlg"});
-   dialog.innerHTML='<form id="jobSeekerForm"><div class="feature-head"><h3>التسجيل كباحث عن عمل</h3><button type="button" class="x" id="closeJobSeeker">×</button></div><label>الاسم الكامل<input name="fullName" maxlength="100" required></label><label>التخصص أو المهنة<input name="specialty" maxlength="120" required placeholder="مثلاً: محاسب، مبرمج، فني كهرباء"></label><label>سنوات الخبرة<input name="experienceYears" type="number" min="0" max="60" step="1" required value="0"></label><label>الدولة<select name="country" required><option value="Yemen">اليمن</option><option value="Saudi Arabia">السعودية</option><option value="United Arab Emirates">الإمارات</option><option value="Oman">عُمان</option><option value="Qatar">قطر</option><option value="Bahrain">البحرين</option><option value="Iraq">العراق</option><option value="Jordan">الأردن</option></select></label><label>المحافظة أو المدينة<input name="governorate" maxlength="80" required></label><label>نبذة مختصرة<textarea name="bio" rows="3" maxlength="800" required placeholder="اكتب مهاراتك ونوع العمل الذي تبحث عنه"></textarea></label><label>رقم واتساب مع مفتاح الدولة<input name="whatsapp" type="tel" inputmode="tel" dir="ltr" maxlength="24" required placeholder="+9677xxxxxxxx"></label><label class="job-public-consent"><input name="consentPublic" type="checkbox" required><span>أوافق على نشر اسمي وتخصصي وخبرتي وموقعي ونبذتي ورقم واتسابي للعامة ليتمكن أصحاب العمل من التواصل معي مباشرة.</span></label><p class="job-seeker-status" id="jobSeekerFormStatus">الملف مجاني ويظل منشوراً 60 يوماً. لا تسجل إن لم توافق على إظهار بيانات التواصل.</p><div class="fbtn"><button class="add" type="submit">حفظ ونشر الملف</button></div></form>';
+   dialog.innerHTML='<form id="jobSeekerForm"><div class="feature-head"><h3>التسجيل كباحث عن عمل</h3><button type="button" class="x" id="closeJobSeeker">×</button></div><label>الاسم الكامل<input name="fullName" maxlength="100" required></label><label>التخصص أو المهنة<input name="specialty" maxlength="120" required placeholder="مثلاً: محاسب، مبرمج، فني كهرباء"></label><label>سنوات الخبرة<input name="experienceYears" type="number" min="0" max="60" step="1" required value="0"></label><label>الدولة<select name="country" required><option value="Yemen">اليمن</option><option value="Saudi Arabia">السعودية</option><option value="United Arab Emirates">الإمارات</option><option value="Oman">عُمان</option><option value="Qatar">قطر</option><option value="Bahrain">البحرين</option><option value="Iraq">العراق</option><option value="Jordan">الأردن</option></select></label><label>المحافظة أو المدينة<input name="governorate" maxlength="80" required></label><label>نبذة مختصرة<textarea name="bio" rows="3" maxlength="800" required placeholder="اكتب مهاراتك ونوع العمل الذي تبحث عنه"></textarea></label><label>رقم واتساب مع مفتاح الدولة<input name="whatsapp" type="tel" inputmode="tel" dir="ltr" maxlength="24" required placeholder="+9677xxxxxxxx"></label><label class="job-public-consent"><input name="consentPublic" type="checkbox" required><span>أوافق على نشر اسمي وتخصصي وخبرتي وموقعي ونبذتي ورقم واتسابي للعامة ليتمكن أصحاب العمل من التواصل معي مباشرة.</span></label><label class="job-public-consent"><input name="termsAccepted" type="checkbox" required><span>أوافق على <a href="./terms.html" target="_blank" rel="noopener noreferrer">شروط الاستخدام وسياسة المحتوى</a> وأؤكد أن بياناتي تخصني وأن نشرها لا ينتهك خصوصية الآخرين.</span></label><p class="job-seeker-status" id="jobSeekerFormStatus">الملف مجاني ويظل منشوراً 60 يوماً. لا تسجل إن لم توافق على إظهار بيانات التواصل.</p><div class="fbtn"><button class="add" type="submit">حفظ ونشر الملف</button></div></form>';
    document.body.appendChild(dialog);
   }
  }
@@ -219,6 +219,20 @@
   const digits=String(phone||"").replace(/[^0-9]/g,"");
   return digits.length>=9&&digits.length<=15?"https://wa.me/"+digits:"";
  }
+ function normalizeBlockedSellerPhone(value){
+  let digits=String(value||"").replace(/\D/g,"");
+  if(digits.startsWith("00"))digits=digits.slice(2);
+  if(digits.startsWith("967")&&digits.length===12)digits=digits.slice(3);
+  if(digits.startsWith("0")&&digits.length===10)digits=digits.slice(1);
+  return digits.length>=9&&digits.length<=15?digits:"";
+ }
+ function isBlockedJobSeeker(phone){
+  const candidate=normalizeBlockedSellerPhone(phone);if(!candidate)return false;
+  try{
+   const list=JSON.parse(localStorage.getItem("dalilna-blocked-sellers-v1")||"[]");
+   return Array.isArray(list)&&list.some(value=>normalizeBlockedSellerPhone(value)===candidate);
+  }catch(_){return false;}
+ }
  async function loadCandidates(){
   const status=$("jobSeekersStatus"),box=$("jobSeekersList");
   if(!status||!box)return;
@@ -229,21 +243,27 @@
    const data=await response.json().catch(()=>({}));
    if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
    if(!Array.isArray(data.items)||!data.items.length){box.replaceChildren();status.textContent="لا توجد ملفات منشورة لهذه الدولة حالياً.";translateFeatureTree(status);return;}
-   status.textContent="ملفات منشورة بموافقة أصحابها: "+data.items.length;
+   const visibleItems=data.items.filter(person=>!isBlockedJobSeeker(person.whatsapp));
+   if(!visibleItems.length){box.replaceChildren();status.textContent="لا توجد ملفات منشورة ظاهرة حالياً.";translateFeatureTree(status);return;}
+   status.textContent="ملفات منشورة بموافقة أصحابها: "+visibleItems.length;
    const fragment=document.createDocumentFragment();
-   data.items.forEach(person=>{
+   visibleItems.forEach(person=>{
     const card=el("article",{class:"job-seeker-card"});
     card.appendChild(el("h4",{},person.fullName||"باحث عن عمل"));
     const experience=Number(person.experienceYears);
     card.appendChild(el("div",{class:"job-seeker-meta"},(person.specialty||"")+(experience===0?" · دون خبرة":" · "+experience+" سنة خبرة")));
     card.appendChild(el("div",{class:"job-seeker-meta"},[person.governorate,person.country].filter(Boolean).join(" · ")));
     if(person.bio)card.appendChild(el("p",{},person.bio));
+    const actions=el("div",{class:"job-seeker-actions"});
+    const report=el("button",{type:"button",class:"job-seeker-report"},"إبلاغ عن الملف");
+    report.addEventListener("click",()=>window.DalilnaShared?.reportCandidate?.(person.id));
+    actions.appendChild(report);
+    const block=el("button",{type:"button",class:"job-seeker-block"},"حظر هذا الباحث");
+    block.addEventListener("click",()=>window.DalilnaShared?.blockSeller?.(person.whatsapp));
+    actions.appendChild(block);
     const href=waUrl(person.whatsapp);
-    if(href){
-     const actions=el("div",{class:"job-seeker-actions"});
-     actions.appendChild(el("a",{href:href,target:"_blank",rel:"noopener noreferrer"},"تواصل واتساب"));
-     card.appendChild(actions);
-    }
+    if(href)actions.appendChild(el("a",{href:href,target:"_blank",rel:"noopener noreferrer"},"تواصل واتساب"));
+    card.appendChild(actions);
     fragment.appendChild(card);
    });
    box.replaceChildren(fragment);
@@ -262,9 +282,10 @@
    governorate:String(fd.get("governorate")||"").trim(),
    bio:String(fd.get("bio")||"").trim(),
    whatsapp:String(fd.get("whatsapp")||"").trim(),
-   consentPublic:fd.get("consentPublic")==="on"
+   consentPublic:fd.get("consentPublic")==="on",
+   termsAccepted:fd.get("termsAccepted")==="on"
   };
-  if(!payload.consentPublic){status.textContent="يجب الموافقة على عرض معلوماتك قبل النشر.";return;}
+  if(!payload.consentPublic||!payload.termsAccepted){status.textContent="يجب الموافقة على عرض معلوماتك وشروط المحتوى قبل النشر.";return;}
   button.disabled=true;status.textContent="جارٍ إرسال ملفك إلى دليلنا…";
   try{
    const response=await fetch(API+"/api/jobs/candidates",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)});
@@ -314,6 +335,7 @@
  }
  function bind(){
   buildJobs();buildSouq();renderTabs();translateFeatureTree();
+  window.addEventListener("dalilna:seller-block-change",()=>loadCandidates());
   $("jobsInlineSearch")?.addEventListener("input",event=>{jobsSearchText=event.target.value||"";applyJobFilters();});
   $("jobsSavedFilter")?.addEventListener("click",()=>{jobsSavedOnly=!jobsSavedOnly;applyJobFilters();});
   $("jobsCountryTabs")?.addEventListener("click",event=>{
