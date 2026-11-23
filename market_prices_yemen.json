@@ -7,7 +7,7 @@
   "priceDisclosure": "هذه أسعار مرجعية وليست عروض بيع من دليلنا. تختلف الأسعار حسب المدينة والماركة والحالة والضمان وتوفر المخزون. قيم عدن أو صنعاء المحولة تقديرات صرف وليست تسعيرة محلية مؤكدة.",
   "exchangeRates": {
     "asOf": "2026-11-23",
-    "sourceName": "أسعار الصرف المنشورة يوم 23 نوفمبر 2026",
+    "sourceName": "المشهد اليمني / الخبر المنشور في 23 نوفمبر 2026",
     "sourceUrl": "https://yemennewsnow.com/article/3535364",
     "aden": {
       "usd": {
@@ -21,7 +21,7 @@
         "mid": 411.5
       }
     },
-    "sarPerUsd": 3.75,
+    "sarPerUsd": 3.81,
     "sanaa": {
       "usd": {
         "buy": 533,
@@ -178,7 +178,7 @@
       },
       "sourceName": "Aramobi · أسعار الهواتف في اليمن",
       "sourceUrl": "https://aramobi.com/mobile-prices-in-ye/",
-      "sourceCheckedAt": "2026-11-22",
+      "sourceCheckedAt": "2026-11-23",
       "priceLabel": "سعر محلي تقريبي"
     },
     {
@@ -194,10 +194,11 @@
         "sourceZone": "aden",
         "basis": "seller_listing_sample"
       },
-      "sourceName": "OpenSooq · عينة إعلان بائع",
-      "sourceUrl": "https://ye.opensooq.com/en/cars/cars-for-sale/toyota/hilux",
+      "sourceName": "OpenSooq · إعلان 2016 في عدن",
+      "sourceUrl": "https://ye.opensooq.com/en/cars/cars-for-sale/toyota/hilux/2016",
       "sourceCheckedAt": "2026-11-23",
-      "priceLabel": "سعر طلب في إعلان فردي"
+      "priceLabel": "سعر طلب في إعلان فردي",
+      "sourceListingDate": "2026-11-23"
     },
     {
       "id": "toyota-hilux-2022-shabwah",
@@ -212,10 +213,11 @@
         "sourceZone": "aden",
         "basis": "seller_listing_sample"
       },
-      "sourceName": "OpenSooq · عينة إعلان بائع",
+      "sourceName": "OpenSooq · إعلان 2022 في شبوة",
       "sourceUrl": "https://ye.opensooq.com/en/cars/cars-for-sale/toyota/hilux",
       "sourceCheckedAt": "2026-11-23",
-      "priceLabel": "سعر طلب في إعلان فردي"
+      "priceLabel": "سعر طلب في إعلان فردي",
+      "sourceListingDate": "2026-11-23"
     },
     {
       "id": "apartment-rent-sanaa",
@@ -230,10 +232,11 @@
         "sourceZone": "sanaa",
         "basis": "seller_listing_sample"
       },
-      "sourceName": "OpenSooq · عينة إعلان بائع",
+      "sourceName": "OpenSooq · إعلان شقة 100م² في صنعاء",
       "sourceUrl": "https://ye.opensooq.com/en/property/property-for-rent",
       "sourceCheckedAt": "2026-11-23",
-      "priceLabel": "سعر طلب في إعلان فردي"
+      "priceLabel": "سعر طلب في إعلان فردي",
+      "sourceListingDate": "2026-11-23"
     },
     {
       "id": "apartment-rent-aden",
@@ -248,10 +251,11 @@
         "sourceZone": "aden",
         "basis": "seller_listing_sample"
       },
-      "sourceName": "OpenSooq · عينة إعلان بائع",
-      "sourceUrl": "https://ye.opensooq.com/en/property/property-for-rent",
+      "sourceName": "OpenSooq · إعلان شقة مفروشة في عدن",
+      "sourceUrl": "https://ye.opensooq.com/en/aden/property/property-for-rent",
       "sourceCheckedAt": "2026-11-23",
-      "priceLabel": "سعر طلب في إعلان فردي"
+      "priceLabel": "سعر طلب في إعلان فردي",
+      "sourceListingDate": "2026-10-27"
     },
     {
       "id": "toyota-camry-2013-sanaa",
@@ -321,7 +325,20 @@
       "sourceName": "تصفح إعلانات العقارات الحالية",
       "sourceUrl": "https://ye.opensooq.com/en/property",
       "sourceCheckedAt": "2026-11-23",
-      "priceLabel": "تصفح عروض البائعين"
+      "priceLabel": "سعر طلب في إعلان فردي"
+    },
+    {
+      "id": "laptop-yemen",
+      "category": "electronics",
+      "title": "لابتوبات وأجهزة محمولة",
+      "subtitle": "Lenovo · Dell · HP · ASUS · السعر يعتمد على المعالج والذاكرة والحالة",
+      "image": "laptop.svg",
+      "priceUnit": "للجهاز",
+      "pricing": null,
+      "sourceName": "تصفح إعلانات البائعين الحاليّة",
+      "sourceUrl": "https://ye.opensooq.com/en/electronics/laptops",
+      "sourceCheckedAt": "2026-11-23",
+      "priceLabel": "لا يوجد متوسط موثق حتى الآن"
     }
   ],
   "categorySearchUrls": {
