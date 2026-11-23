@@ -1,8 +1,8 @@
 {
-  "version": "2.8.0",
-  "versionCode": 280,
-  "webVersion": "2.8.0",
-  "androidVersion": "2.8.0",
+  "version": "2.9.0",
+  "versionCode": 290,
+  "webVersion": "2.9.0",
+  "androidVersion": "2.9.0",
   "androidVersionCode": 280,
   "catalogSchemaVersion": 2,
   "catalogSnapshotDate": "2026-11-23",
@@ -20,5 +20,7 @@
     "Foursquare Open Places (via Overture)": 4
   },
   "osmDatasetSource": "BBBike Yemen OSM mirror (fallback)",
-  "updatedAt": "2026-11-23T03:06:41Z"
+  "updatedAt": "2026-11-23T03:06:41Z",
+  "marketPriceGuideVersion": 1,
+  "marketPriceGuideUpdatedAt": "2026-11-23"
 }

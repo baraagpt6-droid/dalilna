@@ -9,9 +9,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.webkit.GeolocationPermissions;
+import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
+import android.webkit.ServiceWorkerController;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -25,11 +28,67 @@ public class MainActivity extends Activity {
     private static final int REQ_AUDIO = 301;
     private static final int REQ_LOCATION = 302;
     private static final int REQ_FILE = 303;
+    private static final String REMOTE_APP_URL = "https://baraagpt6-droid.github.io/dalilna/";
+    private static final String LOCAL_APP_URL = "https://appassets.androidplatform.net/assets/index.html";
+    private static final String PREFS = "dalilna_web_runtime";
+    private static final String KEY_STORAGE = "local_storage_snapshot";
+    private static final String KEY_REMOTE_READY = "remote_content_ready";
+    private static final String KEY_LAST_REMOTE_ATTEMPT = "last_remote_attempt_ms";
+    private static final int MAX_STORAGE_BYTES = 4 * 1024 * 1024;
+
     private WebView webView;
+    private WebViewAssetLoader assetLoader;
+    private android.content.SharedPreferences preferences;
+    private boolean fallbackLoading = false;
     private PermissionRequest pendingWebPermission;
     private GeolocationPermissions.Callback pendingGeoCallback;
     private String pendingGeoOrigin;
     private ValueCallback<Uri[]> fileChooserCallback;
+
+    private final class DalilnaNativeBridge {
+        @JavascriptInterface
+        public int getVersionCode() {
+            return BuildConfig.VERSION_CODE;
+        }
+
+        @JavascriptInterface
+        public String getVersionName() {
+            return BuildConfig.VERSION_NAME;
+        }
+
+        @JavascriptInterface
+        public String loadLocalStorage() {
+            return preferences.getString(KEY_STORAGE, "{}");
+        }
+
+        @JavascriptInterface
+        public void saveLocalStorage(String snapshot) {
+            if (snapshot == null || snapshot.length() > MAX_STORAGE_BYTES) return;
+            try {
+                preferences.edit().putString(KEY_STORAGE, snapshot).apply();
+            } catch (Exception ignored) { }
+        }
+
+        @JavascriptInterface
+        public void markRemoteReady() {
+            preferences.edit().putBoolean(KEY_REMOTE_READY, true).apply();
+        }
+
+        @JavascriptInterface
+        public void switchToRemote() {
+            runOnUiThread(() -> {
+                if (webView == null) return;
+                String current = webView.getUrl();
+                if (current == null || !current.startsWith("https://appassets.androidplatform.net/")) return;
+                long last = preferences.getLong(KEY_LAST_REMOTE_ATTEMPT, 0L);
+                long now = System.currentTimeMillis();
+                if (now - last < 30000L) return;
+                preferences.edit().putLong(KEY_LAST_REMOTE_ATTEMPT, now).apply();
+                fallbackLoading = false;
+                webView.loadUrl(REMOTE_APP_URL);
+            });
+        }
+    }
 
     @SuppressLint({"SetJavaScriptEnabled", "JavascriptInterface"})
     @Override
@@ -39,7 +98,8 @@ public class MainActivity extends Activity {
         getWindow().setStatusBarColor(android.graphics.Color.rgb(24, 20, 17));
         getWindow().setNavigationBarColor(android.graphics.Color.rgb(18, 14, 12));
 
-        WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
+        preferences = getSharedPreferences(PREFS, MODE_PRIVATE);
+        assetLoader = new WebViewAssetLoader.Builder()
                 .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
                 .build();
 
@@ -57,19 +117,11 @@ public class MainActivity extends Activity {
         settings.setMediaPlaybackRequiresUserGesture(true);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) settings.setSafeBrowsingEnabled(true);
-
-        // Clear only the WebView HTTP resource cache when the installed APK version changes.
-        // Keep DOM storage/localStorage intact so user-created records and preferences survive upgrades.
-        int currentVersionCode = BuildConfig.VERSION_CODE;
-        android.content.SharedPreferences appPreferences =
-                getSharedPreferences("dalilna_app_version", MODE_PRIVATE);
-        int previousVersionCode = appPreferences.getInt("installed_version_code", -1);
-        if (previousVersionCode != currentVersionCode) {
-            webView.clearCache(true);
-            webView.clearHistory();
-            appPreferences.edit().putInt("installed_version_code", currentVersionCode).apply();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            ServiceWorkerController.getInstance().getServiceWorkerWebSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         }
 
+        webView.addJavascriptInterface(new DalilnaNativeBridge(), "DalilnaNative");
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
@@ -79,8 +131,7 @@ public class MainActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri uri = request.getUrl();
-                String host = uri.getHost();
-                if ("appassets.androidplatform.net".equalsIgnoreCase(host)) return false;
+                if (isTrustedAppUrl(uri)) return false;
                 String scheme = uri.getScheme() == null ? "" : uri.getScheme().toLowerCase();
                 if ("https".equals(scheme) || "http".equals(scheme) || "tel".equals(scheme) || "mailto".equals(scheme)) {
                     try {
@@ -91,6 +142,31 @@ public class MainActivity extends Activity {
                     return true;
                 }
                 return true;
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+                if (request.isForMainFrame() && isRemoteAppUrl(request.getUrl())) loadLocalFallback();
+            }
+
+            @Override
+            public void onReceivedHttpError(WebView view, WebResourceRequest request, android.webkit.WebResourceResponse response) {
+                super.onReceivedHttpError(view, request, response);
+                if (request.isForMainFrame() && response.getStatusCode() >= 400 && isRemoteAppUrl(request.getUrl())) {
+                    loadLocalFallback();
+                }
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (isRemoteAppUrl(Uri.parse(url))) {
+                    fallbackLoading = false;
+                    preferences.edit().putBoolean(KEY_REMOTE_READY, true).apply();
+                } else if (url.startsWith("https://appassets.androidplatform.net/assets/")) {
+                    fallbackLoading = false;
+                }
             }
         });
 
@@ -142,8 +218,34 @@ public class MainActivity extends Activity {
             }
         });
 
-        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+        boolean migrated = preferences.getBoolean(KEY_REMOTE_READY, false);
+        if (migrated) {
+            preferences.edit().putLong(KEY_LAST_REMOTE_ATTEMPT, System.currentTimeMillis()).apply();
+            webView.loadUrl(REMOTE_APP_URL);
+        } else {
+            // Load the previous local origin once so its localStorage can be copied before switching to GitHub Pages.
+            webView.loadUrl(LOCAL_APP_URL);
+        }
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
+    }
+
+    private boolean isRemoteAppUrl(Uri uri) {
+        return uri != null && "https".equalsIgnoreCase(uri.getScheme())
+                && "baraagpt6-droid.github.io".equalsIgnoreCase(uri.getHost())
+                && uri.getPath() != null && uri.getPath().startsWith("/dalilna/");
+    }
+
+    private boolean isTrustedAppUrl(Uri uri) {
+        return uri != null && (("appassets.androidplatform.net".equalsIgnoreCase(uri.getHost()))
+                || isRemoteAppUrl(uri));
+    }
+
+    private void loadLocalFallback() {
+        if (webView == null || fallbackLoading) return;
+        fallbackLoading = true;
+        webView.post(() -> {
+            if (webView != null) webView.loadUrl(LOCAL_APP_URL);
+        });
     }
 
     @Override

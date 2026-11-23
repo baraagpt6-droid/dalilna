@@ -84,6 +84,13 @@
   function makeCard(item) {
     const card = document.createElement("article");
     card.className = "shared-listing-card";
+    if (item.category === "souq" || item.category === "land") {
+      card.classList.add("seller-advert-card");
+      const sellerBadge = document.createElement("span");
+      sellerBadge.className = "shared-listing-seller-badge";
+      sellerBadge.textContent = label("إعلان بائع");
+      card.appendChild(sellerBadge);
+    }
     const imageSource = typeof item.imageData === "string" ? item.imageData.trim() : "";
     const inlineImage = imageSource.length <= 400000 && /^data:image\/(?:jpeg|png|webp);base64,/.test(imageSource);
     let remoteImage = false;
@@ -232,7 +239,9 @@
     try {
       const result = await api("/api/marketplace/listings?" + params.toString());
       list.replaceChildren();
-      (result.items || []).forEach(item => list.appendChild(makeCard(item)));
+      const items = Array.isArray(result.items) ? result.items.slice() : [];
+      items.sort((a,b) => new Date(b.submittedAt || b.approvedAt || 0).getTime() - new Date(a.submittedAt || a.approvedAt || 0).getTime());
+      items.forEach(item => list.appendChild(makeCard(item)));
       list.dataset.loaded = "true";
       status.textContent = result.count
         ? ui("يعرض ","Showing ") + result.items.length + ui(" من "," of ") + result.count + ui(" إعلاناً منشوراً · آخر تحديث "," published listings · Last update ") + new Date(result.fetchedAt).toLocaleTimeString(isEnglish()?"en":"ar")

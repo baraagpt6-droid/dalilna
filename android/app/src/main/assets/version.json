@@ -1,0 +1,26 @@
+{
+  "version": "2.9.0",
+  "versionCode": 290,
+  "webVersion": "2.9.0",
+  "androidVersion": "2.9.0",
+  "androidVersionCode": 280,
+  "catalogSchemaVersion": 2,
+  "catalogSnapshotDate": "2026-11-23",
+  "catalogTotalCount": 24563,
+  "sources": [
+    "OpenStreetMap",
+    "Overture Maps",
+    "Foursquare Open Places (optional portal export)"
+  ],
+  "generatedAt": "2026-11-23T00:00:00Z",
+  "catalogGeneratedAt": "2026-11-23T02:54:03.158878+00:00",
+  "sourceCounts": {
+    "OpenStreetMap": 17041,
+    "Overture Maps": 15386,
+    "Foursquare Open Places (via Overture)": 4
+  },
+  "osmDatasetSource": "BBBike Yemen OSM mirror (fallback)",
+  "updatedAt": "2026-11-23T03:06:41Z",
+  "marketPriceGuideVersion": 1,
+  "marketPriceGuideUpdatedAt": "2026-11-23"
+}
