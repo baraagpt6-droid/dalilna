@@ -24,5 +24,6 @@
   "marketPriceGuideVersion": 1,
   "marketPriceGuideUpdatedAt": "2026-11-23",
   "androidSigningMode": "persistent",
-  "androidReleaseUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.0.1/app-debug.apk"
+  "androidReleaseUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.0.1/app-debug.apk",
+  "officialWebUrl": "https://dalilna-ftny.netlify.app/"
 }
