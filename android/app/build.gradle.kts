@@ -21,7 +21,7 @@ android {
         applicationId = "ye.dalilna.app"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2_900_000 + workflowRunNumber
+        versionCode = 2_900_000 + (workflowRunNumber * 100) + (System.getenv("GITHUB_RUN_ATTEMPT")?.toIntOrNull() ?: 1)
         versionName = "2.9.0"
     }
 
