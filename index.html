@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#181411">
 <meta name="app-version" content="3.0.1">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
+<link rel="canonical" href="https://dalilna-ftny.netlify.app/">
+<meta property="og:url" content="https://dalilna-ftny.netlify.app/">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="دليلنا">
@@ -2505,6 +2507,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 (()=>{
 const STORE_KEY="dalilna_app_v6";
 const APP_VERSION="3.0.1";
+const OFFICIAL_WEB_URL="https://dalilna-ftny.netlify.app/";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز صحية"],["pharmacy","صيدليات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -3802,8 +3805,8 @@ document.addEventListener("click",e=>{
   if(sh){
     e.stopPropagation();
     const it=S.items.find(x=>x.id===sh.dataset.shr);if(!it)return;
-    const txt=`${it.name} (${CN[it.cat]||""})\nالموقع: ${it.area||""}${it.phone?"\nالهاتف: "+it.phone:""}\nعبر تطبيق دليلنا`;
-    if(navigator.share)navigator.share({title:it.name,text:txt}).catch(()=>{});
+    const txt=`${it.name} (${CN[it.cat]||""})\nالموقع: ${it.area||""}${it.phone?"\nالهاتف: "+it.phone:""}\nعبر تطبيق دليلنا: ${OFFICIAL_WEB_URL}`;
+    if(navigator.share)navigator.share({title:it.name,text:txt,url:OFFICIAL_WEB_URL}).catch(()=>{});
     else window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank");
     return;
   }
@@ -4449,7 +4452,7 @@ function liveDirectoryPanelHTML(){
 }
 const LIVE_DIRECTORY_API="https://dalilna-live.onrender.com";
 const LIVE_CATALOG_LOCAL_BASE="./regional-catalog/";
-const LIVE_CATALOG_REMOTE_BASE="https://baraagpt6-droid.github.io/dalilna/regional-catalog/";
+const LIVE_CATALOG_REMOTE_BASE=OFFICIAL_WEB_URL+"regional-catalog/";
 const LIVE_CATALOG_BASE=location.hostname==="appassets.androidplatform.net"?LIVE_CATALOG_REMOTE_BASE:LIVE_CATALOG_LOCAL_BASE;
 async function fetchCatalogAsset(path,signal){
  const bases=LIVE_CATALOG_BASE===LIVE_CATALOG_REMOTE_BASE?[LIVE_CATALOG_REMOTE_BASE,LIVE_CATALOG_LOCAL_BASE]:[LIVE_CATALOG_LOCAL_BASE];
@@ -6300,7 +6303,7 @@ buildScopeSelector();
 async function checkRemoteVersionSilently(){
  const localVersion=document.querySelector('meta[name="app-version"]')?.content||"3.0.1";
  const remoteUrl=location.hostname==="appassets.androidplatform.net"
-  ?"https://baraagpt6-droid.github.io/dalilna/version.json"
+  ?OFFICIAL_WEB_URL+"version.json"
   :"./version.json";
  try{
   const response=await fetch(remoteUrl+"?t="+Date.now(),{headers:{Accept:"application/json"},cache:"no-store"});
