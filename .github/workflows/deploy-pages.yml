@@ -141,7 +141,6 @@ jobs:
           if (!Array.isArray(lightPayload.i) || lightPayload.i.length !== manifest.totalCount || lightEnvelope.recordCount !== manifest.totalCount) throw new Error("Full-Yemen search index is incomplete.");
           if (version.webVersion !== "3.0.2" || version.version !== "3.0.2" || Number(version.versionCode) < 3000000 || Number(version.androidVersionCode) < 3000000 || version.androidSigningMode !== "persistent") throw new Error("version.json does not describe the persistent Dalilna 3.0.2 release.");
           if (version.officialWebUrl !== base || manifest.version !== "3.0.2" || !html.includes(`<link rel="canonical" href="${base}">`)) throw new Error("Official canonical URL, PWA manifest or OTA metadata does not match GitHub Pages.");
-          if (version.officialWebUrl !== base || !html.includes(`<link rel="canonical" href="${base}">`)) throw new Error("Canonical URL and version metadata do not match the official GitHub Pages origin.");
           if (!html.includes('content="3.0.2"')) throw new Error("Deployed homepage version is not 3.0.2.");
           if (!(await css.text()).includes(".quick-jump-btn")) throw new Error("Quick-access stylesheet was not published.");
           if (!featureJsText.includes("officialApplicationUrl")) throw new Error("Feature JavaScript is incomplete.");
