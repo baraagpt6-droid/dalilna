@@ -103,9 +103,18 @@ test("Overpass retry budgets preserve time for all three provider starts",()=>{
  assert.equal(overpassAttemptTimeout(300,1,3),300);
 });
 
-test("Overpass endpoints are rate-limited independently so a busy primary does not delay a mirror",()=>{
+test("Overpass endpoints are rate-limited independently and busy slots are skipped within the shared deadline",()=>{
  const source=fs.readFileSync(require.resolve("../server"),"utf8");
  assert.ok(source.includes("const overpassProviderSlots = new Map()"));
  assert.ok(source.includes("const key=String(providerName||\"default\")"));
+ assert.ok(source.includes("return gate(deadlineAt,250)"));
+ assert.ok(source.includes('error.code==="OVERPASS_SLOT_BUSY"'));
  assert.equal(source.split("await waitForOverpassSlot(provider.name,deadlineAt)").length-1,2);
+});
+test("a busy provider slot is skipped without waiting for its full interval",async()=>{
+ const gate=createIntervalGate(1100);
+ await gate(Date.now()+1000);
+ const started=Date.now();
+ await assert.rejects(()=>gate(Date.now()+1500,250),error=>error.code==="OVERPASS_SLOT_BUSY");
+ assert.ok(Date.now()-started<100);
 });
