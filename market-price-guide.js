@@ -158,6 +158,11 @@
       || (item.category==="vehicles"&&/(سيار|هايلوكس|تويوتا|دباب|باص)/.test(q))
       || (item.category==="property"&&/(عقار|ارض|شقه|ايجار|محل)/.test(q)));
   }
-  window.DalilnaPriceGuide={load,search,getData:()=>data};
+  function getPriceSummary(item){
+    if(!data||!item)return "";
+    return "صنعاء: "+formatPrice(item,"sanaa")+" · عدن: "+formatPrice(item,"aden")
+      +" · "+money(baseUsd(item))+" USD · "+money(baseUsd(item)*Number(data.exchangeRates.sarPerUsd||3.75))+" SAR";
+  }
+  window.DalilnaPriceGuide={load,search,getData:()=>data,getPriceSummary};
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",load,{once:true});else load();
 })();
