@@ -60,6 +60,10 @@ test("merchant profile, shop submission and directory favourites work in a real 
 
   let browser;
   let marketplacePayload = null;
+  let resolveMarketplacePayload;
+  const marketplacePayloadPromise = new Promise(resolve => {
+    resolveMarketplacePayload = resolve;
+  });
   const pageErrors = [];
 
   try {
@@ -75,6 +79,7 @@ test("merchant profile, shop submission and directory favourites work in a real 
       if (url.origin === origin) return route.continue();
       if (url.pathname === "/api/marketplace/listings" && request.method() === "POST") {
         marketplacePayload = request.postDataJSON();
+        resolveMarketplacePayload(marketplacePayload);
         return route.fulfill({
           status: 201,
           contentType: "application/json",
