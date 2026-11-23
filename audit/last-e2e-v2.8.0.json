@@ -1,0 +1,125 @@
+{
+  "version": "2.8.0",
+  "catalog": {
+    "records": 24563,
+    "governorates": 22,
+    "compressedBytes": 1094206,
+    "queries": {
+      "الزوقري": {
+        "matches": 2,
+        "examples": [
+          {
+            "name": "الزوقري للسفريات والسياحة",
+            "category": "transport",
+            "governorate": "عدن",
+            "district": "المنصوره"
+          },
+          {
+            "name": "الزوقري للسفريات والسياحه وخدمات التوصيل من والى المطارات",
+            "category": "vehicles",
+            "governorate": "إب",
+            "district": "الظهار"
+          }
+        ]
+      },
+      "الناهي": {
+        "matches": 1,
+        "examples": [
+          {
+            "name": "الناهي للإلكترونيات",
+            "category": "elec",
+            "governorate": "إب",
+            "district": "الظهار"
+          }
+        ]
+      },
+      "صيدلية": {
+        "pharmacyRecords": 821,
+        "namedMatches": 706,
+        "examples": [
+          {
+            "name": "صيدلية",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الحريري",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الحسام",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية العربية",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الهدى",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الأستاذ",
+            "governorate": "عدن",
+            "district": "التواهي"
+          },
+          {
+            "name": "صيدلية الأسرار للأدوية والمستلزمات الطبية",
+            "governorate": "عدن",
+            "district": "المنصوره"
+          },
+          {
+            "name": "صيدلية البحر الأحمر",
+            "governorate": "عدن",
+            "district": "المعلا"
+          }
+        ]
+      }
+    }
+  },
+  "live": {
+    "generatedAt": "2026-11-23T02:48:00.267Z",
+    "health": {
+      "ok": false,
+      "ms": 7003,
+      "status": 0
+    },
+    "marketplace": {
+      "databaseReady": false,
+      "databaseConfigured": false,
+      "approvedOffers": 0,
+      "returned": 0,
+      "withImages": 0,
+      "withPrice": 0,
+      "withContact": 0,
+      "ms": 164,
+      "status": 200,
+      "error": ""
+    },
+    "pharmacyLiveSearch": {
+      "ok": false,
+      "status": 0,
+      "ms": 3501,
+      "within3Seconds": false,
+      "results": 0,
+      "resultsWithHours": 0,
+      "twentyFourHourResults": 0,
+      "error": "This operation was aborted"
+    },
+    "assistant": {
+      "configured": true,
+      "provider": "Gemini",
+      "model": "gemini-3.8-flash",
+      "ok": false,
+      "status": 502,
+      "ms": 25120,
+      "answerChars": 0,
+      "mode": "",
+      "error": "provider_timeout"
+    }
+  }
+}
