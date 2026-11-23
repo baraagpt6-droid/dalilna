@@ -167,5 +167,59 @@
         "downloadUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.0.1/app-debug.apk"
       }
     }
+  },
+  "auditSummary": {
+    "status": "passed",
+    "gateCompletionPercent": 100,
+    "gateScope": "All blocking acceptance checks configured in the Dalilna v3.0.1 live E2E workflow. This percentage does not mean the marketplace is populated or that every API meets an unstated latency target.",
+    "auditedAt": "2026-11-23T10:08:42.500Z",
+    "workflow": {
+      "name": "Dalilna v3.0.1 live E2E audit",
+      "runId": 45150981337,
+      "attempt": 2,
+      "conclusion": "success",
+      "url": "https://github.com/baraagpt6-droid/dalilna/actions/runs/45150981337"
+    },
+    "requiredChecks": {
+      "netlifyAnonymousProductionRead": "passed",
+      "netlifyVersionAndCanonicalUrl": "passed",
+      "renderHealthV301": "passed",
+      "assistantCorsForOfficialNetlifyOrigin": "passed",
+      "assistantGeminiLiveResponse": "passed",
+      "androidV301PersistentSigningAndReleaseAsset": "passed",
+      "nationalCatalogBuildAndSearchBenchmark": "passed",
+      "pharmacySearchWithLocalCatalogFallback": "passed"
+    },
+    "nonBlockingObservations": [
+      {
+        "component": "marketplace",
+        "status": "database_connected_but_no_approved_offers",
+        "approvedOffers": 0,
+        "databaseReady": true,
+        "note": "The marketplace database is reachable and ready, but there are currently no approved listings to display."
+      },
+      {
+        "component": "pharmacyLiveSearch",
+        "status": "results_returned_above_3_second_target",
+        "responseMs": 5645,
+        "targetMs": 3000,
+        "resultCount": 7,
+        "source": "فهرس اليمن الوطني المحلي (OSM + Overture)",
+        "note": "The search returned results using the national local catalog fallback. Its measured response exceeded the 3-second target."
+      },
+      {
+        "component": "twentyFourHourPharmacyResults",
+        "status": "no_24_hour_result_in_this_live_response",
+        "liveResults": 0,
+        "nationalCatalogRecords": 17,
+        "note": "The live query returned no 24-hour result, although the national catalog contains records marked as 24-hour."
+      },
+      {
+        "component": "assistantResponseLatency",
+        "status": "response_succeeded_latency_observed",
+        "responseMs": 16004,
+        "mode": "gemini"
+      }
+    ]
   }
 }
