@@ -119,11 +119,36 @@ test("merchant profile, shop submission and directory favourites work in a real 
     await page.locator('#f input[name="phone"]').fill(merchantPhone);
     await page.locator("#save").click();
 
-    const shopCard = page.locator("#list .card").filter({ hasText: shopName }).first();
-    await shopCard.waitFor({ state: "visible", timeout: 15000 });
-    const shopId = await shopCard.getAttribute("data-open");
+    await page.waitForFunction(name => {
+      const state = JSON.parse(localStorage.getItem("dalilna_app_v6") || "{}");
+      return Array.isArray(state.items) && state.items.some(item => item.name === name);
+    }, shopName, { timeout: 15000 }).catch(async error => {
+      const diagnostics = await page.evaluate(() => ({
+        toast: document.querySelector("#toast")?.textContent || "",
+        formError: document.querySelector("#ferr")?.textContent || "",
+        addDialogOpen: document.querySelector("#dlg")?.open || false,
+        savedItems: (JSON.parse(localStorage.getItem("dalilna_app_v6") || "{}").items || []).map(item => item.name),
+        governorate: document.querySelector("#fgov")?.value || "",
+        district: document.querySelector("#fdist")?.value || "",
+        phone: document.querySelector('#f input[name="phone"]')?.value || ""
+      }));
+      throw new Error("Shop did not persist after submit. " + JSON.stringify(diagnostics) + ". " + error.message);
+    });
+
+    // Make sure the app is showing the complete directory, not a prior region scope.
+    await page.locator("#q").fill("");
+    await page.locator("#scopeBtn").click();
+    await page.locator('#pickerList [data-pval=""]').click();
+
+    const savedShop = await page.evaluate(name => {
+      const state = JSON.parse(localStorage.getItem("dalilna_app_v6") || "{}");
+      return (state.items || []).find(item => item.name === name) || null;
+    }, shopName);
+    const shopId = savedShop?.id;
     assert.ok(shopId, "The submitted shop should have a local listing identifier.");
 
+    const shopCard = page.locator('#list .card[data-open="' + shopId + '"]').first();
+    await shopCard.waitFor({ state: "visible", timeout: 15000 });
     await shopCard.locator("[data-fav]").click();
     let saved = await page.evaluate(() => JSON.parse(localStorage.getItem("dalilna_app_v6") || "{}"));
     assert.ok(saved.items.some(item => item.id === shopId && item.name === shopName), "The new shop should be stored locally.");
