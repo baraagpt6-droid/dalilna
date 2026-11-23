@@ -167,7 +167,9 @@ test("Gemini request budget allows slower responses while local answers render f
  const root=path.resolve(__dirname,"..");
  const api=fs.readFileSync(path.join(root,"api/assistant.js"),"utf8");
  const web=fs.readFileSync(path.join(root,"index.html"),"utf8");
- assert.match(api,/AbortSignal\.timeout\(15_000\)/);
+ assert.ok(api.includes('AbortSignal.timeout(model === "gemini-3.5-flash-lite" ? 10_000 : 15_000)'));
+ assert.ok(api.includes('const fallbackModel = preferredModel === "gemini-3.5-flash-lite" ? "gemini-3.8-flash" : "gemini-3.5-flash-lite"'));
+ assert.ok(api.includes("for (const model of modelCandidates)"));
  assert.match(web,/timer=setTimeout\(\(\)=>controller\.abort\(\),18000\)/);
  const jobs=web.indexOf('const response=await fetch("./jobs-feed.json"');
  const immediate=web.indexOf('if(typeof onImmediate==="function")onImmediate(result)',jobs);
