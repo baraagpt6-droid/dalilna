@@ -115,6 +115,11 @@ test("merchant profile, shop submission and directory favourites work in a real 
     const shopName = "Dalilna E2E Shop";
     await page.locator("#merchantAddBtn").click();
     await page.locator("#dlg").waitFor({ state: "visible" });
+    await page.locator("#fgovBtn").click();
+    await page.locator('#pickerList [data-pval="إب"]').click();
+    await page.locator("#fdistBtn").click();
+    await page.locator("#pickerSearch").fill("حبيش");
+    await page.locator('#pickerList [data-pval="حبيش"]').click();
     await page.locator('#f input[name="name"]').fill(shopName);
     await page.locator('#f input[name="phone"]').fill(merchantPhone);
     await page.locator("#save").click();
