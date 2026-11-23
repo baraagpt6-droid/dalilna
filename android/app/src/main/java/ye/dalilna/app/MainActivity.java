@@ -62,6 +62,7 @@ public class MainActivity extends Activity {
     private boolean adLoaded = false;
     private boolean detailScreenVisible = false;
     private boolean adsDestroyed = false;
+    private boolean adViewPaused = true;
     private android.content.SharedPreferences preferences;
     private boolean fallbackLoading = false;
     private PermissionRequest pendingWebPermission;
@@ -316,18 +317,29 @@ public class MainActivity extends Activity {
             consentInformation.requestConsentInfoUpdate(
                     this,
                     parameters,
-                    () -> UserMessagingPlatform.loadAndShowConsentFormIfRequired(this, formError -> {
-                        updatePrivacyOptionsVisibility();
-                        requestAdsIfAllowed();
-                    }),
+                    () -> {
+                        // This callback is asynchronous, so guard UMP calls inside the callback too.
+                        try {
+                            UserMessagingPlatform.loadAndShowConsentFormIfRequired(this, formError -> {
+                                try {
+                                    updatePrivacyOptionsVisibility();
+                                    if (detailScreenVisible) requestAdsIfAllowed();
+                                } catch (RuntimeException ignored) { }
+                            });
+                        } catch (RuntimeException ignored) {
+                            updatePrivacyOptionsVisibility();
+                            if (detailScreenVisible) requestAdsIfAllowed();
+                        }
+                    },
                     requestConsentError -> {
-                        updatePrivacyOptionsVisibility();
-                        // UMP may use a still-valid consent choice from an earlier session.
-                        requestAdsIfAllowed();
+                        try {
+                            updatePrivacyOptionsVisibility();
+                            if (detailScreenVisible) requestAdsIfAllowed();
+                        } catch (RuntimeException ignored) { }
                     }
             );
         } catch (RuntimeException error) {
-            // Ads stay unavailable when consent cannot be established.
+            // Consent failure disables ads only; the directory remains usable.
             try { updatePrivacyOptionsVisibility(); } catch (RuntimeException ignored) { }
         }
     }
@@ -350,7 +362,7 @@ public class MainActivity extends Activity {
             UserMessagingPlatform.showPrivacyOptionsForm(this, formError -> {
                 try {
                     updatePrivacyOptionsVisibility();
-                    requestAdsIfAllowed();
+                    if (detailScreenVisible) requestAdsIfAllowed();
                 } catch (RuntimeException ignored) { }
             });
         } catch (RuntimeException ignored) { }
@@ -358,7 +370,7 @@ public class MainActivity extends Activity {
 
     private void requestAdsIfAllowed() {
         try {
-            if (adsInitialized || consentInformation == null || adsDestroyed
+            if (!detailScreenVisible || adsInitialized || consentInformation == null || adsDestroyed
                     || isFinishing() || !consentInformation.canRequestAds()) return;
             adsInitialized = true;
             MobileAds.initialize(this, initializationStatus -> {
@@ -379,18 +391,47 @@ public class MainActivity extends Activity {
     }
 
     private void setDetailBannerVisibleOnUi(boolean visible) {
+        detailScreenVisible = visible;
         try {
-            if (adsDestroyed || isFinishing() || adView == null) return;
-            detailScreenVisible = visible;
+            if (adView == null || adsDestroyed || isFinishing()) return;
             if (!visible) {
                 adView.setVisibility(View.GONE);
+                pauseDetailBanner();
                 return;
             }
-            if (adLoaded) adView.setVisibility(View.VISIBLE);
-            else if (adsSdkReady) loadBannerAd();
+
+            resumeDetailBanner();
+            if (adLoaded) {
+                adView.setVisibility(View.VISIBLE);
+            } else {
+                adView.setVisibility(View.INVISIBLE);
+                if (adsSdkReady) loadBannerAd();
+                else requestAdsIfAllowed();
+            }
         } catch (RuntimeException ignored) {
             try { if (adView != null) adView.setVisibility(View.GONE); }
             catch (RuntimeException ignoredAgain) { }
+        }
+    }
+
+    private void pauseDetailBanner() {
+        if (adView == null || adsDestroyed || adViewPaused) return;
+        try {
+            adView.pause();
+            adViewPaused = true;
+        } catch (RuntimeException ignored) {
+            // Keep the banner hidden even when the SDK cannot pause cleanly.
+            adViewPaused = true;
+        }
+    }
+
+    private void resumeDetailBanner() {
+        if (adView == null || adsDestroyed || !adViewPaused) return;
+        try {
+            adView.resume();
+            adViewPaused = false;
+        } catch (RuntimeException ignored) {
+            adViewPaused = true;
         }
     }
 
@@ -505,16 +546,22 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-        try { if (adView != null && !adsDestroyed) adView.pause(); }
-        catch (RuntimeException ignored) { }
+        if (detailScreenVisible) pauseDetailBanner();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        try { if (adView != null && !adsDestroyed) adView.resume(); }
-        catch (RuntimeException ignored) { }
+        if (detailScreenVisible) {
+            resumeDetailBanner();
+            try {
+                if (adView != null && !adsDestroyed) {
+                    if (adLoaded) adView.setVisibility(View.VISIBLE);
+                    else if (adsSdkReady) loadBannerAd();
+                }
+            } catch (RuntimeException ignored) { }
+        }
     }
 
     @Override
@@ -527,6 +574,7 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         adsDestroyed = true;
         detailScreenVisible = false;
+        adViewPaused = true;
         try {
             if (adView != null) {
                 adView.setVisibility(View.GONE);
