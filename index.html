@@ -766,6 +766,10 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
         <button type="button" data-cg="tech" aria-pressed="false">طاقة وصيانة</button>
         <button type="button" data-cg="shop" aria-pressed="false">تسوق ومناسبات</button>
       </div>
+      <div id="pharmacy24Quick" class="pharmacy24-quick" hidden>
+        <button type="button" class="quick-jump-btn" id="pharmacy24QuickBtn">صيدليات مناوبة 24 ساعة</button>
+        <small id="pharmacy24QuickHint">يعرض السجلات التي تذكر ساعات عمل 24/7 صراحةً.</small>
+      </div>
       <div class="tiles" id="tiles"></div>
       <div class="cat-more-row" id="catMoreRow">
         <button type="button" class="cat-more-btn" id="catMoreBtn">عرض كل الأقسام</button>
@@ -2515,7 +2519,8 @@ const I18N={
     catHubTitle:"الأقسام والخدمات الذكية",catSearchPh:"ابحث في الأقسام (مثلاً: دواء، سباك)…",
     cgAll:"الكل",cgTop:"الأكثر طلباً",cgDaily:"يومية وغذاء",cgHealth:"صحة وتعليم",cgTech:"طاقة وصيانة",cgShop:"تسوق ومناسبات",
     showAllCats:"عرض كل الأقسام",collapseCats:"طي الأقسام",
-    fltNear:"الأقرب لموقعي",fltOpen:"مفتوح الآن",fltVer:"موثّق",fltFav:"المفضلة",
+    fltNear:"الأقرب لموقعي",fltOpen:"مفتوح الآن",flt24:"دوام 24 ساعة فقط",fltVer:"موثّق",fltFav:"المفضلة",
+    pharmacy24Title:"صيدليات مناوبة 24 ساعة",pharmacy24Hint:"يعرض السجلات التي تذكر ساعات عمل 24/7 صراحةً.",
     recentTitle:"شاهدته مؤخراً",clear:"مسح",latestTitle:"الخدمات والمحلات",searchRes:"نتائج البحث",moreBtn:"عرض المزيد",
     fxTitle:"أسعار الصرف والذهب اليوم",fxUpdated:"محدّث",fxCalcTitle:"حاسبة تحويل العملات الفورية",fxAmtPh:"المبلغ",
     emTitle:"أرقام الطوارئ والخدمات",
@@ -2537,7 +2542,8 @@ const I18N={
     catHubTitle:"Smart Categories & Services",catSearchPh:"Filter categories (e.g. medicine, plumber)…",
     cgAll:"All",cgTop:"Most Popular",cgDaily:"Daily & Food",cgHealth:"Health & Edu",cgTech:"Solar & Repair",cgShop:"Shopping & Events",
     showAllCats:"Show All Categories",collapseCats:"Collapse Categories",
-    fltNear:"Nearest to Me",fltOpen:"Open Now",fltVer:"Verified",fltFav:"Favorites",
+    fltNear:"Nearest to Me",fltOpen:"Open Now",flt24:"24/7 only",fltVer:"Verified",fltFav:"Favorites",
+    pharmacy24Title:"24-hour pharmacies",pharmacy24Hint:"Shows records that explicitly list 24/7 opening hours.",
     recentTitle:"Recently Viewed",clear:"Clear",latestTitle:"Services & Shops",searchRes:"Search Results",moreBtn:"Load More",
     fxTitle:"Exchange & Gold Rates Today",fxUpdated:"Updated",fxCalcTitle:"Instant Currency Converter",fxAmtPh:"Amount",
     emTitle:"Emergency & Important Numbers",
@@ -3104,6 +3110,8 @@ function applyLang(){
   $("#themeBtn .lbl").textContent=T("theme");
   $("#q").placeholder=T("searchPh");
   $("#catHub h2").textContent=T("catHubTitle");
+  if($("#pharmacy24QuickBtn"))$("#pharmacy24QuickBtn").textContent=T("pharmacy24Title");
+  if($("#pharmacy24QuickHint"))$("#pharmacy24QuickHint").textContent=T("pharmacy24Hint");
   const cgKeys={all:"cgAll",top:"cgTop",daily:"cgDaily",health:"cgHealth",tech:"cgTech",shop:"cgShop"};
   $("#catTabs").querySelectorAll("[data-cg]").forEach(b=>b.textContent=T(cgKeys[b.dataset.cg]));
   $("#recentBox h2 span").textContent=T("recentTitle");
@@ -3353,11 +3361,12 @@ $("#toggleAdmPass").addEventListener("click",()=>{
 
 /* Navigation & Smart Shortcuts */
 let view="home",curCat="",scope=S.defaultGovernorate?"gov:"+S.defaultGovernorate:"",catGroup="all",catExpanded=false,homeLim=24;
-let flt={open:false,ver:false,fav:false,near:false};
+let flt={open:false,ver:false,fav:false,near:false,open24:false};
 let userPos=null;
 
 function go(v,c){
   if(v==="souq"&&!S.perms.souqEnabled){toast("سوق البيع والشراء متوقف حالياً.");v="home";}
+  if(v!=="cat"||c!=="pharmacy")flt.open24=false;
   view=v;curCat=c||"";
   $("#vHome").hidden=v!=="home";
   $("#vCat").hidden=v!=="cat";
@@ -3374,7 +3383,7 @@ function go(v,c){
 }
 $("#logoHome").addEventListener("click",e=>{
   e.preventDefault();
-  $("#q").value="";liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";flt={open:false,ver:false,fav:false,near:false};scope="";buildScopeSelector();go("home");
+  $("#q").value="";liveDirectoryCategoryOverride="";liveDirectoryListingTypeOverride="";flt={open:false,ver:false,fav:false,near:false,open24:false};scope="";buildScopeSelector();go("home");
 });
 $("#aiFab").addEventListener("click",()=>go("fb"));
 document.querySelector(".bottom").addEventListener("click",e=>{
@@ -3674,6 +3683,11 @@ function toggleNearRadar(){
 }
 
 /* Open Now Helper */
+function isTwentyFourHours(h){
+  if(!h)return false;
+  const text=String(h).replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).toLowerCase();
+  return /24\s*\/\s*7|24\s*(?:ساعة|hours?|h\b)|00:00\s*-\s*24:00|على مدار الساعة|دوام مستمر/.test(text);
+}
 function isOpenNow(h){
   if(!h)return null;
   const text=String(h).replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).toLowerCase();
@@ -3703,6 +3717,13 @@ $("#catTabs").addEventListener("click",e=>{
   renderCategories();
 });
 $("#catMoreBtn").addEventListener("click",()=>{catExpanded=!catExpanded;renderCategories();});
+$("#pharmacy24QuickBtn").addEventListener("click",()=>{
+  $("#q").value="";
+  liveDirectoryCategoryOverride="";
+  liveDirectoryListingTypeOverride="";
+  flt={open:false,ver:false,fav:false,near:false,open24:true};
+  go("cat","pharmacy");
+});
 $("#tiles").addEventListener("click",e=>{
   const t=e.target.closest(".tile");if(!t)return;
   const c=t.dataset.c;
@@ -3733,6 +3754,7 @@ function renderFilterChips(){
   const chips=[
     ["near",T("fltNear")],
     ["open",T("fltOpen")],
+    ...(view==="cat"&&curCat==="pharmacy"?[["open24",T("flt24")]]:[]),
     ["ver",T("fltVer")],
     ["fav",T("fltFav")+" ("+S.favs.length+")"]
   ];
@@ -3743,7 +3765,7 @@ document.addEventListener("click",e=>{
   const b=e.target.closest("[data-flt]");
   if(b){
     const k=b.dataset.flt;
-    if(k==="near")toggleNearRadar();else{flt[k]=!flt[k];render();}
+    if(k==="near")toggleNearRadar();else{flt[k]=!flt[k];if(k==="open24"&&flt.open24)flt.open=false;render();}
     return;
   }
   const f=e.target.closest("[data-fav]");
@@ -4737,6 +4759,7 @@ function renderLiveDirectoryResponse(data){
  if(!status||!box)return;
  let items=Array.isArray(data?.items)?data.items:[];
  if(flt.open)items=items.filter(item=>isOpenNow(item?.openingHours||item?.hours)===true);
+ if(flt.open24)items=items.filter(item=>item.category==="pharmacy"&&isTwentyFourHours(item?.openingHours||item?.hours));
  if(flt.ver)items=items.filter(item=>!!item?.verifiedAt);
  if(flt.fav)items=items.filter(item=>S.favs.includes(String(item?.id||"")));
  if(flt.near&&userPos)items=items.slice().sort((a,b)=>(calcKm(userPos.lat,userPos.lng,a?.lat??a?.latitude,a?.lon??a?.longitude)??999)-(calcKm(userPos.lat,userPos.lng,b?.lat??b?.latitude,b?.lon??b?.longitude)??999));
@@ -4758,8 +4781,10 @@ function renderLiveDirectoryResponse(data){
   (liveSharedLoadError?(english?" · Shared adverts could not be refreshed":" · تعذر تحديث الإعلانات المشتركة"):"");
  if(view==="cat"&&$("#count"))$("#count").textContent=Number(items.length).toLocaleString(english?"en-US":"ar-YE")+(english?" results in ":" نتيجة في ")+catLabel(curCat);
  if(!items.length){
-  const msg=data.classifiedOnly
-   ?(english?"This section uses adverts approved by Dalilna administrators. No approved advert matched this search.":"هذا القسم يعتمد على إعلانات المستخدمين والتجار التي تعتمدها الإدارة. لم توجد إعلانات معتمدة تطابق البحث حالياً.")
+  const msg=flt.open24
+   ?(english?"No pharmacy record in this area explicitly lists 24/7 opening hours.":"لا توجد في بيانات هذا النطاق صيدلية تذكر ساعات عمل 24/7 صراحةً.")
+   :data.classifiedOnly
+   ?(english?"This section uses adverts approved by Dalilna administrators. No approved advert matched this search.":"هذا القسم يعتمد على إعلانات المستخدمين والتجار التي تعتمدها الإدارة. لم توجد إعلانات معتمدة تطابق هذا البحث حالياً.")
    :(english?"No matching records were found in the current open-map catalogue. This does not mean the place does not exist. You can submit its details for review.":"لم نجد سجلات مطابقة في فهرس OpenStreetMap الحالي. هذا لا يعني أن المكان غير موجود. يمكنك إرسال بياناته إلى دليلنا لمراجعتها.");
   const suggestions=Array.isArray(data?.suggestions)?data.suggestions:[];
   const suggestionsHtml=suggestions.length
@@ -4847,17 +4872,17 @@ async function ensureLightSearchIndex(){
  if(liveLightSearchIndex)return liveLightSearchIndex;
  if(liveLightSearchPromise)return liveLightSearchPromise;
  liveLightSearchPromise=(async()=>{
-  const response=await fetchCatalogAsset("search_index_light.json?v=2.8.0");
+  const response=await fetchCatalogAsset("search_index_light.json?v=2.8.0-pharmacy24");
   const envelope=await response.json();
-  if(!envelope||envelope.schemaVersion!==1||envelope.encoding!=="gzip+base64"||typeof envelope.data!=="string")throw new Error("ملف فهرس البحث الوطني غير صالح.");
+  if(!envelope||envelope.schemaVersion!==2||envelope.encoding!=="gzip+base64"||typeof envelope.data!=="string")throw new Error("ملف فهرس البحث الوطني غير صالح.");
   if(typeof DecompressionStream!=="function")throw new Error("المتصفح لا يدعم فك ضغط فهرس البحث.");
   const binary=atob(envelope.data),bytes=new Uint8Array(binary.length);
   for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
   const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
   const payload=await new Response(stream).json();
-  if(payload?.v!==1||!Array.isArray(payload.i)||!Array.isArray(payload.c)||!Array.isArray(payload.g)||!Array.isArray(payload.d))throw new Error("بنية فهرس البحث الوطني غير مكتملة.");
+  if(payload?.v!==2||!Array.isArray(payload.i)||!Array.isArray(payload.c)||!Array.isArray(payload.g)||!Array.isArray(payload.d))throw new Error("بنية فهرس البحث الوطني غير مكتملة.");
   const items=payload.i.map(row=>{
-   if(!Array.isArray(row)||row.length!==8)return null;
+   if(!Array.isArray(row)||row.length!==9)return null;
    const gov=payload.g[Number(row[3])]||"",districtRow=payload.d[Number(row[4])]||[];
    const category=payload.c[Number(row[2])]||"other";
    const district=String(districtRow[0]||"");
@@ -4867,13 +4892,15 @@ async function ensureLightSearchIndex(){
    if(!name)return null;
    return {
     id:String(row[0]||""),name,category,categories:[category],governorate:gov,district,
-    phone:String(row[5]||""),lat,lon,source:"OpenStreetMap / Overture Maps",
+    phone:String(row[5]||""),lat,lon,openingHours:String(row[8]||""),source:"OpenStreetMap / Overture Maps",
     mapsUrl:Number.isFinite(lat)&&Number.isFinite(lon)?"https://www.openstreetmap.org/?mlat="+lat+"&mlon="+lon+"#map=18/"+lat+"/"+lon:""
    };
   }).filter(Boolean);
   if(items.length!==Number(envelope.recordCount)||items.length===0)throw new Error("عدد سجلات فهرس البحث لا يطابق بيانات الملف.");
   liveLightSearchIndex=items.map(item=>({...item,_nameKey:normalizeSearchPlace(item.name),_searchKey:normalizeSearchPlace([item.name,item.governorate,item.district,item.category,catLabel(item.category),CN[item.category],CAT_SYN[item.category]||""].filter(Boolean).join(" "))}));
-  window.DALILNA_SEARCH_INDEX={ready:true,count:liveLightSearchIndex.length,governorates:payload.g.length,mode:"full-yemen-light",compressedBytes:bytes.length};
+  const open24Pharmacies=liveLightSearchIndex.filter(item=>item.category==="pharmacy"&&isTwentyFourHours(item.openingHours)).length;
+  window.DALILNA_SEARCH_INDEX={ready:true,count:liveLightSearchIndex.length,governorates:payload.g.length,open24Pharmacies,mode:"full-yemen-light",compressedBytes:bytes.length};
+  const pharmacy24Quick=$("#pharmacy24Quick");if(pharmacy24Quick)pharmacy24Quick.hidden=open24Pharmacies===0;
   return liveLightSearchIndex;
  })().catch(error=>{liveLightSearchPromise=null;throw error;});
  return liveLightSearchPromise;
@@ -4903,11 +4930,11 @@ function searchLightIndex(index,query,context,category,productType){
   if(context?.district&&normalizePlace(item.district)!==normalizePlace(context.district))return false;
   return true;
  };
- const matches=[];
+ const matches=[],maxMatches=wanted==="pharmacy"&&flt.open24?2500:500;
  for(const item of rows){
   if(!eligible(item))continue;
   if(!tokens.length||tokens.every(token=>item._searchKey.includes(token)))matches.push(item);
-  if(matches.length>=500)break;
+  if(matches.length>=maxMatches)break;
  }
  if(matches.length||tokens.length===0)return {items:matches,suggestions:[]};
  const phrase=tokens.join(" "),first=tokens[0],suggestions=[];
