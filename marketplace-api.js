@@ -75,7 +75,7 @@ async function schema(db){
    await db.query("ALTER TABLE marketplace_listings ALTER COLUMN expires_at DROP NOT NULL");
    await db.query(`CREATE TABLE IF NOT EXISTS marketplace_ugc_reports (
      id UUID PRIMARY KEY,
-     report_type VARCHAR(16) NOT NULL CHECK(report_type IN ('listing','seller','assistant')),
+     report_type VARCHAR(16) NOT NULL CHECK(report_type IN ('listing','seller','candidate','assistant')),
      listing_id UUID REFERENCES marketplace_listings(id) ON DELETE SET NULL,
      reason VARCHAR(32) NOT NULL,
      details VARCHAR(800) NOT NULL DEFAULT '',
@@ -87,6 +87,8 @@ async function schema(db){
    )`);
    await db.query("CREATE INDEX IF NOT EXISTS marketplace_ugc_reports_pending_idx ON marketplace_ugc_reports(status,created_at DESC)");
    await db.query("ALTER TABLE marketplace_ugc_reports ADD COLUMN IF NOT EXISTS candidate_id UUID");
+   await db.query("ALTER TABLE marketplace_ugc_reports DROP CONSTRAINT IF EXISTS marketplace_ugc_reports_report_type_check");
+   await db.query("ALTER TABLE marketplace_ugc_reports ADD CONSTRAINT marketplace_ugc_reports_report_type_check CHECK(report_type IN ('listing','seller','candidate','assistant'))");
    await db.query(`CREATE TABLE IF NOT EXISTS marketplace_seller_blocks (
      phone_hash CHAR(64) PRIMARY KEY,
      reason VARCHAR(500) NOT NULL DEFAULT '',
