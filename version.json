@@ -13,14 +13,14 @@
     "Foursquare Open Places (optional portal export)"
   ],
   "generatedAt": "2026-11-23T00:00:00Z",
-  "catalogGeneratedAt": "2026-11-23T02:54:03.158878+00:00",
+  "catalogGeneratedAt": "2026-11-23T07:27:44.981028+00:00",
   "sourceCounts": {
     "OpenStreetMap": 17041,
     "Overture Maps": 15386,
     "Foursquare Open Places (via Overture)": 4
   },
-  "osmDatasetSource": "BBBike Yemen OSM mirror (fallback)",
-  "updatedAt": "2026-11-23T07:12:58.254Z",
+  "osmDatasetSource": "Geofabrik latest Yemen extract",
+  "updatedAt": "2026-11-23T07:27:46.850600+00:00",
   "marketPriceGuideVersion": 1,
   "marketPriceGuideUpdatedAt": "2026-11-23",
   "androidSigningMode": "persistent",
