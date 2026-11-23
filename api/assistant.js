@@ -166,7 +166,7 @@ async function handler(req, res) {
         generation_config: { temperature: 0.3, max_output_tokens: 700 },
         store: false
       }),
-      signal: AbortSignal.timeout(25_000)
+      signal: AbortSignal.timeout(8_500)
     });
 
     const data = await upstream.json().catch(() => ({}));
