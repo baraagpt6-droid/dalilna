@@ -129,3 +129,14 @@ html{scroll-behavior:smooth}
   .quick-jump-btn > span:last-child{font-size:10.5px}
   .quick-jump-icon{width:24px;height:24px;flex-basis:24px}
 }
+
+/* Dalilna 2.8.0 compact trust labels, suggestions and assistant typing. */
+.live-directory-badges{display:flex;align-items:center;justify-content:flex-end;gap:5px;flex-wrap:wrap}
+.verification-badge{display:inline-flex;align-items:center;padding:3px 7px;border:1px solid var(--line);border-radius:999px;color:var(--mute);font-size:9px;line-height:1.4;white-space:nowrap}
+.verification-badge.verified{border-color:rgba(56,182,166,.45);color:var(--acc)}
+.live-directory-suggestions{display:grid;gap:7px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.live-directory-suggestions>b{font-size:12px}
+.live-directory-suggestions button{min-height:34px;padding:7px 10px;text-align:start;border:1px solid var(--line);border-radius:9px;background:var(--chip);color:var(--ink)}
+.assistant-typing{display:inline-flex;align-items:center;gap:7px}
+.assistant-typing:after{content:"";width:24px;height:6px;background:radial-gradient(circle,var(--acc) 2px,transparent 3px) 0 50%/8px 6px repeat-x;animation:dalilna-typing .8s linear infinite}
+@keyframes dalilna-typing{to{background-position:8px 50%}}

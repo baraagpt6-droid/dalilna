@@ -44,6 +44,22 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Build compressed full-Yemen search index
+        run: python scripts/build_search_index_light.py --catalog-dir regional-catalog --output regional-catalog/search_index_light.json
+
+      - name: Verify compressed search index
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path("regional-catalog/search_index_light.json")
+          payload=json.loads(path.read_text(encoding="utf-8"))
+          assert path.stat().st_size <= 1_500_000
+          assert payload.get("recordCount",0)>0
+          assert payload.get("encoding") == "gzip+base64"
+          print("National search index:", payload["recordCount"], "records,", path.stat().st_size, "bytes")
+          PY
+
       - name: Sync PWA and national catalogue into Android assets
         shell: bash
         run: |
@@ -54,12 +70,13 @@ jobs:
           cmp -s index.html android/app/src/main/assets/index.html
           cmp -s regions-yemen.js android/app/src/main/assets/regions-yemen.js
           cmp -s version.json android/app/src/main/assets/version.json
+          cmp -s regional-catalog/search_index_light.json android/app/src/main/assets/regional-catalog/search_index_light.json
 
       - name: Check JavaScript syntax
         run: node --check server.js
 
       - name: Compile data scripts
-        run: python -m py_compile scripts/build_regional_catalog.py scripts/fuse_regional_catalog.py scripts/test_regional_catalog.py
+        run: python -m py_compile scripts/build_regional_catalog.py scripts/fuse_regional_catalog.py scripts/test_regional_catalog.py scripts/build_search_index_light.py
 
       - name: Run JavaScript tests
         run: npm test

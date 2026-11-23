@@ -45,6 +45,8 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: Build compressed full-Yemen search index
+        run: python3 scripts/build_search_index_light.py --catalog-dir regional-catalog --output regional-catalog/search_index_light.json
       - name: Prepare website files
         run: |
           mkdir -p _site/icons _site/regional-catalog
@@ -88,25 +90,32 @@ jobs:
             }
             throw lastError;
           }
-          const [page, css, js, swResponse, manifestResponse, versionResponse, marketItemsResponse] = await Promise.all([
+          const [page, css, js, swResponse, manifestResponse, versionResponse, marketItemsResponse, lightIndexResponse] = await Promise.all([
             get("./index.html"),
-            get("./features-2.1.css?v=2.7.1"),
-            get("./features-2.1.js?v=2.7.1"),
+            get("./features-2.1.css?v=2.8.0"),
+            get("./features-2.1.js?v=2.8.0"),
             get("./sw.js"),
-            get("./regional-catalog/manifest.json?v=2.7.1"),
+            get("./regional-catalog/manifest.json?v=2.8.0"),
             get("./version.json"),
-            get("./market_items.json")
+            get("./market_items.json"),
+            get("./regional-catalog/search_index_light.json?v=2.8.0")
           ]);
           const html = await page.text();
           const manifest = await manifestResponse.json();
           const version = await versionResponse.json();
           const marketItems = await marketItemsResponse.json();
-          if (version.webVersion !== "2.7.1" || version.versionCode !== 271) throw new Error("version.json does not describe Dalilna 2.7.1.");
-          if (!html.includes('content="2.7.1"')) throw new Error("Deployed homepage version is not 2.7.1.");
+          const lightBytes = await lightIndexResponse.arrayBuffer();
+          const lightEnvelope = JSON.parse(new TextDecoder().decode(lightBytes));
+          if (lightBytes.byteLength > 1500000 || lightEnvelope.encoding !== "gzip+base64") throw new Error("Full-Yemen light search index is too large or uncompressed.");
+          const { gunzipSync } = await import("node:zlib");
+          const lightPayload = JSON.parse(gunzipSync(Buffer.from(lightEnvelope.data, "base64")).toString("utf8"));
+          if (!Array.isArray(lightPayload.i) || lightPayload.i.length !== manifest.totalCount || lightEnvelope.recordCount !== manifest.totalCount) throw new Error("Full-Yemen search index is incomplete.");
+          if (version.webVersion !== "2.8.0" || version.versionCode !== 280) throw new Error("version.json does not describe Dalilna 2.8.0.");
+          if (!html.includes('content="2.8.0"')) throw new Error("Deployed homepage version is not 2.8.0.");
           if (!(await css.text()).includes(".quick-jump-btn")) throw new Error("Quick-access stylesheet was not published.");
           if (!(await js.text()).includes("officialApplicationUrl")) throw new Error("Feature JavaScript is incomplete.");
-          if (!(await swResponse.text()).includes("v2.7.1")) throw new Error("Updated service worker was not published.");
-          if (!Array.isArray(marketItems.items) || marketItems.items.length < 21 || !marketItems.groupNames || marketItems.groupNames.length !== 7) throw new Error("Marketplace reference catalogue is incomplete.");
+          if (!(await swResponse.text()).includes("v2.8.0")) throw new Error("Updated service worker was not published.");
+          if (!Array.isArray(marketItems.items) || marketItems.items.length !== 0 || !marketItems.groupNames || marketItems.groupNames.length !== 7) throw new Error("Marketplace must not publish synthetic reference listings.");
           if (!Array.isArray(manifest.governorates) || manifest.governorates.length !== 22) throw new Error("Published regional manifest does not contain all 22 governorates.");
           if (!Array.isArray(manifest.districtCounts) || manifest.districtCounts.length !== 335) throw new Error("Published regional manifest does not contain all 335 districts.");
           const governorateTotal = manifest.governorates.reduce((sum, item) => sum + Number(item.count || 0), 0);
@@ -115,5 +124,5 @@ jobs:
           if (!Number.isInteger(Number(manifest.totalCount)) || Number(manifest.totalCount) < 1) throw new Error("Published regional manifest has an invalid total count.");
           if (governorateTotal !== Number(manifest.totalCount)) throw new Error("Governorate totals do not match the national catalogue total.");
           if (districtTotal + unassignedCount !== Number(manifest.totalCount)) throw new Error("District and unassigned totals do not match the national catalogue total.");
-          console.log(JSON.stringify({ page: base, version: "2.7.1", governorates: manifest.governorates.length, districtRows: manifest.districtCounts.length, places: manifest.totalCount, marketplaceReferenceItems: marketItems.items.length, marketplaceGroups: marketItems.groupNames.length }, null, 2));
+          console.log(JSON.stringify({ page: base, version: "2.8.0", governorates: manifest.governorates.length, districtRows: manifest.districtCounts.length, places: manifest.totalCount, marketplaceReferenceItems: marketItems.items.length, marketplaceGroups: marketItems.groupNames.length, nationalSearchRecords: lightPayload.i.length, lightSearchBytes: lightBytes.byteLength }, null, 2));
           NODE

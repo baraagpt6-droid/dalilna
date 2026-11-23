@@ -267,10 +267,9 @@ test("quick-jump labels wrap inside their own cards on narrow screens",()=>{
  assert.ok(quickCss.includes("min-height:56px"));
 });
 
-test("approved listing cards use compact empty-image fallbacks",()=>{
- assert.ok(html.includes('shared-listing-image-fallback no-image'));
- assert.ok(client.includes('shared-listing-image-fallback no-image'));
- assert.ok(features.includes('image.replaceWith(fallback)'));
+test("approved listing cards omit empty-image placeholders",()=>{
+ assert.ok(!html.includes('shared-listing-image-fallback no-image'));
+ assert.ok(!client.includes('shared-listing-image-fallback no-image'));
 });
 test("currency, gold and emergency areas use matching vector icons",()=>{
  assert.ok(html.includes('class="fx-asset-icon '));

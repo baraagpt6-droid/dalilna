@@ -1,7 +1,7 @@
 "use strict";
 const test=require("node:test");
 const assert=require("node:assert/strict");
-const {parseYemenHrJobs}=require("../scripts/refresh-jobs.cjs");
+const {parseYemenHrJobs,dedupeJobs}=require("../scripts/refresh-jobs.cjs");
 
 function fixture(applicationUrl){
  return `<div class="tgme_widget_message_wrap">
@@ -39,4 +39,15 @@ test("YemenHR parser publishes only a direct application URL supplied by the sou
  assert.equal(job.url,job.applicationUrl);
  assert.equal(job.sourceUrl,"https://t.me/hr_yemen/12345");
  assert.doesNotMatch(job.url,/telegra\\.ph|t\\.me/i);
+});
+
+test("job refresh removes expired records and duplicate IDs with different application URLs",()=>{
+ const now=Date.parse("2026-11-23T00:00:00Z");
+ const base={id:"yemenhr:abc",title:"Field Assistant",organization:"Example",location:"Ibb, Yemen",country:"Yemen",countryCode:"YE",publishedAt:"2026-11-22T00:00:00Z",url:"https://yemenhr.com/jobs/first",applicationUrl:"https://yemenhr.com/jobs/first",expiresAt:"2026-11-30T00:00:00Z",sourceUrl:"https://t.me/hr_yemen/123"};
+ const richer={...base,url:"https://yemenhr.com/jobs/second",applicationUrl:"https://yemenhr.com/jobs/second",summaryAr:"وصف الوظيفة ومؤهلاتها",deadline:"30 نوفمبر"};
+ const expired={...base,id:"yemenhr:old",expiresAt:"2026-11-22T00:00:00Z"};
+ const rows=dedupeJobs([base,richer,expired],now);
+ assert.equal(rows.length,1);
+ assert.equal(rows[0].applicationUrl,"https://yemenhr.com/jobs/second");
+ assert.equal(rows[0].summaryAr,"وصف الوظيفة ومؤهلاتها");
 });

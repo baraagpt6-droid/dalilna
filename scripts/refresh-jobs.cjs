@@ -168,6 +168,63 @@ async function reliefWeb(app){
  }
  return items;
 }
-async function main(){let prev={items:[]};try{prev=JSON.parse(fs.readFileSync(OUT,"utf8"));}catch(_){}const fresh=[],sources=[],feeds=[["UN Careers RSS","https://careers.un.org/jobfeed?isPage=true"]];String(process.env.DALILNA_JOB_RSS_FEEDS||"").split(/[\r\n,]+/).map(x=>x.trim()).filter(Boolean).forEach((url,i)=>feeds.push(["Configured RSS "+(i+1),url]));for(const [name,url] of feeds){try{const items=parseRss(await getText(url),name);fresh.push(...items);sources.push({name,url,status:"ok",count:items.length});}catch(e){sources.push({name,url,status:"unavailable",message:String(e.message||e).slice(0,160),count:0});}}for(const [name,loader,url] of [["YemenHR public channel",fetchYemenHrJobs,"https://t.me/s/hr_yemen"],["Careers.sa Saudi listings",fetchCareersSaJobs,"https://www.careers.sa/en"]]){try{const items=await loader();fresh.push(...items);sources.push({name,url,status:"ok",count:items.length});}catch(e){sources.push({name,url,status:"unavailable",message:String(e.message||e).slice(0,160),count:0});}}const app=String(process.env.RELIEFWEB_APPNAME||"").trim();if(app){try{const items=await reliefWeb(app);fresh.push(...items);sources.push({name:"ReliefWeb Jobs API",url:"https://api.reliefweb.int/v2/jobs",status:"ok",count:items.length});}catch(e){sources.push({name:"ReliefWeb Jobs API",url:"https://api.reliefweb.int/v2/jobs",status:"unavailable",message:String(e.message||e).slice(0,160),count:0});}}else sources.push({name:"ReliefWeb Jobs API",url:"https://api.reliefweb.int/v2/jobs",status:"skipped",message:"RELIEFWEB_APPNAME is not configured.",count:0});const old=(Array.isArray(prev.items)?prev.items:[]).filter(x=>x&&x.applicationUrl&&isOfficialApplicationUrl(x.applicationUrl)&&x.url===x.applicationUrl&&Date.parse(x.expiresAt||"")>now&&!/\/en\/jobs\/company(?:\/|$)/i.test(String(x.url))),map=new Map();[...old,...fresh].forEach(item=>{const key=String(item.url).split("#")[0];if(key)map.set(key,item);});const items=[...map.values()].sort((a,b)=>Date.parse(b.publishedAt||0)-Date.parse(a.publishedAt||0)).slice(0,300);if(!fresh.length&&!old.length){console.log("No jobs received; keeping the current index.");console.log(JSON.stringify(sources));return;}if(JSON.stringify(items)===JSON.stringify(old)&&JSON.stringify(sources)===JSON.stringify(prev.sources||[])){console.log("No job-feed content or source-status changes; no commit needed.");return;}fs.writeFileSync(OUT,JSON.stringify({schemaVersion:1,fetchedAt:new Date(now).toISOString(),refreshedBy:"GitHub Actions daily job-feed refresh",sources,items},null,2)+"\n");console.log("Refreshed job index: "+fresh.length+" fresh, "+items.length+" retained.");console.log(JSON.stringify(sources));}
+
+function jobQuality(item){
+ return (item.title?3:0)+(item.organization?2:0)+(item.location?2:0)
+  +(item.summary||item.summaryAr?2:0)+(item.deadline?1:0)+(item.sourceUrl?1:0);
+}
+function dedupeJobs(records,nowMs=Date.now()){
+ const selected=new Map();
+ for(const item of Array.isArray(records)?records:[]){
+  if(!item||typeof item!=="object")continue;
+  const url=String(item.applicationUrl||item.url||"").split("#")[0].trim();
+  if(!url||item.url!==url||!isOfficialApplicationUrl(url))continue;
+  if(/\/en\/jobs\/company(?:\/|$)/i.test(url))continue;
+  const expiry=Date.parse(item.expiresAt||"");
+  if(!Number.isFinite(expiry)||expiry<=nowMs)continue;
+  const id=String(item.id||"").trim().toLowerCase();
+  const key=id?"id:"+id:"url:"+url.toLowerCase();
+  const previous=selected.get(key);
+  if(!previous||jobQuality(item)>jobQuality(previous)||
+    (jobQuality(item)===jobQuality(previous)&&Date.parse(item.publishedAt||0)>Date.parse(previous.publishedAt||0))){
+   selected.set(key,{...item,url,applicationUrl:url});
+  }
+ }
+ return [...selected.values()].sort((a,b)=>Date.parse(b.publishedAt||0)-Date.parse(a.publishedAt||0)).slice(0,300);
+}
+async function main(){
+ let prev={items:[]};
+ try{prev=JSON.parse(fs.readFileSync(OUT,"utf8"));}catch(_){}
+ const fresh=[],sources=[],feeds=[["UN Careers RSS","https://careers.un.org/jobfeed?isPage=true"]];
+ String(process.env.DALILNA_JOB_RSS_FEEDS||"").split(/[\r\n,]+/).map(x=>x.trim()).filter(Boolean).forEach((url,i)=>feeds.push(["Configured RSS "+(i+1),url]));
+ for(const [name,url] of feeds){
+  try{const items=parseRss(await getText(url),name);fresh.push(...items);sources.push({name,url,status:"ok",count:items.length});}
+  catch(e){sources.push({name,url,status:"unavailable",message:String(e.message||e).slice(0,160),count:0});}
+ }
+ for(const [name,loader,url] of [["YemenHR public channel",fetchYemenHrJobs,"https://t.me/s/hr_yemen"],["Careers.sa public listings",fetchCareersSaJobs,"https://www.careers.sa/en"]]){
+  try{const items=await loader();fresh.push(...items);sources.push({name,url,status:"ok",count:items.length});}
+  catch(e){sources.push({name,url,status:"unavailable",message:String(e.message||e).slice(0,160),count:0});}
+ }
+ const app=String(process.env.RELIEFWEB_APPNAME||"").trim();
+ if(app){
+  try{const items=await reliefWeb(app);fresh.push(...items);sources.push({name:"ReliefWeb Jobs API",url:"https://api.reliefweb.int/v2/jobs",status:"ok",count:items.length});}
+  catch(e){sources.push({name:"ReliefWeb Jobs API",url:"https://api.reliefweb.int/v2/jobs",status:"unavailable",message:String(e.message||e).slice(0,160),count:0});}
+ }else sources.push({name:"ReliefWeb Jobs API",url:"https://api.reliefweb.int/v2/jobs",status:"skipped",message:"RELIEFWEB_APPNAME is not configured.",count:0});
+ const old=Array.isArray(prev.items)?prev.items:[];
+ const items=dedupeJobs([...old,...fresh],now);
+ if(!fresh.length&&!items.length){
+  console.log("No live jobs were received; expired and duplicate records remain excluded.");
+  console.log(JSON.stringify(sources));
+  return;
+ }
+ if(JSON.stringify(items)===JSON.stringify(old)&&JSON.stringify(sources)===JSON.stringify(prev.sources||[])){
+  console.log("No job-feed content or source-status changes; no commit needed.");
+  return;
+ }
+ fs.writeFileSync(OUT,JSON.stringify({schemaVersion:1,fetchedAt:new Date(now).toISOString(),refreshedBy:"GitHub Actions six-hour jobs refresh",sources,items},null,2)+"\n");
+ const filtered=Math.max(0,old.length+fresh.length-items.length);
+ console.log("Refreshed job index: "+fresh.length+" fresh, "+items.length+" active unique, "+filtered+" expired/duplicate filtered.");
+ console.log(JSON.stringify(sources));
+}
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
-module.exports={parseRss,parseDateLabel,parseYemenHrJobs,parseCareersSaIndex,parseCareersSaJob};
+module.exports={parseRss,parseDateLabel,parseYemenHrJobs,parseCareersSaIndex,parseCareersSaJob,dedupeJobs};

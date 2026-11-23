@@ -9,6 +9,7 @@ on:
     paths:
       - "scripts/build_regional_catalog.py"
       - "scripts/test_regional_catalog.py"
+      - "scripts/build_search_index_light.py"
       - "scripts/fuse_regional_catalog.py"
       - "category-mapping.json"
       - "regions-yemen.js"
@@ -235,6 +236,9 @@ jobs:
           print("Polygon district assignments:", sum(item["boundaryCount"] for item in data["districtCounts"]))
           print("Approximate district assignments:", sum(item["approximateCount"] for item in data["districtCounts"]))
           PY
+      - name: Build compressed full-Yemen search index
+        run: python3 scripts/build_search_index_light.py --catalog-dir regional-catalog --output regional-catalog/search_index_light.json
+
       - name: Update silent version metadata with the published catalogue snapshot
         run: |
           python3 - <<'PY'
