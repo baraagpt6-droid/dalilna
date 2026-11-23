@@ -26,6 +26,7 @@ Example:
       "listingType": "sale",
       "description": "وصف المنتج",
       "productUrl": "https://merchant.example/products/SKU-100",
+      "imageUrl": "https://cdn.merchant.example/images/SKU-100.webp",
       "status": "available"
     }
   ]
