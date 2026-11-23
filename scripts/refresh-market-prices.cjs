@@ -26,7 +26,7 @@ function parseMoneyNear(text,terms){
  const fragment=normalized.slice(at,Math.min(normalized.length,at+1800));
  const matches=[...fragment.matchAll(/(?:([0-9]{1,3}(?:,[0-9]{3})+|[0-9]{5,})\s*(?:﷼|ريال(?:\s*يمني)?))/g)];
  if(matches.length){
-  const n=Number(matches[matches.length-1][1].replace(/,/g,""));
+  const n=Number(matches[0][1].replace(/,/g,""));
   return Number.isSafeInteger(n)&&n>0?n:null;
  }
  return null;
