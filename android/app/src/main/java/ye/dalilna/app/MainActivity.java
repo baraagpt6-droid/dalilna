@@ -118,7 +118,7 @@ public class MainActivity extends Activity {
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) settings.setSafeBrowsingEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            ServiceWorkerController.getInstance().getServiceWorkerSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+            ServiceWorkerController.getInstance().getServiceWorkerWebSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         }
 
         webView.addJavascriptInterface(new DalilnaNativeBridge(), "DalilnaNative");
