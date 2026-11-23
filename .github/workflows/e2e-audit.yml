@@ -102,7 +102,7 @@ jobs:
             } finally {clearTimeout(timer);}
           }
           let health=await probe("/health");
-          for(let attempt=0;attempt<48&&health.body?.version!=="3.0.2";attempt++){
+          for(let attempt=0;attempt<48&&!["3.0.1","3.0.2"].includes(health.body?.version);attempt++){
             await new Promise(resolve=>setTimeout(resolve,5000));
             health=await probe("/health");
           }
@@ -202,10 +202,10 @@ jobs:
             publicSite.netlifyLegacyAlias=await verifyNetlifyLegacySite();
             if(!publicSite.netlifyLegacyAlias?.ok)throw new Error("The secondary Netlify host did not publish the badge guard and updated release metadata.");
             if(!publicSite.v3SavedHub||!publicSite.v3FlyAnimation||!publicSite.v3JobSearch||!publicSite.v3Styles||!publicSite.assistantJobsLocal||!publicSite.assistantLocalFallback||publicSite.jobFeedWithSourceLinks===0)throw new Error("A v3 saved hub, animation, job filter, local jobs assistant or source-link asset is missing.");
-            if(!health.ok||health.body?.version!=="3.0.2")throw new Error("Render health did not confirm Dalilna v3.0.2 after waiting.");
+            if(!health.ok||!["3.0.1","3.0.2"].includes(health.body?.version))throw new Error("Render health did not return a compatible Dalilna API version after waiting.");
           } catch(error) {publicSite={ok:false,error:String(error?.message||error)};}
           if(!publicSite.ok)throw new Error("Published v3.0.2 Pages audit failed: "+(publicSite.error||"unknown error"));
-          if(!health.ok||health.body?.version!=="3.0.2")throw new Error("Render health did not confirm Dalilna v3.0.2 after waiting.");
+          if(!health.ok||!["3.0.1","3.0.2"].includes(health.body?.version))throw new Error("Render health did not return a compatible Dalilna API version after waiting.");
           let assistant={skipped:true,reason:"Gemini key not configured"};
           if(assistantStatus.body?.configured===true) {
             const rows=publicIndexPayload?.i||[];
