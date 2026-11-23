@@ -82,28 +82,29 @@
     }
   },
   "live": {
-    "generatedAt": "2026-11-23T02:48:00.267Z",
+    "generatedAt": "2026-11-23T02:51:57.887Z",
     "health": {
-      "ok": false,
-      "ms": 7003,
-      "status": 0
+      "ok": true,
+      "version": "2.8.0",
+      "ms": 303,
+      "status": 200
     },
     "marketplace": {
-      "databaseReady": false,
-      "databaseConfigured": false,
+      "databaseReady": true,
+      "databaseConfigured": true,
       "approvedOffers": 0,
       "returned": 0,
       "withImages": 0,
       "withPrice": 0,
       "withContact": 0,
-      "ms": 164,
+      "ms": 177,
       "status": 200,
       "error": ""
     },
     "pharmacyLiveSearch": {
       "ok": false,
       "status": 0,
-      "ms": 3501,
+      "ms": 3502,
       "within3Seconds": false,
       "results": 0,
       "resultsWithHours": 0,
@@ -116,10 +117,10 @@
       "model": "gemini-3.8-flash",
       "ok": false,
       "status": 502,
-      "ms": 25120,
+      "ms": 1018,
       "answerChars": 0,
       "mode": "",
-      "error": "provider_timeout"
+      "error": "provider_request_failed"
     }
   }
 }
