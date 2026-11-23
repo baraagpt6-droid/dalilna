@@ -3,7 +3,7 @@ const test=require("node:test"),assert=require("node:assert/strict"),fs=require(
 const root=path.resolve(__dirname,".."),read=name=>fs.readFileSync(path.join(root,name),"utf8");
 test("v3 app files load in PWA and Android WebView assets",()=>{
  const html=read("index.html");assert.equal(html,read("android/app/src/main/assets/index.html"));
- assert.ok(html.includes("v3.0.0.css?v=3.0.0"));assert.ok(html.includes("v3.0.0.js?v=3.0.0"));
+ assert.ok(html.includes("v3.0.0.css?v=3.0.1"));assert.ok(html.includes("v3.0.0.js?v=3.0.1"));
  assert.equal(read("v3.0.0.js"),read("android/app/src/main/assets/v3.0.0.js"));
  assert.equal(read("v3.0.0.css"),read("android/app/src/main/assets/v3.0.0.css"));
 });

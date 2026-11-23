@@ -37,7 +37,11 @@ test("v3.0 offline assistant reads active jobs locally and returns interactive s
  const feed=JSON.parse(fs.readFileSync(path.join(root,"jobs-feed.json"),"utf8"));
  assert.match(app,/fetch\("\.\/jobs-feed\.json"/);
  assert.match(app,/assistantCards:cards/);
- assert.match(app,/localJobs:/);
+ assert.match(app,/const sourceJobs=/);
+ assert.match(app,/const now=Date\.now\(\)/);
+ assert.match(app,/jobs\.slice\(0,5\)/);
+ assert.match(app,/assistant-job-save/);
+ assert.match(app,/resolveAssistantConversationFollowup/);
  assert.ok(Array.isArray(feed.items));
  assert.ok(feed.items.length>=75,"active job feed must retain at least the expected baseline count");
  assert.equal(new Set(feed.items.map(item=>item.id||item.url||item.title)).size,feed.items.length,"job feed entries must remain unique");
@@ -62,12 +66,12 @@ test("v3.0 app, PWA manifest, Android Gradle and metadata versions match",()=>{
  const manifest=JSON.parse(fs.readFileSync(path.join(root,"manifest.json"),"utf8"));
  const pkg=JSON.parse(fs.readFileSync(path.join(root,"package.json"),"utf8"));
  const gradle=fs.readFileSync(path.join(root,"android/app/build.gradle.kts"),"utf8");
- assert.match(app,/meta name="app-version" content="3.0.0"/);
- assert.match(app,/const APP_VERSION="3.0.0"/);
- assert.equal(version.version,"3.0.0");
- assert.equal(manifest.version,"3.0.0");
- assert.equal(pkg.version,"3.0.0");
- assert.match(gradle,/versionName = "3.0.0"/);
+ assert.match(app,/meta name="app-version" content="3.0.1"/);
+ assert.match(app,/const APP_VERSION="3.0.1"/);
+ assert.equal(version.version,"3.0.1");
+ assert.equal(manifest.version,"3.0.1");
+ assert.equal(pkg.version,"3.0.1");
+ assert.match(gradle,/versionName = "3.0.1"/);
 });
 test("OTA worker activates immediately and removes only older Dalilna caches",()=>{
  const sw=fs.readFileSync(path.join(root,"sw.js"),"utf8");
