@@ -82,11 +82,11 @@
     }
   },
   "live": {
-    "generatedAt": "2026-11-23T02:51:57.887Z",
+    "generatedAt": "2026-11-23T02:59:32.126Z",
     "health": {
       "ok": true,
       "version": "2.8.0",
-      "ms": 303,
+      "ms": 252,
       "status": 200
     },
     "marketplace": {
@@ -97,19 +97,19 @@
       "withImages": 0,
       "withPrice": 0,
       "withContact": 0,
-      "ms": 177,
+      "ms": 162,
       "status": 200,
       "error": ""
     },
     "pharmacyLiveSearch": {
       "ok": false,
-      "status": 0,
-      "ms": 3502,
+      "status": 503,
+      "ms": 2943,
       "within3Seconds": false,
       "results": 0,
       "resultsWithHours": 0,
       "twentyFourHourResults": 0,
-      "error": "This operation was aborted"
+      "error": "انتهت مهلة البحث قبل الاتصال بمصدر الخريطة."
     },
     "assistant": {
       "configured": true,
@@ -117,7 +117,7 @@
       "model": "gemini-3.8-flash",
       "ok": false,
       "status": 502,
-      "ms": 1018,
+      "ms": 1322,
       "answerChars": 0,
       "mode": "",
       "error": "provider_request_failed"
