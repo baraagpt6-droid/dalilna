@@ -4,12 +4,11 @@ const path=require("node:path");
 const ROOT=path.resolve(__dirname,"..");
 const FILE=path.join(ROOT,"market_prices_yemen.json");
 const SOURCES=[
- {id:"samsung-galaxy-a08",url:"https://aramobi.com/mobile-prices-in-ye/",terms:["Samsung Galaxy A08 4G","121,675"]},
+ {id:"samsung-galaxy-a08",url:"https://aramobi.com/mobile-prices-in-ye/",terms:["Samsung Galaxy A08 4G"]},
  {id:"xiaomi-redmi-note-15",url:"https://aramobi.com/mobile-prices-in-ye/",terms:["Xiaomi Redmi Note 15 4G"]},
- {id:"iphone-18-pro-256",url:"https://aramobi.com/mobile-prices-in-ye/",terms:["Apple iPhone 18 Pro"]},
- {id:"solar-panel-550w",url:"https://yemenfiy.com/shop/electronics/monocrystalline-solar-panel-550w/"},
- {id:"hybrid-inverter-55kw",url:"https://yemenfiy.com/shop/electronics/hybrid-solar-inverter-5500w-mppt/"},
- {id:"lithium-battery-48v-100ah",url:"https://yemenfiy.com/shop/electronics/lithium-solar-battery-48v-100ah/"}
+  {id:"solar-panel-550w",url:"https://yemenfiy.com/shop/electronics/monocrystalline-solar-panel-550w/",terms:["لوح طاقة شمسية مونو كريستال 550W"]},
+ {id:"hybrid-inverter-55kw",url:"https://yemenfiy.com/shop/electronics/hybrid-solar-inverter-5500w-mppt/",terms:["إنفرتر طاقة شمسية هجين 5.5KW"]},
+ {id:"lithium-battery-48v-100ah",url:"https://yemenfiy.com/shop/electronics/lithium-solar-battery-48v-100ah/",terms:["بطارية طاقة شمسية ليثيوم 48V 100Ah"]}
 ];
 function stripHtml(value){
  return String(value||"").replace(/<script[\s\S]*?<\/script>/gi," ").replace(/<style[\s\S]*?<\/style>/gi," ")
@@ -43,6 +42,8 @@ async function fetchText(url){
  try{
   const response=await fetch(url,{headers:{Accept:"text/html","User-Agent":"DalilnaPriceGuide/2.9 (+https://baraagpt6-droid.github.io/dalilna/)"},redirect:"follow",signal:controller.signal,cache:"no-store"});
   if(!response.ok)throw new Error("HTTP "+response.status);
+  const finalUrl=new URL(response.url||url);
+  if(finalUrl.protocol!=="https:"||!["aramobi.com","yemenfiy.com"].includes(finalUrl.hostname))throw new Error("Source redirected outside the allowlist");
   const raw=await response.text();
   if(raw.length>3_000_000)throw new Error("Source page exceeds 3 MB");
   return stripHtml(raw);
