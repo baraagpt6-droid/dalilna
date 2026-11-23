@@ -139,6 +139,19 @@
     const details=String(window.prompt("اشرح سبب البلاغ عن الملف (اختياري). لا تضع معلومات خاصة.", "")||"").trim();
     await sendUgcReport({reportType:"candidate",candidateId:String(candidateId),reason,details});
   }
+  async function reportCandidate(candidateId) {
+    if(!candidateId)return;
+    const reason=String(window.prompt(
+      "سبب البلاغ: spam أو scam أو prohibited أو harassment أو fake أو unsafe أو other",
+      "other"
+    )||"").trim().toLowerCase();
+    if(!["spam","scam","prohibited","harassment","fake","unsafe","other"].includes(reason)){
+      flash(label("لا يمكن تنفيذ البلاغ دون اختيار سبب."));
+      return;
+    }
+    const details=String(window.prompt("اشرح سبب البلاغ عن الملف (اختياري). لا تضع معلومات خاصة.", "")||"").trim();
+    await sendUgcReport({reportType:"candidate",candidateId:String(candidateId),reason,details});
+  }
   async function reportAssistant(content) {
     const snapshot=String(content||"").trim().slice(0,4000);
     if(!snapshot)return;
