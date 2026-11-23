@@ -124,7 +124,7 @@ jobs:
               throw lastError||new Error("GitHub Pages unavailable");
             }
             const [pageRes,versionRes,marketRes,indexRes,clientRes,v3jsRes,v3cssRes,featuresRes,jobsRes]=await Promise.all([
-              getPublic("index.html"),getPublic("version.json"),getPublic("market_items.json"),
+              getPublic("index.html"),getPublic("version.json?audit="+process.env.GITHUB_SHA),getPublic("market_items.json"),
               getPublic("regional-catalog/search_index_light.json?v=3.0.0-pharmacy24"),getPublic("marketplace-client.js"),
               getPublic("v3.0.0.js?v=3.0.0"),getPublic("v3.0.0.css?v=3.0.0"),getPublic("features-2.1.js?v=3.0.0"),getPublic("jobs-feed.json")
             ]);
