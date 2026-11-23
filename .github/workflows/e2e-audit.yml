@@ -175,7 +175,7 @@ jobs:
             }
             if(!apk||apk.browser_download_url!==version.androidReleaseUrl||!String(release?.body||"").includes("Signing mode: persistent"))throw lastReleaseError||new Error("The persistent v3.0.2 Android APK release asset is missing.");
             if(publicSite.version!=="3.0.2"||publicSite.signingMode!=="persistent"||version.officialWebUrl!==publicBase||!pageText.includes('<link rel="canonical" href="'+publicBase+'">'))throw new Error("Published GitHub Pages version, canonical URL or Android signing mode is not aligned to v3.0.2.");
-            if(assistantStatus.corsOrigin!=="https://dalilna-ftny.netlify.app")throw new Error("Render assistant CORS does not allow the official GitHub Pages origin.");
+            if(assistantStatus.corsOrigin!=="https://baraagpt6-droid.github.io")throw new Error("Render assistant CORS does not allow the official GitHub Pages origin.");
             publicSite.androidRelease={ok:true,versionCode:version.androidVersionCode,size:apk.size,digest:apk.digest,downloadUrl:apk.browser_download_url};
             publicSite.netlifyBadgeGuard=pageText.includes('id="dalilna-netlify-badge-guard"')&&pageText.includes('id="dalilna-netlify-badge-guard-script"');
             if(!publicSite.netlifyBadgeGuard)throw new Error("The Netlify badge guard CSS/JavaScript is missing from the official site source.");
