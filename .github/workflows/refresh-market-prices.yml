@@ -1,0 +1,41 @@
+name: Refresh Yemen market reference prices
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 5"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dalilna-market-reference-prices
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Refresh allowlisted public price sources
+        run: node scripts/refresh-market-prices.cjs
+      - name: Validate data and commit the weekly price snapshot
+        run: |
+          npm test -- --test-name-pattern="market reference|price-page parser|weekly price guide"
+          if git diff --quiet -- market_prices_yemen.json; then
+            echo "No validated price changes were available; preserving the previous snapshot."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add market_prices_yemen.json
+          git commit -m "data(prices): refresh Yemen market reference prices"
+          git push origin HEAD:main
