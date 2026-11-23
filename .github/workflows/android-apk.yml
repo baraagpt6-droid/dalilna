@@ -303,15 +303,15 @@ jobs:
           const fs = require("node:fs");
           const file = "version.json";
           const v = JSON.parse(fs.readFileSync(file, "utf8"));
-          v.version = "3.0.2";
-          v.webVersion = "3.0.2";
-          v.androidVersion = "3.0.2";
+          v.version = "3.1.0";
+          v.webVersion = "3.1.0";
+          v.androidVersion = "3.1.0";
           const versionCode = Number(process.env.APK_VERSION_CODE);
           if (!Number.isSafeInteger(versionCode) || versionCode <= 0) throw new Error("Invalid APK versionCode");
           v.versionCode = versionCode;
           v.androidVersionCode = versionCode;
           v.androidSigningMode = process.env.APK_SIGNING_MODE;
-          v.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.0.2/app-debug.apk";
+          v.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.1.0/app-debug.apk";
           v.officialWebUrl = "https://baraagpt6-droid.github.io/dalilna/";
           v.updatedAt = new Date().toISOString();
           fs.writeFileSync(file, JSON.stringify(v, null, 2));
@@ -323,7 +323,7 @@ jobs:
               pushed=true
               break
             fi
-            git commit -m "chore(release): publish v3.0.2 Android update code"
+            git commit -m "chore(release): publish v3.1.0 Android update code"
             if git push origin HEAD:main; then
               pushed=true
               break
