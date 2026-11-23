@@ -1,4 +1,5 @@
 name: Build Dalilna Android APK
+# The persistent release keystore is supplied only through repository Actions secrets.
 
 on:
   workflow_dispatch:
