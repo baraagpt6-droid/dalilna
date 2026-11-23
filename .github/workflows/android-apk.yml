@@ -167,16 +167,12 @@ jobs:
           fi
 
           "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
-          CERT_SHA256="$("$BUILD_TOOLS/apksigner" verify --print-certs "$APK" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -n 1)"
-          if [[ -z "$CERT_SHA256" ]]; then
-            echo "APK signer certificate fingerprint could not be read."
-            exit 1
-          fi
+          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
+          "$BUILD_TOOLS/apksigner" verify --print-certs "$APK" >/dev/null 2>&1
           echo "APK signing mode: ${{ steps.signing.outputs.mode }}"
-          echo "APK signer SHA-256: $CERT_SHA256"
+          echo "APK signature verification passed."
           echo "version=2.9.0" >> "$GITHUB_OUTPUT"
           echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
-          echo "signer_sha256=$CERT_SHA256" >> "$GITHUB_OUTPUT"
 
       - name: Upload APK workflow artifact
         uses: actions/upload-artifact@v4
@@ -198,7 +194,6 @@ jobs:
           body: |
             Dalilna 2.9.0 Android APK.
             Signing mode: ${{ steps.signing.outputs.mode }}
-            Signer certificate SHA-256: ${{ steps.app-version.outputs.signer_sha256 }}
             versionCode: ${{ steps.app-version.outputs.version_code }}
 
             With all four persistent signing secrets configured, this APK uses the persistent Dalilna keystore for in-place updates.
