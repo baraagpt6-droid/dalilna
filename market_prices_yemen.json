@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "title": "دليل أسعار السوق اليمنية الاسترشادية",
+  "generatedAt": "2026-11-23T00:00:00Z",
+  "updateFrequencyDays": 7,
+  "lastChecked": "2026-11-23",
+  "priceDisclosure": "هذه أسعار مرجعية وليست عروض بيع من دليلنا. تختلف الأسعار حسب المدينة والماركة والحالة والضمان وتوفر المخزون. قيم عدن أو صنعاء المحولة تقديرات صرف وليست تسعيرة محلية مؤكدة.",
+  "exchangeRates": {
+    "asOf": "2026-11-23",
+    "sourceName": "أسعار الصرف المنشورة يوم 23 نوفمبر 2026",
+    "sourceUrl": "https://yemennewsnow.com/article/3535364",
+    "saa": {
+      "usd": {
+        "buy": 533,
+        "sell": 537,
+        "mid": 535
+      },
+      "sar": {
+        "buy": 140,
+        "sell": 140.5,
+        "mid": 140.25
+      }
+    },
+    "aden": {
+      "usd": {
+        "buy": 1556,
+        "sell": 1577,
+        "mid": 1566.5
+      },
+      "sar": {
+        "buy": 410,
+        "sell": 413,
+        "mid": 411.5
+      }
+    },
+    "sarPerUsd": 3.75
+  },
+  "categories": [
+    {
+      "id": "solar",
+      "label": "الطاقة الشمسية"
+    },
+    {
+      "id": "electronics",
+      "label": "الجوالات والإلكترونيات"
+    },
+    {
+      "id": "vehicles",
+      "label": "السيارات والنقل"
+    },
+    {
+      "id": "property",
+      "label": "العقارات والإيجارات"
+    }
+  ],
+  "items": [
+    {
+      "id": "solar-panel-550w",
+      "category": "solar",
+      "title": "لوح طاقة شمسية Mono 550W",
+      "subtitle": "550 واط · Half-Cell",
+      "image": "solar-panel.svg",
+      "priceUnit": "للوح",
+      "pricing": {
+        "currency": "YER",
+        "amount": 75000,
+        "sourceZone": "sanaa",
+        "basis": "store_listing"
+      },
+      "sourceName": "Yemenfiy Store",
+      "sourceUrl": "https://yemenfiy.com/shop/electronics/monocrystalline-solar-panel-550w/",
+      "sourceCheckedAt": "2026-11-23",
+      "priceLabel": "سعر متجر منشور"
+    },
+    {
+      "id": "hybrid-inverter-55kw",
+      "category": "solar",
+      "title": "إنفرتر هجين 5.5KW MPPT 100A",
+      "subtitle": "موجة جيبية نقية · 48V",
+      "image": "solar-inverter.svg",
+      "priceUnit": "للوحدة",
+      "pricing": {
+        "currency": "YER",
+        "amount": 365000,
+        "sourceZone": "sanaa",
+        "basis": "store_listing"
+      },
+      "sourceName": "Yemenfiy Store",
+      "sourceUrl": "https://yemenfiy.com/shop/electronics/hybrid-solar-inverter-5500w-mppt/",
+      "sourceCheckedAt": "2026-11-23",
+      "priceLabel": "سعر متجر منشور"
+    },
+    {
+      "id": "lithium-battery-48v-100ah",
+      "category": "solar",
+      "title": "بطارية ليثيوم LiFePO4 48V 100Ah",
+      "subtitle": "سعة اسمية 4.8kWh",
+      "image": "solar-battery.svg",
+      "priceUnit": "للوحدة",
+      "pricing": {
+        "currency": "YER",
+        "amount": 480000,
+        "sourceZone": "sanaa",
+        "basis": "store_listing"
+      },
+      "sourceName": "Yemenfiy Store",
+      "sourceUrl": "https://yemenfiy.com/shop/electronics/lithium-solar-battery-48v-100ah/",
+      "sourceCheckedAt": "2026-11-23",
+      "priceLabel": "سعر متجر منشور"
+    },
+    {
+      "id": "gel-battery-12v-200ah",
+      "category": "solar",
+      "title": "بطارية جل Deep Cycle 12V 200Ah",
+      "subtitle": "سعة اسمية 1.2kWh",
+      "image": "gel-battery.svg",
+      "priceUnit": "للوحدة",
+      "pricing": {
+        "currency": "YER",
+        "min": 115000,
+        "max": 135000,
+        "sourceZone": "sanaa",
+        "basis": "article_range"
+      },
+      "sourceName": "Yemenfiy Store · دليل الأسعار 2026",
+      "sourceUrl": "https://yemenfiy.com/blog/lifepo4-lithium-vs-gel-solar-batteries-yemen-prices-guide/",
+      "sourceCheckedAt": "2026-11-23",
+      "priceLabel": "نطاق مرجعي منشور"
+    },
+    {
+      "id": "samsung-galaxy-a08",
+      "category": "electronics",
+      "title": "Samsung Galaxy A08 4G",
+      "subtitle": "64GB / 4GB RAM",
+      "image": "phone-samsung.svg",
+      "priceUnit": "للجهاز",
+      "pricing": {
+        "currency": "YER",
+        "amount": 121675,
+        "sourceZone": "sanaa",
+        "basis": "price_guide"
+      },
+      "sourceName": "Aramobi · أسعار الهواتف في اليمن",
+      "sourceUrl": "https://aramobi.com/mobile-prices-in-ye/",
+      "sourceCheckedAt": "2026-11-22",
+      "priceLabel": "سعر محلي تقريبي"
+    },
+    {
+      "id": "xiaomi-redmi-note-15",
+      "category": "electronics",
+      "title": "Xiaomi Redmi Note 15 4G",
+      "subtitle": "256GB / 8GB RAM",
+      "image": "phone-xiaomi.svg",
+      "priceUnit": "للجهاز",
+      "pricing": {
+        "currency": "YER",
+        "amount": 151267,
+        "sourceZone": "sanaa",
+        "basis": "price_guide"
+      },
+      "sourceName": "Aramobi · أسعار الهواتف في اليمن",
+      "sourceUrl": "https://aramobi.com/mobile-prices-in-ye/",
+      "sourceCheckedAt": "2026-11-22",
+      "priceLabel": "سعر محلي تقريبي"
+    },
+    {
+      "id": "iphone-18-pro-256",
+      "category": "electronics",
+      "title": "Apple iPhone 18 Pro",
+      "subtitle": "256GB",
+      "image": "phone-iphone.svg",
+      "priceUnit": "للجهاز",
+      "pricing": {
+        "currency": "YER",
+        "amount": 887583,
+        "sourceZone": "sanaa",
+        "basis": "price_guide"
+      },
+      "sourceName": "Aramobi · أسعار الهواتف في اليمن",
+      "sourceUrl": "https://aramobi.com/mobile-prices-in-ye/",
+      "sourceCheckedAt": "2026-11-22",
+      "priceLabel": "سعر محلي تقريبي"
+    },
+    {
+      "id": "toyota-hilux-2016-aden",
+      "category": "vehicles",
+      "title": "Toyota Hilux 2016 مستعملة",
+      "subtitle": "مثال إعلان بائع في عدن · ليست قيمة سوقية متوسطة",
+      "image": "vehicle-hilux.svg",
+      "priceUnit": "للسيارة",
+      "pricing": {
+        "currency": "YER",
+        "amount": 4881338,
+        "sourceZone": "aden",
+        "basis": "seller_listing_sample"
+      },
+      "sourceName": "OpenSooq · عينة إعلان بائع",
+      "sourceUrl": "https://ye.opensooq.com/en/cars/cars-for-sale/toyota/hilux",
+      "sourceCheckedAt": "2026-11-23",
+      "priceLabel": "سعر طلب في إعلان فردي"
+    },
+    {
+      "id": "toyota-hilux-2022-shabwah",
+      "category": "vehicles",
+      "title": "Toyota Hilux 2022 مستعملة",
+      "subtitle": "مثال إعلان بائع في شبوة · تختلف الحالة والمواصفات",
+      "image": "vehicle-hilux.svg",
+      "priceUnit": "للسيارة",
+      "pricing": {
+        "currency": "YER",
+        "amount": 5757475,
+        "sourceZone": "aden",
+        "basis": "seller_listing_sample"
+      },
+      "sourceName": "OpenSooq · عينة إعلان بائع",
+      "sourceUrl": "https://ye.opensooq.com/en/cars/cars-for-sale/toyota/hilux",
+      "sourceCheckedAt": "2026-11-23",
+      "priceLabel": "سعر طلب في إعلان فردي"
+    },
+    {
+      "id": "apartment-rent-sanaa",
+      "category": "property",
+      "title": "شقة للإيجار في صنعاء",
+      "subtitle": "مثال إعلان · 100 م² · شهري",
+      "image": "property-apartment.svg",
+      "priceUnit": "شهرياً",
+      "pricing": {
+        "currency": "YER",
+        "amount": 75000,
+        "sourceZone": "sanaa",
+        "basis": "seller_listing_sample"
+      },
+      "sourceName": "OpenSooq · عينة إعلان بائع",
+      "sourceUrl": "https://ye.opensooq.com/en/property/property-for-rent",
+      "sourceCheckedAt": "2026-11-23",
+      "priceLabel": "سعر طلب في إعلان فردي"
+    },
+    {
+      "id": "apartment-rent-aden",
+      "category": "property",
+      "title": "شقة مفروشة للإيجار في عدن",
+      "subtitle": "مثال إعلان في المنصورة · شهري",
+      "image": "property-apartment.svg",
+      "priceUnit": "شهرياً",
+      "pricing": {
+        "currency": "YER",
+        "amount": 225293,
+        "sourceZone": "aden",
+        "basis": "seller_listing_sample"
+      },
+      "sourceName": "OpenSooq · عينة إعلان بائع",
+      "sourceUrl": "https://ye.opensooq.com/en/property/property-for-rent",
+      "sourceCheckedAt": "2026-11-23",
+      "priceLabel": "سعر طلب في إعلان فردي"
+    }
+  ],
+  "categorySearchUrls": {
+    "solar": "https://www.google.com/maps/search/?api=1&query=محلات+طاقة+شمسية+اليمن",
+    "electronics": "https://www.google.com/maps/search/?api=1&query=محلات+جوالات+وإلكترونيات+اليمن",
+    "vehicles": "https://ye.opensooq.com/en/cars",
+    "property": "https://ye.opensooq.com/en/property"
+  }
+}
