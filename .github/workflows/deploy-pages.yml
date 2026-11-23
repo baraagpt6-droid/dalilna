@@ -105,7 +105,7 @@ jobs:
             }
             throw lastError;
           }
-          const [page, css, js, v3jsResponse, v3cssResponse, swResponse, manifestResponse, versionResponse, marketItemsResponse, lightIndexResponse, priceGuideResponse, priceGuideJsResponse, nativeBridgeResponse, appUpdateResponse, jobsFeedResponse] = await Promise.all([
+          const [page, css, js, v3jsResponse, v3cssResponse, swResponse, manifestResponse, pwaManifestResponse, versionResponse, marketItemsResponse, lightIndexResponse, priceGuideResponse, priceGuideJsResponse, nativeBridgeResponse, appUpdateResponse, jobsFeedResponse] = await Promise.all([
             get("./index.html"),
             get("./features-2.1.css?v=3.0.2"),
             get("./features-2.1.js?v=3.0.2"),
@@ -113,6 +113,7 @@ jobs:
             get("./v3.0.0.css?v=3.0.2"),
             get("./sw.js"),
             get("./regional-catalog/manifest.json?v=3.0.2"),
+            get("./manifest.json"),
             get("./version.json"),
             get("./market_items.json"),
             get("./regional-catalog/search_index_light.json?v=3.0.2"),
@@ -124,6 +125,7 @@ jobs:
           ]);
           const html = await page.text();
           const manifest = await manifestResponse.json();
+          const pwaManifest = await pwaManifestResponse.json();
           const version = await versionResponse.json();
           const marketItems = await marketItemsResponse.json();
           const priceGuide = await priceGuideResponse.json();
@@ -140,7 +142,7 @@ jobs:
           const lightPayload = JSON.parse(gunzipSync(Buffer.from(lightEnvelope.data, "base64")).toString("utf8"));
           if (!Array.isArray(lightPayload.i) || lightPayload.i.length !== manifest.totalCount || lightEnvelope.recordCount !== manifest.totalCount) throw new Error("Full-Yemen search index is incomplete.");
           if (version.webVersion !== "3.0.2" || version.version !== "3.0.2" || Number(version.versionCode) < 3000000 || Number(version.androidVersionCode) < 3000000 || version.androidSigningMode !== "persistent") throw new Error("version.json does not describe the persistent Dalilna 3.0.2 release.");
-          if (version.officialWebUrl !== base || manifest.version !== "3.0.2" || !html.includes(`<link rel="canonical" href="${base}">`)) throw new Error("Official canonical URL, PWA manifest or OTA metadata does not match GitHub Pages.");
+          if (version.officialWebUrl !== base || pwaManifest.id !== base || pwaManifest.version !== "3.0.2" || !html.includes(`<link rel="canonical" href="${base}">`)) throw new Error("Official canonical URL, PWA manifest identity or OTA metadata does not match GitHub Pages.");
           if (!html.includes('content="3.0.2"')) throw new Error("Deployed homepage version is not 3.0.2.");
           if (!(await css.text()).includes(".quick-jump-btn")) throw new Error("Quick-access stylesheet was not published.");
           if (!featureJsText.includes("officialApplicationUrl")) throw new Error("Feature JavaScript is incomplete.");
