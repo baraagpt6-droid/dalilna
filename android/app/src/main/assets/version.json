@@ -1,9 +1,9 @@
 {
   "version": "3.0.2",
-  "versionCode": 3023201,
+  "versionCode": 3023701,
   "webVersion": "3.0.2",
   "androidVersion": "3.0.2",
-  "androidVersionCode": 3023201,
+  "androidVersionCode": 3023701,
   "catalogSchemaVersion": 2,
   "catalogSnapshotDate": "2026-11-23",
   "catalogTotalCount": 24563,
@@ -20,7 +20,7 @@
     "Foursquare Open Places (via Overture)": 4
   },
   "osmDatasetSource": "Geofabrik latest Yemen extract",
-  "updatedAt": "2026-11-23T10:45:00.000Z",
+  "updatedAt": "2026-11-23T11:07:35.120Z",
   "marketPriceGuideVersion": 1,
   "marketPriceGuideUpdatedAt": "2026-11-23",
   "androidSigningMode": "persistent",
