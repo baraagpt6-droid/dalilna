@@ -4,7 +4,10 @@ Dalilna does not scrape arbitrary storefront pages and does not infer stock or p
 
 ## Configure a feed
 
-Set `DALILNA_PRODUCT_FEED_URLS` on the Render Cron service. Use one HTTPS JSON URL per line or a comma-separated list. Each endpoint must return either a JSON array or an object with an `items` array.
+Configure the feed on the GitHub repository used by Dalilna. Open **Settings → Secrets and variables → Actions** and add:
+
+- Repository variable `DALILNA_PRODUCT_FEED_URLS`: one HTTPS JSON URL per line or a comma-separated list. Each endpoint must return either a JSON array or an object with an `items` array.
+- Repository secret `DALILNA_PRODUCT_SYNC_TOKEN`: a random token with at least 32 characters. Keep it private. The feed endpoint itself must be a public HTTPS URL; the sync token protects the write request to Dalilna.
 
 Example:
 
@@ -40,7 +43,7 @@ The importer keeps the merchant image URL with the live price and currency. The 
 ## Security and lifecycle
 
 - Only HTTPS feed URLs are fetched.
-- The Cron job sends validated records to `/api/marketplace/feed-sync` using `DALILNA_PRODUCT_SYNC_TOKEN`.
+- The scheduled GitHub Actions job sends validated records to `/api/marketplace/feed-sync` using `DALILNA_PRODUCT_SYNC_TOKEN`.
 - The API upserts stable feed references; repeated daily runs do not duplicate the same product.
 - A complete feed snapshot archives products removed from the configured feeds. If one feed fails, the run is marked incomplete and existing records are not mass-archived.
 - Feed listings are labelled as merchant feed records and expire after 60 days unless refreshed.
@@ -49,6 +52,6 @@ The importer keeps the merchant image URL with the live price and currency. The 
 
 ## Daily jobs
 
-GitHub Actions refreshes the Yemen place catalogue and jobs feed daily. Render Cron runs `node scripts/daily-sync.cjs` daily to validate the live exchange source, check the marketplace and jobs API, and synchronize configured merchant JSON feeds.
+GitHub Actions runs `node scripts/daily-sync.cjs` every six hours. It validates the exchange source, checks the marketplace and jobs API, and synchronizes configured merchant JSON feeds. No Render Cron service is required for this schedule.
 
-No external product source is enabled by default. Configure feed URLs only after the merchant authorizes their use.
+No external product source is enabled by default. Configure feed URLs only after the merchant authorizes their use. The refresh job reports `configured: 0` when the Repository variable is missing; it does not create placeholder products.
