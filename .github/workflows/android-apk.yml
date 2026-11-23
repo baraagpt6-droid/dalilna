@@ -283,6 +283,7 @@ jobs:
             The signed AAB is intended for Google Play Console review. Check the Data safety worksheet before submission.
 
       - name: Publish exact Android versionCode for OTA clients
+        if: steps.release-ads.outputs.ready == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           APK_VERSION_CODE: ${{ steps.app-version.outputs.version_code }}
@@ -336,6 +337,7 @@ jobs:
           fi
 
       - name: Trigger GitHub Pages refresh with the published OTA versionCode
+        if: steps.release-ads.outputs.ready == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
