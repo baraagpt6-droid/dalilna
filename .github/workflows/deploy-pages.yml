@@ -12,6 +12,7 @@ on:
       - 'market-price-guide.css'
       - 'market_prices_yemen.json'
       - 'market-price-images/**'
+      - 'market-price-images/**'
       - 'regional-catalog-runtime.js'
       - 'marketplace-client.js'
       - 'features-2.1.js'
