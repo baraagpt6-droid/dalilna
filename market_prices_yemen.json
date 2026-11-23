@@ -252,6 +252,76 @@
       "sourceUrl": "https://ye.opensooq.com/en/property/property-for-rent",
       "sourceCheckedAt": "2026-11-23",
       "priceLabel": "سعر طلب في إعلان فردي"
+    },
+    {
+      "id": "toyota-camry-2013-sanaa",
+      "category": "vehicles",
+      "title": "Toyota Camry 2013 مستعملة",
+      "subtitle": "مثال إعلان في صنعاء · تختلف الحالة والمواصفات",
+      "image": "vehicle-car.svg",
+      "priceUnit": "للسيارة",
+      "pricing": {
+        "currency": "YER",
+        "amount": 2127763,
+        "sourceZone": "sanaa",
+        "basis": "seller_listing_sample"
+      },
+      "sourceName": "OpenSooq · عينة إعلان بائع",
+      "sourceUrl": "https://ye.opensooq.com/en/cars/cars-for-sale/toyota/camry",
+      "sourceCheckedAt": "2026-11-23",
+      "sourceListingDate": "2026-11-06",
+      "priceLabel": "سعر طلب في إعلان فردي"
+    },
+    {
+      "id": "motorcycle-150cc-sanaa",
+      "category": "vehicles",
+      "title": "دراجة نارية 150cc",
+      "subtitle": "مثال دراجة جديدة في صنعاء · موديل 2026",
+      "image": "motorcycle.svg",
+      "priceUnit": "للدراجة",
+      "pricing": {
+        "currency": "YER",
+        "amount": 310000,
+        "sourceZone": "sanaa",
+        "basis": "seller_listing_sample"
+      },
+      "sourceName": "OpenSooq · عينة إعلان بائع",
+      "sourceUrl": "https://ye.opensooq.com/en/cars/motorcycles",
+      "sourceCheckedAt": "2026-11-23",
+      "sourceListingDate": "2026-11-22",
+      "priceLabel": "سعر طلب في إعلان فردي"
+    },
+    {
+      "id": "toyota-bus-2008-sanaa",
+      "category": "vehicles",
+      "title": "باص تويوتا 2008",
+      "subtitle": "مثال إعلان في صنعاء · مستعمل",
+      "image": "bus.svg",
+      "priceUnit": "للباص",
+      "pricing": {
+        "currency": "YER",
+        "amount": 2700000,
+        "sourceZone": "sanaa",
+        "basis": "seller_listing_sample"
+      },
+      "sourceName": "OpenSooq · عينة إعلان بائع",
+      "sourceUrl": "https://ye.opensooq.com/en/cars/buses",
+      "sourceCheckedAt": "2026-11-23",
+      "sourceListingDate": "2026-11-23",
+      "priceLabel": "سعر طلب في إعلان فردي"
+    },
+    {
+      "id": "property-land-shop",
+      "category": "property",
+      "title": "أراضٍ ومحلات تجارية",
+      "subtitle": "لا توجد قيمة موحدة موثوقة؛ الأسعار تعتمد على الموقع والمساحة والوثائق",
+      "image": "property-shop.svg",
+      "priceUnit": "حسب الموقع والمساحة",
+      "pricing": null,
+      "sourceName": "تصفح إعلانات العقارات الحالية",
+      "sourceUrl": "https://ye.opensooq.com/en/property",
+      "sourceCheckedAt": "2026-11-23",
+      "priceLabel": "تصفح عروض البائعين"
     }
   ],
   "categorySearchUrls": {
