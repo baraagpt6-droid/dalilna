@@ -1,4 +1,4 @@
-name: Dalilna v3.0.1 live E2E audit
+name: Dalilna v3.0.2 live E2E audit
 # Final signed APK metadata is published before this live audit runs.
 # Re-run live probes after the signed APK and assistant fallback are deployed.
 
@@ -102,16 +102,16 @@ jobs:
             } finally {clearTimeout(timer);}
           }
           let health=await probe("/health");
-          for(let attempt=0;attempt<48&&health.body?.version!=="3.0.1";attempt++){
+          for(let attempt=0;attempt<48&&health.body?.version!=="3.0.2";attempt++){
             await new Promise(resolve=>setTimeout(resolve,5000));
             health=await probe("/health");
           }
           const marketStatus=await probe("/api/marketplace/status");
           const listings=await probe("/api/marketplace/listings?category=souq&limit=24&includeImages=1");
           const pharmacies=await probe("/api/places/search?q=%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D8%A9&category=pharmacy&place=%D9%85%D8%AD%D8%A7%D9%81%D8%B8%D8%A9%20%D8%A5%D8%A8",{},6500);
-          const assistantStatus=await probe("/api/assistant/status",{headers:{Origin:"https://dalilna-ftny.netlify.app"}});
-          const publicBase="https://dalilna-ftny.netlify.app/";
-          let publicSite={ok:false,error:"Netlify PWA not retrieved"};
+          const assistantStatus=await probe("/api/assistant/status",{headers:{Origin:"https://baraagpt6-droid.github.io"}});
+          const publicBase="https://baraagpt6-droid.github.io/dalilna/";
+          let publicSite={ok:false,error:"GitHub Pages PWA not retrieved"};
           let publicIndexPayload=null;
           try {
             async function getPublic(path) {
@@ -122,21 +122,21 @@ jobs:
                   if(response.ok){
                     if(path.startsWith("version.json")){
                       const current=await response.clone().json();
-                      if(current.webVersion==="3.0.1"&&current.officialWebUrl===publicBase)return response;
-                      lastError=new Error("Netlify version.json is not yet aligned with v3.0.1 and the official URL.");
+                      if(current.webVersion==="3.0.2"&&current.officialWebUrl===publicBase)return response;
+                      lastError=new Error("GitHub Pages version.json is not yet aligned with v3.0.2 and the official URL.");
                     }else return response;
                   }else lastError=new Error(path+" HTTP "+response.status);
                 } catch(error) {lastError=error;}
                 await new Promise(resolve=>setTimeout(resolve,2000));
               }
-              throw lastError||new Error("Netlify did not publish the current website version.");
+              throw lastError||new Error("GitHub Pages did not publish the current website version.");
             }
             const versionRes=await getPublic("version.json?audit="+process.env.GITHUB_SHA);
             const version=await versionRes.json();
             const [pageRes,marketRes,indexRes,clientRes,v3jsRes,v3cssRes,featuresRes,jobsRes]=await Promise.all([
               getPublic("index.html"),getPublic("market_items.json"),
-              getPublic("regional-catalog/search_index_light.json?v=3.0.1-pharmacy24"),getPublic("marketplace-client.js"),
-              getPublic("v3.0.0.js?v=3.0.1"),getPublic("v3.0.0.css?v=3.0.1"),getPublic("features-2.1.js?v=3.0.1"),getPublic("jobs-feed.json")
+              getPublic("regional-catalog/search_index_light.json?v=3.0.2-pharmacy24"),getPublic("marketplace-client.js"),
+              getPublic("v3.0.0.js?v=3.0.2"),getPublic("v3.0.0.css?v=3.0.2"),getPublic("features-2.1.js?v=3.0.2"),getPublic("jobs-feed.json")
             ]);
             const pageText=await pageRes.text(),market=await marketRes.json(),clientText=await clientRes.text();
             const v3js=await v3jsRes.text(),v3css=await v3cssRes.text(),featuresText=await featuresRes.text(),jobsFeed=await jobsRes.json();
@@ -160,18 +160,52 @@ jobs:
               craftCategory:pageText.includes("craft:")||pageText.includes('"craft"'),
               directoryWhatsApp:pageText.includes("مشاركة واتساب"),
               productWhatsApp:clientText.includes("مشاركة واتساب")};
-            const releaseResponse=await fetch("https://api.github.com/repos/baraagpt6-droid/dalilna/releases/tags/v3.0.1",{headers:{Accept:"application/vnd.github+json",Authorization:"Bearer "+process.env.GH_TOKEN}});
-            if(!releaseResponse.ok)throw new Error("GitHub v3.0.1 release could not be loaded.");
-            const release=await releaseResponse.json(),apk=release.assets?.find(asset=>asset.name==="app-debug.apk");
-            if(!apk||apk.browser_download_url!==version.androidReleaseUrl||!String(release.body||"").includes("Signing mode: persistent"))throw new Error("The persistent v3.0.1 Android APK release asset is missing or its URL does not match version.json.");
-            if(publicSite.version!=="3.0.1"||publicSite.signingMode!=="persistent"||version.officialWebUrl!==publicBase||!pageText.includes('<link rel="canonical" href="'+publicBase+'">'))throw new Error("Published Netlify version, canonical URL or Android signing mode is not aligned to v3.0.1.");
-            if(assistantStatus.corsOrigin!=="https://dalilna-ftny.netlify.app")throw new Error("Render assistant CORS does not allow the official Netlify origin.");
+            let release=null,apk=null,lastReleaseError=null;
+            for(let attempt=0;attempt<90;attempt++){
+              try{
+                const releaseResponse=await fetch("https://api.github.com/repos/baraagpt6-droid/dalilna/releases/tags/v3.0.2",{headers:{Accept:"application/vnd.github+json",Authorization:"Bearer "+process.env.GH_TOKEN}});
+                if(releaseResponse.ok){
+                  release=await releaseResponse.json();
+                  apk=release.assets?.find(asset=>asset.name==="app-debug.apk");
+                  if(apk&&apk.browser_download_url===version.androidReleaseUrl&&String(release.body||"").includes("Signing mode: persistent"))break;
+                  lastReleaseError=new Error("GitHub v3.0.2 release asset is not ready.");
+                }else lastReleaseError=new Error("GitHub v3.0.2 release HTTP "+releaseResponse.status);
+              }catch(error){lastReleaseError=error;}
+              await new Promise(resolve=>setTimeout(resolve,2000));
+            }
+            if(!apk||apk.browser_download_url!==version.androidReleaseUrl||!String(release?.body||"").includes("Signing mode: persistent"))throw lastReleaseError||new Error("The persistent v3.0.2 Android APK release asset is missing.");
+            if(publicSite.version!=="3.0.2"||publicSite.signingMode!=="persistent"||version.officialWebUrl!==publicBase||!pageText.includes('<link rel="canonical" href="'+publicBase+'">'))throw new Error("Published GitHub Pages version, canonical URL or Android signing mode is not aligned to v3.0.2.");
+            if(assistantStatus.corsOrigin!=="https://dalilna-ftny.netlify.app")throw new Error("Render assistant CORS does not allow the official GitHub Pages origin.");
             publicSite.androidRelease={ok:true,versionCode:version.androidVersionCode,size:apk.size,digest:apk.digest,downloadUrl:apk.browser_download_url};
+            publicSite.netlifyBadgeGuard=pageText.includes('id="dalilna-netlify-badge-guard"')&&pageText.includes('id="dalilna-netlify-badge-guard-script"');
+            if(!publicSite.netlifyBadgeGuard)throw new Error("The Netlify badge guard CSS/JavaScript is missing from the official site source.");
+            async function verifyNetlifyLegacySite(){
+              let lastError;
+              for(let attempt=0;attempt<90;attempt++){
+                try{
+                  const [legacyPageResponse,legacyVersionResponse]=await Promise.all([
+                    fetch("https://dalilna-ftny.netlify.app/index.html?audit="+process.env.GITHUB_SHA,{cache:"no-store"}),
+                    fetch("https://dalilna-ftny.netlify.app/version.json?audit="+process.env.GITHUB_SHA,{cache:"no-store"})
+                  ]);
+                  if(!legacyPageResponse.ok||!legacyVersionResponse.ok)throw new Error("Netlify legacy site HTTP "+legacyPageResponse.status+"/"+legacyVersionResponse.status);
+                  const legacyHtml=await legacyPageResponse.text(),legacyVersion=await legacyVersionResponse.json();
+                  const badgeGuard=legacyHtml.includes('id="dalilna-netlify-badge-guard"')&&legacyHtml.includes('id="dalilna-netlify-badge-guard-script"');
+                  if(legacyVersion.webVersion==="3.0.2"&&legacyVersion.officialWebUrl===publicBase&&badgeGuard){
+                    return {ok:true,version:legacyVersion.webVersion,officialWebUrl:legacyVersion.officialWebUrl,badgeGuard};
+                  }
+                  lastError=new Error("Netlify legacy host has not deployed v3.0.2 with the badge guard.");
+                }catch(error){lastError=error;}
+                await new Promise(resolve=>setTimeout(resolve,2000));
+              }
+              throw lastError||new Error("Netlify legacy host did not publish the badge guard.");
+            }
+            publicSite.netlifyLegacyAlias=await verifyNetlifyLegacySite();
+            if(!publicSite.netlifyLegacyAlias?.ok)throw new Error("The secondary Netlify host did not publish the badge guard and updated release metadata.");
             if(!publicSite.v3SavedHub||!publicSite.v3FlyAnimation||!publicSite.v3JobSearch||!publicSite.v3Styles||!publicSite.assistantJobsLocal||!publicSite.assistantLocalFallback||publicSite.jobFeedWithSourceLinks===0)throw new Error("A v3 saved hub, animation, job filter, local jobs assistant or source-link asset is missing.");
-            if(!health.ok||health.body?.version!=="3.0.1")throw new Error("Render health did not confirm Dalilna v3.0.1 after waiting.");
+            if(!health.ok||health.body?.version!=="3.0.2")throw new Error("Render health did not confirm Dalilna v3.0.2 after waiting.");
           } catch(error) {publicSite={ok:false,error:String(error?.message||error)};}
-          if(!publicSite.ok)throw new Error("Published v3.0.1 Pages audit failed: "+(publicSite.error||"unknown error"));
-          if(!health.ok||health.body?.version!=="3.0.1")throw new Error("Render health did not confirm Dalilna v3.0.1 after waiting.");
+          if(!publicSite.ok)throw new Error("Published v3.0.2 Pages audit failed: "+(publicSite.error||"unknown error"));
+          if(!health.ok||health.body?.version!=="3.0.2")throw new Error("Render health did not confirm Dalilna v3.0.2 after waiting.");
           let assistant={skipped:true,reason:"Gemini key not configured"};
           if(assistantStatus.body?.configured===true) {
             const rows=publicIndexPayload?.i||[];
@@ -222,15 +256,15 @@ jobs:
           import json
           from pathlib import Path
           catalog=json.loads(Path("audit-catalog.json").read_text(encoding="utf-8"))
-          report={"version":"3.0.1","catalog":catalog,"live":json.loads(Path("audit-live.json").read_text(encoding="utf-8"))}
+          report={"version":"3.0.2","catalog":catalog,"live":json.loads(Path("audit-live.json").read_text(encoding="utf-8"))}
           Path("audit").mkdir(exist_ok=True)
-          Path("audit/last-e2e-v3.0.1.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          Path("audit/last-e2e-v3.0.2.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
           print(json.dumps(report,ensure_ascii=False,indent=2))
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add audit/last-e2e-v3.0.1.json
-          git commit -m "audit: publish Dalilna v3.0.1 live verification"
+          git add audit/last-e2e-v3.0.2.json
+          git commit -m "audit: publish Dalilna v3.0.2 live verification"
           # The audit regenerates the tracked compressed index. Keep the report
           # commit, but discard generated working-tree changes before rebasing.
           git restore --worktree --staged .
@@ -241,9 +275,9 @@ jobs:
             if ! git rebase origin/main; then
               # Concurrent audit runs may update the same report. Keep this
               # run's completed report while retaining every other main change.
-              if [ "$(git diff --name-only --diff-filter=U)" = "audit/last-e2e-v3.0.1.json" ]; then
-                git checkout --theirs audit/last-e2e-v3.0.1.json
-                git add audit/last-e2e-v3.0.1.json
+              if [ "$(git diff --name-only --diff-filter=U)" = "audit/last-e2e-v3.0.2.json" ]; then
+                git checkout --theirs audit/last-e2e-v3.0.2.json
+                git add audit/last-e2e-v3.0.2.json
                 GIT_EDITOR=true git rebase --continue
               else
                 git rebase --abort
