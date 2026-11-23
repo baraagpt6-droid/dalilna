@@ -185,8 +185,10 @@
   }
   function getPriceSummary(item){
     if(!data||!item)return "";
-    return "صنعاء: "+formatPrice(item,"sanaa")+" · عدن: "+formatPrice(item,"aden")
-      +" · "+money(baseUsd(item))+" USD · "+money(baseUsd(item)*Number(data.exchangeRates.sarPerUsd||3.75))+" SAR";
+    const usd=baseUsd(item);
+    if(!usd)return "لا يوجد سعر موثق بالدولار أو الريال السعودي لهذا الصنف.";
+    const sanaa=converted(item,"sanaa"),aden=converted(item,"aden");
+    return "صنعاء: "+formatPrice(item,"sanaa")+" · "+money(sanaa.usd)+" USD · "+money(sanaa.sar)+" SAR | عدن: "+formatPrice(item,"aden")+" · "+money(aden.usd)+" USD · "+money(aden.sar)+" SAR";
   }
   window.DalilnaPriceGuide={load,search,getData:()=>data,getPriceSummary};
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",load,{once:true});else load();
