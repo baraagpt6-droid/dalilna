@@ -1,6 +1,16 @@
 name: Dalilna v2.8.0 live E2E audit
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/e2e-audit.yml"
+      - "server.js"
+      - "api/assistant.js"
+      - "index.html"
+      - "version.json"
+      - "regional-catalog/**"
+      - "tests/**"
   push:
     branches: [main]
     paths:
@@ -154,6 +164,7 @@ jobs:
           console.log(JSON.stringify(report,null,2));
           NODE
       - name: Publish a compact audit report
+        if: github.event_name != 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
