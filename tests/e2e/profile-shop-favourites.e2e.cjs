@@ -77,11 +77,23 @@ test("merchant profile, shop submission and directory favourites work in a real 
       const request = route.request();
       const url = new URL(request.url());
       if (url.origin === origin) return route.continue();
+      if (url.pathname === "/api/marketplace/listings" && request.method() === "OPTIONS") {
+        return route.fulfill({
+          status: 204,
+          headers: {
+            "access-control-allow-origin": origin,
+            "access-control-allow-methods": "POST, OPTIONS",
+            "access-control-allow-headers": "content-type",
+            "access-control-max-age": "86400"
+          }
+        });
+      }
       if (url.pathname === "/api/marketplace/listings" && request.method() === "POST") {
         marketplacePayload = request.postDataJSON();
         resolveMarketplacePayload(marketplacePayload);
         return route.fulfill({
           status: 201,
+          headers: { "access-control-allow-origin": origin },
           contentType: "application/json",
           body: JSON.stringify({ id: "e2e-shared-listing-1", status: "pending" })
         });
