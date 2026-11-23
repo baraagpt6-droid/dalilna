@@ -120,7 +120,7 @@
     head.appendChild(html("span","price-guide-live-tag","مراجعة أسبوعية"));
     panel.appendChild(head);
     const rates=data.exchangeRates;
-    panel.appendChild(html("p","price-guide-fx-note","مرجع الصرف "+data.exchangeRates.asOf+" · صنعاء USD "+rates.saa.usd.mid+" / SAR "+rates.saa.sar.mid+" · عدن USD "+rates.aden.usd.mid+" / SAR "+rates.aden.sar.mid));
+    panel.appendChild(html("p","price-guide-fx-note","مرجع الصرف "+data.exchangeRates.asOf+" · صنعاء USD "+rates.sanaa.usd.mid+" / SAR "+rates.sanaa.sar.mid+" · عدن USD "+rates.aden.usd.mid+" / SAR "+rates.aden.sar.mid));
     const tabs=html("div","price-guide-tabs");
     [["all","الكل"],...data.categories.map(c=>[c.id,c.label])].forEach(([id,label])=>{
       const button=html("button",activeCategory===id?"active":"",label);
