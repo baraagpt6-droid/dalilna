@@ -14,6 +14,7 @@ on:
       - 'privacy.html'
       - 'terms.html'
       - 'manifest.json'
+      - 'market_items.json'
       - 'version.json'
       - 'sw.js'
       - 'regions-yemen.js'
@@ -47,7 +48,7 @@ jobs:
       - name: Prepare website files
         run: |
           mkdir -p _site/icons _site/regional-catalog
-          cp index.html regional-catalog-runtime.js marketplace-client.js features-2.1.js features-2.1.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html _site/
+          cp index.html regional-catalog-runtime.js marketplace-client.js market_items.json features-2.1.js features-2.1.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html _site/
           cp icons/* _site/icons/
           cp regional-catalog/*.json _site/regional-catalog/
           touch _site/.nojekyll
@@ -87,22 +88,25 @@ jobs:
             }
             throw lastError;
           }
-          const [page, css, js, swResponse, manifestResponse, versionResponse] = await Promise.all([
+          const [page, css, js, swResponse, manifestResponse, versionResponse, marketItemsResponse] = await Promise.all([
             get("./index.html"),
-            get("./features-2.1.css?v=2.7.0"),
-            get("./features-2.1.js?v=2.7.0"),
+            get("./features-2.1.css?v=2.7.1"),
+            get("./features-2.1.js?v=2.7.1"),
             get("./sw.js"),
-            get("./regional-catalog/manifest.json?v=2.7.0"),
-            get("./version.json")
+            get("./regional-catalog/manifest.json?v=2.7.1"),
+            get("./version.json"),
+            get("./market_items.json")
           ]);
           const html = await page.text();
           const manifest = await manifestResponse.json();
           const version = await versionResponse.json();
-          if (version.webVersion !== "2.7.0" || version.versionCode !== 270) throw new Error("version.json does not describe Dalilna 2.7.0.");
-          if (!html.includes('content="2.7.0"')) throw new Error("Deployed homepage version is not 2.7.0.");
+          const marketItems = await marketItemsResponse.json();
+          if (version.webVersion !== "2.7.1" || version.versionCode !== 271) throw new Error("version.json does not describe Dalilna 2.7.1.");
+          if (!html.includes('content="2.7.1"')) throw new Error("Deployed homepage version is not 2.7.1.");
           if (!(await css.text()).includes(".quick-jump-btn")) throw new Error("Quick-access stylesheet was not published.");
           if (!(await js.text()).includes("officialApplicationUrl")) throw new Error("Feature JavaScript is incomplete.");
-          if (!(await swResponse.text()).includes("v2.7.0")) throw new Error("Updated service worker was not published.");
+          if (!(await swResponse.text()).includes("v2.7.1")) throw new Error("Updated service worker was not published.");
+          if (!Array.isArray(marketItems.items) || marketItems.items.length < 21 || !marketItems.groupNames || marketItems.groupNames.length !== 7) throw new Error("Marketplace reference catalogue is incomplete.");
           if (!Array.isArray(manifest.governorates) || manifest.governorates.length !== 22) throw new Error("Published regional manifest does not contain all 22 governorates.");
           if (!Array.isArray(manifest.districtCounts) || manifest.districtCounts.length !== 335) throw new Error("Published regional manifest does not contain all 335 districts.");
           const governorateTotal = manifest.governorates.reduce((sum, item) => sum + Number(item.count || 0), 0);
@@ -111,5 +115,5 @@ jobs:
           if (!Number.isInteger(Number(manifest.totalCount)) || Number(manifest.totalCount) < 1) throw new Error("Published regional manifest has an invalid total count.");
           if (governorateTotal !== Number(manifest.totalCount)) throw new Error("Governorate totals do not match the national catalogue total.");
           if (districtTotal + unassignedCount !== Number(manifest.totalCount)) throw new Error("District and unassigned totals do not match the national catalogue total.");
-          console.log(JSON.stringify({ page: base, version: "2.7.0", governorates: manifest.governorates.length, districtRows: manifest.districtCounts.length, places: manifest.totalCount }, null, 2));
+          console.log(JSON.stringify({ page: base, version: "2.7.1", governorates: manifest.governorates.length, districtRows: manifest.districtCounts.length, places: manifest.totalCount, marketplaceReferenceItems: marketItems.items.length, marketplaceGroups: marketItems.groupNames.length }, null, 2));
           NODE

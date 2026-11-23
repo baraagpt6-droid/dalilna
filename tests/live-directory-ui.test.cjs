@@ -57,9 +57,12 @@ test("jobs, products and property adverts remain in the shared marketplace",()=>
 test("individual place cards use optional map and source links from catalogue data",()=>{
  for(const token of ["record.mapsUrl","data-map-toggle","View map","OpenStreetMap"])assert.ok(html.includes(token),token);
 });
-test("all-tab search uses the preloaded Yemen index and live OSM fallback",()=>{
- for(const token of ["const showTopSearch=searchActive",'if(view!=="home")go("home")',"warmUnifiedSearchIndex(false)","searchLiveDirectoryFallback","rows.length<5"])assert.ok(html.includes(token),token);
+test("all-tab search shows local matches and progressively loads governorate catalogues beside OSM",()=>{
+ for(const token of ["const showTopSearch=searchActive",'if(view!=="home")go("home")',"searchRegionalCatalogProgressive","searchLiveDirectoryFallback","query.length>=2","openLiveCatalogDB","readRegionalCatalogCache","writeRegionalCatalogCache"])
+  assert.ok(html.includes(token),token);
  assert.ok(!html.includes('id="catFilterQ"'));
+ assert.ok(!html.includes("async function loadAllRegionalCatalog"));
+ assert.ok(!html.includes('loadRegionalCatalogManifest(false).then(()=>warmUnifiedSearchIndex(false))'));
 });
 
 
@@ -143,4 +146,20 @@ test("English live-assistant cards and result summaries use English category nam
  assert.ok(html.includes('const assistantServiceLabel=curLang==="en"?(serviceNames[serviceIntent.category]'));
  assert.ok(html.includes('category:curLang==="en"?assistantServiceLabel'));
  assert.ok(html.includes('"I found "+count+" matching "+assistantServiceLabel'));
+});
+
+test("progressive directory search keeps the first fifty matches appear with 30-card pagination",()=>{
+ assert.ok(html.includes("liveDirectoryVisibleCount=50"));
+ assert.ok(html.includes("liveDirectoryVisibleCount+=30"));
+ assert.ok(html.includes("batchSize=2"));
+ assert.ok(html.includes("maxMatches=500"));
+ assert.ok(html.includes("data?.pending&&!items.length"));
+ assert.ok(!html.includes('id="fxRefresh"'));
+ assert.ok(!html.includes("تحديث الأسعار"));
+});
+
+test("manual price refresh is removed while automatic rate polling remains",()=>{
+ assert.ok(!html.includes('id="fxRefresh"'));
+ assert.ok(!html.includes('$("#fxRefresh")?.addEventListener'));
+ assert.ok(html.includes('setInterval(()=>{if(!document.hidden)loadLiveFx(false);},60000)'));
 });
