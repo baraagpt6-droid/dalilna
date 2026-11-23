@@ -37,7 +37,7 @@ test("AdMob defaults are Google test IDs; production IDs are configurable and no
 
 test("privacy policy contains Arabic and English disclosures for current data flows", () => {
   const policy = read("privacy.html");
-  for (const term of ["arabicPolicy", "englishPolicy", "Google AdMob", "Google Mobile Ads", "Google Gemini", "Firebase", "الموقع الجغرافي", "المفضلة", "المحلات", "HTTPS"]) {
+  for (const term of ["arabicPolicy", "englishPolicy", "Google AdMob", "Google Mobile Ads", "Google Gemini", "Firebase", "الموقع الجغرافي", "المفضلة", "المحلات", "HTTPS", "baraagpt6@gmail.com", "mailto:baraagpt6@gmail.com"]) {
     assert.ok(policy.includes(term), `privacy.html must disclose: ${term}`);
   }
 });
