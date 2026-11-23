@@ -109,7 +109,7 @@ test("exchange rates use fresh public quotes and do not display saved device pri
 test("Android 3.1.0 uses a run-based versionCode and preserves localStorage through OTA origin migration",()=>{
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
  const activity=fs.readFileSync("android/app/src/main/java/ye/dalilna/app/MainActivity.java","utf8");
- assert.ok(gradle.includes("versionCode = 3_100_000 + (workflowRunNumber * 100)"));
+ assert.ok(gradle.includes("versionCodeForBuild = 3_100_000 + (workflowRunNumber * 100)"));
  assert.ok(gradle.includes('versionName = "3.1.0"'));
  assert.ok(activity.includes("REMOTE_APP_URL"));
  assert.ok(activity.includes("DalilnaNativeBridge"));
@@ -169,7 +169,7 @@ test("Android 3.1.0 cache and version metadata remain synchronized",()=>{
  assert.ok(sw.includes('CACHE_PREFIX + "v3.1.0"'));
  assert.ok(html.includes('content="3.1.0"'));
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
- assert.ok(gradle.includes("versionCode = 3_100_000 + (workflowRunNumber * 100)"));
+ assert.ok(gradle.includes("versionCodeForBuild = 3_100_000 + (workflowRunNumber * 100)"));
  assert.ok(gradle.includes('versionName = "3.1.0"'));
 });
 
