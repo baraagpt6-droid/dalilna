@@ -34,6 +34,7 @@ jobs:
           python3 - <<'PY'
           import base64, gzip, json, re
           from pathlib import Path
+          from time import perf_counter
           envelope=json.loads(Path("regional-catalog/search_index_light.json").read_text(encoding="utf-8"))
           payload=json.loads(gzip.decompress(base64.b64decode(envelope["data"])))
           def norm(s):
@@ -41,15 +42,26 @@ jobs:
               s=re.sub(r"[ًٌٍَُِّْـ]", "", s)
               return s.translate(str.maketrans({"أ":"ا","إ":"ا","آ":"ا","ى":"ي","ة":"ه"})).lower()
           rows=payload["i"]
-          names=[(str(row[1]), payload["c"][row[2]], payload["g"][row[3]], payload["d"][row[4]][0]) for row in rows]
+          names=[(str(row[1]), payload["c"][row[2]], payload["g"][row[3]], payload["d"][row[4]][0], str(row[8] or "")) for row in rows]
+          def is24(value):
+              text=norm(value).lower()
+              return bool(re.search(r"24\\s*/\\s*7|24\\s*(?:ساعة|hours?|h\\b)|00:00\\s*-\\s*24:00|على مدار الساعة|دوام مستمر",text))
           report={}
-          for term in ["الزوقري","الناهي"]:
+          for term in ["الزوقري","الناهي","صيدلية"]:
+              started=perf_counter()
               needle=norm(term)
-              found=[{"name":n,"category":c,"governorate":g,"district":d} for n,c,g,d in names if needle in norm(n)]
-              report[term]={"matches":len(found),"examples":found[:8]}
-          pharmacies=[{"name":n,"category":c,"governorate":g,"district":d} for n,c,g,d in names if c=="pharmacy" and ("صيدل" in norm(n) or "دواء" in norm(n))]
-          report["صيدلية"]={"pharmacyCategoryRecords":sum(1 for _,c,_,_ in names if c=="pharmacy"),"namedMatches":len(pharmacies),"examples":pharmacies[:8]}
-          print(json.dumps({"bytes":Path("regional-catalog/search_index_light.json").stat().st_size,"recordCount":len(rows),"governorates":len(payload["g"]),"queries":report},ensure_ascii=False))
+              found=[{"name":n,"category":cat,"governorate":g,"district":d} for n,cat,g,d,hours in names if needle in norm(n)]
+              elapsed=(perf_counter()-started)*1000
+              report[term]={"matches":len(found),"searchMs":round(elapsed,3),"within50ms":elapsed<50,"examples":found[:8]}
+          pharmacies=[{"name":n,"governorate":g,"district":d} for n,cat,g,d,hours in names if cat=="pharmacy" and ("صيدل" in norm(n) or "دواء" in norm(n))]
+          pharmacy_records=[(n,g,d,hours) for n,cat,g,d,hours in names if cat=="pharmacy"]
+          report["صيدلية"]["pharmacyCategoryRecords"]=len(pharmacy_records)
+          report["صيدلية"]["namedPharmacyMatches"]=len(pharmacies)
+          report["صيدلية"]["open24HoursRecords"]=sum(1 for _,_,_,hours in pharmacy_records if is24(hours))
+          report["صيدلية"]["examples"]=pharmacies[:8]
+          catalog_report={"bytes":Path("regional-catalog/search_index_light.json").stat().st_size,"recordCount":len(rows),"governorates":len(payload["g"]),"schemaVersion":envelope["schemaVersion"],"queries":report}
+          Path("audit-catalog.json").write_text(json.dumps(catalog_report,ensure_ascii=False,indent=2),encoding="utf-8")
+          print(json.dumps(catalog_report,ensure_ascii=False))
           PY
       - name: Run actual live API, marketplace and assistant probes
         env:
@@ -73,13 +85,52 @@ jobs:
           const health=await probe("/health");
           const marketStatus=await probe("/api/marketplace/status");
           const listings=await probe("/api/marketplace/listings?category=souq&limit=24&includeImages=1");
-          const pharmacies=await probe("/api/places/search?q=%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D8%A9&category=pharmacy&place=%D9%85%D8%AD%D8%A7%D9%81%D8%B8%D8%A9%20%D8%A5%D8%A8",{},3500);
+          const pharmacies=await probe("/api/places/search?q=%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D8%A9&category=pharmacy&place=%D9%85%D8%AD%D8%A7%D9%81%D8%B8%D8%A9%20%D8%A5%D8%A8",{},3000);
           const assistantStatus=await probe("/api/assistant/status");
+          let publicSite={ok:false,error:"Pages index not retrieved"};
+          let publicIndexPayload=null;
+          try {
+            async function getPublic(path) {
+              let lastError;
+              for(let attempt=0;attempt<12;attempt++) {
+                try {
+                  const response=await fetch("https://baraagpt6-droid.github.io/dalilna/"+path,{cache:"no-store"});
+                  if(response.ok)return response;
+                  lastError=new Error(path+" HTTP "+response.status);
+                } catch(error) {lastError=error;}
+                await new Promise(resolve=>setTimeout(resolve,2000));
+              }
+              throw lastError||new Error("GitHub Pages unavailable");
+            }
+            const [pageRes,versionRes,marketRes,indexRes,clientRes]=await Promise.all([
+              getPublic("index.html"),getPublic("version.json"),getPublic("market_items.json"),
+              getPublic("regional-catalog/search_index_light.json?v=2.8.0-pharmacy24"),getPublic("marketplace-client.js")
+            ]);
+            const pageText=await pageRes.text(),version=await versionRes.json(),market=await marketRes.json(),clientText=await clientRes.text();
+            const {gunzipSync}=await import("node:zlib");
+            const publicBytes=await indexRes.arrayBuffer();
+            const publicEnvelope=JSON.parse(new TextDecoder().decode(publicBytes));
+            publicIndexPayload=JSON.parse(gunzipSync(Buffer.from(publicEnvelope.data,"base64")).toString("utf8"));
+            publicSite={ok:true,version:version.webVersion||version.version,bytes:publicBytes.byteLength,
+              schemaVersion:publicEnvelope.schemaVersion,records:publicIndexPayload.i?.length||0,
+              pharmacyRecords:publicIndexPayload.i?.filter(row=>publicIndexPayload.c[row[2]]==="pharmacy").length||0,
+              open24Pharmacies:publicIndexPayload.i?.filter(row=>publicIndexPayload.c[row[2]]==="pharmacy"&&/(24\\s*\\/\\s*7|24\\s*(?:hours?|h\\b)|00:00\\s*-\\s*24:00|على مدار الساعة)/i.test(String(row[8]||""))).length||0,
+              marketplaceReferenceItems:Array.isArray(market.items)?market.items.length:null,
+              pharmacy24Shortcut:pageText.includes('id="pharmacy24QuickBtn"'),
+              craftCategory:pageText.includes("craft:")||pageText.includes('"craft"'),
+              directoryWhatsApp:pageText.includes("مشاركة واتساب"),
+              productWhatsApp:clientText.includes("مشاركة واتساب")};
+          } catch(error) {publicSite={ok:false,error:String(error?.message||error)};}
           let assistant={skipped:true,reason:"Gemini key not configured"};
           if(assistantStatus.body?.configured===true) {
-            const context={liveSearch:{intent:"pharmacy",selectedRegion:{governorate:"إب",district:"",place:"محافظة إب، اليمن"},openDataPlaces:(pharmacies.body?.items||[]).slice(0,8).map(x=>({name:x.name,category:x.category,governorate:x.governorate||"إب",district:x.district||"",address:x.address||"",phone:x.phone||"",source:x.source||"OpenStreetMap",verificationStatus:"not_field_verified_by_dalilna"}))}};
-            const call=await probe("/api/assistant",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:"أقرب صيدلية في إب",context})},28000);
-            assistant={ok:call.ok,status:call.status,ms:call.ms,answerChars:String(call.body?.answer||"").length,mode:call.body?.mode||"",error:call.body?.error||""};
+            const rows=publicIndexPayload?.i||[];
+            const openDataPlaces=rows.filter(row=>publicIndexPayload.c[row[2]]==="pharmacy"&&publicIndexPayload.g[row[3]]==="إب").slice(0,8).map(row=>({
+              name:row[1],category:"صيدليات",governorate:"إب",district:publicIndexPayload.d[row[4]]?.[0]||"",phone:row[5]||"",
+              lat:row[6]===null?null:row[6]/100000,lon:row[7]===null?null:row[7]/100000,
+              openingHours:row[8]||"",source:"فهرس اليمن الوطني",verificationStatus:"not_field_verified_by_dalilna"}));
+            const context={liveSearch:{intent:"pharmacy",selectedRegion:{governorate:"إب",district:"",place:"محافظة إب، اليمن"},openDataPlaces}};
+            const call=await probe("/api/assistant",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:"أقرب صيدلية في إب",context})},10000);
+            assistant={ok:call.ok,status:call.status,ms:call.ms,answerChars:String(call.body?.answer||"").length,mode:call.body?.mode||"",error:call.body?.error||"",providerStatus:call.body?.providerStatus||0,providerCode:call.body?.providerCode||""};
           }
           const items=Array.isArray(listings.body?.items)?listings.body.items:[];
           const report={
@@ -92,12 +143,13 @@ jobs:
               withContact:items.filter(x=>String(x.phone||"").trim()).length,
               ms:listings.ms,status:listings.status,error:listings.body?.error||listings.error||""},
             pharmacyLiveSearch:{ok:pharmacies.ok,status:pharmacies.status,ms:pharmacies.ms,
-              within3Seconds:pharmacies.ok&&pharmacies.ms<=3000,
+              respondedWithin3Seconds:pharmacies.ms<=3000,successfulWithin3Seconds:pharmacies.ok&&pharmacies.ms<=3000,
               results:Array.isArray(pharmacies.body?.items)?pharmacies.body.items.length:0,
               resultsWithHours:(pharmacies.body?.items||[]).filter(x=>x.openingHours||x.opening_hours).length,
               twentyFourHourResults:(pharmacies.body?.items||[]).filter(x=>/24\s?[/]?\s?7|24\s?hours|24\s?ساعة|٢٤\s?ساعة/i.test(String(x.openingHours||x.opening_hours||""))).length,
               error:pharmacies.body?.error||pharmacies.error||""},
-            assistant:{configured:assistantStatus.body?.configured===true,provider:assistantStatus.body?.provider||"",model:assistantStatus.body?.model||"",...assistant}
+            assistant:{configured:assistantStatus.body?.configured===true,provider:assistantStatus.body?.provider||"",model:assistantStatus.body?.model||"",...assistant},
+            publicSite
           };
           console.log(JSON.stringify(report,null,2));
           NODE
@@ -108,24 +160,8 @@ jobs:
           python3 - <<'PY'
           import json
           from pathlib import Path
-          index=Path("regional-catalog/search_index_light.json")
-          envelope=json.loads(index.read_text(encoding="utf-8"))
-          import base64,gzip
-          payload=json.loads(gzip.decompress(base64.b64decode(envelope["data"])))
-          # The query results are reproduced from the exact built index.
-          import re
-          def norm(s):
-              s=re.sub(r"[ًٌٍَُِّْـ]","",str(s or ""))
-              return s.translate(str.maketrans({"أ":"ا","إ":"ا","آ":"ا","ى":"ي","ة":"ه"})).lower()
-          names=[(str(r[1]),payload["c"][r[2]],payload["g"][r[3]],payload["d"][r[4]][0]) for r in payload["i"]]
-          queries={}
-          for term in ["الزوقري","الناهي"]:
-              hits=[{"name":n,"category":c,"governorate":g,"district":d} for n,c,g,d in names if norm(term) in norm(n)]
-              queries[term]={"matches":len(hits),"examples":hits[:8]}
-          pharm=[{"name":n,"governorate":g,"district":d} for n,c,g,d in names if c=="pharmacy" and ("صيدل" in norm(n) or "دواء" in norm(n))]
-          queries["صيدلية"]={"pharmacyRecords":sum(c=="pharmacy" for _,c,_,_ in names),"namedMatches":len(pharm),"examples":pharm[:8]}
-          report={"version":"2.8.0","catalog":{"records":len(names),"governorates":len(payload["g"]),"compressedBytes":index.stat().st_size,"queries":queries},
-                  "live":json.loads(Path("audit-live.json").read_text(encoding="utf-8"))}
+          catalog=json.loads(Path("audit-catalog.json").read_text(encoding="utf-8"))
+          report={"version":"2.8.0","catalog":catalog,"live":json.loads(Path("audit-live.json").read_text(encoding="utf-8"))}
           Path("audit").mkdir(exist_ok=True)
           Path("audit/last-e2e-v2.8.0.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
           print(json.dumps(report,ensure_ascii=False,indent=2))
