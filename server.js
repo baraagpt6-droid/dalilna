@@ -697,7 +697,7 @@ async function geocodePlace(place,deadlineAt=Date.now()+2700) {
   ].filter(Boolean))];
   let lastError=null;
   for(const candidate of candidates){
-    try{await waitForNominatimSlot(deadlineAt);}catch(error){lastError=error;break;}
+    try{await waitForNominatimSlot(deadlineAt,250);}catch(error){lastError=error;break;}
     const remaining=deadlineAt-Date.now();
     if(remaining<=120)break;
     lastGeocodeAt=Date.now();
@@ -992,7 +992,11 @@ async function searchYemenOverpass(query,category="all",deadlineAt=Date.now()+27
 }
 
 async function searchPlaces(params) {
-  const deadlineAt=Date.now()+2800;
+  const startedAt=Date.now();
+  // Reserve a bounded geocoding window and keep the remaining time for all
+  // Overpass mirrors. Geocoding must never reset or silently consume the map deadline.
+  const deadlineAt=startedAt+5500;
+  const geocodeDeadlineAt=Math.min(deadlineAt-3200,startedAt+2000);
   const place = cleanText(params.place, 180);
   const fallbackPlace = cleanText(params.fallbackPlace, 180);
   const query = cleanText(params.q, 100);
@@ -1056,10 +1060,10 @@ async function searchPlaces(params) {
     const lonDelta = radius / (111000 * Math.max(0.2, Math.cos(lat * Math.PI / 180)));
     area = { bbox: { south: lat - latDelta, north: lat + latDelta, west: lon - lonDelta, east: lon + lonDelta }, label: "بالقرب من موقعك" };
   } else {
-    area = await geocodePlace(place);
+    area = await geocodePlace(place,geocodeDeadlineAt);
   }
   if (!area && fallbackPlace && normalizeText(fallbackPlace) !== normalizeText(place)) {
-    area = await geocodePlace(fallbackPlace);
+    area = await geocodePlace(fallbackPlace,geocodeDeadlineAt);
     scopeFallback = true;
     usedPlace = fallbackPlace;
   }
