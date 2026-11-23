@@ -231,7 +231,7 @@ public class MainActivity extends Activity {
 
     private boolean isRemoteAppUrl(Uri uri) {
         return uri != null && "https".equalsIgnoreCase(uri.getScheme())
-                && "baraag6-droid.github.io".equalsIgnoreCase(uri.getHost())
+                && "baraagpt6-droid.github.io".equalsIgnoreCase(uri.getHost())
                 && uri.getPath() != null && uri.getPath().startsWith("/dalilna/");
     }
 
