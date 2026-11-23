@@ -27,3 +27,5 @@
 .dalilna-update-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative;margin:8px 12px;padding:10px 12px;border:1px solid var(--gold);border-radius:12px;background:var(--card2);color:var(--ink);font-size:12px}
 .dalilna-update-banner button{min-height:34px;padding:5px 10px;border:0;border-radius:8px;background:var(--gold);color:#17120d;font:inherit;font-weight:800}
 @media(max-width:370px){.price-guide-grid{grid-template-columns:1fr}.price-guide-image{height:140px}}
+
+.assistant-result-price{margin:5px 0;padding:7px 8px;border-radius:8px;background:rgba(56,182,166,.10);border:1px solid rgba(56,182,166,.22);font-size:10px;line-height:1.6;color:var(--ink);font-weight:700}
