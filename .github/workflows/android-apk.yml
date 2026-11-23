@@ -165,7 +165,3 @@ jobs:
           git add version.json
           git commit -m "chore(release): publish v2.9.0 Android update code"
           git push origin HEAD:main
-      - name: Dispatch Pages update for the published Android version
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh api --method POST "/repos/$GITHUB_REPOSITORY/actions/workflows/deploy-pages.yml/dispatches" -f ref=main
