@@ -163,6 +163,12 @@ jobs:
           };
           console.log(JSON.stringify(report,null,2));
           NODE
+      - name: Print live E2E audit results
+        run: |
+          echo "=== Catalog benchmark ==="
+          cat audit-catalog.json
+          echo "=== Live deployed probes ==="
+          cat audit-live.json
       - name: Publish a compact audit report
         if: github.event_name != 'pull_request'
         env:
