@@ -6,14 +6,14 @@
 
 The PWA can be built as a safe static-only bundle with `npm run build:netlify`. The allow-list copies the web shell, jobs feed, version metadata, regional catalogue and public assets into `dist/`; it does not publish the Node API, database, tests or server source.
 
-To enable automatic deployment, create a Netlify site using the account that owns the desired `.netlify.app` name, then add the GitHub repository variable `NETLIFY_SITE_ID` and repository secret `NETLIFY_AUTH_TOKEN`. The `Deploy Dalilna to Netlify` workflow will deploy each matching `main` update. After the final site URL is assigned, set the Render environment variable `DALILNA_NETLIFY_URL` to that exact HTTPS origin so the assistant API accepts browser requests from it. The site name must be available in Netlify before it can be reserved.
+The official browser and PWA URL is https://dalilna-ftny.netlify.app/. The repository is connected to this Netlify site for deployment from `main`. The optional `Deploy Dalilna to Netlify` GitHub Actions workflow can also deploy when its `NETLIFY_SITE_ID` repository variable and `NETLIFY_AUTH_TOKEN` repository secret are configured. Render explicitly allows the official Netlify origin for the assistant API.
 
 ## المنصات والبنية
 
-- Web: تطبيق PWA قابل للتثبيت من المتصفحات التي تدعم ذلك.
+- Web: تطبيق PWA الرسمي القابل للتثبيت: https://dalilna-ftny.netlify.app/
 - Android: تطبيق WebView يستخدم ملفات الواجهة الموجودة في \`android/app/src/main/assets/\`.
 - API: خادم Node.js على Render. العنوان الأساسي للمساعد والخدمات المشتركة هو \`https://dalilna-live.onrender.com\`.
-- Static hosting: ينشر GitHub Actions نسخة الويب عبر GitHub Pages.
+- Static hosting: Netlify هو النطاق الأساسي الرسمي، وGitHub Pages نسخة احتياطية.
 - Version source: ملف \`version.json\` وملف \`android/app/build.gradle.kts\`.
 
 ## الميزات
@@ -75,7 +75,7 @@ python3 scripts/test_regional_catalog.py
 
 ## النشر
 
-- تغييرات الواجهة على \`main\` تشغّل نشر GitHub Pages.
+- تغييرات الواجهة على \`main\` تنشر الموقع الأساسي على Netlify، مع استمرار GitHub Pages كنسخة احتياطية.
 - تغييرات المشروع تشغّل بناء Android APK تجريبي عبر GitHub Actions.
 - خدمات Render تتبع فرع \`main\` وتقوم بالنشر التلقائي عند وصول commit.
 - بناء APK الناتج للتجربة، وليس إصداراً معتمداً للنشر في Google Play.
