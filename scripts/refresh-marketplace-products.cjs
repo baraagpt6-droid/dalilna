@@ -118,6 +118,7 @@ function mapFeedItem(raw){
  const condition=clean(raw.condition||"unknown",16);
  const priceText=clean(raw.price??"",80).replace(/,/g,"");
  const priceValue=Number(priceText);
+ const imageUrl=validHttps(raw.imageUrl||raw.image_url||raw.image||"");
  if(!title||!id||!sellerName||!phone||!governorate||!district||!priceText||
     !Number.isFinite(priceValue)||priceValue<0||(priceValue===0&&listingType!=="free")||!imageUrl)return null;
  if(!PRODUCT_TYPES.has(productType)||!CURRENCIES.has(currency)||!LISTING_TYPES.has(listingType)||!CONDITIONS.has(condition))return null;
@@ -125,7 +126,6 @@ function mapFeedItem(raw){
  const productGroup=Object.entries(PRODUCT_GROUPS).find(([,types])=>types.includes(productType))?.[0]||"";
  if(!PRODUCT_GROUPS_ALLOWED.has(productGroup))return null;
  const productUrl=validHttps(raw.productUrl||raw.product_url||raw.url||raw.website);
- const imageUrl=validHttps(raw.imageUrl||raw.image_url||raw.image||"");
  return {
   id,title,productType,productGroup,listingType,condition,sellerName,phone,governorate,district,
   area:clean(raw.neighbourhood||raw.area||"",120),
