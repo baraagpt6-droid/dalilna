@@ -71,17 +71,39 @@
     const sanaa=converted(item,"sanaa"),aden=converted(item,"aden");
     const foreign=html("p","price-guide-foreign",usd?("صنعاء: "+money(sanaa.usd)+" USD · "+money(sanaa.sar)+" SAR | عدن: "+money(aden.usd)+" USD · "+money(aden.sar)+" SAR"):"لا يتوفر متوسط موثق بالدولار أو الريال السعودي");
     body.appendChild(foreign);
-    body.appendChild(html("p","price-guide-date","آخر مراجعة للمصدر: "+(item.sourceCheckedAt||data.lastChecked)));
+    body.appendChild(html("p","price-guide-date","آخر مراجعة للمصدر: "+(item.sourceCheckedAt||data.lastChecked)+(item.sourceListingDate?" · تاريخ الإعلان: "+item.sourceListingDate:"")));
     const actions=html("div","price-guide-actions");
-    const seller=html("button","add","ابحث عن بائع");
+    const seller=html("button","add","اعرض إعلانات البائعين");
     seller.type="button";
     seller.addEventListener("click",()=>findSeller(item.category));
     actions.appendChild(seller);
+    const gov=(window.regionCurrentContext&&window.regionCurrentContext()?.gov)||"";
+    const mapQuery=[categoryMapLabel(item.category),gov,"اليمن"].filter(Boolean).join(" ");
+    const mapLink=html("a","price-guide-source-link","محلات على الخريطة");
+    mapLink.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(mapQuery);
+    mapLink.target="_blank";mapLink.rel="noopener noreferrer";
+    actions.appendChild(mapLink);
     const request=html("button","ghost","اطلب هذه السلعة");
     request.type="button";
     request.addEventListener("click",()=>{
       const buy=$("sqBuy");
-      if(buy){buy.click();setTimeout(()=>{const title=document.querySelector("#vSouq input[name='name'],#vSouq input[name='title'],#vSouq textarea[name='desc']");if(title&&!title.value)title.value="طلب شراء: "+item.title;},150);}
+      if(!buy)return;
+      buy.click();
+      window.setTimeout(()=>{
+        const form=$("f");
+        if(!form)return;
+        const set=(field,value)=>{
+          if(!field)return;
+          field.value=value;
+          field.dispatchEvent(new Event("input",{bubbles:true}));
+          field.dispatchEvent(new Event("change",{bubbles:true}));
+        };
+        set(form.elements.namedItem("name"),"طلب شراء: "+item.title);
+        set(form.elements.namedItem("desc"),"أبحث عن "+item.title+" في محافظتي. يرجى التواصل لتقديم العرض.");
+        const type=item.category==="solar"?"solar_equipment":item.category==="electronics"?(item.id.includes("laptop")?"computer":"phone"):item.category==="vehicles"?(item.id.includes("motorcycle")?"motorcycle":"car"):item.id.includes("apartment")?"apartment":"land";
+        const productType=form.elements.namedItem("productType");
+        if(productType&&[...productType.options].some(option=>option.value===type))set(productType,type);
+      },0);
     });
     actions.appendChild(request);
     const sourceUrl=safeUrl(item.sourceUrl);
@@ -93,6 +115,9 @@
     body.appendChild(actions);
     card.appendChild(body);
     return card;
+  }
+  function categoryMapLabel(category){
+    return ({solar:"محلات طاقة شمسية وبطاريات",electronics:"محلات جوالات وإلكترونيات",vehicles:"معارض سيارات ودراجات",property:"مكاتب عقارات وتأجير"})[category]||"محلات تجارية";
   }
   function findSeller(category){
     const group={solar:"solar",electronics:"electronics",vehicles:"vehicles",property:"property"}[category]||"all";
