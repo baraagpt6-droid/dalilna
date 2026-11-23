@@ -71,6 +71,12 @@ function run() {
       throw new Error("Netlify output is missing " + relativePath);
     }
   }
+  const publishedHtml = fs.readFileSync(path.join(dist, "index.html"), "utf8");
+  if (!publishedHtml.includes('id="dalilna-netlify-badge-guard"') ||
+      !publishedHtml.includes('id="dalilna-netlify-badge-guard-script"')) {
+    throw new Error("The Netlify badge guard CSS/JavaScript must be present in the published homepage.");
+  }
+
   process.stdout.write(JSON.stringify({
     publishDirectory: "dist",
     staticFiles: publicFiles.length,
