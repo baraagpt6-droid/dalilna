@@ -193,7 +193,15 @@ function createIntervalGate(intervalMs) {
   };
 }
 const waitForNominatimSlot = createIntervalGate(1100);
-const waitForOverpassSlot = createIntervalGate(1100);
+// Rate-limit each Overpass host independently. A busy primary must not consume
+// the next mirror's start interval or the shared search deadline.
+const overpassProviderSlots = new Map();
+function waitForOverpassSlot(providerName,deadlineAt=Infinity){
+  const key=String(providerName||"default");
+  let gate=overpassProviderSlots.get(key);
+  if(!gate){gate=createIntervalGate(1100);overpassProviderSlots.set(key,gate);}
+  return gate(deadlineAt);
+}
 const waitForCommonsSlot = createIntervalGate(1100);
 
 function buildOverpassQuery(bbox, category) {
@@ -725,7 +733,7 @@ async function fetchOverpass(bbox,category,label,deadlineAt=Date.now()+2700){
   let hadValidEmpty=false;
   for(let providerIndex=0;providerIndex<endpoints.length;providerIndex++){
     const provider=endpoints[providerIndex];
-    try{await waitForOverpassSlot(deadlineAt);}catch(error){lastError=error;break;}
+    try{await waitForOverpassSlot(provider.name,deadlineAt);}catch(error){lastError=error;break;}
     const remaining=deadlineAt-Date.now();
     const attemptTimeoutMs=overpassAttemptTimeout(remaining,providerIndex,endpoints.length);
     if(attemptTimeoutMs<=120)break;
@@ -894,17 +902,16 @@ async function searchYemenNominatim(query, category="all",deadlineAt=Date.now()+
   }finally{clearTimeout(timer);}
 }
 
-function overpassAttemptTimeout(remainingMs,providerIndex,providerCount,intervalMs=1100){
+function overpassAttemptTimeout(remainingMs,providerIndex,providerCount){
   const remaining=Math.max(0,Number(remainingMs)||0);
   const index=Math.max(0,Math.floor(Number(providerIndex)||0));
   const count=Math.max(index+1,Math.floor(Number(providerCount)||1));
   if(!remaining)return 0;
-  // The first provider gets one start interval. Later providers reserve the
-  // next provider-start intervals, leaving the final provider the true tail.
-  const budget=index===0
-    ?Math.min(intervalMs,remaining)
-    :Math.max(0,remaining-Math.max(0,count-index-1)*intervalMs);
-  return Math.min(3000,remaining,budget);
+  // Give the current source a fair share of the remaining window. A quick
+  // 429/503 then leaves most of the budget for the next independent mirror.
+  const providersLeft=Math.max(1,count-index);
+  const fairShare=Math.floor(remaining/providersLeft);
+  return Math.min(3000,remaining,Math.max(Math.min(450,remaining),fairShare));
 }
 
 async function searchYemenOverpass(query,category="all",deadlineAt=Date.now()+2700){
@@ -923,7 +930,7 @@ async function searchYemenOverpass(query,category="all",deadlineAt=Date.now()+27
   let lastError=null,hadValidEmpty=false;
   for(let providerIndex=0;providerIndex<endpoints.length;providerIndex++){
     const provider=endpoints[providerIndex];
-    try{await waitForOverpassSlot(deadlineAt);}catch(error){lastError=error;break;}
+    try{await waitForOverpassSlot(provider.name,deadlineAt);}catch(error){lastError=error;break;}
     const remaining=deadlineAt-Date.now();
     const attemptTimeoutMs=overpassAttemptTimeout(remaining,providerIndex,endpoints.length);
     if(attemptTimeoutMs<=120)break;
