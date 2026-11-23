@@ -81,7 +81,7 @@ test("Yemen Nominatim and Overpass requests stay within one bounded three-second
  assert.ok(source.includes("timeoutMs:3000"));
  assert.ok(source.includes("const deadlineAt=Date.now()+2800"));
  assert.ok(source.includes("overpassAttemptTimeout(remaining,providerIndex,endpoints.length)"));
- assert.equal((source.match(/overpassAttemptTimeout\\(remaining,providerIndex,endpoints.length\\)/g)||[]).length,2);
+ assert.equal(source.split("overpassAttemptTimeout(remaining,providerIndex,endpoints.length)").length-1,2);
  assert.ok(source.includes("Math.min(1250,remaining)"));
  assert.ok(source.includes("[out:json][timeout:3]"));
 });
