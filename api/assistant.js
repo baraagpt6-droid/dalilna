@@ -171,11 +171,22 @@ async function handler(req, res) {
 
     const data = await upstream.json().catch(() => ({}));
     if (!upstream.ok) {
+      const providerError = data && typeof data.error === "object" ? data.error : {};
+      const providerCode = String(providerError.status || providerError.code || "").slice(0, 80);
+      console.warn(JSON.stringify({
+        event: "assistant.provider_error",
+        httpStatus: upstream.status,
+        providerCode
+      }));
       if (upstream.status === 429) return send(res, 429, { error: "provider_rate_limit" });
       if (upstream.status === 401 || upstream.status === 403) {
         return send(res, 502, { error: "provider_auth_error" });
       }
-      return send(res, 502, { error: "provider_request_failed" });
+      return send(res, 502, {
+        error: "provider_request_failed",
+        providerStatus: upstream.status,
+        providerCode
+      });
     }
 
     const answer = extractText(data);
