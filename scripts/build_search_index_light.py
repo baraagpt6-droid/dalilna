@@ -79,17 +79,6 @@ def main() -> None:
                 district_index[district_key] = didx
                 districts.append([row_district, gidx])
 
-            source_id = str(item.get("id") or "").strip()
-            if not source_id:
-                source_id = "|".join([
-                    name, category, row_gov, row_district,
-                    str(item.get("lat") or ""), str(item.get("lon") or "")
-                ])
-            compact = compact_id(source_id)
-            if compact in seen_ids:
-                raise SystemExit(f"Search-index ID collision at {source_id!r}")
-            seen_ids.add(compact)
-
             def coordinate(key: str) -> int | None:
                 try:
                     value = float(item.get(key))
@@ -102,6 +91,27 @@ def main() -> None:
             lat = coordinate("lat")
             lng = coordinate("lon")
             phone = str(item.get("phone") or "").strip()
+            source_id = str(item.get("id") or "").strip()
+            if not source_id:
+                source_id = "|".join([
+                    name, category, row_gov, row_district,
+                    str(item.get("lat") or ""), str(item.get("lon") or "")
+                ])
+            # OSM coordinate-based IDs can legitimately appear in more than one
+            # governorate file after boundary/centroid assignment. Qualify the
+            # compact key with the displayed record fields so those entries do
+            # not abort the national build. Stable duplicate ordinals preserve
+            # deterministic IDs for exact repeated records.
+            identity = "|".join([
+                source_id, row_gov, row_district, name, category,
+                str(lat), str(lng), phone
+            ])
+            duplicate_number = sum(1 for row in rows if row[0] == compact_id(identity))
+            compact = compact_id(identity if duplicate_number == 0 else identity + "|duplicate:" + str(duplicate_number))
+            while compact in seen_ids:
+                duplicate_number += 1
+                compact = compact_id(identity + "|duplicate:" + str(duplicate_number))
+            seen_ids.add(compact)
             rows.append([
                 compact, name, cidx, gidx, didx, phone, lat, lng
             ])

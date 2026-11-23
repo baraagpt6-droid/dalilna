@@ -31,9 +31,20 @@ class SearchIndexGeneratorTests(unittest.TestCase):
                     "address": "must not be included",
                     "openingHours": "24/7",
                 }
-                (catalog / filename).write_text(json.dumps({"items": [item]}, ensure_ascii=False), encoding="utf-8")
+                rows = [item]
+                if index == 0:
+                    duplicate_source_id = dict(item)
+                    duplicate_source_id.update({
+                        "name": "فرع إضافي",
+                        "district": "مديرية فرعية",
+                        "lat": 15.255,
+                        "lon": 44.185
+                    })
+                    rows.append(duplicate_source_id)
+                    governors[-1]["count"] = 2
+                (catalog / filename).write_text(json.dumps({"items": rows}, ensure_ascii=False), encoding="utf-8")
             (catalog / "manifest.json").write_text(
-                json.dumps({"totalCount": 22, "governorates": governors}, ensure_ascii=False),
+                json.dumps({"totalCount": 23, "governorates": governors}, ensure_ascii=False),
                 encoding="utf-8"
             )
             output = root / "search_index_light.json"
@@ -43,11 +54,12 @@ class SearchIndexGeneratorTests(unittest.TestCase):
             ], check=True, capture_output=True, text=True)
             envelope = json.loads(output.read_text(encoding="utf-8"))
             self.assertLessEqual(output.stat().st_size, 1_500_000)
-            self.assertEqual(envelope["recordCount"], 22)
+            self.assertEqual(envelope["recordCount"], 23)
             self.assertEqual(envelope["encoding"], "gzip+base64")
             payload = json.loads(gzip.decompress(base64.b64decode(envelope["data"])).decode("utf-8"))
-            self.assertEqual(len(payload["i"]), 22)
+            self.assertEqual(len(payload["i"]), 23)
             self.assertTrue(all(len(row) == 8 for row in payload["i"]))
+            self.assertEqual(len({row[0] for row in payload["i"]}), 23)
             self.assertEqual(payload["c"], ["craft"])
             self.assertEqual(payload["g"], [row["name"] for row in governors])
             self.assertNotIn("openingHours", payload)
