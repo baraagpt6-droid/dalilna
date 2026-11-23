@@ -83,7 +83,7 @@
   }
   const BLOCKED_SELLERS_KEY = "dalilna-blocked-sellers-v1";
   function normalizeSellerPhone(value) {
-    let digits=String(value||"").replace(/\\D/g,"");
+    let digits=String(value||"").replace(/\D/g,"");
     if(digits.startsWith("00"))digits=digits.slice(2);
     if(digits.startsWith("967")&&digits.length===12)digits=digits.slice(3);
     if(digits.startsWith("0")&&digits.length===10)digits=digits.slice(1);
@@ -126,6 +126,19 @@
     const details=String(window.prompt("اشرح سبب البلاغ (اختياري). لا تضع معلومات خاصة.", "")||"").trim();
     await sendUgcReport({reportType:reportType==="seller"?"seller":"listing",listingId:item.id,reason,details});
   }
+  async function reportCandidate(candidateId) {
+    if(!candidateId)return;
+    const reason=String(window.prompt(
+      "سبب البلاغ: spam أو scam أو prohibited أو harassment أو fake أو unsafe أو other",
+      "other"
+    )||"").trim().toLowerCase();
+    if(!["spam","scam","prohibited","harassment","fake","unsafe","other"].includes(reason)){
+      flash(label("لا يمكن تنفيذ البلاغ دون اختيار سبب."));
+      return;
+    }
+    const details=String(window.prompt("اشرح سبب البلاغ عن الملف (اختياري). لا تضع معلومات خاصة.", "")||"").trim();
+    await sendUgcReport({reportType:"candidate",candidateId:String(candidateId),reason,details});
+  }
   async function reportAssistant(content) {
     const snapshot=String(content||"").trim().slice(0,4000);
     if(!snapshot)return;
@@ -141,7 +154,7 @@
     await sendUgcReport({reportType:"assistant",reason,details,contentSnapshot:snapshot});
   }
   function blockSeller(item) {
-    const phone=normalizeSellerPhone(item&&item.phone);
+    const phone=normalizeSellerPhone(typeof item==="string"?item:item&&item.phone);
     if(!phone)return;
     if(!window.confirm("سيتم إخفاء إعلانات هذا البائع على هذا الجهاز. يمكنك إلغاء الحظر من الملف الشخصي. هل تريد المتابعة؟"))return;
     const blocked=blockedSellerPhones();
@@ -149,7 +162,7 @@
     try{localStorage.setItem(BLOCKED_SELLERS_KEY,JSON.stringify(blocked.slice(-300)));}
     catch(_){flash("تعذر حفظ قائمة البائعين المحظورين على هذا الجهاز.");return;}
     window.dispatchEvent(new CustomEvent("dalilna:seller-block-change",{detail:{phone,saved:true}}));
-    flash(label("تم إخفاء إعلانات هذا البائع على هذا الجهاز."));
+    flash(label("تم إخفاء إعلانات هذا الرقم على هذا الجهاز."));
     Promise.all([loadHome(),loadSouq(),loadJobs()]);
   }
   function makeCard(item) {
@@ -505,10 +518,10 @@
         const row=document.createElement("article");
         row.className="shared-admin-item";
         const heading=document.createElement("h4");
-        heading.textContent=(report.reportType==="assistant"?"بلاغ عن رد المساعد":report.reportType==="seller"?"بلاغ عن بائع":"بلاغ عن إعلان")+" · "+report.reason;
+        heading.textContent=(report.reportType==="assistant"?"بلاغ عن رد المساعد":report.reportType==="candidate"?"بلاغ عن ملف باحث عن عمل":report.reportType==="seller"?"بلاغ عن بائع":"بلاغ عن إعلان")+" · "+report.reason;
         row.appendChild(heading);
         const target=document.createElement("p");
-        target.textContent=[report.listingTitle,report.sellerName,report.sellerPhone,report.listingStatus].filter(Boolean).join(" · ");
+        target.textContent=[report.listingTitle,report.candidateName,report.sellerName,report.sellerPhone,report.candidatePhone,report.listingStatus,report.candidateStatus].filter(Boolean).join(" · ");
         row.appendChild(target);
         if(report.details){const details=document.createElement("p");details.textContent=report.details;row.appendChild(details);}
         if(report.contentSnapshot){const snapshot=document.createElement("blockquote");snapshot.textContent=report.contentSnapshot;row.appendChild(snapshot);}
@@ -519,8 +532,8 @@
           button.addEventListener("click",()=>reviewUgcReport(report.id,decision,note.value));actions.appendChild(button);
         };
         addAction("dismiss","إغلاق البلاغ");
-        if(report.listingId)addAction("remove_listing","إخفاء الإعلان");
-        if(report.reportType==="seller"&&report.sellerPhone)addAction("block_seller","حظر البائع على الخادم");
+        if(report.listingId||report.candidateId)addAction("remove_listing",report.candidateId?"إزالة ملف الباحث":"إخفاء الإعلان");
+        if(["seller","candidate"].includes(report.reportType)&&(report.sellerPhone||report.candidatePhone))addAction("block_seller","حظر صاحب المحتوى على الخادم");
         if(report.reportType==="assistant")addAction("resolve","تأكيد مراجعة الرد");
         row.appendChild(actions);box.appendChild(row);
       });
@@ -617,7 +630,7 @@
     loadTimer=window.setInterval(()=>{if(document.hidden)return;loadHome();if($("vSouq")&&!$("vSouq").hidden)loadSouq();if($("vJobs")&&!$("vJobs").hidden)loadJobs();},6*60*60*1000);
     document.addEventListener("click",event=>{if(event.target.closest("[data-go='jobs']"))window.setTimeout(loadJobs,120);if(event.target.closest("[data-go='souq']"))window.setTimeout(loadSouq,120);});
   }
-  window.DalilnaShared = { submitListing, loadHome, loadSouq, loadJobs, loadAdminQueue, loadAdminReports, loadCategoryCounts, reportAssistant };
+  window.DalilnaShared = { submitListing, loadHome, loadSouq, loadJobs, loadAdminQueue, loadAdminReports, loadCategoryCounts, reportAssistant, reportCandidate, blockSeller };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",bind);
   else bind();
 })();
