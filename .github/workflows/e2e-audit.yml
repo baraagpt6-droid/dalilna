@@ -97,7 +97,7 @@ jobs:
           const health=await probe("/health");
           const marketStatus=await probe("/api/marketplace/status");
           const listings=await probe("/api/marketplace/listings?category=souq&limit=24&includeImages=1");
-          const pharmacies=await probe("/api/places/search?q=%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D8%A9&category=pharmacy&place=%D9%85%D8%AD%D8%A7%D9%81%D8%B8%D8%A9%20%D8%A5%D8%A8",{},3000);
+          const pharmacies=await probe("/api/places/search?q=%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D8%A9&category=pharmacy&place=%D9%85%D8%AD%D8%A7%D9%81%D8%B8%D8%A9%20%D8%A5%D8%A8",{},6500);
           const assistantStatus=await probe("/api/assistant/status");
           let publicSite={ok:false,error:"Pages index not retrieved"};
           let publicIndexPayload=null;
