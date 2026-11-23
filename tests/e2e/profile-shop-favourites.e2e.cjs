@@ -140,6 +140,11 @@ test("merchant profile, shop submission and directory favourites work in a real 
       throw new Error("Shop did not persist after submit. " + JSON.stringify(diagnostics) + ". " + error.message);
     });
 
+    await Promise.race([
+      marketplacePayloadPromise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Marketplace POST was not observed after the local shop save.")), 10000))
+    ]);
+
     // Make sure the app is showing the complete directory, not a prior region scope.
     await page.locator("#q").fill("");
     await page.locator("#scopeBtn").click();
