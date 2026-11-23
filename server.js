@@ -173,8 +173,8 @@ function searchLocalYemenCatalog({query="",category="all",place="",bbox=null,lat
   const areaParts=String(place||"").split(/[،,]/)
     .map(part=>{
       const original=String(part).trim();
-      const scope=/^(?:محافظة|governorate)\\b?/iu.test(original)?"governorate":
-        /^(?:مديرية|عزلة|district)\\b?/iu.test(original)?"district":"any";
+      const scope=/^(?:محافظة|governorate)(?:\s|$)/iu.test(original)?"governorate":
+        /^(?:مديرية|عزلة|district)(?:\s|$)/iu.test(original)?"district":"any";
       const value=normalizeLocalCatalogText(original.replace(/(?:محافظة|مديرية|عزلة|منطقة|مدينة|اليمن|yemen|governorate|district)/giu," "));
       return {scope,value};
     })
