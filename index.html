@@ -2491,7 +2491,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="2.8.0";
+const APP_VERSION="2.9.0";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز صحية"],["pharmacy","صيدليات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -6196,7 +6196,7 @@ else if(location.hash==="#jobs")window.setTimeout(()=>go("jobs"),0);
 applyLang();
 buildScopeSelector();
 async function checkRemoteVersionSilently(){
- const localVersion=document.querySelector('meta[name="app-version"]')?.content||"2.8.0";
+ const localVersion=document.querySelector('meta[name="app-version"]')?.content||"2.9.0";
  const remoteUrl=location.hostname==="appassets.androidplatform.net"
   ?"https://baraagpt6-droid.github.io/dalilna/version.json"
   :"./version.json";
