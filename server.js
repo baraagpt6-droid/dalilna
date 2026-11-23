@@ -176,9 +176,16 @@ function rateLimit(req) {
 function createIntervalGate(intervalMs) {
   let nextAt = 0;
   let queue = Promise.resolve();
-  return function waitForSlot(deadlineAt = Infinity) {
+  return function waitForSlot(deadlineAt = Infinity, maxDelayMs = Infinity) {
     const reservation = queue.then(async () => {
       const delay = Math.max(0, nextAt - Date.now());
+      if (delay > maxDelayMs) {
+        const busy = new Error("مصدر الخريطة مشغول بطلب سابق؛ سيتم تجاوز المرآة الحالية.");
+        busy.name = "SlotBusyError";
+        busy.code = "OVERPASS_SLOT_BUSY";
+        busy.statusCode = 503;
+        throw busy;
+      }
       if (Number.isFinite(deadlineAt) && Date.now() + delay >= deadlineAt) {
         const timeout = new Error("انتهت مهلة البحث قبل الاتصال بمصدر الخريطة.");
         timeout.name = "AbortError";
@@ -200,7 +207,9 @@ function waitForOverpassSlot(providerName,deadlineAt=Infinity){
   const key=String(providerName||"default");
   let gate=overpassProviderSlots.get(key);
   if(!gate){gate=createIntervalGate(1100);overpassProviderSlots.set(key,gate);}
-  return gate(deadlineAt);
+  // Do not spend the shared map-search deadline waiting behind another
+  // request to the same host. A busy mirror is skipped and the next is tried.
+  return gate(deadlineAt,250);
 }
 const waitForCommonsSlot = createIntervalGate(1100);
 
@@ -733,7 +742,14 @@ async function fetchOverpass(bbox,category,label,deadlineAt=Date.now()+2700){
   let hadValidEmpty=false;
   for(let providerIndex=0;providerIndex<endpoints.length;providerIndex++){
     const provider=endpoints[providerIndex];
-    try{await waitForOverpassSlot(provider.name,deadlineAt);}catch(error){lastError=error;break;}
+    try{await waitForOverpassSlot(provider.name,deadlineAt);}catch(error){
+      lastError=error;
+      if(error.code==="OVERPASS_SLOT_BUSY"){
+        console.info(JSON.stringify({event:"places.overpass.skip_busy_slot",provider:provider.name,remainingMs:Math.max(0,deadlineAt-Date.now())}));
+        continue;
+      }
+      break;
+    }
     const remaining=deadlineAt-Date.now();
     const attemptTimeoutMs=overpassAttemptTimeout(remaining,providerIndex,endpoints.length);
     if(attemptTimeoutMs<=120)break;
@@ -930,7 +946,14 @@ async function searchYemenOverpass(query,category="all",deadlineAt=Date.now()+27
   let lastError=null,hadValidEmpty=false;
   for(let providerIndex=0;providerIndex<endpoints.length;providerIndex++){
     const provider=endpoints[providerIndex];
-    try{await waitForOverpassSlot(provider.name,deadlineAt);}catch(error){lastError=error;break;}
+    try{await waitForOverpassSlot(provider.name,deadlineAt);}catch(error){
+      lastError=error;
+      if(error.code==="OVERPASS_SLOT_BUSY"){
+        console.info(JSON.stringify({event:"places.overpass.skip_busy_slot",provider:provider.name,remainingMs:Math.max(0,deadlineAt-Date.now())}));
+        continue;
+      }
+      break;
+    }
     const remaining=deadlineAt-Date.now();
     const attemptTimeoutMs=overpassAttemptTimeout(remaining,providerIndex,endpoints.length);
     if(attemptTimeoutMs<=120)break;
