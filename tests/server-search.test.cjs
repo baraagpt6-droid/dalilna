@@ -2,7 +2,7 @@
 const test=require("node:test");
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {inferCategoryFromQuery,buildOverpassQuery,classifyCategory,searchPlaces,searchLocalYemenCatalog,overpassAttemptTimeout,createIntervalGate}=require("../server");
+const {inferCategoryFromQuery,buildOverpassQuery,classifyCategory,searchPlaces,searchLocalYemenCatalog,normalizeText,overpassAttemptTimeout,createIntervalGate}=require("../server");
 
 
 test("global fallback searches Nominatim then the Yemen-bounded Overpass mirror",async()=>{
@@ -129,7 +129,7 @@ test("local Yemen index provides Ibb pharmacy results when map mirrors are unava
  assert.equal(result.localCatalogFallback,true);
  assert.ok(result.count>0);
  assert.ok(result.items.every(item=>item.category==="pharmacy"));
- assert.ok(result.items.every(item=>["إب","اب"].includes(item.governorate)));
+ assert.ok(result.items.every(item=>normalizeText(item.governorate)==="اب"));
  assert.ok(result.items.every(item=>item.verificationStatus==="not_field_verified_by_dalilna"));
  assert.ok(result.items.every(item=>item.source==="فهرس اليمن الوطني المحلي"));
 });

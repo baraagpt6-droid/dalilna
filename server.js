@@ -170,9 +170,15 @@ function searchLocalYemenCatalog({query="",category="all",place="",bbox=null,lat
   const queryTokens=queryText.split(" ").filter(token=>token.length>1);
   const queryCategory=inferCategoryFromQuery(query);
   const categoryOnlyQuery=queryCategory&&queryCategory===(CATEGORY_ALIASES[wantedCategory]||wantedCategory);
-  const areaText=String(place||"").split(/[،,]/)
-    .map(part=>normalizeLocalCatalogText(String(part).replace(/(?:محافظة|مديرية|عزلة|منطقة|مدينة|اليمن|yemen|governorate|district)/giu," ")))
-    .filter(Boolean);
+  const areaParts=String(place||"").split(/[،,]/)
+    .map(part=>{
+      const original=String(part).trim();
+      const scope=/^(?:محافظة|governorate)\\b?/iu.test(original)?"governorate":
+        /^(?:مديرية|عزلة|district)\\b?/iu.test(original)?"district":"any";
+      const value=normalizeLocalCatalogText(original.replace(/(?:محافظة|مديرية|عزلة|منطقة|مدينة|اليمن|yemen|governorate|district)/giu," "));
+      return {scope,value};
+    })
+    .filter(part=>part.value);
   const hasCoords=Number.isFinite(Number(lat))&&Number.isFinite(Number(lon))&&lat!==null&&lon!==null;
   const nearRadius=Math.min(15000,Math.max(500,Number(radius)||7000));
   const bounds=bbox&&["south","north","west","east"].every(key=>Number.isFinite(Number(bbox[key])))?bbox:null;
@@ -186,7 +192,11 @@ function searchLocalYemenCatalog({query="",category="all",place="",bbox=null,lat
     const district=Array.isArray(districtEntry)?String(districtEntry[0]||""):String(districtEntry||"");
     const normalizedGov=normalizeLocalCatalogText(governorate);
     const normalizedDistrict=normalizeLocalCatalogText(district);
-    if(areaText.length&&!areaText.every(part=>normalizedGov.includes(part)||normalizedDistrict.includes(part)))continue;
+    if(areaParts.length&&!areaParts.every(part=>{
+      if(part.scope==="governorate")return normalizedGov.includes(part.value);
+      if(part.scope==="district")return normalizedDistrict.includes(part.value);
+      return normalizedGov.includes(part.value)||normalizedDistrict.includes(part.value);
+    }))continue;
     const itemLat=row[6]===null||row[6]===undefined?null:Number(row[6])/100000;
     const itemLon=row[7]===null||row[7]===undefined?null:Number(row[7])/100000;
     if(bounds) {
