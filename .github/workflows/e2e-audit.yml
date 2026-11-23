@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/e2e-audit.yml"
+      - "server.js"
+      - "api/assistant.js"
+      - "index.html"
   workflow_dispatch:
 
 permissions:
