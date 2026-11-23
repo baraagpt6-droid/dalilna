@@ -335,6 +335,7 @@
  }
  function bind(){
   buildJobs();buildSouq();renderTabs();translateFeatureTree();
+  window.addEventListener("dalilna:seller-block-change",()=>loadCandidates());
   $("jobsInlineSearch")?.addEventListener("input",event=>{jobsSearchText=event.target.value||"";applyJobFilters();});
   $("jobsSavedFilter")?.addEventListener("click",()=>{jobsSavedOnly=!jobsSavedOnly;applyJobFilters();});
   $("jobsCountryTabs")?.addEventListener("click",event=>{
