@@ -1,4 +1,4 @@
-name: Dalilna 2.9.0 quality checks
+name: Dalilna 3.0.0 quality checks
 
 on:
   pull_request:
@@ -64,11 +64,11 @@ jobs:
         shell: bash
         run: |
           mkdir -p android/app/src/main/assets/icons android/app/src/main/assets/regional-catalog android/app/src/main/assets/market-price-images
-          cp index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json regional-catalog-runtime.js marketplace-client.js features-2.1.js features-2.1.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html android/app/src/main/assets/
+          cp index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json regional-catalog-runtime.js marketplace-client.js features-2.1.js features-2.1.css v3.0.0.js v3.0.0.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html android/app/src/main/assets/
           cp icons/* android/app/src/main/assets/icons/
           cp market-price-images/*.svg android/app/src/main/assets/market-price-images/
           cp regional-catalog/*.json android/app/src/main/assets/regional-catalog/
-          for name in index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json sw.js marketplace-client.js manifest.json version.json jobs-feed.json; do
+          for name in index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json sw.js marketplace-client.js manifest.json version.json jobs-feed.json v3.0.0.js v3.0.0.css; do
             cmp -s "$name" "android/app/src/main/assets/$name" || { echo "$name asset is stale"; exit 1; }
           done
           cmp -s regions-yemen.js android/app/src/main/assets/regions-yemen.js
@@ -78,7 +78,10 @@ jobs:
           cmp -s regional-catalog/search_index_light.json android/app/src/main/assets/regional-catalog/search_index_light.json
 
       - name: Check JavaScript syntax
-        run: node --check server.js
+        run: |
+          node --check server.js
+          node --check v3.0.0.js
+          node --check features-2.1.js
 
       - name: Compile data scripts
         run: python -m py_compile scripts/build_regional_catalog.py scripts/fuse_regional_catalog.py scripts/test_regional_catalog.py scripts/build_search_index_light.py tests/test_search_index_light.py

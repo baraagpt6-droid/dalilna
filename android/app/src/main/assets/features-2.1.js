@@ -67,7 +67,7 @@
   ["agriculture","مواشي وزراعة ومعدات"],
   ["clothing","ملابس وعطور ومستلزمات"]
  ];
- let country="YE",transaction="all",group="all";
+ let country="YE",transaction="all",group="all",jobsSearchText="",jobsSavedOnly=false;
  const $=id=>document.getElementById(id);
  function el(tag,attrs,text){
   const node=document.createElement(tag);
@@ -91,7 +91,7 @@
   const jobs=$("vJobs"),shared=$("sharedJobsPanel");
   if(jobs&&shared&&!$("jobsFeaturePanel")){
    const panel=el("section",{id:"jobsFeaturePanel",class:"jobs-feature-panel"});
-   panel.innerHTML='<div class="feature-head"><h3>فرص عمل من مصادرها</h3><span class="tag">تحديث يومي</span></div><div class="country-tabs" id="jobsCountryTabs" aria-label="اختيار الدولة"></div><div class="job-source-links" id="jobSourceLinks"></div><div class="job-feed-status" id="jobsFeedStatus"></div><div class="job-feed-list" id="jobsFeedCards"></div>';
+   panel.innerHTML='<div class="feature-head"><h3>فرص عمل من مصادرها</h3><span class="tag">تحديث يومي</span></div><div class="country-tabs" id="jobsCountryTabs" aria-label="اختيار الدولة"></div><div class="jobs-feed-controls"><input type="search" id="jobsInlineSearch" autocomplete="off" placeholder="ابحث بالمسمى الوظيفي أو المدينة" aria-label="ابحث في الوظائف"><button type="button" id="jobsSavedFilter" aria-pressed="false">★ المحفوظة</button></div><div class="job-source-links" id="jobSourceLinks"></div><div class="job-feed-status" id="jobsFeedStatus"></div><div class="job-feed-list" id="jobsFeedCards"></div>';
    shared.parentNode.insertBefore(panel,shared);
    const seekers=el("section",{id:"jobSeekersPanel",class:"job-seekers-panel"});
    seekers.innerHTML='<div class="feature-head"><h3>باحثون عن عمل</h3><span class="tag">بموافقة أصحاب الملفات</span></div><div class="job-seeker-panel-actions"><button type="button" class="add" id="addJobSeeker">سجّل كباحث عن عمل</button></div><div class="job-seeker-status" id="jobSeekersStatus"></div><div class="job-seeker-list" id="jobSeekersList"></div>';
@@ -159,6 +159,10 @@
  function readJobFavorites(){
   try{const value=JSON.parse(localStorage.getItem("dalilna-job-favs-v1")||"[]");return Array.isArray(value)?value:[];}catch(_){return [];}
  }
+ function readJobFavoriteRecords(){try{const value=JSON.parse(localStorage.getItem("dalilna-job-favs-records-v1")||"{}");return value&&typeof value==="object"&&!Array.isArray(value)?value:{};}catch(_){return {};}}
+ function jobFavoriteKey(job,sourceUrl){return String(job?.id||sourceUrl||job?.url||job?.title||"");}
+ function normalizeJobSearch(value){return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[أإآ]/g,"ا").replace(/[ى]/g,"ي").toLowerCase().replace(/[^\u0600-\u06FFa-z0-9]+/g," ").trim();}
+ function applyJobFilters(){const query=normalizeJobSearch(jobsSearchText),saved=new Set(readJobFavorites()),box=$("jobsFeedCards");if(!box)return;let shown=0;box.querySelectorAll(".job-feed-card").forEach(card=>{const visible=(!query||normalizeJobSearch(card.textContent).includes(query))&&(!jobsSavedOnly||saved.has(card.dataset.favoriteKey||""));card.hidden=!visible;if(visible)shown++;});const filter=$("jobsSavedFilter");if(filter){filter.setAttribute("aria-pressed",jobsSavedOnly?"true":"false");filter.textContent=(isEnglish()?"★ Saved (":"★ المحفوظة (")+saved.size+")";}const status=$("jobsFeedStatus");if(status&&box.childElementCount)status.dataset.visibleCount=String(shown);}
  async function loadJobs(){
   const status=$("jobsFeedStatus"),box=$("jobsFeedCards");
   if(!status||!box)return;
@@ -187,19 +191,13 @@
     if(job.deadline)card.appendChild(el("p",{},"آخر موعد للتقديم: "+job.deadline));
     const actions=el("div",{class:"job-feed-actions"});
     const direct=officialApplicationUrl(job.applicationUrl);
-    const sourceUrl=safeJobUrl(job.url);
-    if(direct)actions.appendChild(el("a",{href:direct,target:"_blank",rel:"noopener noreferrer"},"التقديم من المصدر"));
-    else actions.appendChild(el("span",{class:"job-feed-no-apply"},"لا يتوفر رابط تقديم رسمي مباشر لهذا الإعلان"));
-    if(sourceUrl&&sourceUrl!==direct)actions.appendChild(el("a",{href:sourceUrl,target:"_blank",rel:"noopener noreferrer"},"صفحة المصدر"));
-    const favoriteSet=new Set(readJobFavorites());
-    const favorite=el("button",{type:"button","aria-pressed":favoriteSet.has(String(job.id))?"true":"false"},favoriteSet.has(String(job.id))?"★ محفوظة":"☆ حفظ");
-    favorite.addEventListener("click",()=>{
-     const items=new Set(readJobFavorites()),key=String(job.id||sourceUrl||job.title);
-     if(items.has(key))items.delete(key);else items.add(key);
-     localStorage.setItem("dalilna-job-favs-v1",JSON.stringify([...items].slice(-300)));
-     favorite.setAttribute("aria-pressed",items.has(key)?"true":"false");
-     favorite.textContent=items.has(key)?"★ محفوظة":"☆ حفظ";
-    });
+    const sourceUrl=safeJobUrl(job.url),key=jobFavoriteKey(job,sourceUrl),isSaved=new Set(readJobFavorites()).has(key);card.dataset.favoriteKey=key;
+    if(direct)actions.appendChild(el("a",{href:direct,target:"_blank",rel:"noopener noreferrer",class:"job-apply-link"},"التقديم من المصدر"));
+    else if(sourceUrl)actions.appendChild(el("span",{class:"job-apply-source-badge"},"التقديم عبر صفحة المصدر"));
+    if(sourceUrl)actions.appendChild(el("a",{href:sourceUrl,target:"_blank",rel:"noopener noreferrer",class:"job-source-link"},"صفحة المصدر"));
+    else if(!direct)actions.appendChild(el("span",{class:"job-feed-no-apply"},"رابط المصدر غير متاح"));
+    const favorite=el("button",{type:"button","aria-pressed":isSaved?"true":"false","data-job-fav":key},isSaved?"★ محفوظة":"☆ حفظ");
+    favorite.addEventListener("click",()=>{const items=new Set(readJobFavorites()),wasSaved=items.has(key);if(wasSaved)items.delete(key);else items.add(key);localStorage.setItem("dalilna-job-favs-v1",JSON.stringify([...items].slice(-300)));const records=readJobFavoriteRecords();if(wasSaved)delete records[key];else records[key]=job;localStorage.setItem("dalilna-job-favs-records-v1",JSON.stringify(records));favorite.setAttribute("aria-pressed",wasSaved?"false":"true");favorite.textContent=wasSaved?"☆ حفظ":"★ محفوظة";window.dispatchEvent(new CustomEvent("dalilna:favorite-change",{detail:{kind:"job",saved:!wasSaved,key,item:job,source:favorite}}));applyJobFilters();});
     actions.appendChild(favorite);
     const share=el("button",{type:"button"},"مشاركة");
     share.addEventListener("click",async()=>{
@@ -212,6 +210,7 @@
     card.appendChild(actions);fragment.appendChild(card);
    });
    box.replaceChildren(fragment);
+   applyJobFilters();
    translateFeatureTree(box);
    translateFeatureTree(status.parentElement||status);
   }catch(error){if(!box.childElementCount){status.textContent="تعذر تحميل الوظائف من الخادم. "+error.message;translateFeatureTree(status);}}
@@ -315,6 +314,8 @@
  }
  function bind(){
   buildJobs();buildSouq();renderTabs();translateFeatureTree();
+  $("jobsInlineSearch")?.addEventListener("input",event=>{jobsSearchText=event.target.value||"";applyJobFilters();});
+  $("jobsSavedFilter")?.addEventListener("click",()=>{jobsSavedOnly=!jobsSavedOnly;applyJobFilters();});
   $("jobsCountryTabs")?.addEventListener("click",event=>{
    const button=event.target.closest("[data-country]");if(!button)return;
    country=button.dataset.country;renderTabs();loadJobs();loadCandidates();
@@ -370,7 +371,10 @@
     const id=favorite.dataset.favId,index=saved.indexOf(id);
     if(index>=0)saved.splice(index,1);else saved.push(id);
     try{localStorage.setItem(key,JSON.stringify(saved));}catch(_){}
-    favorite.classList.toggle("is-favorite",index<0);
+    const wasSaved=index>=0,item=favorite._item||null;
+     try{const records=JSON.parse(localStorage.getItem("dalilna-marketplace-fav-records-v1")||"{}");if(wasSaved)delete records[id];else if(item)records[id]=item;localStorage.setItem("dalilna-marketplace-fav-records-v1",JSON.stringify(records));}catch(_){}
+     window.dispatchEvent(new CustomEvent("dalilna:favorite-change",{detail:{kind:"marketplace",saved:!wasSaved,key:id,item,source:favorite}}));
+     favorite.classList.toggle("is-favorite",index<0);
     favorite.setAttribute("aria-pressed",index<0?"true":"false");
     favorite.textContent=index<0?"★ مفضلة":"☆ مفضلة";
    }

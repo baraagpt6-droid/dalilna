@@ -1,9 +1,9 @@
 {
-  "version": "2.9.0",
-  "versionCode": 2920602,
-  "webVersion": "2.9.0",
-  "androidVersion": "2.9.0",
-  "androidVersionCode": 2920602,
+  "version": "3.0.0",
+  "versionCode": 3000000,
+  "webVersion": "3.0.0",
+  "androidVersion": "3.0.0",
+  "androidVersionCode": 3000000,
   "catalogSchemaVersion": 2,
   "catalogSnapshotDate": "2026-11-23",
   "catalogTotalCount": 24563,
@@ -20,9 +20,9 @@
     "Foursquare Open Places (via Overture)": 4
   },
   "osmDatasetSource": "BBBike Yemen OSM mirror (fallback)",
-  "updatedAt": "2026-11-23T06:23:29.123Z",
+  "updatedAt": "2026-11-23T06:58:16.715Z",
   "marketPriceGuideVersion": 1,
   "marketPriceGuideUpdatedAt": "2026-11-23",
   "androidSigningMode": "persistent",
-  "androidReleaseUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v2.9.0/app-debug.apk"
+  "androidReleaseUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.0.0/app-debug.apk"
 }

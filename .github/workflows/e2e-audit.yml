@@ -1,4 +1,4 @@
-name: Dalilna v2.8.0 live E2E audit
+name: Dalilna v3.0.0 live E2E audit
 
 on:
   pull_request:
@@ -8,6 +8,8 @@ on:
       - "server.js"
       - "api/assistant.js"
       - "index.html"
+      - "v3.0.0.js"
+      - "v3.0.0.css"
       - "version.json"
       - "regional-catalog/**"
       - "tests/**"
@@ -18,6 +20,8 @@ on:
       - "server.js"
       - "api/assistant.js"
       - "index.html"
+      - "v3.0.0.js"
+      - "v3.0.0.css"
       - "version.json"
       - "regional-catalog/**"
   workflow_dispatch:
@@ -94,7 +98,11 @@ jobs:
               return {ok:false,status:0,ms:Math.round(performance.now()-started),error:String(error?.message||error)};
             } finally {clearTimeout(timer);}
           }
-          const health=await probe("/health");
+          let health=await probe("/health");
+          for(let attempt=0;attempt<18&&health.body?.version!=="3.0.0";attempt++){
+            await new Promise(resolve=>setTimeout(resolve,5000));
+            health=await probe("/health");
+          }
           const marketStatus=await probe("/api/marketplace/status");
           const listings=await probe("/api/marketplace/listings?category=souq&limit=24&includeImages=1");
           const pharmacies=await probe("/api/places/search?q=%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D8%A9&category=pharmacy&place=%D9%85%D8%AD%D8%A7%D9%81%D8%B8%D8%A9%20%D8%A5%D8%A8",{},6500);
@@ -114,16 +122,22 @@ jobs:
               }
               throw lastError||new Error("GitHub Pages unavailable");
             }
-            const [pageRes,versionRes,marketRes,indexRes,clientRes]=await Promise.all([
+            const [pageRes,versionRes,marketRes,indexRes,clientRes,v3jsRes,v3cssRes,featuresRes,jobsRes]=await Promise.all([
               getPublic("index.html"),getPublic("version.json"),getPublic("market_items.json"),
-              getPublic("regional-catalog/search_index_light.json?v=2.8.0-pharmacy24"),getPublic("marketplace-client.js")
+              getPublic("regional-catalog/search_index_light.json?v=3.0.0-pharmacy24"),getPublic("marketplace-client.js"),
+              getPublic("v3.0.0.js?v=3.0.0"),getPublic("v3.0.0.css?v=3.0.0"),getPublic("features-2.1.js?v=3.0.0"),getPublic("jobs-feed.json")
             ]);
             const pageText=await pageRes.text(),version=await versionRes.json(),market=await marketRes.json(),clientText=await clientRes.text();
+            const v3js=await v3jsRes.text(),v3css=await v3cssRes.text(),featuresText=await featuresRes.text(),jobsFeed=await jobsRes.json();
             const {gunzipSync}=await import("node:zlib");
             const publicBytes=await indexRes.arrayBuffer();
             const publicEnvelope=JSON.parse(new TextDecoder().decode(publicBytes));
             publicIndexPayload=JSON.parse(gunzipSync(Buffer.from(publicEnvelope.data,"base64")).toString("utf8"));
-            publicSite={ok:true,version:version.webVersion||version.version,bytes:publicBytes.byteLength,
+            publicSite={ok:true,version:version.webVersion||version.version,signingMode:version.androidSigningMode,androidVersionCode:version.androidVersionCode,
+              v3SavedHub:v3js.includes("savedHubDialog")&&v3js.includes("dalilna:favorite-change"),
+              v3FlyAnimation:v3js.includes("cubic-bezier"),v3JobSearch:featuresText.includes("jobsInlineSearch")&&featuresText.includes("jobsSavedFilter"),
+              v3JobFeedCount:Array.isArray(jobsFeed.items)?jobsFeed.items.length:0,
+              v3Styles:v3css.includes(".v3-favorite-trigger"),bytes:publicBytes.byteLength,
               schemaVersion:publicEnvelope.schemaVersion,records:publicIndexPayload.i?.length||0,
               pharmacyRecords:publicIndexPayload.i?.filter(row=>publicIndexPayload.c[row[2]]==="pharmacy").length||0,
               open24Pharmacies:publicIndexPayload.i?.filter(row=>publicIndexPayload.c[row[2]]==="pharmacy"&&/(24\s*\/\s*7|24\s*(?:hours?|h\b)|00:00\s*-\s*24:00|على مدار الساعة)/i.test(String(row[8]||""))).length||0,
@@ -132,7 +146,12 @@ jobs:
               craftCategory:pageText.includes("craft:")||pageText.includes('"craft"'),
               directoryWhatsApp:pageText.includes("مشاركة واتساب"),
               productWhatsApp:clientText.includes("مشاركة واتساب")};
+            if(publicSite.version!=="3.0.0"||publicSite.signingMode!=="persistent")throw new Error("Published Pages version or Android signing mode is not v3.0.0 persistent.");
+            if(!publicSite.v3SavedHub||!publicSite.v3FlyAnimation||!publicSite.v3JobSearch||!publicSite.v3Styles)throw new Error("A v3 saved hub, animation, job filter or stylesheet asset is missing.");
+            if(!health.ok||health.body?.version!=="3.0.0")throw new Error("Render health did not confirm Dalilna v3.0.0 after waiting.");
           } catch(error) {publicSite={ok:false,error:String(error?.message||error)};}
+          if(!publicSite.ok)throw new Error("Published v3.0.0 Pages audit failed: "+(publicSite.error||"unknown error"));
+          if(!health.ok||health.body?.version!=="3.0.0")throw new Error("Render health did not confirm Dalilna v3.0.0 after waiting.");
           let assistant={skipped:true,reason:"Gemini key not configured"};
           if(assistantStatus.body?.configured===true) {
             const rows=publicIndexPayload?.i||[];
@@ -180,15 +199,15 @@ jobs:
           import json
           from pathlib import Path
           catalog=json.loads(Path("audit-catalog.json").read_text(encoding="utf-8"))
-          report={"version":"2.8.0","catalog":catalog,"live":json.loads(Path("audit-live.json").read_text(encoding="utf-8"))}
+          report={"version":"3.0.0","catalog":catalog,"live":json.loads(Path("audit-live.json").read_text(encoding="utf-8"))}
           Path("audit").mkdir(exist_ok=True)
-          Path("audit/last-e2e-v2.8.0.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          Path("audit/last-e2e-v3.0.0.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
           print(json.dumps(report,ensure_ascii=False,indent=2))
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add audit/last-e2e-v2.8.0.json
-          git commit -m "audit: publish Dalilna v2.8.0 live verification"
+          git add audit/last-e2e-v3.0.0.json
+          git commit -m "audit: publish Dalilna v3.0.0 live verification"
           # The audit regenerates the tracked compressed index. Keep the report
           # commit, but discard generated working-tree changes before rebasing.
           git restore --worktree --staged .
@@ -199,7 +218,7 @@ jobs:
             if ! git rebase origin/main; then
               # Concurrent audit runs may update the same report. Keep this
               # run's completed report while retaining every other main change.
-              if [ "$(git diff --name-only --diff-filter=U)" = "audit/last-e2e-v2.8.0.json" ]; then
+              if [ "$(git diff --name-only --diff-filter=U)" = "audit/last-e2e-v3.0.0.json" ]; then
                 git checkout --theirs audit/last-e2e-v2.8.0.json
                 git add audit/last-e2e-v2.8.0.json
                 GIT_EDITOR=true git rebase --continue

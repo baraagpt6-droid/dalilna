@@ -221,7 +221,7 @@
       share.target = "_blank"; share.rel = "noopener noreferrer"; share.textContent = label("مشاركة واتساب");
       actions.appendChild(share);
       let favs = []; try { favs = JSON.parse(localStorage.getItem("dalilna-marketplace-favs-v1") || "[]"); } catch (_) {}
-      const favorite = document.createElement("button"); favorite.type = "button"; favorite.dataset.favId = item.id;
+      const favorite = document.createElement("button"); favorite.type = "button"; favorite.dataset.favId = item.id; favorite._item = item;
       favorite.setAttribute("aria-pressed",favs.includes(item.id)?"true":"false"); favorite.className = favs.includes(item.id)?"is-favorite":""; favorite.textContent = favs.includes(item.id)?label("★ مفضلة"):label("☆ مفضلة"); actions.appendChild(favorite);
     }
     card.appendChild(actions);

@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.9.0">
+<meta name="app-version" content="3.0.0">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="دليلنا">
 <link rel="manifest" href="./manifest.json">
-<script src="./app-native-bridge.js?v=2.9.0"></script>
+<script src="./app-native-bridge.js?v=3.0.0"></script>
 <script src="./regions-yemen.js"></script>
 <script src="./regions-profiles.js"></script>
 <script src="./regional-catalog-runtime.js"></script>
@@ -19,8 +19,9 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23181411'/%3E%3Cpath d='M18 54 A32 32 0 0 1 82 54 Z' fill='none' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M22 54 L36 54 A14 14 0 0 1 42 42 L29 33 A28 28 0 0 0 22 54 Z' fill='%233A7EC2'/%3E%3Cpath d='M29 33 L42 42 A14 14 0 0 1 50 40 L50 26 A28 28 0 0 0 29 33 Z' fill='%23E8A025'/%3E%3Cpath d='M50 26 L50 40 A14 14 0 0 1 58 42 L71 33 A28 28 0 0 0 50 26 Z' fill='%23D6455D'/%3E%3Cpath d='M71 33 L58 42 A14 14 0 0 1 64 54 L78 54 A28 28 0 0 0 71 33 Z' fill='%23E8A025'/%3E%3Ccircle cx='50' cy='54' r='11' fill='%23F2B949' stroke='%23F4EFE6' stroke-width='3'/%3E%3Crect x='18' y='54' width='64' height='24' rx='4' fill='%23181411' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M50 54 v24 M18 66 h64' stroke='%23F4EFE6' stroke-width='3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./features-2.1.css?v=2.9.0">
-<link rel="stylesheet" href="./market-price-guide.css?v=2.9.0">
+<link rel="stylesheet" href="./features-2.1.css?v=3.0.0">
+<link rel="stylesheet" href="./market-price-guide.css?v=3.0.0">
+<link rel="stylesheet" href="./v3.0.0.css?v=3.0.0">
 <style>
 :root{
   color-scheme:dark;
@@ -586,7 +587,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 @media(max-width:420px){.shared-marketplace-controls{grid-template-columns:1fr}.shared-marketplace-controls .wide{grid-column:auto}}
 .add-lifetime-intro{display:grid;gap:7px;margin:0 0 12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card2);font-size:13px;line-height:1.7}.add-lifetime-intro ol{margin:0;padding-inline-start:22px;display:grid;gap:3px}.dalilna-map{height:230px;min-height:230px;margin:8px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card2)}[data-map-toggle]{min-height:34px;padding:7px 12px;border:1px solid var(--line);border-radius:9px;background:var(--card2);color:var(--ink);font:inherit;cursor:pointer}.region-sources summary{cursor:pointer;font-weight:700}
 
-/* 2.9.0 critical quick-access fallback. */
+/* 3.0.0 critical quick-access fallback. */
 .quick-jump-bar{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:7px;padding:9px 14px 7px;max-width:1160px;margin:0 auto}
 .quick-jump-btn{display:flex;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:6px;padding:6px 5px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--ink);font:600 11.5px 'Readex Pro',Tahoma,sans-serif;text-decoration:none;white-space:normal;text-align:center;overflow:hidden}
 .quick-jump-icon{display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:8px;background:var(--chip);color:var(--acc)}
@@ -642,6 +643,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       </div>
     </a>
     <div class="top-tools">
+      <button type="button" class="tbtn v3-favorite-trigger" id="savedHubBtn" aria-label="المفضلة والمحفوظات" title="المفضلة والمحفوظات"><span aria-hidden="true">♥</span><span class="lbl">المحفوظات</span><span class="v3-count-badge" id="savedHubCount">0</span></button>
       <button type="button" class="tbtn" id="accountBtn" title="تبديل الحساب">
         <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span class="lbl" id="accountLbl">عميل</span>
@@ -1040,6 +1042,8 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
         <span id="profileContact" class="where">لا توجد بيانات تواصل للحساب الحالي.</span>
         <span id="profileDaysLeft" class="where">متبقي 60 يوماً من عرض الإعلانات المجاني</span>
       </div>
+      <div id="v3RoleSwitcher" class="v3-role-switcher" aria-label="تبديل صفة الحساب"><span>صفة الاستخدام</span><div><button type="button" data-v3-role="client">عميل</button><button type="button" data-v3-role="merchant">بائع</button><button type="button" data-v3-role="admin">مشرف</button></div></div>
+      <button type="button" class="v3-profile-saved" id="profileSavedHub">♥ المفضلة والمحفوظات <span id="profileSavedHubCount">0</span></button>
       <div class="profile-metrics">
         <div><b id="profileAdsCount">0</b><span id="profileAdsLabel">إعلاناتي</span></div>
         <div><b id="profileShopsCount">0</b><span id="profileShopsLabel">محلات أضفتها</span></div>
@@ -2491,7 +2495,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="2.9.0";
+const APP_VERSION="3.0.0";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز صحية"],["pharmacy","صيدليات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -3305,6 +3309,7 @@ $("#profileNotificationsBtn").addEventListener("click",async()=>{
 });
 $("#profileLogoutBtn").addEventListener("click",()=>{
  S.session={role:"client",adminEmail:"",merchant:null};
+ S.onboarded=false;
  saveState();syncRoleUI();render();renderProfilePanel();closeDlg("#accountDlg");
  toast(curLang==="en"?"Signed out on this device.":"تم تسجيل الخروج من هذا الجهاز.");
 });
@@ -3776,8 +3781,11 @@ document.addEventListener("click",e=>{
     e.stopPropagation();
     const id=f.dataset.fav;
     const ix=S.favs.indexOf(id);
+    const record=[...SEED_ITEMS,...S.items].find(item=>String(item.id)===String(id))||null;
     if(ix>=0)S.favs.splice(ix,1);else S.favs.push(id);
-    saveState();render();
+    saveState();
+    window.dispatchEvent(new CustomEvent("dalilna:favorite-change",{detail:{kind:"directory",saved:ix<0,key:id,item:record,source:f}}));
+    render();
     toast(ix>=0?"أُزيل من المفضلة":"حُفظ في المفضلة");
     return;
   }
@@ -4586,8 +4594,8 @@ function getMarketplaceCount(category){const ctx=regionCurrentContext(),counts=c
 function getDirectoryCategoryCount(category){const stats=catalogStatsForScope(),categories=stats?.categories||{};const aliases=category==="land"?["real_estate"]:[];return Number(categories?.[category]||0)+aliases.reduce((sum,key)=>sum+Number(categories?.[key]||0),0)+getMarketplaceCount(category);}
 async function loadRegionalCatalogManifest(force){
  if(!force&&liveCatalogManifestPromise)return liveCatalogManifestPromise;
- const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=2.9.0";
- liveCatalogManifestPromise=fetchCatalogAsset("manifest.json?v=2.9.0").then(async response=>{
+ const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=3.0.0";
+ liveCatalogManifestPromise=fetchCatalogAsset("manifest.json?v=3.0.0").then(async response=>{
   if(!response.ok)throw new Error("ملف فهرس المحافظات غير متاح حالياً (HTTP "+response.status+").");
   const data=await response.json();if(!data||!Array.isArray(data.governorates))throw new Error("صيغة فهرس المحافظات غير صالحة.");
   if(Number(data.totalCount||0)<1||!Array.isArray(data.districtCounts)||data.districtCounts.length!==335)throw new Error("فهرس المحافظات لا يحتوي إحصاءات المديريات الـ335.");
@@ -4644,7 +4652,7 @@ async function loadRegionalCatalog(gov,force,signal){
  let data=null;
  if(!force)data=await readRegionalCatalogCache(region.file,manifest.snapshotDate);
  if(!data){
-  const response=await fetchCatalogAsset(encodeURIComponent(region.file)+"?v=2.9.0",signal);
+  const response=await fetchCatalogAsset(encodeURIComponent(region.file)+"?v=3.0.0",signal);
   if(!response.ok)throw new Error("تعذر تحميل سجل المحافظة ("+region.name+").");
   const payload=await response.json();
   const items=normalizeRegionalCatalogItems(payload);
@@ -4875,7 +4883,7 @@ async function ensureLightSearchIndex(){
  if(liveLightSearchIndex)return liveLightSearchIndex;
  if(liveLightSearchPromise)return liveLightSearchPromise;
  liveLightSearchPromise=(async()=>{
-  const response=await fetchCatalogAsset("search_index_light.json?v=2.9.0-pharmacy24");
+  const response=await fetchCatalogAsset("search_index_light.json?v=3.0.0-pharmacy24");
   const envelope=await response.json();
   if(!envelope||envelope.schemaVersion!==2||envelope.encoding!=="gzip+base64"||typeof envelope.data!=="string")throw new Error("ملف فهرس البحث الوطني غير صالح.");
   if(typeof DecompressionStream!=="function")throw new Error("المتصفح لا يدعم فك ضغط فهرس البحث.");
@@ -5441,7 +5449,7 @@ function assistantSourceText(result){
  const dataLabel=labels.length?(english?" · Data: ":" · بيانات الدليل: ")+labels.join(english?", " : "، "):"";
  if(result?.mode==="gemini")return (english?"Responder: Google Gemini":"المجيب: Google Gemini")+(result.model?" ("+result.model+")":"")+dataLabel;
  if(result?.mode==="reference")return (english?"Responder: Dalilna reference":"المجيب: مرجع دليلنا")+(result.referenceSource?(english?" · Source: ":" · المصدر: ")+result.referenceSource:"")+dataLabel;
- if(result?.mode==="local-fallback")return (english?"Responder: local assistant · Gemini response could not be confirmed":"المجيب: دليلنا المحلي · تعذّر تأكيد وصول السؤال إلى Gemini")+dataLabel;
+ if(result?.mode==="local-fallback")return (english?"Responder: Dalilna local assistant":"المجيب: دليلنا المحلي")+dataLabel
  if(result?.mode==="offline")return (english?"Responder: offline local assistant":"المجيب: دليلنا المحلي دون إنترنت")+dataLabel;
  if(result?.mode==="live-directory")return (english?"Responder: live directory results · not a Gemini answer":"المجيب: نتائج دليلنا المحلية · ليست إجابة من Gemini")+dataLabel;
  if(result?.mode==="live-rates")return (english?"Responder: live rate source":"المجيب: مصدر أسعار مباشر")+dataLabel;
@@ -5492,6 +5500,7 @@ async function askAssistant(q,onImmediate){
    url:item.applicationUrl||item.url||item.sourceUrl||"",
    actionLabel:"عرض الوظيفة"
   }));
+  window.DALILNA_V3_JOBS_FEED=feed||null;
   const result={
    answer:cards.length
     ?(curLang==="en"?"I found "+jobs.length+" active jobs in the local jobs feed. The newest matching opportunities are shown below.":"وجدت "+jobs.length+" وظائف نشطة في ملف الوظائف المحلي. هذه أحدث الفرص المطابقة.")
@@ -5717,6 +5726,7 @@ function assistantWhatsAppShareUrl(item){
 }
 function renderAssistantResult(container,result){
  container.replaceChildren();
+ const origin=document.createElement("div");origin.className="assistant-origin-badge";origin.textContent=result?.mode==="gemini"?"Google Gemini":(curLang==="en"?"Dalilna local":"دليلنا المحلي");container.appendChild(origin);
  const answer=document.createElement("div");
  answer.className="assistant-answer-text";
  answer.dir="auto";
@@ -5798,7 +5808,7 @@ $("#botf").addEventListener("submit",async e=>{
   renderAssistantResult(pending,{answer:answerAI(q),assistantCards:[]});
   const source=document.createElement("small");
   source.className="assistant-source";
-  source.textContent=curLang==="en"?"Responder: local assistant · the cloud route could not process the request":"المجيب: دليلنا المحلي · تعذرت معالجة الطلب عبر المسار السحابي";
+  source.textContent=curLang==="en"?"Responder: Dalilna local assistant":"المجيب: دليلنا المحلي";
   pending.appendChild(source);
  }finally{
   if(sendButton)sendButton.disabled=false;
@@ -6200,7 +6210,7 @@ else if(location.hash==="#jobs")window.setTimeout(()=>go("jobs"),0);
 applyLang();
 buildScopeSelector();
 async function checkRemoteVersionSilently(){
- const localVersion=document.querySelector('meta[name="app-version"]')?.content||"2.9.0";
+ const localVersion=document.querySelector('meta[name="app-version"]')?.content||"3.0.0";
  const remoteUrl=location.hostname==="appassets.androidplatform.net"
   ?"https://baraagpt6-droid.github.io/dalilna/version.json"
   :"./version.json";
@@ -6303,6 +6313,10 @@ refreshPromoCountdown();
 window.setInterval(refreshPromoCountdown,60000);
 renderMerchantTools();
 
+window.DALILNA_V3_BRIDGE={
+  snapshot:()=>({role:S.session?.role||"client",merchant:S.session?.merchant||S.merchantProfile||null,onboarded:S.onboarded===true,directoryFavorites:(Array.isArray(S.favs)?S.favs:[]).map(id=>[...SEED_ITEMS,...S.items].find(item=>String(item.id)===String(id))).filter(Boolean).map(item=>({id:String(item.id),name:item.name||item.title||"",category:CN[item.cat]||item.cat||"خدمة",cat:item.cat||"other",governorate:item.gov||"",district:item.dist||"",area:item.area||item.village||"",phone:item.phone||"",lat:item.lat??item.latitude??null,lon:item.lng??item.lon??item.longitude??null,mapsUrl:item.mapsUrl||item.mapUrl||"",website:item.website||"",sourceUrl:item.sourceUrl||"",description:item.desc||""}))}),
+  setDirectoryFavorite:(id,shouldSave)=>{const key=String(id),items=Array.isArray(S.favs)?S.favs:(S.favs=[]),index=items.indexOf(key);if(shouldSave&&index<0)items.push(key);else if(!shouldSave&&index>=0)items.splice(index,1);saveState();if(typeof renderProfilePanel==="function")renderProfilePanel();render();return items.includes(key);}
+};
 window.DalilnaMarketplaceBridge={
   exportLocalListings:()=>S.items.filter(item=>!item.isPublicSeed&&!item.sharedDatabaseId).map(item=>({
     id:item.id,name:item.name,cat:item.cat,gov:item.gov,dist:item.dist,area:item.area,village:item.village,
@@ -6316,8 +6330,9 @@ window.DalilnaMarketplaceBridge={
 })();
 </script>
 <script src="./marketplace-client.js"></script>
-<script src="./market-price-guide.js?v=2.9.0" defer></script>
-<script src="./app-update.js?v=2.9.0" defer></script>
-<script src="./features-2.1.js?v=2.9.0" defer></script>
+<script src="./market-price-guide.js?v=3.0.0" defer></script>
+<script src="./app-update.js?v=3.0.0" defer></script>
+<script src="./features-2.1.js?v=3.0.0" defer></script>
+<script src="./v3.0.0.js?v=3.0.0" defer></script>
 </body>
 </html>
