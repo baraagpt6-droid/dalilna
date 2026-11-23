@@ -174,5 +174,69 @@
         "badgeGuard": true
       }
     }
+  },
+  "auditSummary": {
+    "status": "passed",
+    "auditedAt": "2026-11-23T11:10:25.602Z",
+    "officialWebUrl": "https://baraagpt6-droid.github.io/dalilna/",
+    "android": {
+      "version": "3.0.2",
+      "versionCode": 3023701,
+      "signingMode": "persistent",
+      "releaseUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.0.2/app-debug.apk",
+      "sizeBytes": 7522891,
+      "sha256": "80aadf47dd4b6ae635d7d1322b637e2b8238bf0133fa06c90c6823910ab4e62a"
+    },
+    "workflow": {
+      "name": "Dalilna v3.0.2 live E2E audit",
+      "runId": 45162653160,
+      "attempt": 1,
+      "conclusion": "success",
+      "url": "https://github.com/baraagpt6-droid/dalilna/actions/runs/45162653160"
+    },
+    "requiredChecks": {
+      "githubPagesDeployment": "passed",
+      "canonicalAndPwaManifest": "passed",
+      "otaMetadata": "passed",
+      "netlifySecondaryHostDeployment": "passed",
+      "netlifyBadgeGuardSourcePublished": "passed",
+      "renderApiHealth": "passed",
+      "renderCorsForOfficialOrigin": "passed",
+      "androidBuildAndPersistentSignature": "passed",
+      "appUnitAndUiTests": "passed",
+      "nationalCatalogueBuild": "passed",
+      "livePharmacyResultsWithLocalFallback": "passed"
+    },
+    "nonBlockingObservations": [
+      {
+        "component": "renderApiVersion",
+        "status": "previousCompatibleBackendStillRunning",
+        "observedVersion": "3.0.1",
+        "expectedWebAndAndroidVersion": "3.0.2",
+        "note": "The Render health endpoint is healthy and CORS accepts the official GitHub Pages origin, but the deployed API runtime still reports 3.0.1. The v3.0.2 web release does not depend on a server-code change."
+      },
+      {
+        "component": "marketplace",
+        "status": "database_connected_but_no_approved_offers",
+        "approvedOffers": 0,
+        "databaseReady": true
+      },
+      {
+        "component": "pharmacyLiveSearch",
+        "status": "results_returned_above_3_second_target",
+        "responseMs": 3536,
+        "targetMs": 3000,
+        "results": 7,
+        "source": "فهرس اليمن الوطني المحلي (OSM + Overture)"
+      },
+      {
+        "component": "assistant",
+        "status": "successful",
+        "provider": "Gemini",
+        "mode": "gemini",
+        "responseMs": 14773
+      }
+    ],
+    "netlifyBadgeNote": "The E2E audit verified that the published Netlify page contains the targeted badge-hiding CSS/JavaScript guard and that the secondary Netlify deployment reports v3.0.2. The automated check validates the deployed guard source; it is not a pixel-based browser screenshot assertion."
   }
 }
