@@ -2,7 +2,7 @@
 const test=require("node:test");
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {inferCategoryFromQuery,buildOverpassQuery,classifyCategory,searchPlaces}=require("../server");
+const {inferCategoryFromQuery,buildOverpassQuery,classifyCategory,searchPlaces,overpassAttemptTimeout}=require("../server");
 
 
 test("global fallback searches Nominatim then the Yemen-bounded Overpass mirror",async()=>{
@@ -50,7 +50,7 @@ test("global fallback searches Nominatim then the Yemen-bounded Overpass mirror"
 test("geocoding falls back to Photon when Nominatim cannot provide a valid boundary",()=>{
  const source=fs.readFileSync(require.resolve("../server"),"utf8");
  assert.match(source,/async function geocodePhotonFallback\(/);
- assert.match(source,/await geocodePhotonFallback\(candidates,key\)/);
+ assert.match(source,/await geocodePhotonFallback\(candidates,key,deadlineAt\)/);
  assert.match(source,/properties\.extent/);
  assert.match(source,/countrycode/);
 });
@@ -76,15 +76,36 @@ test("classifies named stationery and vehicle places",()=>{
  assert.equal(classifyCategory({shop:"watches"}),"gold");
 });
 
-test("Yemen Nominatim and Overpass requests use a three-second timeout",()=>{
+test("Yemen Nominatim and Overpass requests stay within one bounded three-second search deadline",()=>{
  const source=fs.readFileSync(require.resolve("../server"),"utf8");
  assert.ok(source.includes("timeoutMs:3000"));
- assert.ok(source.includes("setTimeout(()=>controller.abort(),3000)"));
+ assert.ok(source.includes("const deadlineAt=Date.now()+2800"));
+ assert.ok(source.includes("overpassAttemptTimeout(remaining,providerIndex,endpoints.length)"));
+ assert.equal(source.split("overpassAttemptTimeout(remaining,providerIndex,endpoints.length)").length-1,2);
+ assert.ok(source.includes("const overpassProviderSlots = new Map()"));
+ assert.ok(source.includes("waitForOverpassSlot(provider.name,deadlineAt)"));
+ assert.ok(source.includes("Give the current source a fair share of the remaining window"));
+ assert.ok(source.includes("Math.min(1250,remaining)"));
  assert.ok(source.includes("[out:json][timeout:3]"));
 });
 test("countrywide live search starts Nominatim and Overpass without serial waiting",()=>{
  const source=fs.readFileSync(require.resolve("../server"),"utf8");
  assert.ok(source.includes("const outcomes=await Promise.allSettled(["));
- assert.ok(source.includes("searchYemenNominatim(query,category),"));
- assert.ok(source.includes("searchYemenOverpass(query,category)"));
+ assert.ok(source.includes("searchYemenNominatim(query,category,deadlineAt)"));
+ assert.ok(source.includes("searchYemenOverpass(query,category,deadlineAt)"));
+});
+
+test("Overpass retry budgets preserve time for all three provider starts",()=>{
+ assert.equal(overpassAttemptTimeout(2800,0,3),933);
+ assert.equal(overpassAttemptTimeout(1700,1,3),850);
+ assert.equal(overpassAttemptTimeout(600,2,3),600);
+ assert.equal(overpassAttemptTimeout(500,2,3),500);
+ assert.equal(overpassAttemptTimeout(300,1,3),300);
+});
+
+test("Overpass endpoints are rate-limited independently so a busy primary does not delay a mirror",()=>{
+ const source=fs.readFileSync(require.resolve("../server"),"utf8");
+ assert.ok(source.includes("const overpassProviderSlots = new Map()"));
+ assert.ok(source.includes("const key=String(providerName||\"default\")"));
+ assert.equal(source.split("await waitForOverpassSlot(provider.name,deadlineAt)").length-1,2);
 });

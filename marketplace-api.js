@@ -50,9 +50,17 @@ function validate(body){
    if(!["http:","https:"].includes(parsed.protocol)||!parsed.hostname||parsed.username||parsed.password)throw error("INVALID_WEBSITE","يجب أن يبدأ رابط الموقع بـ http أو https.");
    website=parsed.href;
   }
-  let image=String(body.imageData||body.img||"");
- if(image.length>400000)throw error("IMAGE_TOO_LARGE","حجم الصورة أكبر من الحد المسموح.",413);
- if(image&&!/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(image))throw error("INVALID_IMAGE","صيغة الصورة غير مدعومة.");
+  let image=String(body.imageData||body.img||body.imageUrl||body.image_url||"");
+ if(/^https:\/\//i.test(image)){
+  let parsedImage;
+  try{parsedImage=new URL(image);}catch(_){throw error("INVALID_IMAGE","صيغة الصورة غير مدعومة.");}
+  if(parsedImage.protocol!=="https:"||parsedImage.username||parsedImage.password||image.length>2048)
+   throw error("INVALID_IMAGE","رابط الصورة يجب أن يكون HTTPS عاماً ومن دون بيانات دخول.");
+  image=parsedImage.href;
+ }else{
+  if(image.length>400000)throw error("IMAGE_TOO_LARGE","حجم الصورة أكبر من الحد المسموح.",413);
+  if(image&&!/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(image))throw error("INVALID_IMAGE","صيغة الصورة غير مدعومة.");
+ }
  return {id:crypto.randomUUID(),clientRef:clean(body.clientRef||body.client_ref,100)||null,title,category,productType:(category==="souq"||category==="land")?productType:"other",listingType,condition,governorate,district:clean(body.district||body.dist,100),area:clean(body.area,120),village:clean(body.village,120),country:clean(body.country||"اليمن",80),description:clean(body.description||body.desc,1800),phone:clean(body.phone,50),openingHours,website,sellerName:clean(body.sellerName,100),price:clean(body.price,80),currency,image,latitude,longitude,deadline:deadline||null};
 }
 function send(res,status,payload){res.writeHead(status,{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"});res.end(JSON.stringify(payload));}

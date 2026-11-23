@@ -278,3 +278,10 @@ test("currency, gold and emergency areas use matching vector icons",()=>{
  assert.ok(html.includes('class="emergency-heading"'));
  assert.ok(html.includes('emergency-number-link'));
 });
+
+test("shared marketplace cards render safe HTTPS merchant image URLs",()=>{
+ assert.ok(client.includes("const imageSource = typeof item.imageData === \"string\""));
+ assert.ok(client.includes("remoteImage = parsedImage.protocol === \"https:\""));
+ assert.ok(client.includes('img.referrerPolicy = "no-referrer"'));
+ assert.ok(client.includes('img.addEventListener("error", () => img.remove()'));
+});

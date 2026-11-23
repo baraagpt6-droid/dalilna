@@ -30,7 +30,7 @@ test("merchant feed validates price, seller phone, district and maps a valid pro
  const row=mapFeedItem({
   id:"phone-001",title:"هاتف تجريبي",productType:"smartphone",
   sellerName:"متجر الاختبار",phone:"777123456",governorate:firstDistrict.governorate,
-  district:firstDistrict.district,price:"150,000",currency:"ريال يمني",listingType:"sale",condition:"used"
+  district:firstDistrict.district,price:"150,000",currency:"ريال يمني",imageUrl:"https://cdn.merchant.example/phone-001.webp",listingType:"sale",condition:"used"
  });
  assert.ok(row);
  assert.equal(row.productType,"phone");

@@ -118,8 +118,9 @@ function mapFeedItem(raw){
  const condition=clean(raw.condition||"unknown",16);
  const priceText=clean(raw.price??"",80).replace(/,/g,"");
  const priceValue=Number(priceText);
+ const imageUrl=validHttps(raw.imageUrl||raw.image_url||raw.image||"");
  if(!title||!id||!sellerName||!phone||!governorate||!district||!priceText||
-    !Number.isFinite(priceValue)||priceValue<0||(priceValue===0&&listingType!=="free"))return null;
+    !Number.isFinite(priceValue)||priceValue<0||(priceValue===0&&listingType!=="free")||!imageUrl)return null;
  if(!PRODUCT_TYPES.has(productType)||!CURRENCIES.has(currency)||!LISTING_TYPES.has(listingType)||!CONDITIONS.has(condition))return null;
  if(listingType==="rent"&&!["land","property","apartment","house","car","motorcycle"].includes(productType))return null;
  const productGroup=Object.entries(PRODUCT_GROUPS).find(([,types])=>types.includes(productType))?.[0]||"";
@@ -131,6 +132,7 @@ function mapFeedItem(raw){
   description:clean(raw.description||raw.summary||"",1800),
   price:priceValue.toString(),currency,
   website:productUrl,
+  imageUrl,
   sourceName:clean(raw.sourceName||raw.source_name||sellerName,100)
  };
 }
@@ -192,7 +194,7 @@ async function syncConfiguredFeeds(){
    id:item.id,clientRef:item.clientRef,title:item.title,productType:item.productType,
    listingType:item.listingType,condition:item.condition,governorate:item.governorate,
    district:item.district,area:item.area,description:item.description,phone:item.phone,
-   sellerName:item.sellerName,price:item.price,currency:item.currency,website:item.website
+   sellerName:item.sellerName,price:item.price,currency:item.currency,website:item.website,imageData:item.imageUrl
   }));
   const response=await fetch(BASE+"/api/marketplace/feed-sync",{
    method:"POST",redirect:"error",
