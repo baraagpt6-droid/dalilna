@@ -159,7 +159,8 @@ test("local assistant fallback renders before cloud requests, including HTTP 503
  const genericImmediate=web.indexOf("const localFallback={answer:answerAI(q)");
  const genericCloud=web.indexOf("requestCloudAssistant(q,buildAssistantContext(q))",genericImmediate);
  assert.ok(genericImmediate>=0&&genericCloud>genericImmediate);
- assert.ok(web.includes("response.status===404||response.status===502||response.status===503"));
+ assert.ok(web.includes("response.status===404||response.status===503"));
+ assert.ok(web.includes('!["provider_timeout","provider_rate_limit"].includes(data.error)'));
 });
  
 test("Gemini request budget allows slower responses while local answers render first",()=>{
@@ -172,4 +173,38 @@ test("Gemini request budget allows slower responses while local answers render f
  const immediate=web.indexOf('if(typeof onImmediate==="function")onImmediate(result)',jobs);
  const cloud=web.indexOf('requestCloudAssistant(q,{localJobs:',jobs);
  assert.ok(jobs>=0&&immediate>jobs&&cloud>immediate,"local jobs result must render before cloud fallback");
+});
+
+test("Gemini proxy falls back to Flash-Lite after primary rate limiting", async () => {
+  process.env.GEMINI_API_KEY = "test-only-not-a-real-key";
+  process.env.GEMINI_MODEL = "gemini-3.8-flash";
+  const originalFetch = global.fetch;
+  const calls = [];
+  global.fetch = async (url, options) => {
+    calls.push({url:String(url),body:JSON.parse(options.body)});
+    if(calls.length===1) return new Response(JSON.stringify({error:{status:"RESOURCE_EXHAUSTED"}}),{
+      status:429,headers:{"Content-Type":"application/json"}
+    });
+    return new Response(JSON.stringify({model:"gemini-3.5-flash-lite",output_text:"إجابة احتياطية سريعة."}),{
+      status:200,headers:{"Content-Type":"application/json"}
+    });
+  };
+  try {
+    const response = await nativeFetch(baseUrl + "/api/assistant",{
+      method:"POST",
+      headers:{"Content-Type":"application/json",Origin:"https://dalilna-yemen.onrender.com"},
+      body:JSON.stringify({question:"اختبار المساعد",context:{}})
+    });
+    assert.equal(response.status,200);
+    const payload=await response.json();
+    assert.equal(payload.answer,"إجابة احتياطية سريعة.");
+    assert.equal(payload.model,"gemini-3.5-flash-lite");
+    assert.equal(calls.length,2);
+    assert.equal(calls[0].body.model,"gemini-3.8-flash");
+    assert.equal(calls[1].body.model,"gemini-3.5-flash-lite");
+  } finally {
+    global.fetch=originalFetch;
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GEMINI_MODEL;
+  }
 });

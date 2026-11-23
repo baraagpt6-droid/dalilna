@@ -152,55 +152,80 @@ async function handler(req, res) {
     question
   ].join("\n");
 
-  try {
-    const upstream = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
-      method: "POST",
-      headers: {
-        "x-goog-api-key": key,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
-        system_instruction: systemInstruction,
-        input,
-        generation_config: { temperature: 0.3, max_output_tokens: 700 },
-        store: false
-      }),
-      signal: AbortSignal.timeout(15_000)
-    });
-
-    const data = await upstream.json().catch(() => ({}));
-    if (!upstream.ok) {
-      const providerError = data && typeof data.error === "object" ? data.error : {};
-      const providerCode = String(providerError.status || providerError.code || "").slice(0, 80);
-      console.warn(JSON.stringify({
-        event: "assistant.provider_error",
-        httpStatus: upstream.status,
-        providerCode
-      }));
-      if (upstream.status === 429) return send(res, 429, { error: "provider_rate_limit" });
-      if (upstream.status === 401 || upstream.status === 403) {
-        return send(res, 502, { error: "provider_auth_error" });
-      }
-      return send(res, 502, {
-        error: "provider_request_failed",
-        providerStatus: upstream.status,
-        providerCode
+  const preferredModel = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+  const fallbackModel = preferredModel === "gemini-3.5-flash-lite" ? "gemini-3.8-flash" : "gemini-3.5-flash-lite";
+  const modelCandidates = [...new Set([preferredModel, fallbackModel])];
+  let lastFailure = "assistant_unavailable";
+  let sawRateLimit = false;
+  let sawTimeout = false;
+  for (const model of modelCandidates) {
+    try {
+      const upstream = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
+        method: "POST",
+        headers: {
+          "x-goog-api-key": key,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model,
+          system_instruction: systemInstruction,
+          input,
+          generation_config: { temperature: 0.3, max_output_tokens: 700 },
+          store: false
+        }),
+        signal: AbortSignal.timeout(model === "gemini-3.5-flash-lite" ? 10_000 : 15_000)
       });
+      const data = await upstream.json().catch(() => ({}));
+      if (!upstream.ok) {
+        const providerError = data && typeof data.error === "object" ? data.error : {};
+        const providerCode = String(providerError.status || providerError.code || "").slice(0, 80);
+        console.warn(JSON.stringify({
+          event: "assistant.provider_error",
+          httpStatus: upstream.status,
+          providerCode,
+          model
+        }));
+        if (upstream.status === 401 || upstream.status === 403) {
+          return send(res, 502, { error: "provider_auth_error" });
+        }
+        if (upstream.status === 429) {
+          sawRateLimit = true;
+          lastFailure = "provider_rate_limit";
+          continue;
+        }
+        if (upstream.status >= 500) {
+          lastFailure = "provider_request_failed";
+          continue;
+        }
+        return send(res, 502, {
+          error: "provider_request_failed",
+          providerStatus: upstream.status,
+          providerCode
+        });
+      }
+      const answer = extractText(data);
+      if (!answer) {
+        lastFailure = "empty_ai_response";
+        continue;
+      }
+      return send(res, 200, {
+        answer,
+        mode: "gemini",
+        provider: "Gemini",
+        model: data.model || model
+      });
+    } catch (error) {
+      const isTimeout = error?.name === "TimeoutError" || error?.name === "AbortError";
+      if (isTimeout) {
+        sawTimeout = true;
+        lastFailure = "provider_timeout";
+      } else {
+        lastFailure = "assistant_unavailable";
+      }
     }
-
-    const answer = extractText(data);
-    if (!answer) return send(res, 502, { error: "empty_ai_response" });
-    return send(res, 200, {
-      answer,
-      mode: "gemini",
-      provider: "Gemini",
-      model: data.model || process.env.GEMINI_MODEL || "gemini-3.8-flash"
-    });
-  } catch (error) {
-    const isTimeout = error?.name === "TimeoutError" || error?.name === "AbortError";
-    return send(res, 502, { error: isTimeout ? "provider_timeout" : "assistant_unavailable" });
   }
+  if (sawRateLimit) return send(res, 429, { error: "provider_rate_limit" });
+  return send(res, 502, { error: sawTimeout ? "provider_timeout" : lastFailure });
 }
 
 module.exports = handler;
