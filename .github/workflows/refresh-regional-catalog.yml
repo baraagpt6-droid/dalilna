@@ -265,7 +265,22 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add regional-catalog version.json
             git commit -m "data: refresh Yemen regional places catalogue"
-            git push origin main
+            # Other scheduled jobs may update main while the OSM/Overture
+            # downloads and fusion steps are running. Rebase before pushing.
+            pushed=false
+            for attempt in 1 2 3; do
+              git fetch origin main
+              git rebase origin/main
+              if git push origin HEAD:main; then
+                pushed=true
+                break
+              fi
+              echo "Push race on attempt $attempt; fetching main and retrying."
+            done
+            if [[ "$pushed" != "true" ]]; then
+              echo "Unable to publish the catalogue after three rebase attempts."
+              exit 1
+            fi
             gh workflow run deploy-pages.yml --ref main
             gh workflow run android-apk.yml --ref main
             gh workflow run places-proxy-verification.yml --ref main
