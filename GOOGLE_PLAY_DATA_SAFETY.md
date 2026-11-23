@@ -4,7 +4,7 @@ Prepared: 23 November 2026
 Privacy policy: https://baraagpt6-droid.github.io/dalilna/privacy.html  
 Package: `ye.dalilna.app`
 
-This worksheet reflects the reviewed Android/WebView code and the planned Google Mobile Ads SDK 25.5.0 integration. It is preparation material, not a declaration submitted to Google. Before submitting the Play Console form, verify the final production AAB, AdMob account settings, privacy messages, Gemini/search routes, server retention and every transitive SDK.
+This worksheet reflects the reviewed Android/WebView code and the integrated Google Mobile Ads SDK 25.5.0 and UMP 4.0.0 components. It is preparation material, not a declaration submitted to Google. Before submitting the Play Console form, verify the final production AAB, AdMob account settings, privacy messages, Gemini/search routes, server retention and every transitive SDK.
 
 ## 1. Account and sign-in
 
