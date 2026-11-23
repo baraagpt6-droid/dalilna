@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#181411">
-<meta name="app-version" content="2.7.0">
+<meta name="app-version" content="2.7.1">
 <meta name="description" content="دليلنا: دليل المحلات والخدمات والوظائف وسوق البيع والشراء في اليمن، مع تغطية مديرية حبيش وعزلها.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -18,7 +18,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23181411'/%3E%3Cpath d='M18 54 A32 32 0 0 1 82 54 Z' fill='none' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M22 54 L36 54 A14 14 0 0 1 42 42 L29 33 A28 28 0 0 0 22 54 Z' fill='%233A7EC2'/%3E%3Cpath d='M29 33 L42 42 A14 14 0 0 1 50 40 L50 26 A28 28 0 0 0 29 33 Z' fill='%23E8A025'/%3E%3Cpath d='M50 26 L50 40 A14 14 0 0 1 58 42 L71 33 A28 28 0 0 0 50 26 Z' fill='%23D6455D'/%3E%3Cpath d='M71 33 L58 42 A14 14 0 0 1 64 54 L78 54 A28 28 0 0 0 71 33 Z' fill='%23E8A025'/%3E%3Ccircle cx='50' cy='54' r='11' fill='%23F2B949' stroke='%23F4EFE6' stroke-width='3'/%3E%3Crect x='18' y='54' width='64' height='24' rx='4' fill='%23181411' stroke='%23F4EFE6' stroke-width='4'/%3E%3Cpath d='M50 54 v24 M18 66 h64' stroke='%23F4EFE6' stroke-width='3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./features-2.1.css?v=2.7.0">
+<link rel="stylesheet" href="./features-2.1.css?v=2.7.1">
 <style>
 :root{
   color-scheme:dark;
@@ -584,7 +584,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 @media(max-width:420px){.shared-marketplace-controls{grid-template-columns:1fr}.shared-marketplace-controls .wide{grid-column:auto}}
 .add-lifetime-intro{display:grid;gap:7px;margin:0 0 12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card2);font-size:13px;line-height:1.7}.add-lifetime-intro ol{margin:0;padding-inline-start:22px;display:grid;gap:3px}.dalilna-map{height:230px;min-height:230px;margin:8px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card2)}[data-map-toggle]{min-height:34px;padding:7px 12px;border:1px solid var(--line);border-radius:9px;background:var(--card2);color:var(--ink);font:inherit;cursor:pointer}.region-sources summary{cursor:pointer;font-weight:700}
 
-/* 2.7.0 critical quick-access fallback. */
+/* 2.7.1 critical quick-access fallback. */
 .quick-jump-bar{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:7px;padding:9px 14px 7px;max-width:1160px;margin:0 auto}
 .quick-jump-btn{display:flex;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:6px;padding:6px 5px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--ink);font:600 11.5px 'Readex Pro',Tahoma,sans-serif;text-decoration:none;white-space:normal;text-align:center;overflow:hidden}
 .quick-jump-icon{display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:8px;background:var(--chip);color:var(--acc)}
@@ -848,7 +848,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <section class="panel" id="fxBox">
       <h2>
         <span class="fx-title-group"><svg class="fx-heading-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M15.2 8.3c-.7-.8-1.7-1.2-3.1-1.2-1.5 0-2.5.8-2.5 1.9 0 3.1 5.1 1.1 5.1 4.2 0 1.1-1 2-2.8 2-1.2 0-2.3-.4-3-1.2M12 5.5v13"/></svg><span>أسعار الصرف والذهب اليوم</span></span>
-        <span class="tag" id="fxBadge">في انتظار المصدر</span><button type="button" class="ghost" id="fxRefresh" style="min-height:30px">تحديث الأسعار</button>
+        <span class="tag" id="fxBadge">في انتظار المصدر</span>
       </h2>
       <div class="fxg" id="fxGrid"></div>
       <div class="fx-calc" id="fxCalcBox">
@@ -2484,7 +2484,7 @@ global.DalilnaQRCode={QRCode:load("index"),ErrorLevel:load("QRErrorCorrectLevel"
 <script>
 (()=>{
 const STORE_KEY="dalilna_app_v6";
-const APP_VERSION="2.7.0";
+const APP_VERSION="2.7.1";
 const CATS=[
   ["grocery","بقالات"],["food","مطاعم ومخابز"],["cafe","بوفيات وكافيه"],["edu","مدارس وتعليم"],
   ["health","مستشفيات ومراكز صحية"],["pharmacy","صيدليات"],["gov","جهات حكومية"],["money","صرافة وتحويلات"],
@@ -4251,7 +4251,7 @@ function renderFx(){
  }
  calcFx();
 }
-$("#fxRefresh")?.addEventListener("click",()=>loadLiveFx(true));
+// Exchange rates refresh automatically in the background. No manual refresh control is exposed.
 setInterval(()=>{if(!document.hidden)loadLiveFx(false);},60000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadLiveFx(false);});
 let calcFromVal="USD",calcToVal="YER_S";
@@ -4403,18 +4403,18 @@ function directoryMapSearchInfo(q){
    rateIntent,governorate:gov||districtEntry?.[0]||"",district:district||""};
 }
 function liveDirectoryPanelHTML(){
- return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>'+(curLang==="en"?"Search Yemen's shops and services":"البحث في دليل المحلات والخدمات اليمني")+'</b><div class="live-directory-sub">'+(curLang==="en"?"Search across all governorates or narrow by category and district.":"ابحث في جميع محافظات اليمن، أو اختر قسماً أو مديرية لتضييق النتائج.")+'</div></div></div><div class="live-directory-status" id="liveDirectoryStatus">'+(curLang==="en"?"Preparing the unified search index…":"جارٍ تجهيز فهرس البحث الموحد…")+'</div><div class="live-directory-list" id="liveDirectoryItems"></div></section>';
+ return '<section class="live-directory-panel" id="liveDirectoryPanel"><div class="live-directory-head"><div><b>'+(curLang==="en"?"Search Yemen's shops and services":"البحث في دليل المحلات والخدمات اليمني")+'</b><div class="live-directory-sub">'+(curLang==="en"?"Search across all governorates or narrow by category and district.":"ابحث في جميع محافظات اليمن، أو اختر قسماً أو مديرية لتضييق النتائج.")+'</div></div></div><div class="live-directory-status" id="liveDirectoryStatus">'+(curLang==="en"?"Ready for instant local and live search.":"جاهز للبحث المحلي والحي.")+'</div><div class="live-directory-list" id="liveDirectoryItems"></div></section>';
 }
 const LIVE_DIRECTORY_API="https://dalilna-live.onrender.com";
 const LIVE_CATALOG_LOCAL_BASE="./regional-catalog/";
 const LIVE_CATALOG_REMOTE_BASE="https://baraagpt6-droid.github.io/dalilna/regional-catalog/";
 const LIVE_CATALOG_BASE=location.hostname==="appassets.androidplatform.net"?LIVE_CATALOG_REMOTE_BASE:LIVE_CATALOG_LOCAL_BASE;
-async function fetchCatalogAsset(path){
+async function fetchCatalogAsset(path,signal){
  const bases=LIVE_CATALOG_BASE===LIVE_CATALOG_REMOTE_BASE?[LIVE_CATALOG_REMOTE_BASE,LIVE_CATALOG_LOCAL_BASE]:[LIVE_CATALOG_LOCAL_BASE];
  let lastError;
  for(const base of bases){
   try{
-   const response=await fetch(base+path,{headers:{Accept:"application/json"},cache:"no-store"});
+   const response=await fetch(base+path,{headers:{Accept:"application/json"},cache:"no-store",signal});
    if(response.ok)return response;
    lastError=new Error("Regional catalogue returned HTTP "+response.status);
   }catch(error){lastError=error;}
@@ -4425,7 +4425,7 @@ const LIVE_LOCAL_KEY="dalilna_live_places_159";
 let liveGeoapifyEnabled=false;
 let liveDirectoryTimer=null,liveDirectoryController=null,liveDirectorySeq=0,liveDirectoryCache=new Map(),liveDirectoryLast={query:"",category:"all"};
 let liveDirectoryCategoryOverride="",liveDirectoryListingTypeOverride="";
-let liveDirectoryLastData=null,liveDirectoryVisibleCount=8,liveDirectoryCoords=null,liveSharedMatches=[],liveSharedCache=new Map();
+let liveDirectoryLastData=null,liveDirectoryVisibleCount=30,liveDirectoryCoords=null,liveSharedMatches=[],liveSharedCache=new Map();
 function liveLocalData(){
  try{const value=JSON.parse(localStorage.getItem(LIVE_LOCAL_KEY)||"{}");const data=value&&typeof value==="object"&&!Array.isArray(value)?value:{};return {ratings:data.ratings&&typeof data.ratings==="object"&&!Array.isArray(data.ratings)?data.ratings:{},photos:data.photos&&typeof data.photos==="object"&&!Array.isArray(data.photos)?data.photos:{}};}catch(_){return {ratings:{},photos:{}};}
 }
@@ -4555,8 +4555,8 @@ function getMarketplaceCount(category){const ctx=regionCurrentContext(),counts=c
 function getDirectoryCategoryCount(category){const stats=catalogStatsForScope(),categories=stats?.categories||{};const aliases=category==="land"?["real_estate"]:[];return Number(categories?.[category]||0)+aliases.reduce((sum,key)=>sum+Number(categories?.[key]||0),0)+getMarketplaceCount(category);}
 async function loadRegionalCatalogManifest(force){
  if(!force&&liveCatalogManifestPromise)return liveCatalogManifestPromise;
- const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=2.7.0";
- liveCatalogManifestPromise=fetchCatalogAsset("manifest.json?v=2.7.0").then(async response=>{
+ const manifestUrl=LIVE_CATALOG_BASE+"manifest.json?v=2.7.1";
+ liveCatalogManifestPromise=fetchCatalogAsset("manifest.json?v=2.7.1").then(async response=>{
   if(!response.ok)throw new Error("ملف فهرس المحافظات غير متاح حالياً (HTTP "+response.status+").");
   const data=await response.json();if(!data||!Array.isArray(data.governorates))throw new Error("صيغة فهرس المحافظات غير صالحة.");
   if(Number(data.totalCount||0)<1||!Array.isArray(data.districtCounts)||data.districtCounts.length!==335)throw new Error("فهرس المحافظات لا يحتوي إحصاءات المديريات الـ335.");
@@ -4564,17 +4564,67 @@ async function loadRegionalCatalogManifest(force){
  }).catch(error=>{liveCatalogManifestPromise=null;liveCatalogLoadError=error?.message||"تعذر تحميل الفهرس";buildScopeSelector();throw error;});
  return liveCatalogManifestPromise;
 }
-async function loadRegionalCatalog(gov,force){
- const manifest=await loadRegionalCatalogManifest(force),key=normalizePlace(gov),region=(manifest.governorates||[]).find(item=>normalizePlace(item?.name)===key);
+const LIVE_CATALOG_CACHE_DB="dalilna-regional-cache-v271";
+let liveCatalogDbPromise=null;
+function openLiveCatalogDB(){
+ if(!("indexedDB" in window))return Promise.resolve(null);
+ if(liveCatalogDbPromise)return liveCatalogDbPromise;
+ liveCatalogDbPromise=new Promise(resolve=>{
+  let request;
+  try{request=indexedDB.open(LIVE_CATALOG_CACHE_DB,1);}catch(_){resolve(null);return;}
+  request.onupgradeneeded=()=>{
+   const db=request.result;
+   if(!db.objectStoreNames.contains("regions"))db.createObjectStore("regions",{keyPath:"file"});
+  };
+  request.onsuccess=()=>resolve(request.result);
+  request.onerror=()=>resolve(null);
+  request.onblocked=()=>resolve(null);
+ });
+ return liveCatalogDbPromise;
+}
+async function readRegionalCatalogCache(file,snapshotDate){
+ const db=await openLiveCatalogDB();if(!db)return null;
+ return new Promise(resolve=>{
+  try{
+   const request=db.transaction("regions","readonly").objectStore("regions").get(file);
+   request.onsuccess=()=>{const row=request.result;resolve(row&&row.snapshotDate===snapshotDate&&row.data&&Array.isArray(row.data.items)?row.data:null);};
+   request.onerror=()=>resolve(null);
+  }catch(_){resolve(null);}
+ });
+}
+async function writeRegionalCatalogCache(file,snapshotDate,data){
+ const db=await openLiveCatalogDB();if(!db)return false;
+ return new Promise(resolve=>{
+  try{
+   const tx=db.transaction("regions","readwrite");
+   tx.objectStore("regions").put({file,snapshotDate,data});
+   tx.oncomplete=()=>resolve(true);
+   tx.onerror=()=>resolve(false);
+   tx.onabort=()=>resolve(false);
+  }catch(_){resolve(false);}
+ });
+}
+async function loadRegionalCatalog(gov,force,signal){
+ const manifest=await loadRegionalCatalogManifest(false),key=normalizePlace(gov),region=(manifest.governorates||[]).find(item=>normalizePlace(item?.name)===key);
  if(!region||!region.file)throw new Error("لا توجد قائمة بيانات لهذه المحافظة في ملف الفهرس.");
- const cached=liveCatalogFiles.get(region.file);if(!force&&cached)return {region,manifest,data:cached};
- const response=await fetchCatalogAsset(encodeURIComponent(region.file)+"?v=2.7.0");
- if(!response.ok)throw new Error("تعذر تحميل سجل المحافظة.");
- const payload=await response.json(),items=normalizeRegionalCatalogItems(payload);
- if(!items.length&&Number(region.count||0)>0)throw new Error("ملف المحافظة لا يحتوي سجلات قابلة للقراءة.");
- const data=payload&&typeof payload==="object"&&!Array.isArray(payload)?{...payload,items}:{governorate:region.name,items,snapshotDate:manifest.snapshotDate};
- data.items=items.map(item=>({...item,governorate:item.governorate||region.name}));
- liveCatalogFiles.set(region.file,data);buildScopeSelector();renderCategories();renderRegionInfo();
+ if(signal?.aborted)throw new DOMException("Search aborted","AbortError");
+ const cached=liveCatalogFiles.get(region.file);
+ if(!force&&cached&&cached.snapshotDate===manifest.snapshotDate)return {region,manifest,data:cached};
+ let data=null;
+ if(!force)data=await readRegionalCatalogCache(region.file,manifest.snapshotDate);
+ if(!data){
+  const response=await fetchCatalogAsset(encodeURIComponent(region.file)+"?v=2.7.1",signal);
+  if(!response.ok)throw new Error("تعذر تحميل سجل المحافظة ("+region.name+").");
+  const payload=await response.json();
+  const items=normalizeRegionalCatalogItems(payload);
+  if(!items.length&&Number(region.count||0)>0)throw new Error("ملف المحافظة لا يحتوي سجلات قابلة للقراءة: "+region.name);
+  data=payload&&typeof payload==="object"&&!Array.isArray(payload)?{...payload,items}:{governorate:region.name,items,snapshotDate:manifest.snapshotDate};
+  data.items=items.map(item=>({...item,governorate:item.governorate||region.name}));
+  data.snapshotDate=manifest.snapshotDate;
+  void writeRegionalCatalogCache(region.file,manifest.snapshotDate,data);
+ }
+ liveCatalogFiles.set(region.file,data);
+ while(liveCatalogFiles.size>2)liveCatalogFiles.delete(liveCatalogFiles.keys().next().value);
  return {region,manifest,data};
 }
 let liveAllCatalogPromise=null;
@@ -4589,36 +4639,55 @@ function buildUnifiedSearchItem(item){
  ].filter(Boolean).join(" "));
  return {...item,_searchKey:searchable};
 }
+// Kept as a compatibility helper. It warms only the selected governorate;
+// country-wide searches are handled one governorate at a time below.
 async function warmUnifiedSearchIndex(force){
- if(!force&&liveUnifiedIndexReady)return {manifest:liveCatalogManifest,items:liveUnifiedIndex};
- if(!force&&liveUnifiedIndexPromise)return liveUnifiedIndexPromise;
- const loading=loadAllRegionalCatalog(force).then(data=>{
-  liveUnifiedIndex=data.items.map(buildUnifiedSearchItem);
-  liveUnifiedIndexReady=true;
-  window.DALILNA_SEARCH_INDEX={ready:true,count:liveUnifiedIndex.length,snapshotDate:data.manifest.snapshotDate};
-  return {manifest:data.manifest,items:liveUnifiedIndex};
- });
- liveUnifiedIndexPromise=loading;
- try{return await loading;}
- finally{if(liveUnifiedIndexPromise===loading)liveUnifiedIndexPromise=null;}
+ const manifest=await loadRegionalCatalogManifest(false),context=regionCurrentContext();
+ if(!context.gov)return {manifest,items:[],lazy:true};
+ const loaded=await loadRegionalCatalog(context.gov,force);
+ const items=loaded.data.items.map(buildUnifiedSearchItem);
+ window.DALILNA_SEARCH_INDEX={ready:true,count:items.length,governorate:context.gov,snapshotDate:manifest.snapshotDate,mode:"lazy"};
+ return {manifest,items};
 }
-async function loadAllRegionalCatalog(force){
- if(!force&&liveAllCatalogPromise)return liveAllCatalogPromise;
- const loading=(async()=>{
-  const manifest=await loadRegionalCatalogManifest(force),regions=manifest.governorates||[],items=[];
-  for(let offset=0;offset<regions.length;offset+=4){
-   const group=await Promise.all(regions.slice(offset,offset+4).map(async region=>{
-    const loaded=await loadRegionalCatalog(region.name,force);
-    return loaded.data.items.map(item=>({...item,governorate:item.governorate||region.name}));
-   }));
-   for(const rows of group)items.push(...rows);
+async function searchRegionalCatalogProgressive(context,query,category,productType,signal,onChunk,force){
+ const manifest=await loadRegionalCatalogManifest(false);
+ let regions=Array.isArray(manifest.governorates)?manifest.governorates.slice():[];
+ if(context?.gov)regions=regions.filter(region=>normalizePlace(region.name)===normalizePlace(context.gov));
+ if(!regions.length)return {manifest,items:[]};
+ const aliases={land:["real_estate"]},wanted=String(category||"all");
+ if(wanted!=="all"){
+  const keys=[wanted,...(aliases[wanted]||[])];
+  regions.sort((a,b)=>keys.reduce((n,key)=>n+Number(b.categories?.[key]||0)-Number(a.categories?.[key]||0),0));
+ }
+ const matches=[],seen=new Set(),batchSize=2,maxMatches=500;
+ for(let offset=0;offset<regions.length;offset+=batchSize){
+  if(signal?.aborted)throw new DOMException("Search aborted","AbortError");
+  const group=regions.slice(offset,offset+batchSize);
+  const loaded=await Promise.all(group.map(async region=>{
+   try{
+    const result=await loadRegionalCatalog(region.name,force,signal);
+    let rows=regionalCatalogMatches(result.data.items,context,query,category,productType);
+    if(productType)rows=rows.filter(item=>!item.productType||item.productType===productType);
+    return rows;
+   }catch(error){
+    if(error?.name==="AbortError")throw error;
+    console.info("Dalilna skipped a regional catalogue chunk:",region.name,error?.message||error);
+    return [];
+   }
+  }));
+  for(const rows of loaded){
+   for(const item of rows){
+    const signature=String(item.id||"")+"|"+normalizeSearchPlace(item.name||"")+"|"+String(item.governorate||"");
+    if(seen.has(signature))continue;
+    seen.add(signature);
+    if(matches.length<maxMatches)matches.push(item);
+   }
   }
-  if(items.length!==Number(manifest.totalCount))throw new Error("عدد سجلات المحافظات ("+items.length+") لا يطابق إجمالي الفهرس ("+manifest.totalCount+").");
-  return {manifest,items};
- })();
- if(!force)liveAllCatalogPromise=loading;
- try{return await loading;}
- finally{if(liveAllCatalogPromise===loading)liveAllCatalogPromise=null;}
+  if(typeof onChunk==="function")onChunk({manifest,items:matches.slice(0,maxMatches),loadedGovernorates:Math.min(offset+group.length,regions.length),totalGovernorates:regions.length});
+  if(matches.length>=maxMatches)break;
+ }
+ window.DALILNA_SEARCH_INDEX={ready:true,count:matches.length,snapshotDate:manifest.snapshotDate,governorate:context?.gov||"all",mode:"progressive"};
+ return {manifest,items:matches};
 }
 function regionalCatalogMatches(items,context,query,category,productType){
  if(category==="jobs"||category==="souq"||category==="marketplace")return [];
@@ -4667,6 +4736,11 @@ function renderLiveDirectoryResponse(data){
  if(flt.near&&userPos)items=items.slice().sort((a,b)=>(calcKm(userPos.lat,userPos.lng,a?.lat??a?.latitude,a?.lon??a?.longitude)??999)-(calcKm(userPos.lat,userPos.lng,b?.lat??b?.latitude,b?.lon??b?.longitude)??999));
  liveDirectoryLastData=data;
  const shared=liveDirectorySharedMatchesHTML();
+ if(data?.pending&&!items.length){
+  status.textContent=english?"Searching local Yemen catalogue and OpenStreetMap…":"جارٍ البحث في الفهرس المحلي وخرائط OpenStreetMap…";
+  box.innerHTML=shared+'<div class="live-directory-empty">'+(english?"Loading the first matching records. You can keep using the app.":"جارٍ جلب أول النتائج المطابقة. يمكنك استخدام التطبيق أثناء ذلك.")+'</div>';
+  return;
+ }
  box.classList.remove("live-google-results");
  if(attribution)attribution.innerHTML=english
   ?'Places: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> (ODbL-1.0) · <a href="https://docs.overturemaps.org/guides/places/" target="_blank" rel="noopener noreferrer">Overture Maps Places</a> · <a href="https://docs.foursquare.com/data-products/docs/fsq-places-open-source" target="_blank" rel="noopener noreferrer">Foursquare Open Places</a> · boundaries: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">geoBoundaries</a> and <a href="https://github.com/open-admin-data/yemen-administrative-divisions" target="_blank" rel="noopener noreferrer">Open Admin Data</a>.'
@@ -4729,7 +4803,7 @@ async function loadLiveMarketplaceMatches(query,category,productType,signal,forc
 }
 async function searchLiveDirectoryFallback(query,category,context,signal,force){
  const normalized=normalizeSearchPlace(query);
- if(normalized.length<3)return [];
+ if(normalized.length<2)return [];
  const key=[normalized,category,context?.gov||"",context?.district||""].join("|");
  const cached=liveFallbackCache.get(key);
  if(!force&&cached&&Date.now()-cached.at<90000)return cached.items;
@@ -4804,60 +4878,89 @@ async function runLiveDirectorySearch(force){
  if(liveDirectoryController){liveDirectoryController.abort();liveDirectoryController=null;}
  const seq=++liveDirectorySeq;
  if(!box||!status)return;
- const context=regionCurrentContext(),query=liveDirectoryLast.query||"",category=liveDirectoryLast.category||"all",productType=liveDirectoryLast.productType||"",listingType=liveDirectoryLast.listingType||"";
- liveDirectoryVisibleCount=8;liveDirectoryLastData=null;
- status.textContent=liveUnifiedIndexReady?"فهرس اليمن جاهز للبحث…":"جارٍ تجهيز فهرس البحث الموحد…";
- box.innerHTML='<div class="live-directory-empty">تظهر النتائج المحلية أولاً، ثم تُراجع الخريطة عند الحاجة.</div>';
- liveDirectoryTimer=setTimeout(async()=>{
-  const controller=new AbortController();
-  liveDirectoryController=controller;
-  const requestTimer=setTimeout(()=>controller.abort(),24000);
+ const context=regionCurrentContext(),query=String(liveDirectoryLast.query||"").trim(),category=liveDirectoryLast.category||"all",productType=liveDirectoryLast.productType||"",listingType=liveDirectoryLast.listingType||"";
+ liveDirectoryVisibleCount=30;liveDirectoryLastData=null;
+ const controller=new AbortController();liveDirectoryController=controller;
+ const requestTimer=setTimeout(()=>controller.abort(),30000);
+ const classifiedOnly=["jobs","souq","land","marketplace"].includes(category);
+ const responseData={items:[],manifest:liveCatalogManifest,snapshotDate:liveCatalogManifest?.snapshotDate,regionName:context.gov||"اليمن",context,classifiedOnly,category,liveFallbackCount:0,pending:true};
+ const isCurrent=()=>seq===liveDirectorySeq&&!controller.signal.aborted&&$("#liveDirectoryItems");
+ const localRows=localDirectoryCatalogMatches(query,context,category,productType);
+ if(localRows.length){
+  responseData.items=localRows.slice(0,50);
+  renderLiveDirectoryResponse(responseData);
+ }else{
+  status.textContent=curLang==="en"?"Searching local Yemen catalogue…":"جارٍ البحث في فهرس اليمن المحلي…";
+  box.innerHTML='<div class="live-directory-empty">'+(curLang==="en"?"Searching local records and live map sources in parallel…":"يتم البحث في السجلات المحلية ومصادر الخرائط بالتوازي…")+'</div>';
+ }
+ if(!context.gov&&!query&&category==="all"&&!Object.values(flt).some(Boolean)){
   try{
-   const sharedPromise=loadLiveMarketplaceMatches(query,category,productType,controller.signal,force,listingType);
-   const classifiedOnly=["jobs","souq","land","marketplace"].includes(category);
-   if(!context.gov&&!query&&category==="all"&&!Object.values(flt).some(Boolean)){
-    const manifest=await loadRegionalCatalogManifest(force);
-    if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
-    liveDirectoryLocationPrompt(manifest);
-    sharedPromise.then(()=>{if(seq===liveDirectorySeq&&!controller.signal.aborted)liveDirectoryLocationPrompt(manifest);});
-    return;
-   }
-   let manifest=null,rows=[];
-   if(!classifiedOnly){
-    status.textContent=liveUnifiedIndexReady?"البحث في فهرس اليمن الموحد…":"جارٍ تحميل سجلات المحافظات الـ22 في الخلفية…";
-    const loaded=await warmUnifiedSearchIndex(false);
-    manifest=loaded.manifest;
-    rows=regionalCatalogMatches(loaded.items,context,query,category,productType);
-     rows=mergeLiveFallbackRows(localDirectoryCatalogMatches(query,context,category,productType),rows);
-   }
-   if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
-   const responseData={items:rows,manifest,snapshotDate:manifest?.snapshotDate,regionName:context.gov||"اليمن",context,classifiedOnly,category,liveFallbackCount:0};
-   renderLiveDirectoryResponse(responseData);
-   sharedPromise.then(()=>{if(seq===liveDirectorySeq&&!controller.signal.aborted)renderLiveDirectoryResponse(responseData);});
-   if(!classifiedOnly&&query.length>=3&&rows.length<5){
-    status.textContent+=" · يجري التحقق من النتائج الجديدة عبر الخرائط المفتوحة…";
-    try{
-     const remote=await searchLiveDirectoryFallback(query,category,context,controller.signal,force);
-     if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
-     if(remote.length){
-      const merged=mergeLiveFallbackRows(responseData.items,remote);
-      responseData.liveFallbackCount=merged.length-responseData.items.length;
-      responseData.items=merged;
-      renderLiveDirectoryResponse(responseData);
-     }
-    }catch(error){
-     if(!controller.signal.aborted)console.info("Dalilna live fallback skipped:",error.message||error);
-    }
-   }
+   const manifest=await loadRegionalCatalogManifest(false);
+   if(!isCurrent())return;
+   liveDirectoryLocationPrompt(manifest);
+   responseData.pending=false;
+   loadLiveMarketplaceMatches(query,category,productType,controller.signal,force,listingType).then(()=>{
+    if(isCurrent())liveDirectoryLocationPrompt(manifest);
+   });
+   return;
   }catch(error){
-   if(seq!==liveDirectorySeq||controller.signal.aborted||!$("#liveDirectoryItems"))return;
-   status.textContent="تعذر تحميل الفهرس المحلي: "+String(error&&error.message||"خطأ غير معروف");
-   box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">'+(curLang==="en"?"The local catalogue could not be loaded. The directory will retry automatically when you search again.":"لم يكتمل تحميل السجل المحلي. سيُعاد المحاولة تلقائياً عند البحث مرة أخرى.")+'</div>';
-  }finally{
-   clearTimeout(requestTimer);
-   if(liveDirectoryController===controller)liveDirectoryController=null;
+   if(isCurrent()){
+    status.textContent=curLang==="en"?"The regional catalogue manifest is temporarily unavailable.":"تعذر تحميل فهرس المحافظات حالياً.";
+    box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">'+esc(error?.message||"")+'</div>';
+   }
+   return;
   }
- },45);
+ }
+ const sharedPromise=loadLiveMarketplaceMatches(query,category,productType,controller.signal,force,listingType).then(()=>{
+  if(isCurrent())renderLiveDirectoryResponse(responseData);
+  return liveSharedMatches;
+ });
+ const livePromise=!classifiedOnly&&query.length>=2
+  ?searchLiveDirectoryFallback(query,category,context,controller.signal,force).then(remote=>{
+    if(!isCurrent())return [];
+    responseData.items=mergeLiveFallbackRows(responseData.items,remote).slice(0,500);
+    responseData.liveFallbackCount=remote.length;
+    renderLiveDirectoryResponse(responseData);
+    return remote;
+   }).catch(error=>{
+    if(isCurrent()&&!controller.signal.aborted)console.info("Dalilna live map search skipped:",error?.message||error);
+    return [];
+   })
+  :Promise.resolve([]);
+ let catalogPromise=Promise.resolve([]);
+ if(!classifiedOnly){
+  catalogPromise=searchRegionalCatalogProgressive(context,query,category,productType,controller.signal,chunk=>{
+   if(!isCurrent())return;
+   responseData.manifest=chunk.manifest;
+   responseData.snapshotDate=chunk.manifest?.snapshotDate;
+   responseData.items=mergeLiveFallbackRows(responseData.items,chunk.items).slice(0,500);
+   renderLiveDirectoryResponse(responseData);
+  },force).then(result=>{
+   if(!isCurrent())return result.items;
+   responseData.manifest=result.manifest;
+   responseData.snapshotDate=result.manifest?.snapshotDate;
+   responseData.items=mergeLiveFallbackRows(responseData.items,result.items).slice(0,500);
+   return result.items;
+  }).catch(error=>{
+   if(isCurrent()&&!controller.signal.aborted)console.info("Dalilna progressive catalogue search failed:",error?.message||error);
+   return [];
+  });
+ }
+ try{
+  await catalogPromise;
+  if(isCurrent()){
+   responseData.pending=false;
+   renderLiveDirectoryResponse(responseData);
+  }
+  await Promise.allSettled([livePromise,sharedPromise]);
+  if(isCurrent()){
+   responseData.pending=false;
+   renderLiveDirectoryResponse(responseData);
+  }
+ }finally{
+  clearTimeout(requestTimer);
+  if(liveDirectoryController===controller)liveDirectoryController=null;
+ }
 }
 async function loadLiveCommonsPhotos(button){
  const panel=button.parentElement.querySelector(".live-directory-commons-panel");if(!panel)return;
@@ -4885,7 +4988,7 @@ document.addEventListener("click",event=>{
   return;
  }
  const commons=event.target.closest("[data-commons-photos]");if(commons){loadLiveCommonsPhotos(commons);return;}
- if(event.target.closest("#liveDirectoryMore")){liveDirectoryVisibleCount+=8;if(liveDirectoryLastData)renderLiveDirectoryResponse(liveDirectoryLastData);return;}
+ if(event.target.closest("#liveDirectoryMore")){liveDirectoryVisibleCount+=30;if(liveDirectoryLastData)renderLiveDirectoryResponse(liveDirectoryLastData);return;}
  if(event.target.closest("#liveDirectoryChooseRegion")){$("#scopeBtn").click();return;}
  if(event.target.closest("#liveDirectoryUseLocation")){
   if(!navigator.geolocation){toast("المتصفح لا يدعم تحديد الموقع.");return;}
@@ -5811,7 +5914,7 @@ else if(location.hash==="#jobs")window.setTimeout(()=>go("jobs"),0);
 applyLang();
 buildScopeSelector();
 async function checkRemoteVersionSilently(){
- const localVersion=document.querySelector('meta[name="app-version"]')?.content||"2.7.0";
+ const localVersion=document.querySelector('meta[name="app-version"]')?.content||"2.7.1";
  const remoteUrl=location.hostname==="appassets.androidplatform.net"
   ?"https://baraagpt6-droid.github.io/dalilna/version.json"
   :"./version.json";
@@ -5822,7 +5925,9 @@ async function checkRemoteVersionSilently(){
   window.DALILNA_REMOTE_VERSION=latest;
   const localManifest=liveCatalogManifest;
   if(latest.catalogGeneratedAt&&localManifest?.generatedAt&&latest.catalogGeneratedAt>localManifest.generatedAt){
-   await warmUnifiedSearchIndex(true);
+   liveCatalogFiles.clear();
+   liveCatalogManifestPromise=null;
+   await loadRegionalCatalogManifest(true);
   }
   if(latest.webVersion&&latest.webVersion!==localVersion&&location.hostname!=="appassets.androidplatform.net"&&"serviceWorker" in navigator){
    window.DALILNA_PENDING_WORKER_RELOAD=true;
@@ -5836,7 +5941,7 @@ async function checkRemoteVersionSilently(){
   return null;
  }
 }
-loadRegionalCatalogManifest(false).then(()=>warmUnifiedSearchIndex(false)).then(()=>checkRemoteVersionSilently()).catch(error=>{
+loadRegionalCatalogManifest(false).then(()=>checkRemoteVersionSilently()).catch(error=>{
   console.error("Dalilna regional catalog bootstrap failed:",error);
   buildScopeSelector();
 });
@@ -5924,6 +6029,6 @@ window.DalilnaMarketplaceBridge={
 })();
 </script>
 <script src="./marketplace-client.js"></script>
-<script src="./features-2.1.js?v=2.7.0" defer></script>
+<script src="./features-2.1.js?v=2.7.1" defer></script>
 </body>
 </html>
