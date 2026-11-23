@@ -112,7 +112,7 @@ jobs:
         shell: bash
         run: |
           VERSION="$(sed -n 's/^[[:space:]]*versionName = "\([^"]*\)".*/\1/p' android/app/build.gradle.kts | head -n 1)"
-          VERSION_CODE="$((2900000 + GITHUB_RUN_NUMBER))"
+          VERSION_CODE="$((2900000 + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))"
           if [ "$VERSION" != "2.9.0" ]; then echo "Expected versionName 2.9.0, got $VERSION"; exit 1; fi
           if [ "$(aapt dump badging android/app/build/outputs/apk/debug/app-debug.apk | sed -n "s/.*versionCode='\([0-9]*\)'.*/\1/p" | head -n 1)" != "$VERSION_CODE" ]; then
             echo "APK versionCode does not match 2900000 + GITHUB_RUN_NUMBER."
@@ -155,7 +155,7 @@ jobs:
           v.version = "2.9.0";
           v.webVersion = "2.9.0";
           v.androidVersion = "2.9.0";
-          v.versionCode = Number(process.env.APK_VERSION_CODE || (2900000 + Number(process.env.GITHUB_RUN_NUMBER)));
+          v.versionCode = Number(process.env.APK_VERSION_CODE || (2900000 + Number(process.env.GITHUB_RUN_NUMBER) * 100 + Number(process.env.GITHUB_RUN_ATTEMPT || 1)));
           v.androidVersionCode = v.versionCode;
           v.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v2.9.0/app-debug.apk";
           v.updatedAt = new Date().toISOString();
