@@ -236,7 +236,6 @@ jobs:
           fi
 
           "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
-          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
           "$BUILD_TOOLS/apksigner" verify --print-certs "$APK" >/dev/null 2>&1
           echo "APK signing mode: ${{ steps.signing.outputs.mode }}"
           echo "APK signature verification passed."
