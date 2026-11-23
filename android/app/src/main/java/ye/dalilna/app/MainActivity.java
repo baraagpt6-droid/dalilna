@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
     private static final int REQ_AUDIO = 301;
     private static final int REQ_LOCATION = 302;
     private static final int REQ_FILE = 303;
-    private static final String REMOTE_APP_URL = "https://baraagpt6-droid.github.io/dalilna/";
+    private static final String REMOTE_APP_URL = "https://dalilna-ftny.netlify.app/";
     private static final String LOCAL_APP_URL = "https://appassets.androidplatform.net/assets/index.html";
     private static final String PREFS = "dalilna_web_runtime";
     private static final String KEY_STORAGE = "local_storage_snapshot";
@@ -223,7 +223,7 @@ public class MainActivity extends Activity {
             preferences.edit().putLong(KEY_LAST_REMOTE_ATTEMPT, System.currentTimeMillis()).apply();
             webView.loadUrl(REMOTE_APP_URL);
         } else {
-            // Load the previous local origin once so its localStorage can be copied before switching to GitHub Pages.
+            // Load the previous local origin once so its localStorage can be copied before switching to the official Netlify site.
             webView.loadUrl(LOCAL_APP_URL);
         }
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
@@ -231,8 +231,9 @@ public class MainActivity extends Activity {
 
     private boolean isRemoteAppUrl(Uri uri) {
         return uri != null && "https".equalsIgnoreCase(uri.getScheme())
-                && "baraagpt6-droid.github.io".equalsIgnoreCase(uri.getHost())
-                && uri.getPath() != null && uri.getPath().startsWith("/dalilna/");
+                && "dalilna-ftny.netlify.app".equalsIgnoreCase(uri.getHost())
+                && uri.getPath() != null
+                && ("/".equals(uri.getPath()) || uri.getPath().startsWith("/index.html"));
     }
 
     private boolean isTrustedAppUrl(Uri uri) {
