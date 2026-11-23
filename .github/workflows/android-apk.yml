@@ -103,7 +103,7 @@ jobs:
           done
 
           if [[ "$present" -ne 4 ]]; then
-            echo "::error::All four persistent Android signing secrets are required for Dalilna 3.0.1."
+            echo "::error::All four persistent Android signing secrets are required for Dalilna 3.0.2."
             exit 1
           fi
           KEYSTORE="$RUNNER_TEMP/dalilna-persistent.keystore"
@@ -133,14 +133,14 @@ jobs:
           const versionCode = 3000000 + runNumber * 100 + attempt;
           if (!Number.isSafeInteger(versionCode) || versionCode <= 0) throw new Error("Invalid Android OTA versionCode");
           const version = JSON.parse(fs.readFileSync(file, "utf8"));
-          version.version = "3.0.1";
-          version.webVersion = "3.0.1";
-          version.androidVersion = "3.0.1";
+          version.version = "3.0.2";
+          version.webVersion = "3.0.2";
+          version.androidVersion = "3.0.2";
           version.versionCode = versionCode;
           version.androidVersionCode = versionCode;
           version.androidSigningMode = process.env.APK_SIGNING_MODE || "persistent";
-          version.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.0.1/app-debug.apk";
-          version.officialWebUrl = "https://dalilna-ftny.netlify.app/";
+          version.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.0.2/app-debug.apk";
+          version.officialWebUrl = "https://baraagpt6-droid.github.io/dalilna/";
           version.updatedAt = new Date().toISOString();
           fs.writeFileSync(file, JSON.stringify(version, null, 2));
           NODE
@@ -176,8 +176,8 @@ jobs:
           VERSION="$(sed -n 's/^[[:space:]]*versionName = "\([^"]*\)".*/\1/p' android/app/build.gradle.kts | head -n 1)"
           VERSION_CODE="$((3000000 + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))"
           APK="android/app/build/outputs/apk/debug/app-debug.apk"
-          if [[ "$VERSION" != "3.0.1" ]]; then
-            echo "Expected versionName 3.0.1, got $VERSION"
+          if [[ "$VERSION" != "3.0.2" ]]; then
+            echo "Expected versionName 3.0.2, got $VERSION"
             exit 1
           fi
           test -s "$APK"
@@ -207,13 +207,13 @@ jobs:
           "$BUILD_TOOLS/apksigner" verify --print-certs "$APK" >/dev/null 2>&1
           echo "APK signing mode: ${{ steps.signing.outputs.mode }}"
           echo "APK signature verification passed."
-          echo "version=3.0.1" >> "$GITHUB_OUTPUT"
+          echo "version=3.0.2" >> "$GITHUB_OUTPUT"
           echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
 
       - name: Upload APK workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dalilna-3.0.1-android-apk
+          name: dalilna-3.0.2-android-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
@@ -221,17 +221,17 @@ jobs:
       - name: Publish APK to GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v3.0.1
-          name: Dalilna 3.0.1 Android APK
+          tag_name: v3.0.2
+          name: Dalilna 3.0.2 Android APK
           prerelease: true
           make_latest: false
           overwrite_files: true
           files: android/app/build/outputs/apk/debug/app-debug.apk
           body: |
-            Dalilna 3.0.1 Android APK.
+            Dalilna 3.0.2 Android APK.
             Signing mode: ${{ steps.signing.outputs.mode }}
             versionCode: ${{ steps.app-version.outputs.version_code }}
-            Official web app: https://dalilna-ftny.netlify.app/
+            Official web app: https://baraagpt6-droid.github.io/dalilna/
 
             With all four persistent signing secrets configured, this APK uses the persistent Dalilna keystore for in-place updates.
             Persistent signing is mandatory for this release.
@@ -258,16 +258,16 @@ jobs:
           const fs = require("node:fs");
           const file = "version.json";
           const v = JSON.parse(fs.readFileSync(file, "utf8"));
-          v.version = "3.0.1";
-          v.webVersion = "3.0.1";
-          v.androidVersion = "3.0.1";
+          v.version = "3.0.2";
+          v.webVersion = "3.0.2";
+          v.androidVersion = "3.0.2";
           const versionCode = Number(process.env.APK_VERSION_CODE);
           if (!Number.isSafeInteger(versionCode) || versionCode <= 0) throw new Error("Invalid APK versionCode");
           v.versionCode = versionCode;
           v.androidVersionCode = versionCode;
           v.androidSigningMode = process.env.APK_SIGNING_MODE;
-          v.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.0.1/app-debug.apk";
-          v.officialWebUrl = "https://dalilna-ftny.netlify.app/";
+          v.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.0.2/app-debug.apk";
+          v.officialWebUrl = "https://baraagpt6-droid.github.io/dalilna/";
           v.updatedAt = new Date().toISOString();
           fs.writeFileSync(file, JSON.stringify(v, null, 2));
           fs.copyFileSync(file, "android/app/src/main/assets/version.json");
@@ -278,7 +278,7 @@ jobs:
               pushed=true
               break
             fi
-            git commit -m "chore(release): publish v3.0.1 Android update code"
+            git commit -m "chore(release): publish v3.0.2 Android update code"
             if git push origin HEAD:main; then
               pushed=true
               break
