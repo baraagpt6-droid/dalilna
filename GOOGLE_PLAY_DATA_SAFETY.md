@@ -46,7 +46,7 @@ Do not select “not shared” for data the AdMob SDK shares with Google.
 - Central user accounts: **None** in the reviewed v3.1.0 flow.
 - Account deletion: **Not applicable to a central account**, because the app does not create one.
 - Local deletion: users can clear Android app data or uninstall the app. This removes local profile/favourites but does not automatically delete a marketplace submission already sent to the server.
-- Remote listing deletion: no self-service central deletion workflow was found in the reviewed app. Confirm an operational private contact and moderation process before launch.
+- Remote listing deletion: no self-service central deletion workflow was found in the reviewed app. Users can email the project privacy contact at `baraagpt6@gmail.com` to request a listing review or removal. The in-app feedback form stores tickets locally and is not a remote support channel.
 - Retention: local data remains until cleared. Shared listings may remain for moderation, publication, duplicate prevention or administrative review. Confirm production database retention and backup windows before submission.
 - Dalilna does not sell personal data. This does not override the AdMob SDK sharing described above.
 
