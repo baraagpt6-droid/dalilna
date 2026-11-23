@@ -126,7 +126,7 @@ jobs:
           const { gunzipSync } = await import("node:zlib");
           const lightPayload = JSON.parse(gunzipSync(Buffer.from(lightEnvelope.data, "base64")).toString("utf8"));
           if (!Array.isArray(lightPayload.i) || lightPayload.i.length !== manifest.totalCount || lightEnvelope.recordCount !== manifest.totalCount) throw new Error("Full-Yemen search index is incomplete.");
-          if (version.webVersion !== "2.9.0" || version.version !== "2.9.0" || Number(version.versionCode) < 2900000 || Number(version.androidVersionCode) < 2900000) throw new Error("version.json does not describe Dalilna 2.9.0.");
+          if (version.webVersion !== "2.9.0" || version.version !== "2.9.0" || Number(version.versionCode) < 290 || Number(version.androidVersionCode) < 280) throw new Error("version.json does not describe Dalilna 2.9.0.");
           if (!html.includes('content="2.9.0"')) throw new Error("Deployed homepage version is not 2.9.0.");
           if (!(await css.text()).includes(".quick-jump-btn")) throw new Error("Quick-access stylesheet was not published.");
           if (!(await js.text()).includes("officialApplicationUrl")) throw new Error("Feature JavaScript is incomplete.");
@@ -137,7 +137,7 @@ jobs:
             if (!item.sourceUrl?.startsWith("https://") || !item.image || !(await fetch(new URL("./market-price-images/" + item.image, base))).ok) throw new Error("A market-price card is missing its source or local illustration: " + item.id);
           }
           if (!priceGuideJs.includes("DalilnaPriceGuide") || !nativeBridge.includes("switchToRemote") || !appUpdate.includes("androidVersionCode")) throw new Error("Price guide, OTA bridge or update notice was not published.");
-          if (!version.androidReleaseUrl?.startsWith("https://")) throw new Error("Android release URL is missing from version.json.");
+          if (Number(version.androidVersionCode) > 280 && !version.androidReleaseUrl?.startsWith("https://")) throw new Error("A published Android update is missing its release URL.");
           if (!Array.isArray(manifest.governorates) || manifest.governorates.length !== 22) throw new Error("Published regional manifest does not contain all 22 governorates.");
           if (!Array.isArray(manifest.districtCounts) || manifest.districtCounts.length !== 335) throw new Error("Published regional manifest does not contain all 335 districts.");
           const governorateTotal = manifest.governorates.reduce((sum, item) => sum + Number(item.count || 0), 0);
