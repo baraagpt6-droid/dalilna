@@ -45,7 +45,7 @@ jobs:
           names=[(str(row[1]), payload["c"][row[2]], payload["g"][row[3]], payload["d"][row[4]][0], str(row[8] or "")) for row in rows]
           def is24(value):
               text=norm(value).lower()
-              return bool(re.search(r"24\\s*/\\s*7|24\\s*(?:ساعة|hours?|h\\b)|00:00\\s*-\\s*24:00|على مدار الساعة|دوام مستمر",text))
+              return bool(re.search(r"24\s*/\s*7|24\s*(?:ساعة|hours?|h\b)|00:00\s*-\s*24:00|على مدار الساعة|دوام مستمر",text))
           report={}
           for term in ["الزوقري","الناهي","صيدلية"]:
               started=perf_counter()
@@ -114,7 +114,7 @@ jobs:
             publicSite={ok:true,version:version.webVersion||version.version,bytes:publicBytes.byteLength,
               schemaVersion:publicEnvelope.schemaVersion,records:publicIndexPayload.i?.length||0,
               pharmacyRecords:publicIndexPayload.i?.filter(row=>publicIndexPayload.c[row[2]]==="pharmacy").length||0,
-              open24Pharmacies:publicIndexPayload.i?.filter(row=>publicIndexPayload.c[row[2]]==="pharmacy"&&/(24\\s*\\/\\s*7|24\\s*(?:hours?|h\\b)|00:00\\s*-\\s*24:00|على مدار الساعة)/i.test(String(row[8]||""))).length||0,
+              open24Pharmacies:publicIndexPayload.i?.filter(row=>publicIndexPayload.c[row[2]]==="pharmacy"&&/(24\s*\/\s*7|24\s*(?:hours?|h\b)|00:00\s*-\s*24:00|على مدار الساعة)/i.test(String(row[8]||""))).length||0,
               marketplaceReferenceItems:Array.isArray(market.items)?market.items.length:null,
               pharmacy24Shortcut:pageText.includes('id="pharmacy24QuickBtn"'),
               craftCategory:pageText.includes("craft:")||pageText.includes('"craft"'),
