@@ -22,7 +22,7 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 3_000_000 + (workflowRunNumber * 100) + (System.getenv("GITHUB_RUN_ATTEMPT")?.toIntOrNull() ?: 1)
-        versionName = "3.0.0"
+        versionName = "3.0.1"
     }
 
     buildTypes {

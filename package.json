@@ -1,6 +1,6 @@
 {
   "name": "dalilna-yemen",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "description": "Dalilna Yemen directory and shared marketplace API",
   "engines": {
@@ -15,6 +15,7 @@
     "migrate:marketplace": "node scripts/migrate-marketplace-db.cjs",
     "sync:daily": "node scripts/daily-sync.cjs",
     "sync:marketplace": "node scripts/refresh-marketplace-products.cjs",
-    "sync:prices": "node scripts/refresh-market-prices.cjs"
+    "sync:prices": "node scripts/refresh-market-prices.cjs",
+    "build:netlify": "node scripts/build-netlify-site.cjs"
   }
 }

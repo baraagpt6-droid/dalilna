@@ -163,7 +163,7 @@ test("local assistant fallback renders before cloud requests, including HTTP 503
  assert.ok(web.includes('!["provider_timeout","provider_rate_limit"].includes(data.error)'));
 });
  
-test("Gemini request budget allows slower responses while local answers render first",()=>{
+test("Gemini request budget and local jobs feed render safely",()=>{
  const root=path.resolve(__dirname,"..");
  const api=fs.readFileSync(path.join(root,"api/assistant.js"),"utf8");
  const web=fs.readFileSync(path.join(root,"index.html"),"utf8");
@@ -172,9 +172,13 @@ test("Gemini request budget allows slower responses while local answers render f
  assert.ok(api.includes("for (const model of modelCandidates)"));
  assert.match(web,/timer=setTimeout\(\(\)=>controller\.abort\(\),18000\)/);
  const jobs=web.indexOf('const response=await fetch("./jobs-feed.json"');
- const immediate=web.indexOf('if(typeof onImmediate==="function")onImmediate(result)',jobs);
- const cloud=web.indexOf('requestCloudAssistant(q,{localJobs:',jobs);
- assert.ok(jobs>=0&&immediate>jobs&&cloud>immediate,"local jobs result must render before cloud fallback");
+ const price=web.indexOf(" const priceIntent=",jobs);
+ assert.ok(jobs>=0&&price>jobs,"assistant must read the shared jobs feed");
+ const jobsBranch=web.slice(jobs,price);
+ assert.match(jobsBranch,/const now=Date\.now\(\)/);
+ assert.match(jobsBranch,/slice\(0,5\)/);
+ assert.match(jobsBranch,/applicationUrl/);
+ assert.doesNotMatch(jobsBranch,/requestCloudAssistant/);
 });
 
 test("Gemini proxy falls back to Flash-Lite after primary rate limiting", async () => {
@@ -209,4 +213,29 @@ test("Gemini proxy falls back to Flash-Lite after primary rate limiting", async 
     delete process.env.GEMINI_API_KEY;
     delete process.env.GEMINI_MODEL;
   }
+});
+
+test("assistant job cards save to the shared favorites hub and conversation follow-ups keep the selected result",()=>{
+ const root=path.resolve(__dirname,"..");
+ const web=fs.readFileSync(path.join(root,"index.html"),"utf8");
+ assert.ok(web.includes("assistantConversationContext"));
+ assert.ok(web.includes("resolveAssistantConversationFollowup"));
+ assert.ok(web.includes("dalilna-job-favs-v1"));
+ assert.ok(web.includes("dalilna-job-favs-records-v1"));
+ assert.ok(web.includes("assistant-job-save"));
+ assert.ok(web.includes("التقديم من المصدر"));
+ assert.ok(web.includes("contextType:\"job\""));
+ assert.ok(!web.includes('className="assistant-source"'),"there must be one source badge only");
+ assert.ok(web.includes("flex-direction:column"),"assistant bubbles must use vertical layout");
+});
+
+test("Netlify static build includes public PWA assets without publishing backend code",()=>{
+ const root=path.resolve(__dirname,"..");
+ const build=fs.readFileSync(path.join(root,"scripts/build-netlify-site.cjs"),"utf8");
+ const config=fs.readFileSync(path.join(root,"netlify.toml"),"utf8");
+ for(const asset of ["index.html","jobs-feed.json","version.json","regional-catalog","search_index_light.json","manifest.json","sw.js"])assert.ok(build.includes(asset),asset+" must be in the public bundle");
+ assert.ok(build.includes("dist"));
+ assert.ok(config.includes("npm run build:netlify"));
+ assert.ok(config.includes("publish = \"dist\""));
+ assert.ok(!build.includes('"api"')&&!build.includes('"server.js"'),"backend source must not be copied into Netlify public output");
 });

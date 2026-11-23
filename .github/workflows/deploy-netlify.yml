@@ -1,0 +1,84 @@
+name: Deploy Dalilna to Netlify
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'app-native-bridge.js'
+      - 'app-update.js'
+      - 'market-price-guide.js'
+      - 'market-price-guide.css'
+      - 'market_prices_yemen.json'
+      - 'regional-catalog-runtime.js'
+      - 'marketplace-client.js'
+      - 'market_items.json'
+      - 'features-2.1.js'
+      - 'features-2.1.css'
+      - 'v3.0.0.js'
+      - 'v3.0.0.css'
+      - 'jobs-feed.json'
+      - 'manifest.json'
+      - 'version.json'
+      - 'sw.js'
+      - 'regions-yemen.js'
+      - 'regions-profiles.js'
+      - 'privacy.html'
+      - 'terms.html'
+      - 'icons/**'
+      - 'market-price-images/**'
+      - 'regional-catalog/**'
+      - 'netlify.toml'
+      - 'scripts/build-netlify-site.cjs'
+      - '.github/workflows/deploy-netlify.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dalilna-netlify-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    # Create the Netlify site first, then store its Site ID as a repository variable.
+    if: ${{ vars.NETLIFY_SITE_ID != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build public static PWA
+        run: |
+          npm run build:netlify
+          test -s dist/index.html
+          test -s dist/jobs-feed.json
+          test -s dist/version.json
+          test -s dist/regional-catalog/search_index_light.json
+          if [ -e dist/api ] || [ -e dist/server.js ] || [ -e dist/db ]; then
+            echo "::error::Backend source must not be included in the public Netlify bundle."
+            exit 1
+          fi
+
+      - name: Deploy production site
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ vars.NETLIFY_SITE_ID }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$NETLIFY_AUTH_TOKEN" ]]; then
+            echo "::error::Add NETLIFY_AUTH_TOKEN as a GitHub repository secret."
+            exit 1
+          fi
+          npx --yes netlify-cli@latest deploy \
+            --prod \
+            --dir dist \
+            --site "$NETLIFY_SITE_ID" \
+            --auth "$NETLIFY_AUTH_TOKEN" \
+            --message "Dalilna v3.0.1"

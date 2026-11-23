@@ -1,6 +1,12 @@
 # دليلنا | Dalilna
 
-دليل الخدمات والمحلات والوظائف وسوق البيع والشراء في اليمن. الإصدار الحالي 2.8.0.
+دليل الخدمات والمحلات والوظائف وسوق البيع والشراء في اليمن. الإصدار الحالي 3.0.1.
+
+## Netlify static hosting
+
+The PWA can be built as a safe static-only bundle with `npm run build:netlify`. The allow-list copies the web shell, jobs feed, version metadata, regional catalogue and public assets into `dist/`; it does not publish the Node API, database, tests or server source.
+
+To enable automatic deployment, create a Netlify site using the account that owns the desired `.netlify.app` name, then add the GitHub repository variable `NETLIFY_SITE_ID` and repository secret `NETLIFY_AUTH_TOKEN`. The `Deploy Dalilna to Netlify` workflow will deploy each matching `main` update. After the final site URL is assigned, set the Render environment variable `DALILNA_NETLIFY_URL` to that exact HTTPS origin so the assistant API accepts browser requests from it. The site name must be available in Netlify before it can be reserved.
 
 ## المنصات والبنية
 

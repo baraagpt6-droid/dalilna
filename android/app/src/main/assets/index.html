@@ -611,6 +611,15 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 .assistant-result-meta{display:block;color:var(--mute);font-size:11px;margin-top:3px}
 .assistant-result-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
 .assistant-result-actions a{display:inline-flex;align-items:center;min-height:32px;border:1px solid var(--line);border-radius:8px;padding:5px 10px;color:var(--acc);text-decoration:none;font-size:11px}
+
+/* Assistant bubbles use one top source badge and a vertical content flow. */
+#msgs .m.a{display:flex;flex-direction:column;align-items:stretch;gap:8px;min-width:0;max-width:94%;overflow-wrap:anywhere}
+.assistant-origin-badge{order:0;align-self:flex-start;display:inline-flex;align-items:center;max-width:100%;padding:4px 9px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--mute);font-size:10px;line-height:1.4;font-weight:600;white-space:normal;overflow-wrap:anywhere}
+.assistant-answer-text{order:1;width:100%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}
+.assistant-result-cards{order:2;width:100%;min-width:0}
+.assistant-result-card.is-context-selected{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+.assistant-result-actions button.assistant-job-save{display:inline-flex;align-items:center;justify-content:center;min-height:32px;border:1px solid var(--gold);border-radius:8px;padding:5px 10px;background:rgba(232,160,37,.12);color:var(--gold);font:inherit;font-size:11px;font-weight:700}
+.assistant-result-actions button.assistant-job-save:disabled{opacity:.75;cursor:default}
 </style>
 </head>
 <body>
@@ -5415,7 +5424,7 @@ async function requestCloudAssistant(q,context){
  const payload=JSON.stringify({question:question.slice(0,1200),context:context||{}});
  const endpoints=[assistantApiUrl(),assistantFallbackApiUrl()];
  for(const endpoint of endpoints){
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);
   try{
    const response=await fetch(endpoint,{
     method:"POST",
@@ -5433,7 +5442,7 @@ async function requestCloudAssistant(q,context){
      referenceSource:typeof data.source==="string"?data.source:""
     };
    }
-   const canFallback=response.status===404||response.status===502||response.status===503||data.error==="cloud_ai_not_configured";
+   const canFallback=response.status===404||response.status===503||data.error==="cloud_ai_not_configured"||(response.status===502&&!["provider_timeout","provider_rate_limit"].includes(data.error));
    if(!canFallback)break;
   }catch(error){
    // Try the alternate server-side endpoint before using the local catalogue.
@@ -5457,7 +5466,42 @@ function assistantSourceText(result){
  return (english?"Responder: Dalilna local assistant":"المجيب: دليلنا المحلي")+dataLabel;
 }
 
+let assistantConversationContext=null;
+function resolveAssistantConversationFollowup(question){
+ const context=assistantConversationContext;
+ if(!context||Date.now()-Number(context.updatedAt||0)>30*60*1000)return null;
+ const item=context.selected||(Array.isArray(context.items)?context.items[0]:null);
+ if(!item)return null;
+ const query=normalizeQuery(String(question||""));
+ const applyIntent=/(كيف.*(اقدم|قدم)|طريقه.*تقديم|رابط.*تقديم|التقديم|اسجل.*وظيف|قدم.*له)/.test(query);
+ const locationIntent=/(وين.*(موقع|مكان|عنوان)|اين.*(موقع|مكان|عنوان)|موقعه|مكانه|عنوانه|اللوكيشن)/.test(query);
+ const contactIntent=/(كيف.*(اتواصل|اتصل)|رقم.*(تواصل|هاتف)|واتساب|تواصل معه|اتصل به)/.test(query);
+ if(!applyIntent&&!locationIntent&&!contactIntent)return null;
+ const isJob=context.kind==="job"||item.kind==="job";
+ const title=String(item.title||item.name||"هذه النتيجة").trim();
+ let answer="";
+ if(applyIntent){
+  if(!isJob)return null;
+  answer=item.url
+   ?"للتقديم على «"+title+"»، افتح زر «"+String(item.actionLabel||"التقديم من المصدر")+"» في البطاقة. الرابط يفتح صفحة الإعلان التي سجلها مصدر الوظيفة."
+   :"لا يوجد رابط تقديم مباشر محفوظ لهذه الوظيفة. افتح صفحة المصدر في البطاقة وابحث عن تعليمات التقديم.";
+ }else if(locationIntent){
+  const place=String(item.city||item.location||item.address||item.country||"").trim();
+  answer=place
+   ?(isJob?"الموقع المسجل لوظيفة «"+title+"»: "+place+".":"الموقع المسجل لـ«"+title+"»: "+place+".")
+   :(isJob?"مصدر الوظيفة لم يحدد مدينة أو موقعاً واضحاً.":"لا يوجد عنوان دقيق محفوظ لهذا الإدراج. افتح رابط الخريطة في البطاقة إن توفر.");
+ }else{
+  const phone=String(item.phone||item.contact||"").trim();
+  answer=phone
+   ?"رقم التواصل المسجل لـ«"+title+"»: "+phone+"."
+   :(isJob?"بيانات التواصل غير مدرجة في بطاقة الوظيفة. استخدم زر المصدر أو التقديم للتواصل مع الجهة.":"لا يوجد رقم تواصل محفوظ لهذا الإدراج. افتح رابط المصدر أو الخريطة في البطاقة.");
+ }
+ return {answer,mode:"directory",contextType:isJob?"job":"place",
+  dataSources:context.dataSources||["نتيجة المحادثة السابقة"],assistantCards:[item]};
+}
 async function askAssistant(q,onImmediate){
+ const followup=resolveAssistantConversationFollowup(q);
+ if(followup)return followup;
  const serviceIntent=directoryMapSearchInfo(q);
  if(serviceIntent?.rateIntent){
   const payload=await loadLiveFx(false);
@@ -5479,39 +5523,63 @@ async function askAssistant(q,onImmediate){
   };
  }
  if(serviceIntent?.category==="jobs"||(!serviceIntent?.rateIntent&&/(وظيف|وظائف|عمل|توظيف|راتب|job|employment|career)/i.test(String(q||"")))){
-  let feed=null;
-  try{const response=await fetch("./jobs-feed.json",{cache:"no-store"});if(response.ok)feed=await response.json();}catch(_){}
-  let jobs=Array.isArray(feed?.items)?feed.items:[];
-  const rawJobQuery=String(q||""),asksSaudi=/السعوديه|السعودية|سعودي|saudi/i.test(rawJobQuery),asksYemen=/اليمن|يمني|يمنية|yemen/i.test(rawJobQuery);
-  jobs=jobs.filter(item=>!item.expiresAt||new Date(item.expiresAt).getTime()>now);
-  if(asksSaudi)jobs=jobs.filter(item=>String(item.countryCode||"").toUpperCase()==="SA");
-  else if(asksYemen)jobs=jobs.filter(item=>String(item.countryCode||"YE").toUpperCase()==="YE");
-  const askedGov=GOVS.find(g=>normalizeQuery(q).includes(normalizeQuery(g)));
-  if(askedGov)jobs=jobs.filter(item=>normalizeQuery(item.location||"").includes(normalizeQuery(askedGov)));
-  jobs.sort((a,b)=>{
-   if(!asksSaudi&&!asksYemen){const countryOrder=(String(a.countryCode||"").toUpperCase()==="YE"?0:1)-(String(b.countryCode||"").toUpperCase()==="YE"?0:1);if(countryOrder)return countryOrder;}
-   return String(b.publishedAt||"").localeCompare(String(a.publishedAt||""));
+  let feed=window.DALILNA_V3_JOBS_FEED||null;
+  try{
+   const response=await fetch("./jobs-feed.json",{cache:"no-store"});
+   if(response.ok)feed=await response.json();
+  }catch(_){}
+  const now=Date.now();
+  const deviceJobs=typeof publicItems==="function"?publicItems().filter(item=>item.cat==="jobs"):[];
+  const stateJobs=Array.isArray(S.jobs)?S.jobs:[];
+  const sourceJobs=[...(Array.isArray(feed?.items)?feed.items:[]),...deviceJobs,...stateJobs];
+  const normalizeJob=item=>{
+   const title=String(item.title||item.name||item.position||"").trim();
+   if(!title)return null;
+   const city=String(item.city||item.town||String(item.location||"").split(",")[0]||item.area||"").trim();
+   const country=String(item.country||item.countryName||"").trim();
+   const organization=String(item.organization||item.company||item.employer||item.entity||"").trim();
+   const applicationUrl=[item.applicationUrl,item.applyUrl,item.url,item.sourceUrl].map(value=>String(value||"").trim()).find(value=>/^https:\/\//i.test(value))||"";
+   const sourceUrl=[item.sourceUrl,item.url,applicationUrl].map(value=>String(value||"").trim()).find(value=>/^https:\/\//i.test(value))||"";
+   const location=String(item.location||[city,country].filter(Boolean).join(", ")||item.area||item.governorate||item.gov||"").trim();
+   const id=String(item.id||applicationUrl||sourceUrl||title).trim();
+   const publishedAt=String(item.publishedAt||item.createdAt||"");
+   return {...item,id,kind:"job",title,name:title,organization,city,country,location,
+    source:String(item.source||"ملف الوظائف المحلي"),applicationUrl:applicationUrl||sourceUrl,
+    sourceUrl,url:applicationUrl||sourceUrl,actionLabel:item.applicationUrl||item.applyUrl?"التقديم من المصدر":"صفحة المصدر",
+    category:"وظيفة",publishedAt};
+  };
+  let jobs=sourceJobs.map(normalizeJob).filter(Boolean).filter(item=>{
+   const expiry=Date.parse(item.expiresAt||"");
+   return !item.expiresAt||!Number.isFinite(expiry)||expiry>now;
   });
-  const cards=jobs.slice(0,8).map(item=>({
-   name:item.title||"وظيفة معلنة",
-   category:"وظيفة",
-   location:[item.city,item.country].filter(Boolean).join("، ")||item.location||"",
-   source:[item.organization,item.source].filter(Boolean).join(" · "),
-   url:item.applicationUrl||item.url||item.sourceUrl||"",
-   actionLabel:"عرض الوظيفة"
-  }));
-  window.DALILNA_V3_JOBS_FEED=feed||null;
+  const rawJobQuery=String(q||"");
+  const asksSaudi=/السعوديه|السعودية|سعودي|saudi/i.test(rawJobQuery);
+  const asksYemen=/اليمن|يمني|يمنية|yemen/i.test(rawJobQuery);
+  if(asksSaudi)jobs=jobs.filter(item=>String(item.countryCode||"").toUpperCase()==="SA"||/السعوديه|السعودية|saudi/i.test(item.country));
+  else if(asksYemen)jobs=jobs.filter(item=>String(item.countryCode||"YE").toUpperCase()==="YE"||/اليمن|yemen/i.test(item.country));
+  const askedGov=GOVS.find(g=>normalizeQuery(rawJobQuery).includes(normalizeQuery(g)));
+  if(askedGov)jobs=jobs.filter(item=>normalizeQuery([item.location,item.city,item.governorate,item.gov,item.district].filter(Boolean).join(" ")).includes(normalizeQuery(askedGov)));
+  const activeScope=scope.startsWith("gov:")?scope.slice(4):scope.startsWith("district:")?scope.slice(9).split("|").join(" "):"";
+  if(activeScope)jobs=jobs.filter(item=>normalizeQuery([item.location,item.city,item.governorate,item.gov,item.district].filter(Boolean).join(" ")).includes(normalizeQuery(activeScope)));
+  const unique=new Map();
+  for(const item of jobs){
+   const signature=[item.title,item.organization,item.city,item.country].map(value=>normalizeQuery(value||"")).join("|");
+   const previous=unique.get(signature);
+   if(!previous||Date.parse(item.publishedAt||"")>Date.parse(previous.publishedAt||""))unique.set(signature,item);
+  }
+  jobs=[...unique.values()].sort((a,b)=>Date.parse(b.publishedAt||"")-Date.parse(a.publishedAt||""));
+  const cards=jobs.slice(0,5).map(item=>({...item,kind:"job",category:"وظيفة",
+   location:item.location||[item.city,item.country].filter(Boolean).join("، "),
+   source:item.source||"ملف الوظائف المحلي",
+   actionLabel:item.applicationUrl?"التقديم من المصدر":"صفحة المصدر"}));
+  window.DALILNA_V3_JOBS_FEED=feed||{items:jobs};
   const result={
    answer:cards.length
-    ?(curLang==="en"?"I found "+jobs.length+" active jobs in the local jobs feed. The newest matching opportunities are shown below.":"وجدت "+jobs.length+" وظائف نشطة في ملف الوظائف المحلي. هذه أحدث الفرص المطابقة.")
-    :(curLang==="en"?"No active jobs matched the selected country and location in the saved jobs feed.":"لم أجد وظيفة نشطة مطابقة في ملف الوظائف المحفوظة لهذا البلد أو الموقع."),
-   mode:"directory",dataSources:[feed?.refreshedBy||"ملف الوظائف المحلي"],assistantCards:cards
+    ?(curLang==="en"?"Found "+jobs.length+" active jobs in the shared jobs feed. The five newest matching jobs are shown below.":"وجدت "+jobs.length+" وظائف نشطة في ملف الوظائف المشترك. هذه أحدث خمس وظائف مطابقة.")
+    :(curLang==="en"?"No active jobs match this country or location in the jobs feed.":"لا توجد وظائف نشطة تطابق البلد أو المنطقة المطلوبة في ملف الوظائف."),
+   mode:"directory",contextType:"job",dataSources:[feed?.refreshedBy||"jobs-feed.json"],assistantCards:cards
   };
   if(typeof onImmediate==="function")onImmediate(result);
-  if(S.aiCloudConsent===true&&navigator.onLine){
-   const cloud=await requestCloudAssistant(q,{localJobs:jobs.slice(0,8).map(item=>({title:item.title,organization:item.organization,location:item.location,country:item.country,source:item.source,url:item.applicationUrl||item.url}))});
-   if(cloud)return {...cloud,dataSources:result.dataSources,assistantCards:cards};
-  }
   return result;
  }
  const priceIntent=/(سعر|اسعار|أسعار|بكم|كم\s*يكلف|تكلفه|تكلفة|price|cost|solar|بطاري|انفرتر|لوح|جوال|هاتف|سامسونج|ايفون|شاومي|سيار|هايلوكس|عقار|ايجار|إيجار|شقه|أرض|لابتوب)/i.test(String(q||""));
@@ -5724,9 +5792,26 @@ function assistantWhatsAppShareUrl(item){
  const message=[item?.name,place,item?.phone?"التواصل: "+item.phone:"","الموقع: "+map].filter(Boolean).join("\n");
  return "https://wa.me/?text="+encodeURIComponent(message);
 }
+function saveAssistantJob(item,button){
+ const key=String(item.id||item.url||item.title||item.name||"").trim();
+ if(!key){toast("تعذر تحديد هذه الوظيفة للحفظ.");return;}
+ try{
+  const idsRaw=JSON.parse(localStorage.getItem("dalilna-job-favs-v1")||"[]");
+  const ids=Array.isArray(idsRaw)?idsRaw.map(String):[];
+  const recordsRaw=JSON.parse(localStorage.getItem("dalilna-job-favs-records-v1")||"{}");
+  const records=recordsRaw&&typeof recordsRaw==="object"&&!Array.isArray(recordsRaw)?recordsRaw:{};
+  if(ids.includes(key)){button.textContent="★ محفوظ";button.disabled=true;return;}
+  ids.unshift(key);records[key]={...item,id:key};
+  localStorage.setItem("dalilna-job-favs-v1",JSON.stringify(ids.slice(0,500)));
+  localStorage.setItem("dalilna-job-favs-records-v1",JSON.stringify(records));
+  button.textContent="★ محفوظ";button.disabled=true;button.setAttribute("aria-pressed","true");
+  window.dispatchEvent(new CustomEvent("dalilna:favorite-change",{detail:{kind:"job",saved:true,key,item:records[key],source:button}}));
+  toast("تم حفظ الوظيفة في المحفوظات");
+ }catch(_){toast("تعذر حفظ الوظيفة على هذا الجهاز.");}
+}
 function renderAssistantResult(container,result){
  container.replaceChildren();
- const origin=document.createElement("div");origin.className="assistant-origin-badge";origin.textContent=result?.mode==="gemini"?"Google Gemini":(curLang==="en"?"Dalilna local":"دليلنا المحلي");container.appendChild(origin);
+ const origin=document.createElement("div");origin.className="assistant-origin-badge";origin.textContent=assistantSourceText(result);origin.dir="auto";container.appendChild(origin);
  const answer=document.createElement("div");
  answer.className="assistant-answer-text";
  answer.dir="auto";
@@ -5734,15 +5819,22 @@ function renderAssistantResult(container,result){
  container.appendChild(answer);
  const cards=Array.isArray(result?.assistantCards)?result.assistantCards:[];
  if(cards.length){
+  const contextType=result?.contextType||(cards.some(item=>item.kind==="job")?"job":"place");
+  assistantConversationContext={kind:contextType,items:cards,selected:cards[0],updatedAt:Date.now(),dataSources:result?.dataSources||[]};
   const list=document.createElement("div");
   list.className="assistant-result-cards";
   for(const item of cards){
    const card=document.createElement("article");
    card.className="assistant-result-card";
+   card.addEventListener("click",event=>{
+    if(event.target.closest("a,button"))return;
+    if(assistantConversationContext){assistantConversationContext.selected=item;assistantConversationContext.updatedAt=Date.now();}
+    list.querySelectorAll(".assistant-result-card").forEach(node=>node.classList.toggle("is-context-selected",node===card));
+   });
    const title=document.createElement("b");title.dir="auto";title.textContent=item.name||"";
    card.appendChild(title);
    const meta=document.createElement("span");meta.className="assistant-result-meta";meta.dir="auto";
-   meta.textContent=[item.category,item.location,item.source].filter(Boolean).join(" · ");
+   meta.textContent=item.kind==="job"?[item.city||item.location,item.country,item.organization,item.source].filter(Boolean).join(" · "):[item.category,item.location,item.source].filter(Boolean).join(" · ");
    card.appendChild(meta);
    if(item.priceText){const price=document.createElement("p");price.className="assistant-result-price";price.dir="auto";price.textContent=item.priceText;card.appendChild(price);}
    if(item.description){const description=document.createElement("p");description.className="assistant-result-meta";description.textContent=item.description;card.appendChild(description);}
@@ -5761,6 +5853,12 @@ function renderAssistantResult(container,result){
    if(mapUrl){const map=document.createElement("a");map.href=mapUrl;map.target="_blank";map.rel="noopener noreferrer";map.textContent=curLang==="en"?"View map":"عرض على الخريطة";actions.appendChild(map);}
    const externalUrl=String(item.url||"").trim();
    if(/^https:\/\//i.test(externalUrl)){const external=document.createElement("a");external.href=externalUrl;external.target="_blank";external.rel="noopener noreferrer";external.textContent=item.actionLabel||(curLang==="en"?"Open source":"عرض المصدر");actions.appendChild(external);}
+   if(item.kind==="job"){
+    const save=document.createElement("button");save.type="button";save.className="assistant-job-save";
+    let alreadySaved=false;try{alreadySaved=JSON.parse(localStorage.getItem("dalilna-job-favs-v1")||"[]").map(String).includes(String(item.id||item.url||item.title));}catch(_){}
+    save.textContent=alreadySaved?"★ محفوظ":"حفظ ★";save.disabled=alreadySaved;save.setAttribute("aria-pressed",String(alreadySaved));
+    save.addEventListener("click",event=>{event.stopPropagation();saveAssistantJob(item,save);});actions.appendChild(save);
+   }
    const share=document.createElement("a");share.href=assistantWhatsAppShareUrl(item);share.target="_blank";share.rel="noopener noreferrer";
    share.textContent=curLang==="en"?"Share on WhatsApp":"مشاركة واتساب";actions.appendChild(share);
    if(actions.childNodes.length)card.appendChild(actions);
@@ -5794,22 +5892,12 @@ $("#botf").addEventListener("submit",async e=>{
  try{
   const result=await askAssistant(q,fastResult=>{
    renderAssistantResult(pending,fastResult);
-   const fastSource=document.createElement("small");fastSource.className="assistant-source";
-   fastSource.textContent=assistantSourceText(fastResult);pending.appendChild(fastSource);
    pending.classList.remove("assistant-typing");
   });
   renderAssistantResult(pending,result);
   pending.classList.remove("assistant-typing");
-  const source=document.createElement("small");
-  source.className="assistant-source";
-  source.textContent=assistantSourceText(result);
-  pending.appendChild(source);
  }catch(error){
   renderAssistantResult(pending,{answer:answerAI(q),assistantCards:[]});
-  const source=document.createElement("small");
-  source.className="assistant-source";
-  source.textContent=curLang==="en"?"Responder: Dalilna local assistant":"المجيب: دليلنا المحلي";
-  pending.appendChild(source);
  }finally{
   if(sendButton)sendButton.disabled=false;
   $("#msgs").scrollTop=$("#msgs").scrollHeight;
