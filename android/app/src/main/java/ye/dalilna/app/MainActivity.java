@@ -133,8 +133,8 @@ public class MainActivity extends Activity {
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f));
 
         adsFooter = new LinearLayout(this);
-        adsFooter.setOrientation(LinearLayout.HORIZONTAL);
-        adsFooter.setGravity(Gravity.CENTER_VERTICAL);
+        adsFooter.setOrientation(LinearLayout.VERTICAL);
+        adsFooter.setGravity(Gravity.CENTER_HORIZONTAL);
         adsFooter.setPadding(dp(6), dp(2), dp(6), dp(2));
         adsFooter.setBackgroundColor(android.graphics.Color.rgb(24, 20, 17));
         adsFooter.setVisibility(View.GONE);
@@ -143,7 +143,7 @@ public class MainActivity extends Activity {
         privacyOptionsButton.setText("خصوصية الإعلانات");
         privacyOptionsButton.setTextColor(android.graphics.Color.rgb(242, 198, 109));
         privacyOptionsButton.setTextSize(11);
-        privacyOptionsButton.setGravity(Gravity.CENTER);
+        privacyOptionsButton.setGravity(Gravity.END);
         privacyOptionsButton.setPadding(dp(8), dp(8), dp(8), dp(8));
         privacyOptionsButton.setVisibility(View.GONE);
         privacyOptionsButton.setOnClickListener(v -> {
@@ -157,10 +157,10 @@ public class MainActivity extends Activity {
         adView = new AdView(this);
         adView.setAdUnitId(BuildConfig.ADMOB_BANNER_AD_UNIT_ID);
         adView.setVisibility(View.GONE);
-        adsFooter.addView(adView, new LinearLayout.LayoutParams(0,
-                LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        adsFooter.addView(adView, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         adsFooter.addView(privacyOptionsButton, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         rootLayout.addView(adsFooter, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         setContentView(rootLayout);
