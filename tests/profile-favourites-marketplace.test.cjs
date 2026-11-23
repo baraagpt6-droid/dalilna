@@ -42,13 +42,15 @@ test("new shop submissions are retained locally and forwarded to shared marketpl
 
 test("directory favourites update local state and are persisted on the device", () => {
   const html = read("index.html");
-  const features = read("features-2.1.js");
+  const favoritesUi = read("v3.0.0.js");
   assert.match(html, /const f=e\.target\.closest\("\[data-fav\]"\)/);
   assert.match(html, /if\(ix>=0\)S\.favs\.splice\(ix,1\);else S\.favs\.push\(id\)/);
   assert.match(html, /saveState\(\);\s*window\.dispatchEvent\(new CustomEvent\("dalilna:favorite-change"/);
   assert.match(html, /setDirectoryFavorite:\(id,shouldSave\)=>/);
-  assert.match(features, /localStorage\.setItem\(key,JSON\.stringify\(saved\)\)/);
-  assert.match(features, /localStorage\.setItem\("dalilna-job-favs-v1",JSON\.stringify\(ids\.slice\(0,500\)\)\)/);
+  assert.match(favoritesUi, /market:"dalilna-marketplace-favs-v1"/);
+  assert.match(favoritesUi, /jobs:"dalilna-job-favs-v1"/);
+  assert.match(favoritesUi, /write\(KEYS\.market,/);
+  assert.match(favoritesUi, /write\(KEYS\.jobs,/);
 });
 
 test("the contract explicitly excludes cross-device profile and favourites synchronization", () => {
