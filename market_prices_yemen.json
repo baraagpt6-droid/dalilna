@@ -9,18 +9,6 @@
     "asOf": "2026-11-23",
     "sourceName": "أسعار الصرف المنشورة يوم 23 نوفمبر 2026",
     "sourceUrl": "https://yemennewsnow.com/article/3535364",
-    "saa": {
-      "usd": {
-        "buy": 533,
-        "sell": 537,
-        "mid": 535
-      },
-      "sar": {
-        "buy": 140,
-        "sell": 140.5,
-        "mid": 140.25
-      }
-    },
     "aden": {
       "usd": {
         "buy": 1556,
@@ -33,7 +21,19 @@
         "mid": 411.5
       }
     },
-    "sarPerUsd": 3.75
+    "sarPerUsd": 3.75,
+    "sanaa": {
+      "usd": {
+        "buy": 533,
+        "sell": 537,
+        "mid": 535
+      },
+      "sar": {
+        "buy": 140,
+        "sell": 140.5,
+        "mid": 140.25
+      }
+    }
   },
   "categories": [
     {
