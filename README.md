@@ -1,19 +1,19 @@
 # دليلنا | Dalilna
 
-دليل الخدمات والمحلات والوظائف وسوق البيع والشراء في اليمن. الإصدار الحالي 3.0.1.
+دليل الخدمات والمحلات والوظائف وسوق البيع والشراء في اليمن. الإصدار الحالي 3.0.2.
 
-## Netlify static hosting
+## GitHub Pages official hosting
 
-The PWA can be built as a safe static-only bundle with `npm run build:netlify`. The allow-list copies the web shell, jobs feed, version metadata, regional catalogue and public assets into `dist/`; it does not publish the Node API, database, tests or server source.
+The official PWA is published on GitHub Pages at https://baraagpt6-droid.github.io/dalilna/. Netlify remains a secondary legacy host; its static build checks that the targeted badge-removal CSS/JavaScript guard is present before publishing.
 
-The official browser and PWA URL is https://dalilna-ftny.netlify.app/. The repository is connected to this Netlify site for deployment from `main`. The optional `Deploy Dalilna to Netlify` GitHub Actions workflow can also deploy when its `NETLIFY_SITE_ID` repository variable and `NETLIFY_AUTH_TOKEN` repository secret are configured. Render explicitly allows the official Netlify origin for the assistant API.
+The official browser and PWA URL is https://baraagpt6-droid.github.io/dalilna/. The Netlify host https://baraagpt6-droid.github.io/dalilna/ remains a secondary entry point with a targeted badge guard. Render allows the GitHub Pages origin for assistant API requests.
 
 ## المنصات والبنية
 
 - Web: تطبيق PWA الرسمي القابل للتثبيت: https://dalilna-ftny.netlify.app/
 - Android: تطبيق WebView يستخدم ملفات الواجهة الموجودة في \`android/app/src/main/assets/\`.
 - API: خادم Node.js على Render. العنوان الأساسي للمساعد والخدمات المشتركة هو \`https://dalilna-live.onrender.com\`.
-- Static hosting: Netlify هو النطاق الأساسي الرسمي، وGitHub Pages نسخة احتياطية.
+- Static hosting: GitHub Pages هو النطاق الأساسي الرسمي، وNetlify استضافة ثانوية.
 - Version source: ملف \`version.json\` وملف \`android/app/build.gradle.kts\`.
 
 ## الميزات
