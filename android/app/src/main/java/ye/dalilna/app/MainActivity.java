@@ -60,7 +60,8 @@ public class MainActivity extends Activity {
     private boolean adsSdkReady = false;
     private boolean adRequested = false;
     private boolean adLoaded = false;
-    private boolean homeAdSlotVisible = false;
+    private boolean detailScreenVisible = false;
+    private boolean adsDestroyed = false;
     private android.content.SharedPreferences preferences;
     private boolean fallbackLoading = false;
     private PermissionRequest pendingWebPermission;
@@ -113,9 +114,8 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
-        public void updateHomeBannerPosition(double leftCss, double topCss, double widthCss,
-                                             double heightCss, boolean visible) {
-            runOnUiThread(() -> positionHomeBanner(leftCss, topCss, widthCss, heightCss, visible));
+        public void setDetailBannerVisible(boolean visible) {
+            runOnUiThread(() -> setDetailBannerVisibleOnUi(visible));
         }
 
         @JavascriptInterface
@@ -144,16 +144,19 @@ public class MainActivity extends Activity {
         rootLayout.addView(webView, new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 
-        // The native banner overlays the 320x50 slot at the end of the home view.
-        // It remains hidden until that slot enters the visible viewport.
-        adView = new AdView(this);
-        adView.setAdUnitId(BuildConfig.ADMOB_BANNER_AD_UNIT_ID);
-        adView.setAdSize(AdSize.BANNER);
-        adView.setBackgroundColor(android.graphics.Color.rgb(24, 20, 17));
-        adView.setVisibility(View.GONE);
-        FrameLayout.LayoutParams adParams = new FrameLayout.LayoutParams(
-                dp(320), dp(50), Gravity.TOP | Gravity.LEFT);
-        rootLayout.addView(adView, adParams);
+        // Standard banner: bottom-center, shown only while the details dialog is open.
+        try {
+            adView = new AdView(this);
+            adView.setAdUnitId(BuildConfig.ADMOB_BANNER_AD_UNIT_ID);
+            adView.setAdSize(AdSize.BANNER);
+            adView.setBackgroundColor(android.graphics.Color.rgb(24, 20, 17));
+            adView.setVisibility(View.GONE);
+            FrameLayout.LayoutParams adParams = new FrameLayout.LayoutParams(
+                    dp(320), dp(50), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+            rootLayout.addView(adView, adParams);
+        } catch (RuntimeException ignored) {
+            adView = null;
+        }
         setContentView(rootLayout);
         beginAdsConsentFlow();
         WebSettings settings = webView.getSettings();
@@ -325,97 +328,112 @@ public class MainActivity extends Activity {
             );
         } catch (RuntimeException error) {
             // Ads stay unavailable when consent cannot be established.
-            updatePrivacyOptionsVisibility();
+            try { updatePrivacyOptionsVisibility(); } catch (RuntimeException ignored) { }
         }
     }
 
     private void updatePrivacyOptionsVisibility() {
-        if (webView == null) return;
-        boolean required = consentInformation != null
-                && consentInformation.getPrivacyOptionsRequirementStatus()
-                == ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED;
-        String script = "(function(){var button=document.getElementById('privacyOptionsEntry');"
-                + "if(button)button.hidden=" + (!required) + ";})();";
-        webView.evaluateJavascript(script, null);
+        try {
+            if (webView == null || adsDestroyed) return;
+            boolean required = consentInformation != null
+                    && consentInformation.getPrivacyOptionsRequirementStatus()
+                    == ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED;
+            String script = "(function(){var button=document.getElementById('privacyOptionsEntry');"
+                    + "if(button)button.hidden=" + (!required) + ";})();";
+            webView.evaluateJavascript(script, null);
+        } catch (RuntimeException ignored) { }
     }
 
     private void openPrivacyOptionsForm() {
-        if (consentInformation == null) return;
-        UserMessagingPlatform.showPrivacyOptionsForm(this, formError -> {
-            updatePrivacyOptionsVisibility();
-            requestAdsIfAllowed();
-        });
+        try {
+            if (consentInformation == null || adsDestroyed || isFinishing()) return;
+            UserMessagingPlatform.showPrivacyOptionsForm(this, formError -> {
+                try {
+                    updatePrivacyOptionsVisibility();
+                    requestAdsIfAllowed();
+                } catch (RuntimeException ignored) { }
+            });
+        } catch (RuntimeException ignored) { }
     }
 
     private void requestAdsIfAllowed() {
-        if (adsInitialized || consentInformation == null || !consentInformation.canRequestAds()) return;
-        adsInitialized = true;
-        MobileAds.initialize(this, initializationStatus -> runOnUiThread(() -> {
-            adsSdkReady = true;
-            if (homeAdSlotVisible) loadBannerAd();
-        }));
+        try {
+            if (adsInitialized || consentInformation == null || adsDestroyed
+                    || isFinishing() || !consentInformation.canRequestAds()) return;
+            adsInitialized = true;
+            MobileAds.initialize(this, initializationStatus -> {
+                try {
+                    runOnUiThread(() -> {
+                        try {
+                            if (adsDestroyed || isFinishing()) return;
+                            adsSdkReady = true;
+                            if (detailScreenVisible) loadBannerAd();
+                        } catch (RuntimeException ignored) { }
+                    });
+                } catch (RuntimeException ignored) { }
+            });
+        } catch (RuntimeException ignored) {
+            adsInitialized = false;
+            adsSdkReady = false;
+        }
     }
 
-    private void positionHomeBanner(double leftCss, double topCss, double widthCss,
-                                    double heightCss, boolean visible) {
-        if (rootLayout == null || webView == null || adView == null) return;
-        homeAdSlotVisible = visible && heightCss >= 50.0;
-        if (!homeAdSlotVisible || !adsSdkReady || isFinishing()) {
-            adView.setVisibility(View.GONE);
-            return;
-        }
-
-        float density = getResources().getDisplayMetrics().density;
-        int bannerWidth = dp(320);
-        int bannerHeight = dp(50);
-        int slotLeft = webView.getLeft() + Math.round((float) leftCss * density);
-        int slotWidth = Math.round((float) widthCss * density);
-        int left = slotLeft + Math.max(0, (slotWidth - bannerWidth) / 2);
-        int top = webView.getTop() + Math.round((float) topCss * density);
-        int rootWidth = rootLayout.getWidth();
-        if (rootWidth > 0) left = Math.max(0, Math.min(left, Math.max(0, rootWidth - bannerWidth)));
-        else left = Math.max(0, left);
-
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) adView.getLayoutParams();
-        params.width = bannerWidth;
-        params.height = bannerHeight;
-        params.leftMargin = left;
-        params.topMargin = top;
-        params.gravity = Gravity.TOP | Gravity.LEFT;
-        adView.setLayoutParams(params);
-
-        if (adLoaded) {
-            adView.setVisibility(View.VISIBLE);
-        } else if (!adRequested) {
-            loadBannerAd();
+    private void setDetailBannerVisibleOnUi(boolean visible) {
+        try {
+            if (adsDestroyed || isFinishing() || adView == null) return;
+            detailScreenVisible = visible;
+            if (!visible) {
+                adView.setVisibility(View.GONE);
+                return;
+            }
+            if (adLoaded) adView.setVisibility(View.VISIBLE);
+            else if (adsSdkReady) loadBannerAd();
+        } catch (RuntimeException ignored) {
+            try { if (adView != null) adView.setVisibility(View.GONE); }
+            catch (RuntimeException ignoredAgain) { }
         }
     }
 
     private void loadBannerAd() {
-        if (adView == null || isFinishing() || !adsSdkReady || !homeAdSlotVisible || adRequested) return;
-        adRequested = true;
-        adView.setAdSize(AdSize.BANNER);
-        adView.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                runOnUiThread(() -> {
-                    if (adView == null) return;
-                    adLoaded = true;
-                    adView.setVisibility(homeAdSlotVisible ? View.VISIBLE : View.GONE);
-                });
-            }
+        try {
+            if (adView == null || adsDestroyed || isFinishing() || !adsSdkReady
+                    || !detailScreenVisible || adRequested) return;
+            adRequested = true;
+            adView.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    try {
+                        runOnUiThread(() -> {
+                            try {
+                                if (adView == null || adsDestroyed) return;
+                                adLoaded = true;
+                                adView.setVisibility(detailScreenVisible ? View.VISIBLE : View.GONE);
+                            } catch (RuntimeException ignored) { }
+                        });
+                    } catch (RuntimeException ignored) { }
+                }
 
-            @Override
-            public void onAdFailedToLoad(LoadAdError error) {
-                runOnUiThread(() -> {
-                    if (adView == null) return;
-                    adLoaded = false;
-                    adRequested = false;
-                    adView.setVisibility(View.GONE);
-                });
-            }
-        });
-        adView.loadAd(new AdRequest.Builder().build());
+                @Override
+                public void onAdFailedToLoad(LoadAdError error) {
+                    try {
+                        runOnUiThread(() -> {
+                            try {
+                                if (adView == null || adsDestroyed) return;
+                                adLoaded = false;
+                                adRequested = false;
+                                adView.setVisibility(View.GONE);
+                            } catch (RuntimeException ignored) { }
+                        });
+                    } catch (RuntimeException ignored) { }
+                }
+            });
+            adView.loadAd(new AdRequest.Builder().build());
+        } catch (RuntimeException ignored) {
+            adRequested = false;
+            adLoaded = false;
+            try { if (adView != null) adView.setVisibility(View.GONE); }
+            catch (RuntimeException ignoredAgain) { }
+        }
     }
 
     private void captureLegacyStorageAndOpenOfficial(WebView view) {
@@ -487,14 +505,16 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-        if (adView != null) adView.pause();
+        try { if (adView != null && !adsDestroyed) adView.pause(); }
+        catch (RuntimeException ignored) { }
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (adView != null) adView.resume();
+        try { if (adView != null && !adsDestroyed) adView.resume(); }
+        catch (RuntimeException ignored) { }
     }
 
     @Override
@@ -505,16 +525,23 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        if (adView != null) {
-            adView.destroy();
-            adView = null;
-        }
-        if (webView != null) {
-            webView.stopLoading();
-            webView.loadUrl("about:blank");
-            webView.destroy();
-            webView = null;
-        }
+        adsDestroyed = true;
+        detailScreenVisible = false;
+        try {
+            if (adView != null) {
+                adView.setVisibility(View.GONE);
+                adView.destroy();
+                adView = null;
+            }
+        } catch (RuntimeException ignored) { }
+        try {
+            if (webView != null) {
+                webView.stopLoading();
+                webView.loadUrl("about:blank");
+                webView.destroy();
+                webView = null;
+            }
+        } catch (RuntimeException ignored) { }
         super.onDestroy();
     }
 }
