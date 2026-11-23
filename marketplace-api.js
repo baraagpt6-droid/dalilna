@@ -145,7 +145,11 @@ async function adminUgcReports(req,res){
  const r=await db.query(
   "SELECT r.id,r.report_type,r.listing_id,r.reason,r.details,r.content_snapshot,r.status,r.created_at,l.title AS listing_title,l.phone AS seller_phone,l.seller_name,l.status AS listing_status FROM marketplace_ugc_reports r LEFT JOIN marketplace_listings l ON l.id=r.listing_id WHERE r.status='pending' ORDER BY r.created_at ASC LIMIT 100"
  );
- return send(res,200,{ok:true,items:r.rows,count:r.rows.length});
+ return send(res,200,{ok:true,items:r.rows.map(row=>({
+  id:row.id,reportType:row.report_type,listingId:row.listing_id,reason:row.reason,details:row.details,
+  contentSnapshot:row.content_snapshot,status:row.status,createdAt:row.created_at,
+  listingTitle:row.listing_title,sellerPhone:row.seller_phone,sellerName:row.seller_name,listingStatus:row.listing_status
+ })),count:r.rows.length});
 }
 async function reviewUgcReport(req,res){
  admin(req);
