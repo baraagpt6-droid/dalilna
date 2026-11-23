@@ -1,4 +1,4 @@
-Dalilna v3.0.2
+Dalilna v3.1.0
 Release date: 2026-11-23
 
 - Restores GitHub Pages as the official web/PWA origin: https://baraagpt6-droid.github.io/dalilna/
@@ -6,6 +6,6 @@ Release date: 2026-11-23
 - Keeps the Netlify hostname available as a secondary site and adds a targeted CSS/JavaScript guard that removes only Netlify badge elements.
 - Makes the Netlify static build fail if the badge guard is missing from the published homepage.
 - Adds a one-time Android WebView storage migration from the previous Netlify origin before returning to the official origin.
-- Publishes Android version 3.0.2 with a higher versionCode and the existing persistent signing key.
+- Publishes Android version 3.1.0 with a higher versionCode and the existing persistent signing key.
 
 The Android APK is a persistent-key-signed debug/test build for direct installation. It is not a Google Play production release.
