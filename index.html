@@ -792,6 +792,11 @@ img[alt*="Powered by Netlify" i],img[alt*="Made with Netlify" i] {
       <div class="shared-marketplace-status" id="sharedAdminStatus">يتطلب ربط PostgreSQL ورمز إدارة الخادم.</div>
       <div class="shared-admin-box" id="sharedAdminQueue"></div>
     </section>
+    <section class="panel" id="sharedAdminReportsPanel">
+      <div class="shared-marketplace-head"><h3>بلاغات المحتوى والمستخدمين</h3><button type="button" class="ghost" id="sharedAdminReportsButton">تحميل البلاغات</button></div>
+      <div class="shared-marketplace-status" id="sharedAdminReportsStatus">تظهر هنا بلاغات المستخدمين عن الإعلانات والبائعين وردود مساعد نور.</div>
+      <div class="shared-admin-box" id="sharedAdminReportsQueue"></div>
+    </section>
     <div class="adm-tabs" id="admTabs">
       <button type="button" data-atab="overview" aria-selected="true">نظرة عامة</button>
       <button type="button" data-atab="listings">الإدراجات والحذف</button>
@@ -1106,6 +1111,7 @@ img[alt*="Powered by Netlify" i],img[alt*="Made with Netlify" i] {
       </div>
       <div id="v3RoleSwitcher" class="v3-role-switcher" aria-label="تبديل صفة الحساب"><span>صفة الاستخدام</span><div><button type="button" data-v3-role="client">عميل</button><button type="button" data-v3-role="merchant">بائع</button><button type="button" data-v3-role="admin">مشرف</button></div></div>
       <button type="button" class="v3-profile-saved" id="profileSavedHub">♥ المفضلة والمحفوظات <span id="profileSavedHubCount">0</span></button>
+      <button type="button" class="ghost" id="profileBlockedSellersBtn">إدارة البائعين المحظورين على هذا الجهاز</button>
       <div class="profile-metrics">
         <div><b id="profileAdsCount">0</b><span id="profileAdsLabel">إعلاناتي</span></div>
         <div><b id="profileShopsCount">0</b><span id="profileShopsLabel">محلات أضفتها</span></div>
@@ -1267,6 +1273,10 @@ img[alt*="Powered by Netlify" i],img[alt*="Made with Netlify" i] {
       <button type="button" class="ghost" id="imgClearBtn" style="min-height:34px;font-size:12.5px">إزالة الصورة</button>
     </div>
     <label>وصف مختصر<textarea name="desc" rows="2" maxlength="300" placeholder="الخدمات أو المنتجات المتوفرة"></textarea></label>
+    <label class="ugc-terms-consent" style="display:flex;align-items:flex-start;gap:9px;margin:10px 0;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:13px">
+      <input type="checkbox" id="ugcTermsAccept" required style="width:18px;height:18px;flex:none;margin-top:3px">
+      <span>أؤكد أن المعلومات والصورة التي أرسلها تخصني أو لدي إذن بنشرها، وأوافق على <a href="./terms.html" target="_blank" rel="noopener noreferrer">شروط الاستخدام وسياسة المحتوى</a>. أفهم أن الإعلان ينتظر مراجعة الإدارة، ويمكن للمستخدمين الإبلاغ عنه أو حظر البائع.</span>
+    </label>
     <p class="err" id="ferr"></p>
     <div class="fbtn">
       <button class="add" type="submit" id="save">حفظ ونشر</button>
@@ -3371,6 +3381,21 @@ $("#profileNotificationsBtn").addEventListener("click",async()=>{
  saveState();renderProfilePanel();
  toast(S.notificationsEnabled?(curLang==="en"?"Notifications permission enabled on this device.":"تم السماح بالإشعارات على هذا الجهاز."):(curLang==="en"?"Notifications permission was not granted.":"لم يتم منح إذن الإشعارات."));
 });
+$("#profileBlockedSellersBtn").addEventListener("click",()=>{
+ let blocked=[];
+ try{const raw=JSON.parse(localStorage.getItem("dalilna-blocked-sellers-v1")||"[]");blocked=Array.isArray(raw)?raw:[];}catch(_){}
+ if(!blocked.length){toast("لا يوجد بائعون محظورون على هذا الجهاز.");return;}
+ const selected=String(window.prompt("أدخل رقم البائع الذي تريد إلغاء حظره:\n"+blocked.join("\n"),"")||"").replace(/\\D/g,"");
+ if(!selected)return;
+ const key=phoneKey(selected);
+ const before=blocked.length;
+ blocked=blocked.filter(phone=>phoneKey(phone)!==key);
+ if(blocked.length===before){toast("لم يتم العثور على الرقم في قائمة الحظر.");return;}
+ try{localStorage.setItem("dalilna-blocked-sellers-v1",JSON.stringify(blocked));}catch(_){}
+ window.dispatchEvent(new CustomEvent("dalilna:seller-block-change",{detail:{phone:selected,saved:false}}));
+ window.DalilnaShared?.loadHome?.();window.DalilnaShared?.loadSouq?.();window.DalilnaShared?.loadJobs?.();
+ toast("تم إلغاء حظر البائع على هذا الجهاز.");
+});
 $("#profileLogoutBtn").addEventListener("click",()=>{
  S.session={role:"client",adminEmail:"",merchant:null};
  S.onboarded=false;
@@ -4180,6 +4205,7 @@ $("#f").addEventListener("submit",e=>{
   const area=String(fd.area||"").trim()||district;
   if(!name||!fd.gov||!district){$("#ferr").textContent="أدخل اسم المحل والمحافظة والمديرية.";return;}
   const isAdm=S.session.role==="admin";
+  if(!$("#ugcTermsAccept").checked){$("#ferr").textContent="وافق على شروط الاستخدام وسياسة المحتوى قبل إرسال الإعلان.";return;}
   if(!isAdm&&(isPhoneBlocked(fd.phone)||(S.session.merchant?.phone&&isPhoneBlocked(S.session.merchant.phone)))){toast("لا يمكن النشر من رقم موقوف. تواصل مع الإدارة إذا كان الإيقاف بالخطأ.");return;}
   if(editingId){const current=S.items.find(x=>x.id===editingId);if(!current||!canManage(current)){toast("ليست لديك صلاحية تعديل هذا الإدراج.");return;}}
   if(isAdm&&!hasPerm(editingId?"edit":"add")){toast("ليست لديك صلاحية تنفيذ العملية.");return;}
@@ -4198,6 +4224,7 @@ $("#f").addEventListener("submit",e=>{
     img:pendingImgData||"",
     ownerPhone:S.session.merchant?.phone||phoneKey(fd.phone)||"",
     aiChecked:true,
+    termsAccepted:$("#ugcTermsAccept").checked===true,
     verifiedAt:isAdm?Date.now():null,
     createdAt:Date.now()
   };
@@ -5872,6 +5899,17 @@ function renderAssistantResult(container,result){
  answer.dir="auto";
  answer.textContent=isolateMixedDirectionText(result?.answer||"");
  container.appendChild(answer);
+ if(String(result?.answer||"").trim()){
+  const reportResponse=document.createElement("button");
+  reportResponse.type="button";
+  reportResponse.className="assistant-report-response";
+  reportResponse.textContent=curLang==="en"?"Report this assistant response":"الإبلاغ عن رد المساعد";
+  reportResponse.addEventListener("click",()=>{
+   if(window.DalilnaShared&&typeof window.DalilnaShared.reportAssistant==="function")window.DalilnaShared.reportAssistant(answer.textContent);
+   else toast("تعذر الاتصال بخدمة البلاغات. حاول عند توفر الإنترنت.");
+  });
+  container.appendChild(reportResponse);
+ }
  const cards=Array.isArray(result?.assistantCards)?result.assistantCards:[];
  if(cards.length){
   const contextType=result?.contextType||(cards.some(item=>item.kind==="job")?"job":"place");
