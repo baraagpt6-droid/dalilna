@@ -5377,7 +5377,7 @@ async function requestCloudAssistant(q,context){
  const payload=JSON.stringify({question:question.slice(0,1200),context:context||{}});
  const endpoints=[assistantApiUrl(),assistantFallbackApiUrl()];
  for(const endpoint of endpoints){
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),28000);
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
   try{
    const response=await fetch(endpoint,{
     method:"POST",
