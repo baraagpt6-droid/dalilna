@@ -79,7 +79,11 @@ test("classifies named stationery and vehicle places",()=>{
 test("Yemen Nominatim and Overpass requests stay within one bounded three-second search deadline",()=>{
  const source=fs.readFileSync(require.resolve("../server"),"utf8");
  assert.ok(source.includes("timeoutMs:3000"));
- assert.ok(source.includes("const deadlineAt=Date.now()+2800"));
+ assert.ok(source.includes("const deadlineAt=startedAt+5500"));
+ assert.ok(source.includes("const geocodeDeadlineAt=Math.min(deadlineAt-3200,startedAt+2000)"));
+ assert.ok(source.includes("await geocodePlace(place,geocodeDeadlineAt)"));
+ assert.ok(source.includes("await geocodePlace(fallbackPlace,geocodeDeadlineAt)"));
+ assert.ok(source.includes("waitForNominatimSlot(deadlineAt,250)"));
  assert.ok(source.includes("overpassAttemptTimeout(remaining,providerIndex,endpoints.length)"));
  assert.equal(source.split("overpassAttemptTimeout(remaining,providerIndex,endpoints.length)").length-1,2);
  assert.ok(source.includes("const overpassProviderSlots = new Map()"));
