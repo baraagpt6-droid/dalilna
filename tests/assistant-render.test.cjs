@@ -149,3 +149,15 @@ test("assistant preflight advertises POST for the Render-backed endpoint", async
   assert.match(response.headers.get("access-control-allow-methods") || "", /POST/);
   assert.match(response.headers.get("access-control-allow-methods") || "", /GET/);
 });
+
+test("local assistant fallback renders before cloud requests, including HTTP 503",()=>{
+ const root=path.resolve(__dirname,"..");
+ const web=fs.readFileSync(path.join(root,"index.html"),"utf8");
+ const serviceImmediate=web.indexOf('if(!localHits.length&&typeof onImmediate==="function")');
+ const serviceCloud=web.indexOf("requestCloudAssistant(q,assistantContext)",serviceImmediate);
+ assert.ok(serviceImmediate>=0&&serviceCloud>serviceImmediate);
+ const genericImmediate=web.indexOf("const localFallback={answer:answerAI(q)");
+ const genericCloud=web.indexOf("requestCloudAssistant(q,buildAssistantContext(q))",genericImmediate);
+ assert.ok(genericImmediate>=0&&genericCloud>genericImmediate);
+ assert.ok(web.includes("response.status===404||response.status===502||response.status===503"));
+});
