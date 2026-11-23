@@ -6,11 +6,11 @@
 
 The official PWA is published on GitHub Pages at https://baraagpt6-droid.github.io/dalilna/. Netlify remains a secondary legacy host; its static build checks that the targeted badge-removal CSS/JavaScript guard is present before publishing.
 
-The official browser and PWA URL is https://baraagpt6-droid.github.io/dalilna/. The Netlify host https://baraagpt6-droid.github.io/dalilna/ remains a secondary entry point with a targeted badge guard. Render allows the GitHub Pages origin for assistant API requests.
+The official browser and PWA URL is https://baraagpt6-droid.github.io/dalilna/. The Netlify host https://dalilna-ftny.netlify.app/ remains a secondary entry point with a targeted badge guard. Render allows the GitHub Pages origin for assistant API requests.
 
 ## المنصات والبنية
 
-- Web: تطبيق PWA الرسمي القابل للتثبيت: https://dalilna-ftny.netlify.app/
+- Web: تطبيق PWA الرسمي القابل للتثبيت: https://baraagpt6-droid.github.io/dalilna/
 - Android: تطبيق WebView يستخدم ملفات الواجهة الموجودة في \`android/app/src/main/assets/\`.
 - API: خادم Node.js على Render. العنوان الأساسي للمساعد والخدمات المشتركة هو \`https://dalilna-live.onrender.com\`.
 - Static hosting: GitHub Pages هو النطاق الأساسي الرسمي، وNetlify استضافة ثانوية.
