@@ -10,7 +10,6 @@ on:
       - 'app-update.js'
       - 'market-price-guide.js'
       - 'market-price-guide.css'
-      - 'market_prices_yemen.json'
       - 'market-price-images/**'
       - 'regional-catalog-runtime.js'
       - 'marketplace-client.js'
