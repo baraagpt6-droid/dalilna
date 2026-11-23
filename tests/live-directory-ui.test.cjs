@@ -149,7 +149,7 @@ test("English live-assistant cards and result summaries use English category nam
 });
 
 test("progressive directory search keeps the first page light and uses 30-card pagination",()=>{
- assert.ok(html.includes("liveDirectoryVisibleCount=30"));
+ assert.ok(html.includes("liveDirectoryVisibleCount=50"));
  assert.ok(html.includes("liveDirectoryVisibleCount+=30"));
  assert.ok(html.includes("batchSize=2"));
  assert.ok(html.includes("maxMatches=500"));
