@@ -100,7 +100,7 @@ async function schema(db){
  return schemaPromise;
 }
 function normalizedSellerPhone(value){
- let digits=String(value||"").replace(/\\D/g,"");
+ let digits=String(value||"").replace(/\D/g,"");
  if(digits.startsWith("00"))digits=digits.slice(2);
  if(digits.startsWith("967")&&digits.length===12)digits=digits.slice(3);
  if(digits.startsWith("0")&&digits.length===10)digits=digits.slice(1);
