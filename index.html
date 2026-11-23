@@ -5422,7 +5422,7 @@ async function requestCloudAssistant(q,context){
      referenceSource:typeof data.source==="string"?data.source:""
     };
    }
-   const canFallback=response.status===404||response.status===502||response.status===503;
+   const canFallback=response.status===404||response.status===502||response.status===503||data.error==="cloud_ai_not_configured";
    if(!canFallback)break;
   }catch(error){
    // Try the alternate server-side endpoint before using the local catalogue.
