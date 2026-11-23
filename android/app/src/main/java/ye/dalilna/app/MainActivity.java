@@ -357,7 +357,7 @@ public class MainActivity extends Activity {
         if (adView == null || isFinishing()) return;
         int widthDp = (int) (getResources().getDisplayMetrics().widthPixels
                 / getResources().getDisplayMetrics().density);
-        AdSize adaptiveSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, widthDp);
+        AdSize adaptiveSize = AdSize.getLargeAnchoredAdaptiveBannerAdSize(this, widthDp);
         if (adaptiveSize == null) return;
         adView.setAdSize(adaptiveSize);
         adView.setAdListener(new AdListener() {
