@@ -8,7 +8,7 @@
     "queries": {
       "الزوقري": {
         "matches": 2,
-        "searchMs": 1.725,
+        "searchMs": 1.716,
         "within50ms": true,
         "examples": [
           {
@@ -27,7 +27,7 @@
       },
       "الناهي": {
         "matches": 1,
-        "searchMs": 1.476,
+        "searchMs": 1.41,
         "within50ms": true,
         "examples": [
           {
@@ -40,7 +40,7 @@
       },
       "صيدلية": {
         "matches": 697,
-        "searchMs": 1.462,
+        "searchMs": 1.244,
         "within50ms": true,
         "examples": [
           {
@@ -91,11 +91,11 @@
     }
   },
   "live": {
-    "generatedAt": "2026-11-23T07:33:15.682Z",
+    "generatedAt": "2026-11-23T07:38:51.722Z",
     "health": {
       "ok": true,
       "version": "3.0.0",
-      "ms": 304,
+      "ms": 287,
       "status": 200
     },
     "marketplace": {
@@ -106,14 +106,14 @@
       "withImages": 0,
       "withPrice": 0,
       "withContact": 0,
-      "ms": 317,
+      "ms": 176,
       "status": 200,
       "error": ""
     },
     "pharmacyLiveSearch": {
       "ok": false,
       "status": 503,
-      "ms": 3449,
+      "ms": 4108,
       "respondedWithin3Seconds": false,
       "successfulWithin3Seconds": false,
       "results": 0,
@@ -125,12 +125,12 @@
       "configured": true,
       "provider": "Gemini",
       "model": "gemini-3.8-flash",
-      "ok": false,
-      "status": 429,
-      "ms": 239,
-      "answerChars": 0,
-      "mode": "",
-      "error": "provider_rate_limit",
+      "ok": true,
+      "status": 200,
+      "ms": 1205,
+      "answerChars": 517,
+      "mode": "gemini",
+      "error": "",
       "providerStatus": 0,
       "providerCode": ""
     },
@@ -138,7 +138,7 @@
       "ok": true,
       "version": "3.0.0",
       "signingMode": "persistent",
-      "androidVersionCode": 3021101,
+      "androidVersionCode": 3021301,
       "v3SavedHub": true,
       "v3FlyAnimation": true,
       "v3JobSearch": true,
@@ -159,9 +159,9 @@
       "productWhatsApp": true,
       "androidRelease": {
         "ok": true,
-        "versionCode": 3021101,
-        "size": 7517567,
-        "digest": "sha256:99130c478208ba46a3494576bb13cf2c71200287d9e8daac0d6240687dadf329",
+        "versionCode": 3021301,
+        "size": 7517591,
+        "digest": "sha256:f9d56cf0114119c49de14b6e2c4bd8a3e5516e2e544a24cd67817bf8391e8cda",
         "downloadUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.0.0/app-debug.apk"
       }
     }
