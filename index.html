@@ -4465,6 +4465,7 @@ function liveDirectoryCardHTML(item){
  return '<article class="live-directory-card"><div class="live-directory-card-head"><h3>'+esc(record.name||(english?"Unnamed place":"مكان بدون اسم"))+'</h3><div class="live-directory-badges"><span class="tag">'+esc(category)+'</span>'+statusBadge+'</div></div>'+
  (location?'<p>'+(english?"Governorate and district: ":"المحافظة والمديرية: ")+'<bdi dir="auto">'+esc(location)+'</bdi></p>':"")+
  (record.address?'<p>'+(english?"Address: ":"العنوان: ")+'<bdi dir="auto">'+esc(record.address)+'</bdi></p>':"")+
+ (record.openingHours?'<p>'+(english?"Opening hours: ":"ساعات العمل: ")+esc(record.openingHours)+'</p>':"")+
  (phone?'<p>'+(english?"Phone: ":"الهاتف: ")+'<bdi dir="ltr" class="ltr-value">'+esc(phone)+'</bdi></p>':"")+contact+map+share+
  "</article>";
 }
@@ -4487,7 +4488,7 @@ function geoapifyDirectoryCardHTML(item){
 }
 function liveApprovedListingCardHTML(item){
  const row=item&&typeof item==="object"?item:{},place=[row.area,row.district,row.governorate].filter(Boolean).join(" · ");
-  const image=/^data:image\\/(?:jpeg|png|webp);base64,/.test(String(row.imageData||""))&&row.imageData.length<=400000?'<img class="shared-listing-image" src="'+esc(row.imageData)+'" alt="'+esc(row.title||"صورة الإعلان")+'" loading="lazy">':"";
+  const image=/^data:image\/(?:jpeg|png|webp);base64,/.test(String(row.imageData||""))&&row.imageData.length<=400000?'<img class="shared-listing-image" src="'+esc(row.imageData)+'" alt="'+esc(row.title||"صورة الإعلان")+'" loading="lazy">':"";
  const phone=String(row.phone||"").trim(),phoneInfo=yemenPhoneDetails(phone),tel=phone.replace(/[^+\d]/g,"");
  const contact=phone?'<p class="shared-listing-phone">رقم التواصل: <bdi dir="ltr" class="ltr-value">'+esc(phone)+'</bdi> <small>غير مؤكد ميدانياً</small></p><div class="shared-listing-actions">'+(phoneInfo.isMobile?'<a href="'+esc(yemenWhatsAppUrl(phone,"مرحباً، وجدت محلكم في تطبيق دليلنا وأريد الاستفسار عن الإعلان."))+'" target="_blank" rel="noopener noreferrer">واتساب</a>':"")+'<a href="tel:'+esc(tel)+'">اتصال</a></div>':"";
  const lat=Number(row.latitude??row.lat),lon=Number(row.longitude??row.lon??row.lng);
@@ -4867,7 +4868,7 @@ async function ensureLightSearchIndex(){
    return {
     id:String(row[0]||""),name,category,categories:[category],governorate:gov,district,
     phone:String(row[5]||""),lat,lon,source:"OpenStreetMap / Overture Maps",
-    mapsUrl:Number.isFinite(lat)&&Number.isFinite(lon)?"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(lat+","+lon):""
+    mapsUrl:Number.isFinite(lat)&&Number.isFinite(lon)?"https://www.openstreetmap.org/?mlat="+lat+"&mlon="+lon+"#map=18/"+lat+"/"+lon:""
    };
   }).filter(Boolean);
   if(items.length!==Number(envelope.recordCount)||items.length===0)throw new Error("عدد سجلات فهرس البحث لا يطابق بيانات الملف.");
