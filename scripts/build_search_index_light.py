@@ -2,7 +2,7 @@
 """Build a small, compressed, full-Yemen search index from the regional catalogues.
 
 The decompressed logical records contain only:
-id, name, category, gov, district, phone, lat and lng.
+id, name, category, gov, district, phone, lat, lng and opening hours.
 
 The on-disk JSON is a gzip/base64 envelope with dictionary-coded repeated values.
 This keeps all 22 governorates in one download while preserving the exact fields.
@@ -92,6 +92,7 @@ def main() -> None:
             lat = coordinate("lat")
             lng = coordinate("lon")
             phone = str(item.get("phone") or "").strip()
+            opening_hours = str(item.get("openingHours") or item.get("opening_hours") or item.get("hours") or "").strip()[:120]
             source_id = str(item.get("id") or "").strip()
             if not source_id:
                 source_id = "|".join([
@@ -115,12 +116,12 @@ def main() -> None:
                 compact = compact_id(identity + "|duplicate:" + str(duplicate_number))
             seen_ids.add(compact)
             rows.append([
-                compact, name, cidx, gidx, didx, phone, lat, lng
+                compact, name, cidx, gidx, didx, phone, lat, lng, opening_hours
             ])
 
     rows.sort(key=lambda row: (row[3], row[2], row[1].casefold(), row[0]))
     logical_payload = {
-        "v": 1,
+        "v": 2,
         "c": categories,
         "g": gov_names,
         "d": districts,
@@ -129,7 +130,7 @@ def main() -> None:
     raw = json.dumps(logical_payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     compressed = gzip.compress(raw, compresslevel=9, mtime=0)
     envelope = {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "encoding": "gzip+base64",
         "recordCount": len(rows),
         "rawBytes": len(raw),
