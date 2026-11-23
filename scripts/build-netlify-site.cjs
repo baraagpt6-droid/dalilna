@@ -71,6 +71,9 @@ function run() {
       throw new Error("Netlify output is missing " + relativePath);
     }
   }
+  if (process.env.NETLIFY === "true" && process.env.DALILNA_NETLIFY_BADGE_GUARD !== "true") {
+    throw new Error("Set DALILNA_NETLIFY_BADGE_GUARD=true in netlify.toml before production build.");
+  }
   const publishedHtml = fs.readFileSync(path.join(dist, "index.html"), "utf8");
   if (!publishedHtml.includes('id="dalilna-netlify-badge-guard"') ||
       !publishedHtml.includes('id="dalilna-netlify-badge-guard-script"')) {
