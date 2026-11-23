@@ -109,7 +109,7 @@ test("exchange rates use fresh public quotes and do not display saved device pri
 test("Android 2.7.1 updates app version and clears only the WebView HTTP cache",()=>{
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
  const activity=fs.readFileSync("android/app/src/main/java/ye/dalilna/app/MainActivity.java","utf8");
- assert.ok(gradle.includes("versionCode = 270"));
+ assert.ok(gradle.includes("versionCode = 271"));
  assert.ok(gradle.includes('versionName = "2.7.1"'));
  assert.ok(activity.includes("webView.clearCache(true)"));
  assert.ok(activity.includes("installed_version_code"));
@@ -165,7 +165,7 @@ test("Android 2.7.1 cache and version metadata remain synchronized",()=>{
  assert.ok(sw.includes('CACHE_PREFIX + "v2.7.1"'));
  assert.ok(html.includes('content="2.7.1"'));
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
- assert.ok(gradle.includes("versionCode = 270"));
+ assert.ok(gradle.includes("versionCode = 271"));
  assert.ok(gradle.includes('versionName = "2.7.1"'));
 });
 
