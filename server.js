@@ -723,12 +723,14 @@ async function fetchOverpass(bbox,category,label,deadlineAt=Date.now()+2700){
   ];
   let lastError=null;
   let hadValidEmpty=false;
-  for(const provider of endpoints){
+  for(let providerIndex=0;providerIndex<endpoints.length;providerIndex++){
+    const provider=endpoints[providerIndex];
     try{await waitForOverpassSlot(deadlineAt);}catch(error){lastError=error;break;}
     const remaining=deadlineAt-Date.now();
-    if(remaining<=120)break;
+    const attemptTimeoutMs=overpassAttemptTimeout(remaining,providerIndex,endpoints.length);
+    if(attemptTimeoutMs<=120)break;
     lastOverpassAt=Date.now();
-    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(provider.timeoutMs,Math.max(450,remaining-1100),remaining)),startedAt=Date.now();
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(provider.timeoutMs,attemptTimeoutMs)),startedAt=Date.now();
     try{
       const response=await fetch(provider.url,{
         method:"POST",
@@ -892,6 +894,19 @@ async function searchYemenNominatim(query, category="all",deadlineAt=Date.now()+
   }finally{clearTimeout(timer);}
 }
 
+function overpassAttemptTimeout(remainingMs,providerIndex,providerCount,intervalMs=1100){
+  const remaining=Math.max(0,Number(remainingMs)||0);
+  const index=Math.max(0,Math.floor(Number(providerIndex)||0));
+  const count=Math.max(index+1,Math.floor(Number(providerCount)||1));
+  if(!remaining)return 0;
+  // The first provider gets one start interval. Later providers reserve the
+  // next provider-start intervals, leaving the final provider the true tail.
+  const budget=index===0
+    ?Math.min(intervalMs,remaining)
+    :Math.max(0,remaining-Math.max(0,count-index-1)*intervalMs);
+  return Math.min(3000,remaining,budget);
+}
+
 async function searchYemenOverpass(query,category="all",deadlineAt=Date.now()+2700){
   const normalized=normalizeCategorySearch(query);
   const selected=FILTERS[category]?category:(inferCategoryFromQuery(query)||"all");
@@ -906,12 +921,14 @@ async function searchYemenOverpass(query,category="all",deadlineAt=Date.now()+27
     {name:"VK Maps",url:"https://maps.mail.ru/osm/tools/overpass/api/interpreter",timeoutMs:3000}
   ];
   let lastError=null,hadValidEmpty=false;
-  for(const provider of endpoints){
+  for(let providerIndex=0;providerIndex<endpoints.length;providerIndex++){
+    const provider=endpoints[providerIndex];
     try{await waitForOverpassSlot(deadlineAt);}catch(error){lastError=error;break;}
     const remaining=deadlineAt-Date.now();
-    if(remaining<=120)break;
+    const attemptTimeoutMs=overpassAttemptTimeout(remaining,providerIndex,endpoints.length);
+    if(attemptTimeoutMs<=120)break;
     lastOverpassAt=Date.now();
-    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(provider.timeoutMs,Math.max(450,remaining-1100),remaining)),startedAt=Date.now();
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(provider.timeoutMs,attemptTimeoutMs)),startedAt=Date.now();
     try{
       const response=await fetch(provider.url,{method:"POST",signal:controller.signal,
         headers:{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8","Accept":"application/json",
@@ -1246,4 +1263,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, buildYemenOverpassQuery, searchYemenOverpass, inferCategoryFromQuery, categoryRuleMatches, categoriesForTags, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyRectFilter, geoapifyCategoryLabel, createIntervalGate, searchCommonsPhotos, server };
+module.exports = { buildOverpassQuery, buildYemenOverpassQuery, searchYemenOverpass, inferCategoryFromQuery, categoryRuleMatches, categoriesForTags, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyRectFilter, geoapifyCategoryLabel, createIntervalGate, overpassAttemptTimeout, searchCommonsPhotos, server };
