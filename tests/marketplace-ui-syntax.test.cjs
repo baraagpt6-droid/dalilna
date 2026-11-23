@@ -57,9 +57,9 @@ test("job cards only render apply buttons from approved official provider hosts"
 
 test("PWA version metadata and asset cache tags are 3.0.0",()=>{
  assert.ok(html.includes('content="3.0.0"'));
- assert.ok(html.includes('features-2.1.css?v=3.0.0'));
+ assert.ok(html.includes('features-2.1.css?v=3.0.1'));
  assert.ok(html.includes('features-2.1.js?v=3.0.0'));
- assert.ok(sw.includes('CACHE_PREFIX + "v3.0.0"'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v3.0.1"'));
  assert.ok(sw.includes('"./market_items.json"'));
 });
 test("main directory search loads regional data progressively and persists small chunks",()=>{
@@ -166,7 +166,7 @@ test("merchant feed SQL maps latitude, longitude and source metadata to distinct
  assert.ok(feed.includes("completeSnapshot&&skipped===0"));
 });
 test("Android 3.0.0 cache and version metadata remain synchronized",()=>{
- assert.ok(sw.includes('CACHE_PREFIX + "v3.0.0"'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v3.0.1"'));
  assert.ok(html.includes('content="3.0.0"'));
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
  assert.ok(gradle.includes("versionCode = 3_000_000 + (workflowRunNumber * 100)"));
@@ -206,10 +206,10 @@ test("regional catalogue manifest loads at first visit without warming all gover
  assert.ok(!html.includes('loadRegionalCatalogManifest(false).then(()=>warmUnifiedSearchIndex(false))'));
 });
 test("service worker refreshes regional data and critical CSS/JS from the network",()=>{
- assert.ok(sw.includes('CACHE_PREFIX + "v3.0.0"'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v3.0.1"'));
  assert.ok(sw.includes('url.pathname.includes("/regional-catalog/")'));
  assert.ok(sw.includes('fetch(request, { cache: "no-store" })'));
- assert.ok(sw.includes('features-2.1.css?v=3.0.0'));
+ assert.ok(sw.includes('features-2.1.css?v=3.0.1'));
 });
 
 test("home results stay mounted in a stable slot and can move to the top search panel",()=>{for(const token of ['id="homeListSlot"','id="latestT"','id="list"','id="searchResultsTop"','id="searchResultList"','id="clearSearch"'])assert.ok(html.includes(token),token);});
