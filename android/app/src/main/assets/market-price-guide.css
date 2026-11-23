@@ -1,0 +1,35 @@
+
+/* Yemen reference-price guide */
+.price-guide-panel{display:grid;gap:11px;margin:14px 0;padding:13px;border:1px solid var(--line);border-radius:15px;background:var(--card);box-shadow:var(--shadow)}
+.price-guide-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.price-guide-head h3{font-size:17px}
+.price-guide-note,.price-guide-fx-note,.price-guide-footer{margin:3px 0;color:var(--mute);font-size:10.5px;line-height:1.7}
+.price-guide-live-tag{flex:0 0 auto;padding:4px 9px;border-radius:999px;background:rgba(56,182,166,.12);border:1px solid rgba(56,182,166,.3);font-size:10px;color:var(--acc)}
+.price-guide-tabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0;scrollbar-width:none}
+.price-guide-tabs button{flex:0 0 auto;min-height:34px;padding:5px 11px;border:1px solid var(--line);border-radius:999px;background:var(--chip);color:var(--ink);font:inherit;font-size:11px}
+.price-guide-tabs button.active{background:var(--acc);color:#111;border-color:var(--acc);font-weight:800}
+.price-guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.price-guide-card{display:grid;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--bg);min-width:0}
+.price-guide-image{width:100%;height:116px;object-fit:contain;background:linear-gradient(145deg,rgba(56,182,166,.07),rgba(232,160,37,.05));padding:8px}
+.price-guide-card-body{display:grid;gap:6px;padding:9px}
+.price-guide-card h4{margin:0;font-size:12px;line-height:1.55}
+.price-guide-subtitle{margin:0;color:var(--mute);font-size:10px}
+.price-guide-source{color:var(--mute);font-size:9px;line-height:1.5}
+.price-guide-prices{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.price-guide-price{display:grid;gap:2px;padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+.price-guide-price small{font-size:9px;color:var(--mute)}
+.price-guide-price b{font-size:11px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.price-guide-foreign,.price-guide-date{margin:0;font-size:9px;color:var(--mute);line-height:1.5}
+.price-guide-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px}
+.price-guide-actions button,.price-guide-source-link{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--chip);color:var(--ink);font:inherit;font-size:9px;text-decoration:none}
+.price-guide-actions button.add{background:var(--acc);color:#111;border-color:var(--acc);font-weight:800}
+.price-guide-source-link{color:var(--acc)}
+.dalilna-update-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative;margin:8px 12px;padding:10px 12px;border:1px solid var(--gold);border-radius:12px;background:var(--card2);color:var(--ink);font-size:12px}
+.dalilna-update-banner button{min-height:34px;padding:5px 10px;border:0;border-radius:8px;background:var(--gold);color:#17120d;font:inherit;font-weight:800}
+@media(max-width:370px){.price-guide-grid{grid-template-columns:1fr}.price-guide-image{height:140px}}
+
+.assistant-result-price{margin:5px 0;padding:7px 8px;border-radius:8px;background:rgba(56,182,166,.10);border:1px solid rgba(56,182,166,.22);font-size:10px;line-height:1.6;color:var(--ink);font-weight:700}
+
+.price-guide-price small{white-space:normal;line-height:1.5}.price-guide-foreign{direction:rtl;text-align:start}
+
+.shared-listing-seller-badge{justify-self:start;display:inline-flex;align-items:center;min-height:26px;padding:4px 9px;border-radius:999px;background:rgba(56,182,166,.13);border:1px solid var(--acc);color:var(--acc);font-size:10px;font-weight:800}.seller-advert-card{border-color:rgba(56,182,166,.42)}
