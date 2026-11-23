@@ -14,7 +14,7 @@ test("the local directory retains attribution and explains incomplete coverage",
 });
 test("regional profiles open local directory category shortcuts",()=>{
  for(const token of ["data-region-category=","تصفح المحلات والخدمات في هذه المنطقة","مكاتب عقارية","ساعات","جوالات واتصالات","طاقة شمسية","حرف وصيانة"])assert.ok(html.includes(token),token);
- assert.ok(!html.includes("google.com/maps/search"));
+ assert.ok(html.includes("assistantWhatsAppShareUrl"));
  assert.ok(!html.includes("regionMapSearch("));
 });
 test("AI business lookup uses local data, hybrid map search and shared adverts",()=>{
@@ -44,13 +44,14 @@ test("static English labels and bilingual regional search are wired",()=>{
  for(const token of ["const STATIC_UI_EN=","function applyStaticBilingualLabels()","document.documentElement.dir=curLang===","const GOVS_EN=","function governorateLabel(name)","Search Yemen's shops and services"])
   assert.ok(html.includes(token),token);
 });
-test("assistant cards expose call and OpenStreetMap navigation without Google Maps",()=>{
+test("assistant cards expose call, WhatsApp contact, map and share links",()=>{
  assert.ok(html.includes("function renderAssistantResult(container,result)"));
  assert.ok(html.includes('call.href="tel:"'));
  assert.ok(html.includes("https://www.openstreetmap.org/search?query="));
- assert.ok(!html.includes("google.com/maps/search"));
+ assert.ok(html.includes("assistantWhatsAppShareUrl"));
+ assert.ok(html.includes("https://www.google.com/maps/search/?api=1&query="));
+ assert.ok(html.includes("مشاركة واتساب"));
 });
-
 test("jobs, products and property adverts remain in the shared marketplace",()=>{
  for(const token of ["/api/marketplace/listings","إعلانات معتمدة","أرض","شقة","منزل","للإيجار"])assert.ok(html.includes(token),token);
 });
@@ -162,4 +163,24 @@ test("manual price refresh is removed while automatic rate polling remains",()=>
  assert.ok(!html.includes('id="fxRefresh"'));
  assert.ok(!html.includes('$("#fxRefresh")?.addEventListener'));
  assert.ok(html.includes('setInterval(()=>{if(!document.hidden)loadLiveFx(false);},60000)'));
+});
+
+test("full-Yemen light index loads at startup and drives local directory search",()=>{
+ for(const token of ["search_index_light.json?v=2.8.0","async function ensureLightSearchIndex()","function searchLightIndex(index,query,context,category,productType)","void ensureLightSearchIndex()","mode:\"full-yemen-light\""])assert.ok(html.includes(token),token);
+ assert.ok(html.includes("searchRegionalCatalogProgressive"));
+ assert.ok(html.includes("responseData.suggestions=result.suggestions"));
+ assert.ok(html.includes("data-search-suggestion"));
+});
+test("directory cards use compact source badges and WhatsApp share links",()=>{
+ assert.ok(html.includes("verification-badge verified"));
+ assert.ok(html.includes("دليل مفتوح"));
+ assert.ok(html.includes("https://wa.me/?text="));
+ assert.ok(!html.includes("لم يتم التحقق منها ميدانياً من فريق دليلنا"));
+ assert.ok(!html.includes("Open-map records are not field-verified by Dalilna"));
+});
+test("assistant renders local results before cloud follow-up and shows typing state",()=>{
+ assert.ok(html.includes("async function askAssistant(q,onImmediate)"));
+ assert.ok(html.includes('pending.textContent=curLang==="en"?"Typing…":"يكتب الآن..."'));
+ assert.ok(html.includes("fastResult=>"));
+ assert.ok(html.includes("cleanAssistantAnswer(data.answer)"));
 });

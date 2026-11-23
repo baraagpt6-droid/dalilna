@@ -1,4 +1,4 @@
-name: Dalilna 2.7.0 quality checks
+name: Dalilna 2.8.0 quality checks
 
 on:
   pull_request:
@@ -76,7 +76,10 @@ jobs:
         run: node --check server.js
 
       - name: Compile data scripts
-        run: python -m py_compile scripts/build_regional_catalog.py scripts/fuse_regional_catalog.py scripts/test_regional_catalog.py scripts/build_search_index_light.py
+        run: python -m py_compile scripts/build_regional_catalog.py scripts/fuse_regional_catalog.py scripts/test_regional_catalog.py scripts/build_search_index_light.py tests/test_search_index_light.py
+
+      - name: Test compressed national search-index generator
+        run: python tests/test_search_index_light.py
 
       - name: Run JavaScript tests
         run: npm test

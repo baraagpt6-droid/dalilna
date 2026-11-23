@@ -505,12 +505,54 @@
         "حداد",
         "craft",
         "repair",
-        "plumber"
+        "plumber",
+        "فني كهرباء",
+        "فني كهربائي",
+        "كهربائي سيارات",
+        "ميكانيكي",
+        "ميكانيكا",
+        "ونش",
+        "سطحة",
+        "رافعة",
+        "سحب سيارات",
+        "فني طاقة شمسية",
+        "صيانة طاقة شمسية",
+        "تركيب منظومات شمسية",
+        "electrician",
+        "mechanic",
+        "tow truck",
+        "towing service",
+        "solar technician",
+        "auto repair"
       ],
       "osmTags": [
         {
           "key": "craft",
           "value": "*"
+        },
+        {
+          "key": "shop",
+          "value": "car_repair"
+        },
+        {
+          "key": "shop",
+          "value": "tyres"
+        },
+        {
+          "key": "service",
+          "value": "vehicle_repair"
+        },
+        {
+          "key": "service",
+          "value": "plumbing"
+        },
+        {
+          "key": "service",
+          "value": "electrician"
+        },
+        {
+          "key": "service",
+          "value": "towing"
         }
       ]
     },
