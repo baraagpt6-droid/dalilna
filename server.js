@@ -136,6 +136,112 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+let localYemenIndexCache = null;
+function loadLocalYemenIndex() {
+  if (localYemenIndexCache) return localYemenIndexCache;
+  try {
+    const fs = require("node:fs");
+    const path = require("node:path");
+    const zlib = require("node:zlib");
+    const file = path.join(__dirname, "regional-catalog", "search_index_light.json");
+    const envelope = JSON.parse(fs.readFileSync(file, "utf8"));
+    if (envelope.schemaVersion !== 2 || envelope.encoding !== "gzip+base64" || !envelope.data) return null;
+    const payload = JSON.parse(zlib.gunzipSync(Buffer.from(envelope.data, "base64")).toString("utf8"));
+    if (!Array.isArray(payload.i) || !Array.isArray(payload.c) || !Array.isArray(payload.g) || !Array.isArray(payload.d)) return null;
+    localYemenIndexCache = payload;
+    return payload;
+  } catch (error) {
+    console.warn(JSON.stringify({event:"places.local_catalog.unavailable",code:cleanText(error.code||error.name,60)}));
+    return null;
+  }
+}
+
+function normalizeLocalCatalogText(value) {
+  return normalizeText(value).replace(/ة/g,"ه").replace(/ى/g,"ي")
+    .split(/\\s+/).filter(Boolean)
+    .map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
+}
+
+function searchLocalYemenCatalog({query="",category="all",place="",bbox=null,lat=null,lon=null,radius=7000}={}) {
+  const payload=loadLocalYemenIndex();
+  if(!payload)return null;
+  const wantedCategory=CATEGORY_ALIASES[category]||category||"all";
+  const queryText=normalizeLocalCatalogText(query);
+  const queryTokens=queryText.split(" ").filter(token=>token.length>1);
+  const queryCategory=inferCategoryFromQuery(query);
+  const categoryOnlyQuery=queryCategory&&queryCategory===(CATEGORY_ALIASES[wantedCategory]||wantedCategory);
+  const areaText=String(place||"").split(/[،,]/)
+    .map(part=>normalizeLocalCatalogText(String(part).replace(/(?:محافظة|مديرية|عزلة|منطقة|مدينة|اليمن|yemen|governorate|district)/giu," ")))
+    .filter(Boolean);
+  const hasCoords=Number.isFinite(Number(lat))&&Number.isFinite(Number(lon))&&lat!==null&&lon!==null;
+  const nearRadius=Math.min(15000,Math.max(500,Number(radius)||7000));
+  const bounds=bbox&&["south","north","west","east"].every(key=>Number.isFinite(Number(bbox[key])))?bbox:null;
+  const items=[];
+  for(const row of payload.i) {
+    if(!Array.isArray(row)||row.length<9)continue;
+    const rowCategory=String(payload.c[row[2]]||"other");
+    if(wantedCategory!=="all"&&rowCategory!==wantedCategory)continue;
+    const governorate=String(payload.g[row[3]]||"");
+    const districtEntry=payload.d[row[4]];
+    const district=Array.isArray(districtEntry)?String(districtEntry[0]||""):String(districtEntry||"");
+    const normalizedGov=normalizeLocalCatalogText(governorate);
+    const normalizedDistrict=normalizeLocalCatalogText(district);
+    if(areaText.length&&!areaText.every(part=>normalizedGov.includes(part)||normalizedDistrict.includes(part)))continue;
+    const itemLat=row[6]===null||row[6]===undefined?null:Number(row[6])/100000;
+    const itemLon=row[7]===null||row[7]===undefined?null:Number(row[7])/100000;
+    if(bounds) {
+      if(!Number.isFinite(itemLat)||!Number.isFinite(itemLon)||itemLat<Number(bounds.south)||itemLat>Number(bounds.north)||itemLon<Number(bounds.west)||itemLon>Number(bounds.east))continue;
+    } else if(hasCoords) {
+      if(!Number.isFinite(itemLat)||!Number.isFinite(itemLon))continue;
+      const dLat=(itemLat-Number(lat))*111000;
+      const dLon=(itemLon-Number(lon))*111000*Math.cos(Number(lat)*Math.PI/180);
+      if(Math.hypot(dLat,dLon)>nearRadius)continue;
+    }
+    const name=String(row[1]||"");
+    const searchText=normalizeLocalCatalogText([name,governorate,district,row[8]||""].join(" "));
+    if(queryTokens.length&&!categoryOnlyQuery&&!queryTokens.some(token=>searchText.includes(token)))continue;
+    const address=[district,governorate,"اليمن"].filter(Boolean).join("، ");
+    const validCoordinates=Number.isFinite(itemLat)&&Number.isFinite(itemLon);
+    const mapsUrl=validCoordinates
+      ?"https://www.openstreetmap.org/?mlat="+itemLat+"&mlon="+itemLon+"#map=18/"+itemLat+"/"+itemLon
+      :"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent([name,address].filter(Boolean).join(" "));
+    items.push({
+      id:"yemen-catalog-"+String(row[0]),
+      name,
+      category:rowCategory,
+      categories:[rowCategory],
+      address,
+      governorate,
+      district,
+      phone:cleanText(row[5]||"",60),
+      openingHours:cleanText(row[8]||"",120),
+      lat:validCoordinates?itemLat:null,
+      lon:validCoordinates?itemLon:null,
+      mapsUrl,
+      source:"فهرس اليمن الوطني المحلي",
+      sourceUrl:"https://www.openstreetmap.org/copyright",
+      verificationStatus:"not_field_verified_by_dalilna",
+      localCatalogFallback:true
+    });
+    if(items.length>=80)break;
+  }
+  const result={
+    category:wantedCategory,
+    items,
+    count:items.length,
+    source:"فهرس اليمن الوطني المحلي (OSM + Overture)",
+    place:cleanText(place||"اليمن",180),
+    attribution:"OpenStreetMap contributors وOverture Maps",
+    sourceUrl:"https://www.openstreetmap.org/copyright",
+    localCatalogFallback:true,
+    fetchedAt:new Date().toISOString(),
+    cached:false,
+    note:"هذه نتائج من الفهرس الوطني المحلي. أرقام التواصل وساعات العمل من السجل المصدر ولم يتم التحقق منها ميدانياً."
+  };
+  return result;
+}
+
+
 function touchCache(cache, key, value, ttl = CACHE_TTL_MS) {
   cache.delete(key);
   cache.set(key, { value, expiresAt: Date.now() + ttl });
@@ -1068,6 +1174,11 @@ async function searchPlaces(params) {
     usedPlace = fallbackPlace;
   }
   if (!area) {
+    const local=searchLocalYemenCatalog({query,category,place:usedPlace,lat:hasCoordinates?lat:null,lon:hasCoordinates?lon:null,radius});
+    if(local&&local.count){
+      console.info(JSON.stringify({event:"places.local_catalog.fallback",count:local.count,category,reason:"geocoder_unavailable"}));
+      return local;
+    }
     const error = new Error("لم نعثر على حدود هذه المديرية في بيانات الخريطة. اختر المحافظة أو افتح البحث في OpenStreetMap.");
     error.statusCode = 404;
     throw error;
@@ -1083,7 +1194,19 @@ async function searchPlaces(params) {
     const copy = {...cachedOsm,fetchedAt:new Date().toISOString(),cached:true};
     return filterByQuery(copy,query,category);
   }
-  const items = await fetchOverpass(area.bbox, category, area.label || usedPlace,deadlineAt);
+  let items;
+  try {
+    items = await fetchOverpass(area.bbox, category, area.label || usedPlace,deadlineAt);
+  } catch(error) {
+    const local=searchLocalYemenCatalog({query,category,place:usedPlace,bbox:area.bbox,lat:hasCoordinates?lat:null,lon:hasCoordinates?lon:null,radius});
+    if(local&&local.count){
+      console.info(JSON.stringify({event:"places.local_catalog.fallback",count:local.count,category,reason:"overpass_unavailable",upstreamStatus:Number(error.statusCode)||503}));
+      const localKey="local-catalog:"+cacheKey;
+      touchCache(resultCache,localKey,local,3*60*1000);
+      return local;
+    }
+    throw error;
+  }
   const result = {
     category,items,count:items.length,source:"OpenStreetMap",
     attribution:"© OpenStreetMap contributors",
@@ -1297,4 +1420,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, buildYemenOverpassQuery, searchYemenOverpass, inferCategoryFromQuery, categoryRuleMatches, categoriesForTags, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyRectFilter, geoapifyCategoryLabel, createIntervalGate, overpassAttemptTimeout, searchCommonsPhotos, server };
+module.exports = { buildOverpassQuery, buildYemenOverpassQuery, searchYemenOverpass, inferCategoryFromQuery, categoryRuleMatches, categoriesForTags, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyRectFilter, geoapifyCategoryLabel, createIntervalGate, overpassAttemptTimeout, searchCommonsPhotos, searchLocalYemenCatalog, loadLocalYemenIndex, server };

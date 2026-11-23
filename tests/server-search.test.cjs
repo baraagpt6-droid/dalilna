@@ -122,3 +122,14 @@ test("a busy provider slot is skipped without waiting for its full interval",asy
  await assert.rejects(()=>gate(Date.now()+1500,250),error=>error.code==="OVERPASS_SLOT_BUSY");
  assert.ok(Date.now()-started<100);
 });
+
+test("local Yemen index provides Ibb pharmacy results when map mirrors are unavailable",()=>{
+ const result=searchLocalYemenCatalog({query:"صيدلية",category:"pharmacy",place:"محافظة إب"});
+ assert.ok(result,"national local index must load");
+ assert.equal(result.localCatalogFallback,true);
+ assert.ok(result.count>0);
+ assert.ok(result.items.every(item=>item.category==="pharmacy"));
+ assert.ok(result.items.every(item=>item.governorate==="إب"));
+ assert.ok(result.items.every(item=>item.verificationStatus==="not_field_verified_by_dalilna"));
+ assert.ok(result.items.every(item=>item.source==="فهرس اليمن الوطني المحلي"));
+});
