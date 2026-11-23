@@ -4,7 +4,7 @@
   "generatedAt": "2026-11-23T00:00:00Z",
   "updateFrequencyDays": 7,
   "lastChecked": "2026-11-23",
-  "priceDisclosure": "هذه أسعار مرجعية وليست عروض بيع من دليلنا. تختلف الأسعار حسب المدينة والماركة والحالة والضمان وتوفر المخزون. قيم عدن أو صنعاء المحولة تقديرات صرف وليست تسعيرة محلية مؤكدة.",
+  "priceDisclosure": "الأسعار المنشورة من المتاجر وأدلة الأسعار أسعار مرجعية وليست متوسطاً حكومياً. أسعار السيارات وبعض الإيجارات عينات إعلانات أفراد وليست متوسط السوق. تحويل صنعاء وعدن مبني على سعر صرف منشور في 23 نوفمبر 2026 ولا يمثل عرض تاجر محلي.",
   "exchangeRates": {
     "asOf": "2026-11-23",
     "sourceName": "المشهد اليمني / الخبر المنشور في 23 نوفمبر 2026",
@@ -242,20 +242,15 @@
       "id": "apartment-rent-aden",
       "category": "property",
       "title": "شقة مفروشة للإيجار في عدن",
-      "subtitle": "مثال إعلان في المنصورة · شهري",
+      "subtitle": "تصفح الإعلانات الحالية في عدن؛ تختلف الإيجارات حسب الحي والمساحة والتأثيث",
       "image": "property-apartment.svg",
       "priceUnit": "شهرياً",
-      "pricing": {
-        "currency": "YER",
-        "amount": 225293,
-        "sourceZone": "aden",
-        "basis": "seller_listing_sample"
-      },
-      "sourceName": "OpenSooq · إعلان شقة مفروشة في عدن",
+      "pricing": null,
+      "sourceName": "OpenSooq · إيجارات عدن",
       "sourceUrl": "https://ye.opensooq.com/en/aden/property/property-for-rent",
       "sourceCheckedAt": "2026-11-23",
-      "priceLabel": "سعر طلب في إعلان فردي",
-      "sourceListingDate": "2026-10-27"
+      "priceLabel": "لا يوجد متوسط موثق حتى الآن",
+      "sourceListingDate": ""
     },
     {
       "id": "toyota-camry-2013-sanaa",
@@ -270,49 +265,44 @@
         "sourceZone": "sanaa",
         "basis": "seller_listing_sample"
       },
-      "sourceName": "OpenSooq · عينة إعلان بائع",
-      "sourceUrl": "https://ye.opensooq.com/en/cars/cars-for-sale/toyota/camry",
+      "sourceName": "OpenSooq · إعلان تويوتا كامري 2013 في صنعاء",
+      "sourceUrl": "https://ye.opensooq.com/en/cars/cars-for-sale/toyota/camry/2013",
       "sourceCheckedAt": "2026-11-23",
-      "sourceListingDate": "2026-11-06",
+      "sourceListingDate": "2026-11-23",
       "priceLabel": "سعر طلب في إعلان فردي"
     },
     {
       "id": "motorcycle-150cc-sanaa",
       "category": "vehicles",
-      "title": "دراجة نارية 150cc",
-      "subtitle": "مثال دراجة جديدة في صنعاء · موديل 2026",
+      "title": "دراجة نارية مستعملة",
+      "subtitle": "عينة إعلان حالية في صنعاء · تختلف الماركة والسعة والحالة",
       "image": "motorcycle.svg",
       "priceUnit": "للدراجة",
       "pricing": {
         "currency": "YER",
-        "amount": 310000,
+        "amount": 220000,
         "sourceZone": "sanaa",
         "basis": "seller_listing_sample"
       },
-      "sourceName": "OpenSooq · عينة إعلان بائع",
+      "sourceName": "OpenSooq · عينة إعلان دراجة في صنعاء",
       "sourceUrl": "https://ye.opensooq.com/en/cars/motorcycles",
       "sourceCheckedAt": "2026-11-23",
-      "sourceListingDate": "2026-11-22",
+      "sourceListingDate": "2026-11-23",
       "priceLabel": "سعر طلب في إعلان فردي"
     },
     {
       "id": "toyota-bus-2008-sanaa",
       "category": "vehicles",
       "title": "باص تويوتا 2008",
-      "subtitle": "مثال إعلان في صنعاء · مستعمل",
+      "subtitle": "تختلف القيمة حسب نوع الباص والموديل والحالة",
       "image": "bus.svg",
       "priceUnit": "للباص",
-      "pricing": {
-        "currency": "YER",
-        "amount": 2700000,
-        "sourceZone": "sanaa",
-        "basis": "seller_listing_sample"
-      },
-      "sourceName": "OpenSooq · عينة إعلان بائع",
+      "pricing": null,
+      "sourceName": "تصفح إعلانات الباصات الحالية",
       "sourceUrl": "https://ye.opensooq.com/en/cars/buses",
       "sourceCheckedAt": "2026-11-23",
       "sourceListingDate": "2026-11-23",
-      "priceLabel": "سعر طلب في إعلان فردي"
+      "priceLabel": "لا يوجد متوسط موثق حتى الآن"
     },
     {
       "id": "property-land-shop",
@@ -346,5 +336,6 @@
     "electronics": "https://www.google.com/maps/search/?api=1&query=محلات+جوالات+وإلكترونيات+اليمن",
     "vehicles": "https://ye.opensooq.com/en/cars",
     "property": "https://ye.opensooq.com/en/property"
-  }
+  },
+  "refreshPolicy": "تُراجع أسعار الهواتف والطاقة أسبوعياً آلياً عند توافر سعر واضح في مصدره. لا تُستبدل القيم عند تعذر التحقق. عينات السيارات والإيجارات تُعرض بتاريخ الإعلان وتحتاج مراجعة منفصلة."
 }
