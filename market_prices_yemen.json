@@ -324,11 +324,17 @@
       "subtitle": "Lenovo · Dell · HP · ASUS · السعر يعتمد على المعالج والذاكرة والحالة",
       "image": "laptop.svg",
       "priceUnit": "للجهاز",
-      "pricing": null,
-      "sourceName": "تصفح إعلانات البائعين الحاليّة",
-      "sourceUrl": "https://ye.opensooq.com/en/electronics/laptops",
+      "pricing": {
+        "currency": "YER",
+        "amount": 124662,
+        "sourceZone": "sanaa",
+        "basis": "seller_listing_sample"
+      },
+      "sourceName": "OpenSooq · إعلان Lenovo ThinkPad P15 جديد في صنعاء",
+      "sourceUrl": "https://ye.opensooq.com/en/computers-and-laptops/laptops",
       "sourceCheckedAt": "2026-11-23",
-      "priceLabel": "لا يوجد متوسط موثق حتى الآن"
+      "priceLabel": "سعر طلب في إعلان فردي",
+      "sourceListingDate": "2026-11-23"
     }
   ],
   "categorySearchUrls": {
