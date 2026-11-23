@@ -1,73 +1,171 @@
 {
-  "reportType": "Dalilna v3.0.1 deployment gate audit",
-  "reportVersion": 1,
-  "auditedAt": "2026-11-23T09:58:07Z",
-  "release": {
-    "version": "3.0.1",
-    "commit": "e8e6bba1fb8cafd0a8a1b59d3c8349a8d3f537d3",
-    "officialWebUrl": "https://dalilna-ftny.netlify.app/",
-    "androidVersionCode": 3023101,
-    "androidSigningMode": "persistent",
-    "androidReleaseUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.0.1/app-debug.apk",
-    "androidApk": {
-      "asset": "app-debug.apk",
-      "sizeBytes": 7520531,
-      "sha256": "1cf3dc4d2197d558a44eea7896185eb728fac197dc75ecabf14c609ac5d69ace"
+  "version": "3.0.1",
+  "catalog": {
+    "bytes": 1111246,
+    "recordCount": 24563,
+    "governorates": 22,
+    "schemaVersion": 2,
+    "queries": {
+      "الزوقري": {
+        "matches": 2,
+        "searchMs": 2.224,
+        "within50ms": true,
+        "examples": [
+          {
+            "name": "الزوقري للسفريات والسياحة",
+            "category": "transport",
+            "governorate": "عدن",
+            "district": "المنصوره"
+          },
+          {
+            "name": "الزوقري للسفريات والسياحه وخدمات التوصيل من والى المطارات",
+            "category": "vehicles",
+            "governorate": "إب",
+            "district": "الظهار"
+          }
+        ]
+      },
+      "الناهي": {
+        "matches": 1,
+        "searchMs": 1.551,
+        "within50ms": true,
+        "examples": [
+          {
+            "name": "الناهي للإلكترونيات",
+            "category": "elec",
+            "governorate": "إب",
+            "district": "الظهار"
+          }
+        ]
+      },
+      "صيدلية": {
+        "matches": 697,
+        "searchMs": 1.485,
+        "within50ms": true,
+        "examples": [
+          {
+            "name": "صيدلية",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الحريري",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الحسام",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية العربية",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الهدى",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الأستاذ",
+            "governorate": "عدن",
+            "district": "التواهي"
+          },
+          {
+            "name": "صيدلية الأسرار للأدوية والمستلزمات الطبية",
+            "governorate": "عدن",
+            "district": "المنصوره"
+          },
+          {
+            "name": "صيدلية البحر الأحمر",
+            "governorate": "عدن",
+            "district": "المعلا"
+          }
+        ],
+        "pharmacyCategoryRecords": 821,
+        "namedPharmacyMatches": 706,
+        "open24HoursRecords": 17
+      }
     }
   },
-  "render": {
-    "service": "dalilna-live",
-    "serviceId": "srv-dc0kcsrm8hqs73eq2uvg",
-    "url": "https://dalilna-live.onrender.com",
-    "deployId": "dep-dc20ql56e07s73ekf6q0",
-    "commit": "e8e6bba1fb8cafd0a8a1b59d3c8349a8d3f537d3",
-    "status": "live",
-    "buildStatus": "succeeded",
-    "runtimeStartedAt": "2026-11-23T09:54:49Z",
-    "runtimeVersionLog": "dalilna-yemen@3.0.1 start",
-    "deploymentCompletedAt": "2026-11-23T09:54:53Z"
-  },
-  "checks": {
-    "androidBuildAndPersistentSignature": {
-      "status": "passed",
-      "workflowRunId": 45150981276,
-      "url": "https://github.com/baraagpt6-droid/dalilna/actions/runs/45150981276"
+  "live": {
+    "generatedAt": "2026-11-23T10:08:42.500Z",
+    "health": {
+      "ok": true,
+      "version": "3.0.1",
+      "ms": 264,
+      "status": 200
     },
-    "githubPages": {
-      "status": "passed",
-      "workflowRunId": 45151080222,
-      "url": "https://github.com/baraagpt6-droid/dalilna/actions/runs/45151080222"
+    "marketplace": {
+      "databaseReady": true,
+      "databaseConfigured": true,
+      "approvedOffers": 0,
+      "returned": 0,
+      "withImages": 0,
+      "withPrice": 0,
+      "withContact": 0,
+      "ms": 171,
+      "status": 200,
+      "error": ""
     },
-    "placesMarketplaceAndLiveApi": {
-      "status": "passed",
-      "workflowRunId": 45150981290,
-      "url": "https://github.com/baraagpt6-droid/dalilna/actions/runs/45150981290"
+    "pharmacyLiveSearch": {
+      "ok": true,
+      "status": 200,
+      "ms": 5645,
+      "respondedWithin3Seconds": false,
+      "successfulWithin3Seconds": false,
+      "results": 7,
+      "localCatalogFallback": true,
+      "resultSource": "فهرس اليمن الوطني المحلي (OSM + Overture)",
+      "resultsWithHours": 2,
+      "twentyFourHourResults": 0,
+      "error": ""
     },
-    "renderDeployment": {
-      "status": "passed",
-      "deployId": "dep-dc20ql56e07s73ekf6q0"
+    "assistant": {
+      "configured": true,
+      "provider": "Gemini",
+      "model": "gemini-3.8-flash",
+      "ok": true,
+      "status": 200,
+      "ms": 16004,
+      "answerChars": 508,
+      "mode": "gemini",
+      "error": "",
+      "providerStatus": 0,
+      "providerCode": ""
     },
-    "netlifyProductionRead": {
-      "status": "blocked",
-      "httpStatus": 401,
-      "url": "https://dalilna-ftny.netlify.app/version.json",
-      "details": "The E2E runner received HTTP 401 while fetching the official production version.json. Netlify production visitor access must be made public for anonymous visitors and app clients."
-    },
-    "netlifyActionsDeployment": {
-      "status": "skipped",
-      "workflowRunId": 45150981239,
-      "details": "The optional GitHub Actions Netlify workflow is conditional on repository variable NETLIFY_SITE_ID. The user's direct Netlify Git integration remains separate; its public response returned HTTP 401 during the E2E check."
-    },
-    "endToEnd": {
-      "status": "failed",
-      "workflowRunId": 45150981337,
-      "url": "https://github.com/baraagpt6-droid/dalilna/actions/runs/45150981337",
-      "failure": "Published v3.0.1 Netlify audit failed: version.json?audit=bd5ac2d50d9da300e75b5fbd8485a878e5af32ef HTTP 401"
+    "publicSite": {
+      "ok": true,
+      "version": "3.0.1",
+      "signingMode": "persistent",
+      "androidVersionCode": 3023101,
+      "v3SavedHub": true,
+      "v3FlyAnimation": true,
+      "v3JobSearch": true,
+      "v3JobFeedCount": 76,
+      "assistantJobsLocal": true,
+      "assistantLocalFallback": true,
+      "jobFeedWithSourceLinks": 76,
+      "v3Styles": true,
+      "bytes": 1111246,
+      "schemaVersion": 2,
+      "records": 24563,
+      "pharmacyRecords": 821,
+      "open24Pharmacies": 17,
+      "marketplaceReferenceItems": 0,
+      "pharmacy24Shortcut": true,
+      "craftCategory": true,
+      "directoryWhatsApp": true,
+      "productWhatsApp": true,
+      "androidRelease": {
+        "ok": true,
+        "versionCode": 3023101,
+        "size": 7520531,
+        "digest": "sha256:1cf3dc4d2197d558a44eea7896185eb728fac197dc75ecabf14c609ac5d69ace",
+        "downloadUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.0.1/app-debug.apk"
+      }
     }
-  },
-  "overall": {
-    "status": "blocked",
-    "reason": "Render, APK, GitHub Pages and Places/marketplace checks passed. The official Netlify production site returned HTTP 401, preventing the final public-site and E2E checks from passing.",
-    "requiredAction": "Set Netlify production project visibility to Public, or disable password/team-login protection for production deploys. Keep preview protection enabled if desired, then rerun the E2E workflow."
   }
 }
