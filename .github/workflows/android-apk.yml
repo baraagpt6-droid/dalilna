@@ -113,10 +113,6 @@ jobs:
           VERSION="$(sed -n 's/^[[:space:]]*versionName = "\([^"]*\)".*/\1/p' android/app/build.gradle.kts | head -n 1)"
           VERSION_CODE="$((2900000 + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))"
           if [ "$VERSION" != "2.9.0" ]; then echo "Expected versionName 2.9.0, got $VERSION"; exit 1; fi
-          if [ "$(" + "BUILD_TOOLS/aapt" + " dump badging android/app/build/outputs/apk/debug/app-debug.apk | sed -n "s/.*versionCode='\([0-9]*\)'.*/\1/p" | head -n 1)" != "$VERSION_CODE" ]; then
-            echo "APK versionCode does not match 2900000 + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT."
-            exit 1
-          fi
           SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
           if [ -z "$SDK_ROOT" ] || [ ! -d "$SDK_ROOT/build-tools" ]; then
             echo "Android SDK build-tools were not found."
@@ -124,6 +120,11 @@ jobs:
           fi
           BUILD_TOOLS_VERSION="$(ls -1 "$SDK_ROOT/build-tools" | sort -V | tail -n 1)"
           BUILD_TOOLS="$SDK_ROOT/build-tools/$BUILD_TOOLS_VERSION"
+          ACTUAL_VERSION_CODE="$("$BUILD_TOOLS/aapt" dump badging android/app/build/outputs/apk/debug/app-debug.apk | sed -n "s/.*versionCode='\([0-9]*\)'.*/\1/p" | head -n 1)"
+          if [ "$ACTUAL_VERSION_CODE" != "$VERSION_CODE" ]; then
+            echo "APK versionCode $ACTUAL_VERSION_CODE does not match expected $VERSION_CODE."
+            exit 1
+          fi
           "$BUILD_TOOLS/apksigner" verify --verbose android/app/build/outputs/apk/debug/app-debug.apk
           "$BUILD_TOOLS/apksigner" verify --print-certs android/app/build/outputs/apk/debug/app-debug.apk
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
