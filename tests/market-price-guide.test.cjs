@@ -49,12 +49,12 @@ test("v3.0 app, PWA manifest, Android Gradle and metadata versions match",()=>{
  const manifest=JSON.parse(fs.readFileSync(path.join(root,"manifest.json"),"utf8"));
  const pkg=JSON.parse(fs.readFileSync(path.join(root,"package.json"),"utf8"));
  const gradle=fs.readFileSync(path.join(root,"android/app/build.gradle.kts"),"utf8");
- assert.match(app,/meta name="app-version" content="2\.9\.0"/);
- assert.match(app,/const APP_VERSION="2\.9\.0"/);
+ assert.match(app,/meta name="app-version" content="3.0.0"/);
+ assert.match(app,/const APP_VERSION="3.0.0"/);
  assert.equal(version.version,"3.0.0");
  assert.equal(manifest.version,"3.0.0");
  assert.equal(pkg.version,"3.0.0");
- assert.match(gradle,/versionName = "2\.9\.0"/);
+ assert.match(gradle,/versionName = "3.0.0"/);
 });
 test("OTA worker activates immediately and removes only older Dalilna caches",()=>{
  const sw=fs.readFileSync(path.join(root,"sw.js"),"utf8");

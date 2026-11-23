@@ -21,6 +21,6 @@ test("application package, Android Gradle and VERSION file agree on 3.0.0", () =
   const version = fs.readFileSync(path.join(root, "VERSION"), "utf8").trim();
   assert.equal(packageJson.version, "3.0.0");
   assert.equal(version, "3.0.0");
-  assert.match(gradle, /versionName = "2\.9\.0"/);
+  assert.match(gradle, /versionName = "3.0.0"/);
   assert.match(gradle, /versionCode = 3_000_000 \+ \(workflowRunNumber \* 100\)/);
 });
