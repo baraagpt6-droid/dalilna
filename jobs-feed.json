@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "fetchedAt": "2026-11-23T02:22:44.420Z",
+  "fetchedAt": "2026-11-23T08:00:27.622Z",
   "refreshedBy": "GitHub Actions six-hour jobs refresh",
   "sources": [
     {
@@ -13,7 +13,7 @@
       "name": "YemenHR public channel",
       "url": "https://t.me/s/hr_yemen",
       "status": "ok",
-      "count": 20
+      "count": 19
     },
     {
       "name": "Careers.sa public listings",
@@ -31,6 +31,23 @@
   ],
   "items": [
     {
+      "id": "yemenhr:5059",
+      "title": "Sub-National Protection Cluster Coordinator",
+      "organization": "NRC",
+      "location": "Hodiedah, Yemen",
+      "city": "Hodiedah",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-23T23:59:59.000Z",
+      "deadline": "06 ديسمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/sub-national-protection-cluster-coordinator-nrc-hodiedah-66954698",
+      "applicationUrl": "https://yemenhr.com/jobs/sub-national-protection-cluster-coordinator-nrc-hodiedah-66954698",
+      "sourceUrl": "https://t.me/hr_yemen/5059",
+      "summaryAr": "",
+      "expiresAt": "2026-12-06T23:59:59.000Z"
+    },
+    {
       "id": "careers-sa:operations-manager-%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%B9%D9%85%D8%B1-%D8%A7%D9%84%D9%82%D8%A7%D8%A8%D8%B6%D8%A9-9e1d973d",
       "title": "Operations Manager",
       "organization": "شركة العمر القابضة    شركة العمر القابضة",
@@ -38,14 +55,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-23T02:22:44.420Z",
+      "publishedAt": "2026-11-23T08:00:27.622Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/alomar-holding-company/j/65145B65DE/",
       "applicationUrl": "https://apply.workable.com/alomar-holding-company/j/65145B65DE/",
       "sourceUrl": "https://www.careers.sa/en/jobs/operations-manager-%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%B9%D9%85%D8%B1-%D8%A7%D9%84%D9%82%D8%A7%D8%A8%D8%B6%D8%A9-9e1d973d",
       "eligibility": "Saudi nationals",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-07T02:22:44.420Z"
+      "expiresAt": "2026-12-07T08:00:27.622Z"
     },
     {
       "id": "careers-sa:cybersecurity-pre-sales-senior-engineer-masterworks-e8bd9e03",
@@ -55,14 +72,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-23T02:22:44.420Z",
+      "publishedAt": "2026-11-23T08:00:27.622Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/masterworksco/j/B8DAAAAAA3/",
       "applicationUrl": "https://apply.workable.com/masterworksco/j/B8DAAAAAA3/",
       "sourceUrl": "https://www.careers.sa/en/jobs/cybersecurity-pre-sales-senior-engineer-masterworks-e8bd9e03",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-07T02:22:44.420Z"
+      "expiresAt": "2026-12-07T08:00:27.622Z"
     },
     {
       "id": "careers-sa:senior-manager-permits-and-certification-rd-4-qiddiya-a3afcacc",
@@ -72,14 +89,14 @@
       "city": "Qiddiya City",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-23T02:22:44.420Z",
+      "publishedAt": "2026-11-23T08:00:27.622Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/qiddiya-investment-company-1/j/3866F6F1C0/",
       "applicationUrl": "https://apply.workable.com/qiddiya-investment-company-1/j/3866F6F1C0/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-manager-permits-and-certification-rd-4-qiddiya-a3afcacc",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-07T02:22:44.420Z"
+      "expiresAt": "2026-12-07T08:00:27.622Z"
     },
     {
       "id": "careers-sa:senior-manager-fls-witness-test-engineer-rd-4-qiddiya-7b9737e5",
@@ -89,14 +106,14 @@
       "city": "Qiddiya City",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-23T02:22:44.420Z",
+      "publishedAt": "2026-11-23T08:00:27.622Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/qiddiya-investment-company-1/j/56C0835046/",
       "applicationUrl": "https://apply.workable.com/qiddiya-investment-company-1/j/56C0835046/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-manager-fls-witness-test-engineer-rd-4-qiddiya-7b9737e5",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-07T02:22:44.420Z"
+      "expiresAt": "2026-12-07T08:00:27.622Z"
     },
     {
       "id": "careers-sa:invoice-return-supervisor-ninja-8abc1288",
@@ -106,14 +123,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-23T02:22:44.420Z",
+      "publishedAt": "2026-11-23T08:00:27.622Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/ananinja/j/89559B5CB2/",
       "applicationUrl": "https://apply.workable.com/ananinja/j/89559B5CB2/",
       "sourceUrl": "https://www.careers.sa/en/jobs/invoice-return-supervisor-ninja-8abc1288",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-07T02:22:44.420Z"
+      "expiresAt": "2026-12-07T08:00:27.622Z"
     },
     {
       "id": "careers-sa:talent-acquisition-specialist-clear-1a832ae8",
@@ -123,14 +140,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-23T02:22:44.420Z",
+      "publishedAt": "2026-11-23T08:00:27.622Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/clear-4/j/7BAFF090F3/",
       "applicationUrl": "https://apply.workable.com/clear-4/j/7BAFF090F3/",
       "sourceUrl": "https://www.careers.sa/en/jobs/talent-acquisition-specialist-clear-1a832ae8",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-07T02:22:44.420Z"
+      "expiresAt": "2026-12-07T08:00:27.622Z"
     },
     {
       "id": "careers-sa:director-of-talent-acquisition-gathern-f006eb41",
@@ -140,14 +157,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-23T02:22:44.420Z",
+      "publishedAt": "2026-11-23T08:00:27.622Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/gathern/j/AA37223F54/",
       "applicationUrl": "https://apply.workable.com/gathern/j/AA37223F54/",
       "sourceUrl": "https://www.careers.sa/en/jobs/director-of-talent-acquisition-gathern-f006eb41",
       "eligibility": "Saudi nationals",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-07T02:22:44.420Z"
+      "expiresAt": "2026-12-07T08:00:27.622Z"
     },
     {
       "id": "careers-sa:senior-product-manager-gathern-667ff4ba",
@@ -157,14 +174,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-23T02:22:44.420Z",
+      "publishedAt": "2026-11-23T08:00:27.622Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/gathern/j/C26ABD2A55/",
       "applicationUrl": "https://apply.workable.com/gathern/j/C26ABD2A55/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-product-manager-gathern-667ff4ba",
       "eligibility": "Saudi nationals",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-07T02:22:44.420Z"
+      "expiresAt": "2026-12-07T08:00:27.622Z"
     },
     {
       "id": "careers-sa:product-owner-%D8%B4%D8%B1%D9%83%D8%A9-%D9%85%D9%87%D8%A7%D8%B1%D8%A9-%D9%84%D9%85%D9%88%D8%A7%D8%B1%D8%AF-%D8%A7%D9%84%D8%A8%D8%B4%D8%B1%D9%8A%D8%A9-5f641f7b",
@@ -174,14 +191,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-23T02:22:44.420Z",
+      "publishedAt": "2026-11-23T08:00:27.622Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/maharahjobs/j/012CC00E5F/",
       "applicationUrl": "https://apply.workable.com/maharahjobs/j/012CC00E5F/",
       "sourceUrl": "https://www.careers.sa/en/jobs/product-owner-%D8%B4%D8%B1%D9%83%D8%A9-%D9%85%D9%87%D8%A7%D8%B1%D8%A9-%D9%84%D9%85%D9%88%D8%A7%D8%B1%D8%AF-%D8%A7%D9%84%D8%A8%D8%B4%D8%B1%D9%8A%D8%A9-5f641f7b",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-07T02:22:44.420Z"
+      "expiresAt": "2026-12-07T08:00:27.622Z"
     },
     {
       "id": "careers-sa:senior-manager-tse-and-wastewater-su7-qiddiya-07f84514",
@@ -191,14 +208,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-23T02:22:44.420Z",
+      "publishedAt": "2026-11-23T08:00:27.622Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/qiddiya-investment-company-1/j/24B2B7B129/",
       "applicationUrl": "https://apply.workable.com/qiddiya-investment-company-1/j/24B2B7B129/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-manager-tse-and-wastewater-su7-qiddiya-07f84514",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-07T02:22:44.420Z"
+      "expiresAt": "2026-12-07T08:00:27.622Z"
     },
     {
       "id": "careers-sa:riyadh-mergers-acquisitions-senior-manager-ey-parthenon-riyadh-11391-e-4174db91",
