@@ -50,7 +50,7 @@ test("global fallback searches Nominatim then the Yemen-bounded Overpass mirror"
 test("geocoding falls back to Photon when Nominatim cannot provide a valid boundary",()=>{
  const source=fs.readFileSync(require.resolve("../server"),"utf8");
  assert.match(source,/async function geocodePhotonFallback\(/);
- assert.match(source,/await geocodePhotonFallback\(candidates,key\)/);
+ assert.match(source,/await geocodePhotonFallback\(candidates,key,deadlineAt\)/);
  assert.match(source,/properties\.extent/);
  assert.match(source,/countrycode/);
 });
@@ -76,15 +76,17 @@ test("classifies named stationery and vehicle places",()=>{
  assert.equal(classifyCategory({shop:"watches"}),"gold");
 });
 
-test("Yemen Nominatim and Overpass requests use a three-second timeout",()=>{
+test("Yemen Nominatim and Overpass requests stay within one bounded three-second search deadline",()=>{
  const source=fs.readFileSync(require.resolve("../server"),"utf8");
  assert.ok(source.includes("timeoutMs:3000"));
- assert.ok(source.includes("setTimeout(()=>controller.abort(),3000)"));
+ assert.ok(source.includes("const deadlineAt=Date.now()+2800"));
+ assert.ok(source.includes("Math.min(provider.timeoutMs,remaining)"));
+ assert.ok(source.includes("Math.min(1250,remaining)"));
  assert.ok(source.includes("[out:json][timeout:3]"));
 });
 test("countrywide live search starts Nominatim and Overpass without serial waiting",()=>{
  const source=fs.readFileSync(require.resolve("../server"),"utf8");
  assert.ok(source.includes("const outcomes=await Promise.allSettled(["));
- assert.ok(source.includes("searchYemenNominatim(query,category),"));
- assert.ok(source.includes("searchYemenOverpass(query,category)"));
+ assert.ok(source.includes("searchYemenNominatim(query,category,deadlineAt)"));
+ assert.ok(source.includes("searchYemenOverpass(query,category,deadlineAt)"));
 });
