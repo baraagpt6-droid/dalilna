@@ -176,9 +176,15 @@ function rateLimit(req) {
 function createIntervalGate(intervalMs) {
   let nextAt = 0;
   let queue = Promise.resolve();
-  return function waitForSlot() {
+  return function waitForSlot(deadlineAt = Infinity) {
     const reservation = queue.then(async () => {
       const delay = Math.max(0, nextAt - Date.now());
+      if (Number.isFinite(deadlineAt) && Date.now() + delay >= deadlineAt) {
+        const timeout = new Error("انتهت مهلة البحث قبل الاتصال بمصدر الخريطة.");
+        timeout.name = "AbortError";
+        timeout.statusCode = 503;
+        throw timeout;
+      }
       if (delay) await sleep(delay);
       nextAt = Date.now() + intervalMs;
     });
@@ -435,10 +441,10 @@ async function searchGeoapifyPlaces(params) {
     const lonDelta = radius / (111000 * Math.max(0.2, Math.cos(lat * Math.PI / 180)));
     area = { bbox: { south: lat - latDelta, north: lat + latDelta, west: lon - lonDelta, east: lon + lonDelta }, label: "بالقرب من موقعك" };
   } else {
-    area = await geocodePlace(place);
+    area = await geocodePlace(place,deadlineAt);
   }
   if (!area && fallbackPlace && normalizeText(fallbackPlace) !== normalizeText(place)) {
-    area = await geocodePlace(fallbackPlace);
+    area = await geocodePlace(fallbackPlace,deadlineAt);
     scopeFallback = true;
     usedPlace = fallbackPlace;
   }
@@ -628,11 +634,13 @@ function normalizeElement(element, placeLabel) {
   };
 }
 
-async function geocodePhotonFallback(candidates,key){
+async function geocodePhotonFallback(candidates,key,deadlineAt=Date.now()+2600){
  for(const candidate of candidates){
+  const remaining=deadlineAt-Date.now();
+  if(remaining<=120)break;
   const url=new URL("https://photon.komoot.io/api/");
   url.search=new URLSearchParams({q:candidate,lang:"ar",limit:"10"}).toString();
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),3000);
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(850,remaining));
   try{
    const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/geo+json","User-Agent":"DalilnaDirectory/"+VERSION+" (+https://dalilna-live.onrender.com)"}});
    if(!response.ok){
@@ -661,7 +669,7 @@ async function geocodePhotonFallback(candidates,key){
  }
  return null;
 }
-async function geocodePlace(place) {
+async function geocodePlace(place,deadlineAt=Date.now()+2700) {
   const key=normalizeText(place);
   const cached=readCache(geocodeCache,key);
   if(cached)return cached;
@@ -672,11 +680,13 @@ async function geocodePlace(place) {
   ].filter(Boolean))];
   let lastError=null;
   for(const candidate of candidates){
-    await waitForNominatimSlot();
+    try{await waitForNominatimSlot(deadlineAt);}catch(error){lastError=error;break;}
+    const remaining=deadlineAt-Date.now();
+    if(remaining<=120)break;
     lastGeocodeAt=Date.now();
     const url=new URL("https://nominatim.openstreetmap.org/search");
     url.search=new URLSearchParams({q:candidate,format:"jsonv2",addressdetails:"1",limit:"5",countrycodes:"ye","accept-language":"ar,en"}).toString();
-    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),3000);
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(1250,remaining));
     try{
       const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json","User-Agent":"DalilnaDirectory/"+VERSION+" (+https://dalilna-live.onrender.com)","Referer":"https://dalilna-live.onrender.com/"}});
       if(response.status===429){lastError=new Error("مصدر تحديد المنطقة مزدحم. حاول مرة أخرى بعد قليل.");continue;}
@@ -699,12 +709,12 @@ async function geocodePlace(place) {
     }finally{clearTimeout(timer);}
   }
   if(lastError)console.warn(JSON.stringify({event:"places.geocode.nominatim.unavailable",code:lastError.name==="AbortError"?"TIMEOUT":"NO_RESULT"}));
-  const photonArea=await geocodePhotonFallback(candidates,key);
+  const photonArea=await geocodePhotonFallback(candidates,key,deadlineAt);
   if(photonArea)return photonArea;
   if(lastError)throw lastError;
   return null;
 }
-async function fetchOverpass(bbox,category,label){
+async function fetchOverpass(bbox,category,label,deadlineAt=Date.now()+2700){
   const query=buildOverpassQuery(bbox,category);
   const endpoints=[
     {name:"FOSSGIS",url:"https://overpass-api.de/api/interpreter",timeoutMs:3000},
@@ -714,9 +724,11 @@ async function fetchOverpass(bbox,category,label){
   let lastError=null;
   let hadValidEmpty=false;
   for(const provider of endpoints){
-    await waitForOverpassSlot();
+    try{await waitForOverpassSlot(deadlineAt);}catch(error){lastError=error;break;}
+    const remaining=deadlineAt-Date.now();
+    if(remaining<=120)break;
     lastOverpassAt=Date.now();
-    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),provider.timeoutMs),startedAt=Date.now();
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(provider.timeoutMs,remaining)),startedAt=Date.now();
     try{
       const response=await fetch(provider.url,{
         method:"POST",
@@ -811,19 +823,21 @@ async function searchCommonsPhotos(query, place) {
   }finally{clearTimeout(timer);}
 }
 
-async function searchYemenNominatim(query, category="all") {
+async function searchYemenNominatim(query, category="all",deadlineAt=Date.now()+2700) {
   const normalizedQuery=normalizeText(query);
   const cacheKey="nominatim:yemen:"+normalizedQuery+"|"+category;
   const cached=readCache(resultCache,cacheKey);
   if(cached)return {...cached,cached:true,fetchedAt:new Date().toISOString()};
-  await waitForNominatimSlot();
+  try{await waitForNominatimSlot(deadlineAt);}catch(error){error.statusCode=503;throw error;}
+  const remaining=deadlineAt-Date.now();
+  if(remaining<=120){const error=new Error("انتهت مهلة البحث الحي.");error.statusCode=503;throw error;}
   lastGeocodeAt=Date.now();
   const url=new URL("https://nominatim.openstreetmap.org/search");
   url.search=new URLSearchParams({
     q:query,format:"jsonv2",addressdetails:"1",extratags:"1",namedetails:"1",
     limit:"20",countrycodes:"ye","accept-language":"ar,en"
   }).toString();
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),3000);
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(1900,remaining));
   try{
     const response=await fetch(url,{signal:controller.signal,headers:{
       "Accept":"application/json",
@@ -878,7 +892,7 @@ async function searchYemenNominatim(query, category="all") {
   }finally{clearTimeout(timer);}
 }
 
-async function searchYemenOverpass(query,category="all"){
+async function searchYemenOverpass(query,category="all",deadlineAt=Date.now()+2700){
   const normalized=normalizeCategorySearch(query);
   const selected=FILTERS[category]?category:(inferCategoryFromQuery(query)||"all");
   const cacheKey="overpass:yemen:"+normalized+"|"+selected;
@@ -893,8 +907,11 @@ async function searchYemenOverpass(query,category="all"){
   ];
   let lastError=null,hadValidEmpty=false;
   for(const provider of endpoints){
-    await waitForOverpassSlot();lastOverpassAt=Date.now();
-    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),provider.timeoutMs),startedAt=Date.now();
+    try{await waitForOverpassSlot(deadlineAt);}catch(error){lastError=error;break;}
+    const remaining=deadlineAt-Date.now();
+    if(remaining<=120)break;
+    lastOverpassAt=Date.now();
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(provider.timeoutMs,remaining)),startedAt=Date.now();
     try{
       const response=await fetch(provider.url,{method:"POST",signal:controller.signal,
         headers:{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8","Accept":"application/json",
@@ -928,6 +945,7 @@ async function searchYemenOverpass(query,category="all"){
 }
 
 async function searchPlaces(params) {
+  const deadlineAt=Date.now()+2800;
   const place = cleanText(params.place, 180);
   const fallbackPlace = cleanText(params.fallbackPlace, 180);
   const query = cleanText(params.q, 100);
@@ -945,8 +963,8 @@ async function searchPlaces(params) {
   const countrywideSearch = !hasCoordinates && (!place || normalizeText(place) === "اليمن" || normalizeText(place) === "yemen");
   if (countrywideSearch && query) {
     const outcomes=await Promise.allSettled([
-      searchYemenNominatim(query,category),
-      searchYemenOverpass(query,category)
+      searchYemenNominatim(query,category,deadlineAt),
+      searchYemenOverpass(query,category,deadlineAt)
     ]);
     const nominal=outcomes[0].status==="fulfilled"?outcomes[0].value:{items:[],count:0,category,source:"OpenStreetMap Nominatim",place:"اليمن",cached:false};
     const overpass=outcomes[1].status==="fulfilled"?outcomes[1].value:{items:[],count:0,category,source:"OpenStreetMap Overpass",cached:false};
@@ -1014,7 +1032,7 @@ async function searchPlaces(params) {
     const copy = {...cachedOsm,fetchedAt:new Date().toISOString(),cached:true};
     return filterByQuery(copy,query,category);
   }
-  const items = await fetchOverpass(area.bbox, category, area.label || usedPlace);
+  const items = await fetchOverpass(area.bbox, category, area.label || usedPlace,deadlineAt);
   const result = {
     category,items,count:items.length,source:"OpenStreetMap",
     attribution:"© OpenStreetMap contributors",
