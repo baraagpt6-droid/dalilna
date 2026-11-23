@@ -5,7 +5,7 @@
 - تطبيق PWA كامل في جذر المشروع.
 - مشروع Android WebView يضم ملفات التطبيق ويعمل محلياً دون إنترنت بعد فتحه.
 - GitHub Actions لبناء APK تجريبي موقّع تلقائياً بمفتاح debug.
-- GitHub Actions لنشر PWA على GitHub Pages.
+- GitHub Actions لنشر PWA على GitHub Pages كنسخة احتياطية، مع اعتماد Netlify كرابط الويب الأساسي الرسمي.
 - إعدادات Vercel إذا توفرت صلاحية إنشاء مشروع هناك.
 
 لماذا لم أرفع المستودع بنفسي؟
@@ -24,7 +24,7 @@
 - افتح Settings ثم Pages.
 - اختر Source = GitHub Actions.
 - شغّل Workflow Deploy Dalilna PWA من تبويب Actions.
-- رابط Pages سيظهر في سجل التشغيل. سيكون عادةً https://baraagpt6-droid.github.io/dalilna/ .
+- رابط الويب الأساسي الرسمي هو https://dalilna-ftny.netlify.app/. يبقى GitHub Pages نسخة احتياطية عند تعطل Netlify.
 
 ب) لبناء APK:
 - افتح Actions.

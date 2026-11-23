@@ -6,8 +6,8 @@ Release date: 2026-11-23
 - Adds conversation context for follow-up questions about the last selected job or directory result.
 - Uses one horizontal source badge at the top of assistant messages and a vertical bubble layout to prevent overlap.
 - Adds a Netlify static-site build that publishes only allow-listed PWA assets and regional JSON files.
-- Adds an optional GitHub Actions Netlify deployment workflow while keeping GitHub Pages and Render as fallback services.
-- Aligns the PWA, Android, package, manifest and OTA release metadata at 3.0.1.
+- Makes https://dalilna-ftny.netlify.app/ the official web/PWA URL, Android remote origin, share target and OTA website reference; GitHub Pages remains a fallback.
+- Aligns the PWA, Android, package, manifest and OTA release metadata at 3.0.1, including the official Netlify URL.
 
 Netlify deployment requires a Netlify site ID GitHub repository variable and a Netlify auth token GitHub repository secret. The final .netlify.app site name is reserved by the Netlify account owner and must be checked for availability before it can be adopted.
 

@@ -34,7 +34,7 @@ permissions:
 jobs:
   live-audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -84,6 +84,7 @@ jobs:
       - name: Run actual live API, marketplace and assistant probes
         env:
           LIVE_API_BASE_URL: https://dalilna-live.onrender.com
+          GH_TOKEN: ${{ github.token }}
         run: |
           node --input-type=module <<'NODE' > audit-live.json
           const base=process.env.LIVE_API_BASE_URL;
@@ -95,41 +96,49 @@ jobs:
               const response=await fetch(base+path,{...options,signal:controller.signal,headers:{Accept:"application/json",...(options.headers||{})}});
               const raw=await response.text();
               let body={};try{body=JSON.parse(raw)}catch{}
-              return {ok:response.ok,status:response.status,ms:Math.round(performance.now()-started),body};
+              return {ok:response.ok,status:response.status,ms:Math.round(performance.now()-started),body,corsOrigin:response.headers.get("access-control-allow-origin")};
             } catch(error) {
               return {ok:false,status:0,ms:Math.round(performance.now()-started),error:String(error?.message||error)};
             } finally {clearTimeout(timer);}
           }
           let health=await probe("/health");
-          for(let attempt=0;attempt<18&&health.body?.version!=="3.0.1";attempt++){
+          for(let attempt=0;attempt<48&&health.body?.version!=="3.0.1";attempt++){
             await new Promise(resolve=>setTimeout(resolve,5000));
             health=await probe("/health");
           }
           const marketStatus=await probe("/api/marketplace/status");
           const listings=await probe("/api/marketplace/listings?category=souq&limit=24&includeImages=1");
           const pharmacies=await probe("/api/places/search?q=%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D8%A9&category=pharmacy&place=%D9%85%D8%AD%D8%A7%D9%81%D8%B8%D8%A9%20%D8%A5%D8%A8",{},6500);
-          const assistantStatus=await probe("/api/assistant/status");
-          let publicSite={ok:false,error:"Pages index not retrieved"};
+          const assistantStatus=await probe("/api/assistant/status",{headers:{Origin:"https://dalilna-ftny.netlify.app"}});
+          const publicBase="https://dalilna-ftny.netlify.app/";
+          let publicSite={ok:false,error:"Netlify PWA not retrieved"};
           let publicIndexPayload=null;
           try {
             async function getPublic(path) {
               let lastError;
-              for(let attempt=0;attempt<30;attempt++) {
+              for(let attempt=0;attempt<90;attempt++) {
                 try {
-                  const response=await fetch("https://baraagpt6-droid.github.io/dalilna/"+path,{cache:"no-store"});
-                  if(response.ok)return response;
-                  lastError=new Error(path+" HTTP "+response.status);
+                  const response=await fetch(new URL(path,publicBase),{cache:"no-store"});
+                  if(response.ok){
+                    if(path.startsWith("version.json")){
+                      const current=await response.clone().json();
+                      if(current.webVersion==="3.0.1"&&current.officialWebUrl===publicBase)return response;
+                      lastError=new Error("Netlify version.json is not yet aligned with v3.0.1 and the official URL.");
+                    }else return response;
+                  }else lastError=new Error(path+" HTTP "+response.status);
                 } catch(error) {lastError=error;}
                 await new Promise(resolve=>setTimeout(resolve,2000));
               }
-              throw lastError||new Error("GitHub Pages unavailable");
+              throw lastError||new Error("Netlify did not publish the current website version.");
             }
-            const [pageRes,versionRes,marketRes,indexRes,clientRes,v3jsRes,v3cssRes,featuresRes,jobsRes]=await Promise.all([
-              getPublic("index.html"),getPublic("version.json?audit="+process.env.GITHUB_SHA),getPublic("market_items.json"),
+            const versionRes=await getPublic("version.json?audit="+process.env.GITHUB_SHA);
+            const version=await versionRes.json();
+            const [pageRes,marketRes,indexRes,clientRes,v3jsRes,v3cssRes,featuresRes,jobsRes]=await Promise.all([
+              getPublic("index.html"),getPublic("market_items.json"),
               getPublic("regional-catalog/search_index_light.json?v=3.0.1-pharmacy24"),getPublic("marketplace-client.js"),
               getPublic("v3.0.0.js?v=3.0.1"),getPublic("v3.0.0.css?v=3.0.1"),getPublic("features-2.1.js?v=3.0.1"),getPublic("jobs-feed.json")
             ]);
-            const pageText=await pageRes.text(),version=await versionRes.json(),market=await marketRes.json(),clientText=await clientRes.text();
+            const pageText=await pageRes.text(),market=await marketRes.json(),clientText=await clientRes.text();
             const v3js=await v3jsRes.text(),v3css=await v3cssRes.text(),featuresText=await featuresRes.text(),jobsFeed=await jobsRes.json();
             const {gunzipSync}=await import("node:zlib");
             const publicBytes=await indexRes.arrayBuffer();
@@ -151,11 +160,12 @@ jobs:
               craftCategory:pageText.includes("craft:")||pageText.includes('"craft"'),
               directoryWhatsApp:pageText.includes("مشاركة واتساب"),
               productWhatsApp:clientText.includes("مشاركة واتساب")};
-            const releaseResponse=await fetch("https://api.github.com/repos/baraagpt6-droid/dalilna/releases/tags/v3.0.1",{headers:{Accept:"application/vnd.github+json"}});
+            const releaseResponse=await fetch("https://api.github.com/repos/baraagpt6-droid/dalilna/releases/tags/v3.0.1",{headers:{Accept:"application/vnd.github+json",Authorization:"Bearer "+process.env.GH_TOKEN}});
             if(!releaseResponse.ok)throw new Error("GitHub v3.0.1 release could not be loaded.");
             const release=await releaseResponse.json(),apk=release.assets?.find(asset=>asset.name==="app-debug.apk");
             if(!apk||apk.browser_download_url!==version.androidReleaseUrl||!String(release.body||"").includes("Signing mode: persistent"))throw new Error("The persistent v3.0.1 Android APK release asset is missing or its URL does not match version.json.");
-            if(publicSite.version!=="3.0.1"||publicSite.signingMode!=="persistent")throw new Error("Published Pages version or Android signing mode is not v3.0.1 persistent.");
+            if(publicSite.version!=="3.0.1"||publicSite.signingMode!=="persistent"||version.officialWebUrl!==publicBase||!pageText.includes('<link rel="canonical" href="'+publicBase+'">'))throw new Error("Published Netlify version, canonical URL or Android signing mode is not aligned to v3.0.1.");
+            if(assistantStatus.corsOrigin!=="https://dalilna-ftny.netlify.app")throw new Error("Render assistant CORS does not allow the official Netlify origin.");
             publicSite.androidRelease={ok:true,versionCode:version.androidVersionCode,size:apk.size,digest:apk.digest,downloadUrl:apk.browser_download_url};
             if(!publicSite.v3SavedHub||!publicSite.v3FlyAnimation||!publicSite.v3JobSearch||!publicSite.v3Styles||!publicSite.assistantJobsLocal||!publicSite.assistantLocalFallback||publicSite.jobFeedWithSourceLinks===0)throw new Error("A v3 saved hub, animation, job filter, local jobs assistant or source-link asset is missing.");
             if(!health.ok||health.body?.version!=="3.0.1")throw new Error("Render health did not confirm Dalilna v3.0.1 after waiting.");

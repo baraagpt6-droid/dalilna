@@ -140,6 +140,7 @@ jobs:
           version.androidVersionCode = versionCode;
           version.androidSigningMode = process.env.APK_SIGNING_MODE || "persistent";
           version.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.0.1/app-debug.apk";
+          version.officialWebUrl = "https://dalilna-ftny.netlify.app/";
           version.updatedAt = new Date().toISOString();
           fs.writeFileSync(file, JSON.stringify(version, null, 2));
           NODE
@@ -230,6 +231,7 @@ jobs:
             Dalilna 3.0.1 Android APK.
             Signing mode: ${{ steps.signing.outputs.mode }}
             versionCode: ${{ steps.app-version.outputs.version_code }}
+            Official web app: https://dalilna-ftny.netlify.app/
 
             With all four persistent signing secrets configured, this APK uses the persistent Dalilna keystore for in-place updates.
             Persistent signing is mandatory for this release.
@@ -265,6 +267,7 @@ jobs:
           v.androidVersionCode = versionCode;
           v.androidSigningMode = process.env.APK_SIGNING_MODE;
           v.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.0.1/app-debug.apk";
+          v.officialWebUrl = "https://dalilna-ftny.netlify.app/";
           v.updatedAt = new Date().toISOString();
           fs.writeFileSync(file, JSON.stringify(v, null, 2));
           fs.copyFileSync(file, "android/app/src/main/assets/version.json");
