@@ -22,7 +22,9 @@
       const values=JSON.parse(raw);
       if(!values||typeof values!=="object"||Array.isArray(values))return;
       Object.entries(values).forEach(([key,value])=>{
-        if(typeof key==="string"&&(typeof value==="string"||value===null))localStorage.setItem(key,value);
+        if(typeof key==="string"&&(typeof value==="string"||value===null)){
+          if(!isLegacyNetlifyOrigin||localStorage.getItem(key)===null)localStorage.setItem(key,value);
+        }
       });
     }catch(_){}
   }
@@ -41,7 +43,9 @@
     schedule();
   }
   const localOrigin=location.hostname==="appassets.androidplatform.net";
-  const remoteOrigin=location.hostname==="baraagpt6-droid.github.io"&&location.pathname.startsWith("/dalilna/");
+  const isOfficialOrigin=location.hostname==="baraagpt6-droid.github.io"&&(location.pathname==="/dalilna"||location.pathname.startsWith("/dalilna/"));
+  const isLegacyNetlifyOrigin=location.hostname==="dalilna-ftny.netlify.app";
+  const remoteOrigin=isOfficialOrigin||isLegacyNetlifyOrigin;
   if(remoteOrigin){
     restore();
     observe();
