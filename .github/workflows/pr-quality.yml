@@ -92,6 +92,12 @@ jobs:
       - name: Run JavaScript tests
         run: npm test
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run real-browser profile, shop and favourites journey
+        run: npm run test:e2e
+
       - name: Run Yemen regional catalog tests
         run: python scripts/test_regional_catalog.py
 
