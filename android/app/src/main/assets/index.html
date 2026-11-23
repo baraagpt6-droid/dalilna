@@ -2581,7 +2581,7 @@ const STATIC_UI_EN={
 "جامع أو مدرسة أو مستشفى":"Mosque, school or hospital","وصف أو معلومة":"Description or information",
 "اسم المكان أو عنوان المعلومة":"Place name or information title","التفاصيل":"Details","صورة من جهازك (اختياري)":"Photo from your device (optional)",
 "حفظ المساهمة على هذا الجهاز":"Save contribution on this device","إلغاء":"Cancel",
-"أسعار الصرف والذهب اليوم":"Exchange and gold rates today","في انتظار المصدر":"Awaiting source","تحديث الأسعار":"Refresh rates",
+"أسعار الصرف والذهب اليوم":"Exchange and gold rates today","في انتظار المصدر":"Awaiting source",
 "حاسبة تحويل العملات الفورية":"Instant currency converter","دولار أمريكي (USD)":"US Dollar (USD)",
 "إلى ريال يمني (صنعاء)":"To Yemeni Rial (Sana'a)","53,500 ريال يمني":"53,500 Yemeni Rial",
 "أرقام الطوارئ والخدمات":"Emergency and service numbers","رجوع":"Back","كل المناطق":"All areas",
@@ -5039,7 +5039,7 @@ function answerAIArabic(q){
     return `لا توجد ${serviceIntent.label} مسجلة في دليلنا حالياً ضمن البيانات المتاحة على هذا الجهاز. هذا لا يعني عدم وجودها في المنطقة. استخدم زر خرائط Google أسفل الإجابة للبحث خارج الدليل.`;
   }
   if(/صرف|دولار|سعودي|عمله|ذهب|ريال/.test(t)){
-    if(!liveFxData?.fresh)return "لم يصل تأكيد حديث للأسعار من المصدر. استخدم زر تحديث الأسعار، ولن نعرض أرقاماً قديمة.";
+    if(!liveFxData?.fresh)return "لم يصل تأكيد حديث للأسعار من المصدر. سيجري التحقق من الأسعار في الخلفية، ولن نعرض أرقاماً قديمة.";
     const item=(market,key)=>liveFxData.data?.[market]?.items?.[key]||{};
     const fmt=value=>Number.isFinite(Number(value))?Number(value).toLocaleString("ar-YE",{maximumFractionDigits:2}):"غير متاح";
     return "مؤشرات سوق استرشادية وليست نشرة رسمية.\\nصنعاء: الدولار "+fmt(item("sanaa","usd").buy)+" شراء / "+fmt(item("sanaa","usd").sell)+" بيع، السعودي "+fmt(item("sanaa","sar").buy)+" شراء / "+fmt(item("sanaa","sar").sell)+" بيع، جرام الذهب 21 "+fmt(item("sanaa","gold_gram_21").buy)+" شراء / "+fmt(item("sanaa","gold_gram_21").sell)+" بيع.\\nعدن: الدولار "+fmt(item("aden","usd").buy)+" شراء / "+fmt(item("aden","usd").sell)+" بيع، السعودي "+fmt(item("aden","sar").buy)+" شراء / "+fmt(item("aden","sar").sell)+" بيع، جرام الذهب 21 "+fmt(item("aden","gold_gram_21").buy)+" شراء / "+fmt(item("aden","gold_gram_21").sell)+" بيع.\\nآخر تحقق: "+(liveFxData.last_verified_at||liveFxData.last_sync||"غير متاح")+"\\nالمصدر: https://ye-rial.com/";
