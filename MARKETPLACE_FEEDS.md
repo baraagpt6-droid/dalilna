@@ -32,9 +32,9 @@ Example:
 }
 ```
 
-Required fields: stable `id`, `title`, valid `productType`, `sellerName`, a WhatsApp-capable `phone`, exact Yemeni `governorate`, `district`, `price` and supported `currency`. Records without these fields are rejected. Product status values such as `sold`, `expired`, `inactive` and `out_of_stock` are excluded.
+Required fields: stable `id`, `title`, valid `productType`, `sellerName`, a WhatsApp-capable `phone`, exact Yemeni `governorate`, `district`, `price`, supported `currency` and a public HTTPS `imageUrl`. Records without these fields or a safe HTTPS image URL are rejected. Each displayed image stays on the merchant CDN; the importer does not scrape or invent product photos. Product status values such as `sold`, `expired`, `inactive` and `out_of_stock` are excluded.
 
-The API supports the seven published product groups: electronics, vehicles and parts, property, solar and batteries, home furniture and appliances, agriculture/livestock/equipment, and clothing/perfume/accessories.
+The importer keeps the merchant image URL with the live price and currency. The six-hour refresh job updates the approved listings from the authorized feed; changed or unavailable items follow the feed snapshot rules below.\n\nThe API supports the seven published product groups: electronics, vehicles and parts, property, solar and batteries, home furniture and appliances, agriculture/livestock/equipment, and clothing/perfume/accessories.
 
 ## Security and lifecycle
 
