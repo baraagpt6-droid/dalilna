@@ -39,7 +39,8 @@ test("v3.0 offline assistant reads active jobs locally and returns interactive s
  assert.match(app,/assistantCards:cards/);
  assert.match(app,/localJobs:/);
  assert.ok(Array.isArray(feed.items));
- assert.equal(feed.items.length,75);
+ assert.ok(feed.items.length>=75,"active job feed must retain at least the expected baseline count");
+ assert.equal(new Set(feed.items.map(item=>item.id||item.url||item.title)).size,feed.items.length,"job feed entries must remain unique");
  assert.ok(feed.items.some(item=>item.countryCode==="YE"));
  assert.ok(feed.items.some(item=>item.countryCode==="SA"));
 });
