@@ -55,10 +55,10 @@ test("job cards only render apply buttons from approved official provider hosts"
  assert.ok(jobs.includes('function isOfficialApplicationUrl'));
 });
 
-test("PWA version metadata and asset cache tags are 3.0.0",()=>{
- assert.ok(html.includes('content="3.0.0"'));
+test("PWA version metadata and asset cache tags are 3.0.1",()=>{
+ assert.ok(html.includes('content="3.0.1"'));
  assert.ok(html.includes('features-2.1.css?v=3.0.1'));
- assert.ok(html.includes('features-2.1.js?v=3.0.0'));
+ assert.ok(html.includes('features-2.1.js?v=3.0.1'));
  assert.ok(sw.includes('CACHE_PREFIX + "v3.0.1"'));
  assert.ok(sw.includes('"./market_items.json"'));
 });
@@ -106,11 +106,11 @@ test("exchange rates use fresh public quotes and do not display saved device pri
  assert.ok(!html.includes("S.fx.s.usdB"));
  assert.ok(!html.includes("S.fx.a.usdB"));
 });
-test("Android 3.0.0 uses a run-based versionCode and preserves localStorage through OTA origin migration",()=>{
+test("Android 3.0.1 uses a run-based versionCode and preserves localStorage through OTA origin migration",()=>{
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
  const activity=fs.readFileSync("android/app/src/main/java/ye/dalilna/app/MainActivity.java","utf8");
  assert.ok(gradle.includes("versionCode = 3_000_000 + (workflowRunNumber * 100)"));
- assert.ok(gradle.includes('versionName = "3.0.0"'));
+ assert.ok(gradle.includes('versionName = "3.0.1"'));
  assert.ok(activity.includes("REMOTE_APP_URL"));
  assert.ok(activity.includes("DalilnaNativeBridge"));
  assert.ok(activity.includes("KEY_STORAGE"));
@@ -165,12 +165,12 @@ test("merchant feed SQL maps latitude, longitude and source metadata to distinct
  assert.ok(feed.includes("ON CONFLICT(client_ref) DO UPDATE"));
  assert.ok(feed.includes("completeSnapshot&&skipped===0"));
 });
-test("Android 3.0.0 cache and version metadata remain synchronized",()=>{
+test("Android 3.0.1 cache and version metadata remain synchronized",()=>{
  assert.ok(sw.includes('CACHE_PREFIX + "v3.0.1"'));
- assert.ok(html.includes('content="3.0.0"'));
+ assert.ok(html.includes('content="3.0.1"'));
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
  assert.ok(gradle.includes("versionCode = 3_000_000 + (workflowRunNumber * 100)"));
- assert.ok(gradle.includes('versionName = "3.0.0"'));
+ assert.ok(gradle.includes('versionName = "3.0.1"'));
 });
 
 test("daily sync workflow checks jobs, marketplace, exchange and configured merchant feeds",()=>{
@@ -200,7 +200,7 @@ test("quick-jump fallback prevents intrinsic SVGs from rendering as giant black 
 });
 test("regional catalogue manifest loads at first visit without warming all governorate files",()=>{
  assert.ok(html.includes('loadRegionalCatalogManifest(false).then(()=>checkRemoteVersionSilently())'));
- assert.ok(html.includes('manifest.json?v=3.0.0'));
+ assert.ok(html.includes('manifest.json?v=3.0.1'));
  assert.ok(html.includes('cache:"no-store"'));
  assert.ok(html.includes('districtCounts.length!==335'));
  assert.ok(!html.includes('loadRegionalCatalogManifest(false).then(()=>warmUnifiedSearchIndex(false))'));
@@ -248,7 +248,7 @@ test("regional catalogue requests are cancelled before a newer search starts",()
  assert.ok(html.includes("liveDirectoryController.abort()"));
  assert.ok(html.includes("controller.signal.aborted"));
  assert.ok(html.includes("searchRegionalCatalogProgressive"));
- assert.ok(html.includes("fetchCatalogAsset(encodeURIComponent(region.file)+\"?v=3.0.0\",signal)"));
+ assert.ok(html.includes("fetchCatalogAsset(encodeURIComponent(region.file)+\"?v=3.0.1\",signal)"));
 });
 
 test("Dalilna quick jump buttons use SVG icons and native anchor targets",()=>{
