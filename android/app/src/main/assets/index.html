@@ -3852,7 +3852,7 @@ function cardHTML(i){
       ${i.price?`<span class="price">${esc(i.price)}</span>`:""}
     </div>
     ${i.desc?`<p class="desc">${esc(i.desc)}</p>`:""}
-    ${i.sourceName?`<small class="where">المصدر: ${esc(i.sourceName)} · بيانات عامة قد تتغير. تحقق من النشاط قبل الشراء أو الزيارة.</small>`:""}
+    ${i.sourceName?`<small class="where">المصدر: ${esc(i.sourceName)}</small> <span class="verification-badge">دليل مفتوح</span>`:""}
     <div class="acts">
       ${i.phone?`${yemenPhoneDetails(i.phone).isMobile?`<a class="wa" href="${waLink(i.phone)}" target="_blank" rel="noopener noreferrer">${T("wa")}</a>`:""}<a class="tel" href="tel:${digits(i.phone)}">${esc(i.phone)}</a>`:""}
       ${i.sourceUrl?`<a class="tel public-source-link" href="${esc(i.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(i.sourceLabel||"عرض المصدر")}</a>`:""}
