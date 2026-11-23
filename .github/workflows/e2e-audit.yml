@@ -1,4 +1,4 @@
-name: Dalilna v3.0.0 live E2E audit
+name: Dalilna v3.0.1 live E2E audit
 # Final signed APK metadata is published before this live audit runs.
 # Re-run live probes after the signed APK and assistant fallback are deployed.
 
@@ -101,7 +101,7 @@ jobs:
             } finally {clearTimeout(timer);}
           }
           let health=await probe("/health");
-          for(let attempt=0;attempt<18&&health.body?.version!=="3.0.0";attempt++){
+          for(let attempt=0;attempt<18&&health.body?.version!=="3.0.1";attempt++){
             await new Promise(resolve=>setTimeout(resolve,5000));
             health=await probe("/health");
           }
@@ -126,8 +126,8 @@ jobs:
             }
             const [pageRes,versionRes,marketRes,indexRes,clientRes,v3jsRes,v3cssRes,featuresRes,jobsRes]=await Promise.all([
               getPublic("index.html"),getPublic("version.json?audit="+process.env.GITHUB_SHA),getPublic("market_items.json"),
-              getPublic("regional-catalog/search_index_light.json?v=3.0.0-pharmacy24"),getPublic("marketplace-client.js"),
-              getPublic("v3.0.0.js?v=3.0.0"),getPublic("v3.0.0.css?v=3.0.0"),getPublic("features-2.1.js?v=3.0.0"),getPublic("jobs-feed.json")
+              getPublic("regional-catalog/search_index_light.json?v=3.0.1-pharmacy24"),getPublic("marketplace-client.js"),
+              getPublic("v3.0.0.js?v=3.0.1"),getPublic("v3.0.0.css?v=3.0.1"),getPublic("features-2.1.js?v=3.0.1"),getPublic("jobs-feed.json")
             ]);
             const pageText=await pageRes.text(),version=await versionRes.json(),market=await marketRes.json(),clientText=await clientRes.text();
             const v3js=await v3jsRes.text(),v3css=await v3cssRes.text(),featuresText=await featuresRes.text(),jobsFeed=await jobsRes.json();
@@ -151,17 +151,17 @@ jobs:
               craftCategory:pageText.includes("craft:")||pageText.includes('"craft"'),
               directoryWhatsApp:pageText.includes("مشاركة واتساب"),
               productWhatsApp:clientText.includes("مشاركة واتساب")};
-            const releaseResponse=await fetch("https://api.github.com/repos/baraagpt6-droid/dalilna/releases/tags/v3.0.0",{headers:{Accept:"application/vnd.github+json"}});
-            if(!releaseResponse.ok)throw new Error("GitHub v3.0.0 release could not be loaded.");
+            const releaseResponse=await fetch("https://api.github.com/repos/baraagpt6-droid/dalilna/releases/tags/v3.0.1",{headers:{Accept:"application/vnd.github+json"}});
+            if(!releaseResponse.ok)throw new Error("GitHub v3.0.1 release could not be loaded.");
             const release=await releaseResponse.json(),apk=release.assets?.find(asset=>asset.name==="app-debug.apk");
-            if(!apk||apk.browser_download_url!==version.androidReleaseUrl||!String(release.body||"").includes("Signing mode: persistent"))throw new Error("The persistent v3.0.0 Android APK release asset is missing or its URL does not match version.json.");
-            if(publicSite.version!=="3.0.0"||publicSite.signingMode!=="persistent")throw new Error("Published Pages version or Android signing mode is not v3.0.0 persistent.");
+            if(!apk||apk.browser_download_url!==version.androidReleaseUrl||!String(release.body||"").includes("Signing mode: persistent"))throw new Error("The persistent v3.0.1 Android APK release asset is missing or its URL does not match version.json.");
+            if(publicSite.version!=="3.0.1"||publicSite.signingMode!=="persistent")throw new Error("Published Pages version or Android signing mode is not v3.0.1 persistent.");
             publicSite.androidRelease={ok:true,versionCode:version.androidVersionCode,size:apk.size,digest:apk.digest,downloadUrl:apk.browser_download_url};
             if(!publicSite.v3SavedHub||!publicSite.v3FlyAnimation||!publicSite.v3JobSearch||!publicSite.v3Styles||!publicSite.assistantJobsLocal||!publicSite.assistantLocalFallback||publicSite.jobFeedWithSourceLinks===0)throw new Error("A v3 saved hub, animation, job filter, local jobs assistant or source-link asset is missing.");
-            if(!health.ok||health.body?.version!=="3.0.0")throw new Error("Render health did not confirm Dalilna v3.0.0 after waiting.");
+            if(!health.ok||health.body?.version!=="3.0.1")throw new Error("Render health did not confirm Dalilna v3.0.1 after waiting.");
           } catch(error) {publicSite={ok:false,error:String(error?.message||error)};}
-          if(!publicSite.ok)throw new Error("Published v3.0.0 Pages audit failed: "+(publicSite.error||"unknown error"));
-          if(!health.ok||health.body?.version!=="3.0.0")throw new Error("Render health did not confirm Dalilna v3.0.0 after waiting.");
+          if(!publicSite.ok)throw new Error("Published v3.0.1 Pages audit failed: "+(publicSite.error||"unknown error"));
+          if(!health.ok||health.body?.version!=="3.0.1")throw new Error("Render health did not confirm Dalilna v3.0.1 after waiting.");
           let assistant={skipped:true,reason:"Gemini key not configured"};
           if(assistantStatus.body?.configured===true) {
             const rows=publicIndexPayload?.i||[];
@@ -212,15 +212,15 @@ jobs:
           import json
           from pathlib import Path
           catalog=json.loads(Path("audit-catalog.json").read_text(encoding="utf-8"))
-          report={"version":"3.0.0","catalog":catalog,"live":json.loads(Path("audit-live.json").read_text(encoding="utf-8"))}
+          report={"version":"3.0.1","catalog":catalog,"live":json.loads(Path("audit-live.json").read_text(encoding="utf-8"))}
           Path("audit").mkdir(exist_ok=True)
-          Path("audit/last-e2e-v3.0.0.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          Path("audit/last-e2e-v3.0.1.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
           print(json.dumps(report,ensure_ascii=False,indent=2))
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add audit/last-e2e-v3.0.0.json
-          git commit -m "audit: publish Dalilna v3.0.0 live verification"
+          git add audit/last-e2e-v3.0.1.json
+          git commit -m "audit: publish Dalilna v3.0.1 live verification"
           # The audit regenerates the tracked compressed index. Keep the report
           # commit, but discard generated working-tree changes before rebasing.
           git restore --worktree --staged .
@@ -231,9 +231,9 @@ jobs:
             if ! git rebase origin/main; then
               # Concurrent audit runs may update the same report. Keep this
               # run's completed report while retaining every other main change.
-              if [ "$(git diff --name-only --diff-filter=U)" = "audit/last-e2e-v3.0.0.json" ]; then
-                git checkout --theirs audit/last-e2e-v3.0.0.json
-                git add audit/last-e2e-v3.0.0.json
+              if [ "$(git diff --name-only --diff-filter=U)" = "audit/last-e2e-v3.0.1.json" ]; then
+                git checkout --theirs audit/last-e2e-v3.0.1.json
+                git add audit/last-e2e-v3.0.1.json
                 GIT_EDITOR=true git rebase --continue
               else
                 git rebase --abort
