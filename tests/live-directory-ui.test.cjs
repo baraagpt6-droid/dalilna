@@ -148,7 +148,7 @@ test("English live-assistant cards and result summaries use English category nam
  assert.ok(html.includes('"I found "+count+" matching "+assistantServiceLabel'));
 });
 
-test("progressive directory search keeps the first page light and uses 30-card pagination",()=>{
+test("progressive directory search keeps the first fifty matches appear with 30-card pagination",()=>{
  assert.ok(html.includes("liveDirectoryVisibleCount=50"));
  assert.ok(html.includes("liveDirectoryVisibleCount+=30"));
  assert.ok(html.includes("batchSize=2"));
