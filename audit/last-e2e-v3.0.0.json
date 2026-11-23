@@ -1,0 +1,166 @@
+{
+  "version": "3.0.0",
+  "catalog": {
+    "bytes": 1111246,
+    "recordCount": 24563,
+    "governorates": 22,
+    "schemaVersion": 2,
+    "queries": {
+      "الزوقري": {
+        "matches": 2,
+        "searchMs": 1.825,
+        "within50ms": true,
+        "examples": [
+          {
+            "name": "الزوقري للسفريات والسياحة",
+            "category": "transport",
+            "governorate": "عدن",
+            "district": "المنصوره"
+          },
+          {
+            "name": "الزوقري للسفريات والسياحه وخدمات التوصيل من والى المطارات",
+            "category": "vehicles",
+            "governorate": "إب",
+            "district": "الظهار"
+          }
+        ]
+      },
+      "الناهي": {
+        "matches": 1,
+        "searchMs": 1.725,
+        "within50ms": true,
+        "examples": [
+          {
+            "name": "الناهي للإلكترونيات",
+            "category": "elec",
+            "governorate": "إب",
+            "district": "الظهار"
+          }
+        ]
+      },
+      "صيدلية": {
+        "matches": 697,
+        "searchMs": 1.738,
+        "within50ms": true,
+        "examples": [
+          {
+            "name": "صيدلية",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الحريري",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الحسام",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية العربية",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الهدى",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الأستاذ",
+            "governorate": "عدن",
+            "district": "التواهي"
+          },
+          {
+            "name": "صيدلية الأسرار للأدوية والمستلزمات الطبية",
+            "governorate": "عدن",
+            "district": "المنصوره"
+          },
+          {
+            "name": "صيدلية البحر الأحمر",
+            "governorate": "عدن",
+            "district": "المعلا"
+          }
+        ],
+        "pharmacyCategoryRecords": 821,
+        "namedPharmacyMatches": 706,
+        "open24HoursRecords": 17
+      }
+    }
+  },
+  "live": {
+    "generatedAt": "2026-11-23T07:17:54.829Z",
+    "health": {
+      "ok": true,
+      "version": "3.0.0",
+      "ms": 280,
+      "status": 200
+    },
+    "marketplace": {
+      "databaseReady": true,
+      "databaseConfigured": true,
+      "approvedOffers": 0,
+      "returned": 0,
+      "withImages": 0,
+      "withPrice": 0,
+      "withContact": 0,
+      "ms": 813,
+      "status": 200,
+      "error": ""
+    },
+    "pharmacyLiveSearch": {
+      "ok": false,
+      "status": 503,
+      "ms": 3473,
+      "respondedWithin3Seconds": false,
+      "successfulWithin3Seconds": false,
+      "results": 0,
+      "resultsWithHours": 0,
+      "twentyFourHourResults": 0,
+      "error": "مصدر بيانات الأماكن مشغول حالياً."
+    },
+    "assistant": {
+      "configured": true,
+      "provider": "Gemini",
+      "model": "gemini-3.8-flash",
+      "ok": false,
+      "status": 502,
+      "ms": 8634,
+      "answerChars": 0,
+      "mode": "",
+      "error": "provider_timeout",
+      "providerStatus": 0,
+      "providerCode": ""
+    },
+    "publicSite": {
+      "ok": true,
+      "version": "3.0.0",
+      "signingMode": "persistent",
+      "androidVersionCode": 3020901,
+      "v3SavedHub": true,
+      "v3FlyAnimation": true,
+      "v3JobSearch": true,
+      "v3JobFeedCount": 75,
+      "v3Styles": true,
+      "bytes": 1111246,
+      "schemaVersion": 2,
+      "records": 24563,
+      "pharmacyRecords": 821,
+      "open24Pharmacies": 17,
+      "marketplaceReferenceItems": 0,
+      "pharmacy24Shortcut": true,
+      "craftCategory": true,
+      "directoryWhatsApp": true,
+      "productWhatsApp": true,
+      "androidRelease": {
+        "ok": true,
+        "versionCode": 3020901,
+        "size": 7517571,
+        "digest": "sha256:6510ce93c11cce7f177e683ec8d66252b5864d97d3c9c08ca4d565cfaa29aba2",
+        "downloadUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.0.0/app-debug.apk"
+      }
+    }
+  }
+}
