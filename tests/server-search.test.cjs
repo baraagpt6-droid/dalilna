@@ -82,6 +82,9 @@ test("Yemen Nominatim and Overpass requests stay within one bounded three-second
  assert.ok(source.includes("const deadlineAt=Date.now()+2800"));
  assert.ok(source.includes("overpassAttemptTimeout(remaining,providerIndex,endpoints.length)"));
  assert.equal(source.split("overpassAttemptTimeout(remaining,providerIndex,endpoints.length)").length-1,2);
+ assert.ok(source.includes("const overpassProviderSlots = new Map()"));
+ assert.ok(source.includes("waitForOverpassSlot(provider.name,deadlineAt)"));
+ assert.ok(source.includes("Give the current source a fair share of the remaining window"));
  assert.ok(source.includes("Math.min(1250,remaining)"));
  assert.ok(source.includes("[out:json][timeout:3]"));
 });
@@ -93,9 +96,16 @@ test("countrywide live search starts Nominatim and Overpass without serial waiti
 });
 
 test("Overpass retry budgets preserve time for all three provider starts",()=>{
- assert.equal(overpassAttemptTimeout(2800,0,3),1100);
- assert.equal(overpassAttemptTimeout(1700,1,3),600);
+ assert.equal(overpassAttemptTimeout(2800,0,3),933);
+ assert.equal(overpassAttemptTimeout(1700,1,3),850);
  assert.equal(overpassAttemptTimeout(600,2,3),600);
  assert.equal(overpassAttemptTimeout(500,2,3),500);
- assert.equal(overpassAttemptTimeout(300,1,3),0);
+ assert.equal(overpassAttemptTimeout(300,1,3),150);
+});
+
+test("Overpass endpoints are rate-limited independently so a busy primary does not delay a mirror",()=>{
+ const source=fs.readFileSync(require.resolve("../server"),"utf8");
+ assert.ok(source.includes("const overpassProviderSlots = new Map()"));
+ assert.ok(source.includes("const key=String(providerName||\"default\")"));
+ assert.equal(source.split("await waitForOverpassSlot(provider.name,deadlineAt)").length-1,2);
 });
