@@ -1,9 +1,9 @@
 {
   "version": "3.0.1",
-  "versionCode": 3023001,
+  "versionCode": 3023101,
   "webVersion": "3.0.1",
   "androidVersion": "3.0.1",
-  "androidVersionCode": 3023001,
+  "androidVersionCode": 3023101,
   "catalogSchemaVersion": 2,
   "catalogSnapshotDate": "2026-11-23",
   "catalogTotalCount": 24563,
@@ -20,9 +20,10 @@
     "Foursquare Open Places (via Overture)": 4
   },
   "osmDatasetSource": "Geofabrik latest Yemen extract",
-  "updatedAt": "2026-11-23T09:23:03.582Z",
+  "updatedAt": "2026-11-23T09:53:27.871Z",
   "marketPriceGuideVersion": 1,
   "marketPriceGuideUpdatedAt": "2026-11-23",
   "androidSigningMode": "persistent",
-  "androidReleaseUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.0.1/app-debug.apk"
+  "androidReleaseUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.0.1/app-debug.apk",
+  "officialWebUrl": "https://dalilna-ftny.netlify.app/"
 }
