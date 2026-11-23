@@ -65,7 +65,7 @@ class SearchIndexGeneratorTests(unittest.TestCase):
             self.assertEqual(len({row[0] for row in payload["i"]}), 23)
             self.assertEqual(payload["c"], ["craft"])
             self.assertEqual(payload["g"], [row["name"] for row in governors])
-            self.assertNotIn("address", payload)
+            self.assertNotIn("openingHours", payload)
             self.assertNotIn("address", payload)
 
 if __name__ == "__main__":
