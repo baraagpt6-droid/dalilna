@@ -597,6 +597,7 @@
       loadSouq();
     });
     const adminButton=$("sharedAdminReviewButton");if(adminButton)adminButton.addEventListener("click",loadAdminQueue);
+    const adminReportsButton=$("sharedAdminReportsButton");if(adminReportsButton)adminReportsButton.addEventListener("click",loadAdminReports);
     const migrateButton=$("sharedMigrateLocalButton");if(migrateButton)migrateButton.addEventListener("click",migrateLocal);
     window.addEventListener("dalilna:languagechange",()=>{
       fillSelect($("sharedDirectoryCategory"),CATS,label("كل الأقسام"));
