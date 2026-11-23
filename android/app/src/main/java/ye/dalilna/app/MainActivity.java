@@ -28,11 +28,13 @@ public class MainActivity extends Activity {
     private static final int REQ_AUDIO = 301;
     private static final int REQ_LOCATION = 302;
     private static final int REQ_FILE = 303;
-    private static final String REMOTE_APP_URL = "https://dalilna-ftny.netlify.app/";
+    private static final String REMOTE_APP_URL = "https://baraagpt6-droid.github.io/dalilna/";
+    private static final String LEGACY_NETLIFY_APP_URL = "https://dalilna-ftny.netlify.app/";
     private static final String LOCAL_APP_URL = "https://appassets.androidplatform.net/assets/index.html";
     private static final String PREFS = "dalilna_web_runtime";
     private static final String KEY_STORAGE = "local_storage_snapshot";
     private static final String KEY_REMOTE_READY = "remote_content_ready";
+    private static final String KEY_ORIGIN_MIGRATION_DONE = "official_origin_migration_done";
     private static final String KEY_LAST_REMOTE_ATTEMPT = "last_remote_attempt_ms";
     private static final int MAX_STORAGE_BYTES = 4 * 1024 * 1024;
 
@@ -147,13 +149,24 @@ public class MainActivity extends Activity {
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
-                if (request.isForMainFrame() && isRemoteAppUrl(request.getUrl())) loadLocalFallback();
+                if (request.isForMainFrame() && isLegacyNetlifyAppUrl(request.getUrl())
+                        && !preferences.getBoolean(KEY_ORIGIN_MIGRATION_DONE, false)) {
+                    preferences.edit().putBoolean(KEY_ORIGIN_MIGRATION_DONE, true).apply();
+                    view.loadUrl(REMOTE_APP_URL);
+                } else if (request.isForMainFrame() && isRemoteAppUrl(request.getUrl())) {
+                    loadLocalFallback();
+                }
             }
 
             @Override
             public void onReceivedHttpError(WebView view, WebResourceRequest request, android.webkit.WebResourceResponse response) {
                 super.onReceivedHttpError(view, request, response);
-                if (request.isForMainFrame() && response.getStatusCode() >= 400 && isRemoteAppUrl(request.getUrl())) {
+                if (request.isForMainFrame() && response.getStatusCode() >= 400
+                        && isLegacyNetlifyAppUrl(request.getUrl())
+                        && !preferences.getBoolean(KEY_ORIGIN_MIGRATION_DONE, false)) {
+                    preferences.edit().putBoolean(KEY_ORIGIN_MIGRATION_DONE, true).apply();
+                    view.loadUrl(REMOTE_APP_URL);
+                } else if (request.isForMainFrame() && response.getStatusCode() >= 400 && isRemoteAppUrl(request.getUrl())) {
                     loadLocalFallback();
                 }
             }
@@ -161,9 +174,14 @@ public class MainActivity extends Activity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                if (isRemoteAppUrl(Uri.parse(url))) {
+                Uri finishedUri = Uri.parse(url);
+                if (isLegacyNetlifyAppUrl(finishedUri)
+                        && !preferences.getBoolean(KEY_ORIGIN_MIGRATION_DONE, false)) {
+                    captureLegacyStorageAndOpenOfficial(view);
+                } else if (isRemoteAppUrl(finishedUri)) {
                     fallbackLoading = false;
-                    preferences.edit().putBoolean(KEY_REMOTE_READY, true).apply();
+                    preferences.edit().putBoolean(KEY_REMOTE_READY, true)
+                            .putBoolean(KEY_ORIGIN_MIGRATION_DONE, true).apply();
                 } else if (url.startsWith("https://appassets.androidplatform.net/assets/")) {
                     fallbackLoading = false;
                 }
@@ -219,26 +237,50 @@ public class MainActivity extends Activity {
         });
 
         boolean migrated = preferences.getBoolean(KEY_REMOTE_READY, false);
-        if (migrated) {
+        boolean originMigrationDone = preferences.getBoolean(KEY_ORIGIN_MIGRATION_DONE, false);
+        if (migrated && !originMigrationDone) {
+            preferences.edit().putLong(KEY_LAST_REMOTE_ATTEMPT, System.currentTimeMillis()).apply();
+            // Visit the previous Netlify origin once to copy its WebView localStorage into native storage.
+            webView.loadUrl(LEGACY_NETLIFY_APP_URL);
+        } else if (migrated) {
             preferences.edit().putLong(KEY_LAST_REMOTE_ATTEMPT, System.currentTimeMillis()).apply();
             webView.loadUrl(REMOTE_APP_URL);
         } else {
-            // Load the previous local origin once so its localStorage can be copied before switching to the official Netlify site.
+            // Load the bundled origin once so its localStorage can be copied before switching to GitHub Pages.
             webView.loadUrl(LOCAL_APP_URL);
         }
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
     }
 
+    private void captureLegacyStorageAndOpenOfficial(WebView view) {
+        String script = "(function(){try{"
+                + "var snapshot={};"
+                + "for(var i=0;i<localStorage.length;i++){var key=localStorage.key(i);if(key!==null)snapshot[key]=localStorage.getItem(key);}"
+                + "var json=JSON.stringify(snapshot);"
+                + "if(json.length>4194304)return false;"
+                + "window.DalilnaNative.saveLocalStorage(json);return true;"
+                + "}catch(_){return false;}})()";
+        view.evaluateJavascript(script, result -> {
+            preferences.edit().putBoolean(KEY_ORIGIN_MIGRATION_DONE, true).apply();
+            if (webView != null) webView.postDelayed(() -> webView.loadUrl(REMOTE_APP_URL), 250L);
+        });
+    }
+
     private boolean isRemoteAppUrl(Uri uri) {
+        if (uri == null || !"https".equalsIgnoreCase(uri.getScheme())
+                || !"baraagpt6-droid.github.io".equalsIgnoreCase(uri.getHost())) return false;
+        String path = uri.getPath();
+        return path != null && ("/dalilna".equals(path) || "/dalilna/".equals(path) || path.startsWith("/dalilna/"));
+    }
+
+    private boolean isLegacyNetlifyAppUrl(Uri uri) {
         return uri != null && "https".equalsIgnoreCase(uri.getScheme())
-                && "dalilna-ftny.netlify.app".equalsIgnoreCase(uri.getHost())
-                && uri.getPath() != null
-                && ("/".equals(uri.getPath()) || uri.getPath().startsWith("/index.html"));
+                && "dalilna-ftny.netlify.app".equalsIgnoreCase(uri.getHost());
     }
 
     private boolean isTrustedAppUrl(Uri uri) {
-        return uri != null && (("appassets.androidplatform.net".equalsIgnoreCase(uri.getHost()))
-                || isRemoteAppUrl(uri));
+        return uri != null && ("appassets.androidplatform.net".equalsIgnoreCase(uri.getHost())
+                || isRemoteAppUrl(uri) || isLegacyNetlifyAppUrl(uri));
     }
 
     private void loadLocalFallback() {
