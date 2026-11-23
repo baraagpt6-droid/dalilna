@@ -16,7 +16,7 @@
   }
   function restore(){
     try{
-      if(localStorage.length>0)return;
+      
       const raw=native.loadLocalStorage();
       if(!raw||raw.length>MAX_BYTES)return;
       const values=JSON.parse(raw);
