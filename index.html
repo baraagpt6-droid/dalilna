@@ -4897,7 +4897,7 @@ async function runLiveDirectorySearch(force){
  if(!context.gov&&!query&&category==="all"&&!Object.values(flt).some(Boolean)){
   try{
    const manifest=await loadRegionalCatalogManifest(false);
-   if(!isCurrent())return;
+   if(!isCurrent()){finishRequest();return;}
    liveDirectoryLocationPrompt(manifest);
    responseData.pending=false;
    loadLiveMarketplaceMatches(query,category,productType,controller.signal,force,listingType).then(()=>{
