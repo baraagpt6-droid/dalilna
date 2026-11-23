@@ -137,6 +137,9 @@ jobs:
               v3SavedHub:v3js.includes("savedHubDialog")&&v3js.includes("dalilna:favorite-change"),
               v3FlyAnimation:v3js.includes("cubic-bezier"),v3JobSearch:featuresText.includes("jobsInlineSearch")&&featuresText.includes("jobsSavedFilter"),
               v3JobFeedCount:Array.isArray(jobsFeed.items)?jobsFeed.items.length:0,
+              assistantJobsLocal:Array.isArray(jobsFeed.items)&&jobsFeed.items.length>0&&pageText.includes('fetch("./jobs-feed.json"')&&pageText.includes("assistantCards:cards"),
+              assistantLocalFallback:pageText.includes("const localFallback={answer:answerAI(q)")&&pageText.includes("المجيب: دليلنا المحلي"),
+              jobFeedWithSourceLinks:Array.isArray(jobsFeed.items)?jobsFeed.items.filter(item=>item.applicationUrl||item.url||item.sourceUrl).length:0,
               v3Styles:v3css.includes(".v3-favorite-trigger"),bytes:publicBytes.byteLength,
               schemaVersion:publicEnvelope.schemaVersion,records:publicIndexPayload.i?.length||0,
               pharmacyRecords:publicIndexPayload.i?.filter(row=>publicIndexPayload.c[row[2]]==="pharmacy").length||0,
@@ -152,7 +155,7 @@ jobs:
             if(!apk||apk.browser_download_url!==version.androidReleaseUrl||!String(release.body||"").includes("Signing mode: persistent"))throw new Error("The persistent v3.0.0 Android APK release asset is missing or its URL does not match version.json.");
             if(publicSite.version!=="3.0.0"||publicSite.signingMode!=="persistent")throw new Error("Published Pages version or Android signing mode is not v3.0.0 persistent.");
             publicSite.androidRelease={ok:true,versionCode:version.androidVersionCode,size:apk.size,digest:apk.digest,downloadUrl:apk.browser_download_url};
-            if(!publicSite.v3SavedHub||!publicSite.v3FlyAnimation||!publicSite.v3JobSearch||!publicSite.v3Styles)throw new Error("A v3 saved hub, animation, job filter or stylesheet asset is missing.");
+            if(!publicSite.v3SavedHub||!publicSite.v3FlyAnimation||!publicSite.v3JobSearch||!publicSite.v3Styles||!publicSite.assistantJobsLocal||!publicSite.assistantLocalFallback||publicSite.jobFeedWithSourceLinks===0)throw new Error("A v3 saved hub, animation, job filter, local jobs assistant or source-link asset is missing.");
             if(!health.ok||health.body?.version!=="3.0.0")throw new Error("Render health did not confirm Dalilna v3.0.0 after waiting.");
           } catch(error) {publicSite={ok:false,error:String(error?.message||error)};}
           if(!publicSite.ok)throw new Error("Published v3.0.0 Pages audit failed: "+(publicSite.error||"unknown error"));
