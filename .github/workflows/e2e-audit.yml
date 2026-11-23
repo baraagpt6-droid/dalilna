@@ -1,4 +1,5 @@
 name: Dalilna v3.0.0 live E2E audit
+# Final signed APK metadata is published before this live audit runs.
 # Re-run live probes after the signed APK and assistant fallback are deployed.
 
 on:
