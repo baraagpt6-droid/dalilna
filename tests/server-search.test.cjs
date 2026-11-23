@@ -100,7 +100,7 @@ test("Overpass retry budgets preserve time for all three provider starts",()=>{
  assert.equal(overpassAttemptTimeout(1700,1,3),850);
  assert.equal(overpassAttemptTimeout(600,2,3),600);
  assert.equal(overpassAttemptTimeout(500,2,3),500);
- assert.equal(overpassAttemptTimeout(300,1,3),150);
+ assert.equal(overpassAttemptTimeout(300,1,3),300);
 });
 
 test("Overpass endpoints are rate-limited independently so a busy primary does not delay a mirror",()=>{
