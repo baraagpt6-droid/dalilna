@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "dalilna-pwa-";
-const CACHE_NAME = CACHE_PREFIX + "v2.8.0";
+const CACHE_NAME = CACHE_PREFIX + "v2.9.0";
 const APP_SHELL = ["./", "./index.html", "./manifest.json", "./regions-yemen.js", "./regions-profiles.js", "./regional-catalog-runtime.js", "./marketplace-client.js", "./features-2.1.js?v=2.8.0", "./features-2.1.css?v=2.8.0", "./jobs-feed.json", "./version.json", "./market_items.json", "./regional-catalog/manifest.json?v=2.8.0", "./privacy.html", "./terms.html", "./icons/icon.svg"];
 
 self.addEventListener("install", event => {
@@ -29,7 +29,10 @@ self.addEventListener("fetch", event => {
   // Network-first for mutable catalogue JSON and critical UI assets.
   const freshnessSensitive = url.pathname.includes("/regional-catalog/")
     || url.pathname.endsWith("/features-2.1.css")
-    || url.pathname.endsWith("/features-2.1.js");
+    || url.pathname.endsWith("/features-2.1.js")
+    || url.pathname.endsWith("/market_prices_yemen.json")
+    || url.pathname.endsWith("/version.json")
+    || url.pathname.endsWith("/jobs-feed.json");
   if (freshnessSensitive) {
     event.respondWith((async () => {
       try {
