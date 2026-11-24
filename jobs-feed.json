@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "fetchedAt": "2026-11-24T07:51:59.917Z",
+  "fetchedAt": "2026-11-24T13:44:45.389Z",
   "refreshedBy": "GitHub Actions six-hour jobs refresh",
   "sources": [
     {
@@ -31,6 +31,40 @@
   ],
   "items": [
     {
+      "id": "yemenhr:5064",
+      "title": "مدير تسويق لمجمع صناعي",
+      "organization": "Confidential",
+      "location": "Mukalla, Yemen",
+      "city": "Mukalla",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-24T23:59:59.000Z",
+      "deadline": "24 ديسمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/mdyr-tsoyk-lmgmaa-snaaay-confidential-mukalla-324dcd55",
+      "applicationUrl": "https://yemenhr.com/jobs/mdyr-tsoyk-lmgmaa-snaaay-confidential-mukalla-324dcd55",
+      "sourceUrl": "https://t.me/hr_yemen/5064",
+      "summaryAr": "- - الاشراف على تنفيذ زيارات ميدانية منتظمة لمحلات ومؤسسات بيع مواد البناء والوكلاء والموزعين المحتملين. - - استقطاب وكلاء وموزعين جدد وفتح قنوات بيع جديدة لمنتجات المجمع الصناعي. - - بناء علاقات تجارية طويلة الأمد مع العملاء والوكلاء. - - التعريف بمنتجات المصانع ومواصفاتها الفنية ومميزاتها التنافسية. - - متابعة الوكلاء وا... ━━━━━━━━━━━━━━━━━━━━ #YemenHR | #أخرى ━━━━━━━ قناة وظائف اليمن https://t.me/hr_yemen ━━━━━━━ تابعونا على لينكد إن 💼 ━━━━━━━ نتمنى لكم التوفيق! ❤️",
+      "expiresAt": "2026-12-24T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5065",
+      "title": "IT Assistant",
+      "organization": "NAHR",
+      "location": "Aden, Yemen",
+      "city": "Aden",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-24T23:59:59.000Z",
+      "deadline": "28 نوفمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/it-assistant-nahr-aden-e4b929df",
+      "applicationUrl": "https://yemenhr.com/jobs/it-assistant-nahr-aden-e4b929df",
+      "sourceUrl": "https://t.me/hr_yemen/5065",
+      "summaryAr": "",
+      "expiresAt": "2026-11-28T23:59:59.000Z"
+    },
+    {
       "id": "careers-sa:qa-qc-engineer-urbacon-saudi-company-aa6c54eb",
       "title": "QA/QC Engineer",
       "organization": "Urbacon Saudi Company    Urbacon Saudi Company",
@@ -38,14 +72,14 @@
       "city": "KSA",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-24T07:51:59.917Z",
+      "publishedAt": "2026-11-24T13:44:45.389Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.powerholding-intl.com/job/KSA-QAQC-Engineer/1375772257/",
       "applicationUrl": "https://careers.powerholding-intl.com/job/KSA-QAQC-Engineer/1375772257/",
       "sourceUrl": "https://www.careers.sa/en/jobs/qa-qc-engineer-urbacon-saudi-company-aa6c54eb",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-08T07:51:59.917Z"
+      "expiresAt": "2026-12-08T13:44:45.389Z"
     },
     {
       "id": "careers-sa:contracts-specialist-%D8%A3%D8%A8-%D8%A8%D9%84%D8%B3-3f41f9aa",
