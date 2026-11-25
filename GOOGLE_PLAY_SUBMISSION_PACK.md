@@ -1,7 +1,7 @@
 # Dalilna 3.1.0 — Google Play submission pack
 
 Application ID: `ye.dalilna.app`  
-Release: `3.1.0` · final signed Android version code: `3126901`  
+Release: `3.1.0` · final signed Android version code: `3127201`  
 Website: https://baraagpt6-droid.github.io/dalilna/store/  
 App: https://baraagpt6-droid.github.io/dalilna/  
 Privacy policy: https://baraagpt6-droid.github.io/dalilna/privacy.html  
