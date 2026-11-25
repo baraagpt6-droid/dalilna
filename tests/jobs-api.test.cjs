@@ -80,3 +80,14 @@ test("daily refresh merges retained and freshly collected jobs without losing ol
 test("daily refresh script includes UN RSS and optional ReliefWeb configuration",()=>{const script=fs.readFileSync("scripts/refresh-jobs.cjs","utf8");assert.match(script,/careers\.un\.org/);assert.match(script,/RELIEFWEB_APPNAME/);assert.match(script,/DALILNA_JOB_RSS_FEEDS/);assert.match(script,/expiresAt/);});
 test("job seeker records require public consent and expire after 60 days",()=>{const api=fs.readFileSync("jobs-api.js","utf8");assert.match(api,/body\.consentPublic===true/);assert.match(api,/consent_public=TRUE/);assert.match(api,/INTERVAL '60 days'/);});
 test("marketplace exposes category groups and 60-day market expiry",()=>{const api=fs.readFileSync("marketplace-api.js","utf8");assert.match(api,/PRODUCT_GROUPS/);assert.match(api,/productGroup/);assert.match(api,/NOW\(\)\+INTERVAL '60 days'/);});
+
+test("YemenHR parser reads values placed on the line after each field label",()=>{
+ const {parseYemenHrJobs}=require("../scripts/refresh-jobs.cjs");
+ const html='<div class="tgme_widget_message_wrap"><div data-post="hr_yemen/10001"></div><div class="tgme_widget_message_text js-message_text">📋 المسمى الوظيفي:<br>Project Officer<br>🏢 الجهة:<br>Test NGO<br>📍 الموقع:<br>Aden<br>📅 تاريخ النشر:<br>18 نوفمبر 2026<br>⏰ آخر موعد للتقديم:<br>24 نوفمبر 2026</div><a href="https://yemenhr.com/apply/10001">Apply now</a></div>';
+ const items=parseYemenHrJobs(html);
+ assert.equal(items.length,1);
+ assert.equal(items[0].title,"Project Officer");
+ assert.equal(items[0].organization,"Test NGO");
+ assert.equal(items[0].city,"Aden");
+ assert.equal(items[0].deadline,"24 نوفمبر 2026");
+});
