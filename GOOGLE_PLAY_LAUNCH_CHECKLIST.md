@@ -99,8 +99,8 @@ You can browse the directory without creating a central account. Some features r
 
 - **Primary category:** Travel & Local. هذا هو الأنسب لأن المنتج الأساسي دليل محلي للمحلات والخدمات والمناطق. إذا أصبحت وظيفة السوق هي الغرض الرئيسي في الإصدار المنشور، أعد تقييم فئة Shopping.
 - **Tags:** اختر من الوسوم التي يعرضها Play Console فقط. أعط الأولوية للوسوم الأقرب إلى الدليل المحلي والخدمات والبحث والتسوق والوظائف إذا كانت متاحة. لا تكرر الكلمات المفتاحية بصورة غير طبيعية.
-- **Developer name:** [اسم المطور الرسمي]
-- **Support email:** [البريد الإلكتروني الرسمي]
+- **Developer name:** Dalilna Team (display suggestion; confirm legal account owner)
+- **Support email:** PENDING — enter a verified monitored support/privacy email before submission
 - **Website:** https://baraagpt6-droid.github.io/dalilna/store/
 - **Privacy policy:** https://baraagpt6-droid.github.io/dalilna/privacy.html
 - **Support website:** استخدم صفحة التعريف نفسها حتى يتوفر موقع دعم مستقل.
@@ -288,8 +288,8 @@ All public app features are available without signing in. Open Dalilna and brows
 
 ## 10. بوابات الإطلاق المتبقية
 
-- [ ] استبدال [اسم المطور الرسمي] باسم المطور القانوني كما سيظهر في Play Console.
-- [ ] استبدال [البريد الإلكتروني الرسمي] ببريد فعّال واختبار استقبال الرسائل.
+- [ ] استبدال Dalilna Team (display suggestion; confirm legal account owner) باسم المطور القانوني كما سيظهر في Play Console.
+- [ ] استبدال PENDING — enter a verified monitored support/privacy email before submission ببريد فعّال واختبار استقبال الرسائل.
 - [ ] مراجعة سياسة الخصوصية بعد تثبيت البريد والاسم.
 - [ ] اختبار سلوك التعرف على الكلام على أجهزة Android الفعلية وتأكيد ما إذا كان الصوت يغادر الجهاز.
 - [ ] مراجعة Data Safety مع جميع مكتبات SDK وطلب البيانات الفعلي.
