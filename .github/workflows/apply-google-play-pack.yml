@@ -1,0 +1,15 @@
+name: Apply Dalilna Play contact fixes
+on:
+  push:
+    branches: [chore/google-play-submission-pack]
+    paths: [.github/workflows/apply-google-play-pack.yml]
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - run: node scripts/apply-google-play-pack.cjs
