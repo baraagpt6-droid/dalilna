@@ -222,12 +222,6 @@ jobs:
           fi
           test -s "$APK"
 
-          ACTUAL_PACKAGE_NAME="$("$BUILD_TOOLS/aapt" dump badging "$APK" | sed -n "s/^package: name='\\([^'' ]*\\)'.*/\\1/p" | head -n 1)"
-          if [[ "$ACTUAL_PACKAGE_NAME" != "ye.dalilna.app" ]]; then
-            echo "APK applicationId $ACTUAL_PACKAGE_NAME does not match the production package ye.dalilna.app."
-            exit 1
-          fi
-
           SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
           if [[ -z "$SDK_ROOT" || ! -d "$SDK_ROOT/build-tools" ]]; then
             echo "Android SDK build-tools were not found."
@@ -235,6 +229,11 @@ jobs:
           fi
           BUILD_TOOLS_VERSION="$(ls -1 "$SDK_ROOT/build-tools" | sort -V | tail -n 1)"
           BUILD_TOOLS="$SDK_ROOT/build-tools/$BUILD_TOOLS_VERSION"
+          ACTUAL_PACKAGE_NAME="$("$BUILD_TOOLS/aapt" dump badging "$APK" | awk -F"'" '/^package: name=/{print $2; exit}')"
+          if [[ "$ACTUAL_PACKAGE_NAME" != "ye.dalilna.app" ]]; then
+            echo "APK applicationId $ACTUAL_PACKAGE_NAME does not match the production package ye.dalilna.app."
+            exit 1
+          fi
           ACTUAL_VERSION_CODE="$("$BUILD_TOOLS/aapt" dump badging "$APK" | sed -n "s/.*versionCode='\([0-9]*\)'.*/\1/p" | head -n 1)"
           if [[ "$ACTUAL_VERSION_CODE" != "$VERSION_CODE" ]]; then
             echo "APK versionCode $ACTUAL_VERSION_CODE does not match expected $VERSION_CODE."
