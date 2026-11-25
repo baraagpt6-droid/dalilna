@@ -47,8 +47,8 @@ test("Play Data safety worksheet explains AdMob data and local-only profiles", (
   const safety = read("GOOGLE_PLAY_DATA_SAFETY.md");
   assert.match(safety, /Google Mobile Ads SDK/);
   assert.match(safety, /Advertising ID/);
-  assert.match(safety, /Account creation: \*\*No\*\*/i);
-  assert.match(safety, /Firebase Analytics.*not/i);
+  assert.match(safety, /No centralized customer or merchant account registration/i);
+  assert.match(safety, /No Firebase Analytics/i);
   assert.match(safety, /AdMob/);
   assert.match(safety, /Voice or sound recordings/);
   assert.match(safety, /12\.5|voice/i);
