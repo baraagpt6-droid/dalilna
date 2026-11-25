@@ -118,3 +118,19 @@ test("production runtime contains no legacy static-host origin or migration bran
   assert.equal(source.includes(provider), false);
   assert.equal(source.includes(legacyOrigin), false);
 });
+
+test("direct-download APK is the signed production app variant", () => {
+  const workflow = read(".github/workflows/android-apk.yml");
+  const gradle = read("android/app/build.gradle.kts");
+  const version = JSON.parse(read("version.json"));
+  assert.match(gradle, /applicationId = "ye\\.dalilna\\.app"/);
+  assert.match(gradle, /applicationIdSuffix = "\\.debug"/);
+  assert.match(workflow, /assembleRelease/);
+  assert.match(workflow, /outputs\\/apk\\/release\\/app-release\\.apk/);
+  assert.match(workflow, /ACTUAL_PACKAGE_NAME/);
+  assert.match(workflow, /ye\\.dalilna\\.app/);
+  assert.ok(workflow.includes("/releases/download/v3.1.0/app-release.apk"));
+  assert.ok(version.androidReleaseUrl.endsWith("/app-release.apk"));
+  assert.ok(!version.androidReleaseUrl.endsWith("/app-debug.apk"));
+  assert.equal(read("version.json"), read("android/app/src/main/assets/version.json"));
+});
