@@ -289,7 +289,7 @@ All public app features are available without signing in. Open Dalilna and brows
 ## 10. بوابات الإطلاق المتبقية
 
 - [ ] استبدال Dalilna Team (display suggestion; confirm legal account owner) باسم المطور القانوني كما سيظهر في Play Console.
-- [ ] استبدال PENDING — enter a verified monitored support/privacy email before submission ببريد فعّال واختبار استقبال الرسائل.
+- [ ] تفعيل support@dalilna.app أو استبداله ببريد رسمي مملوك للمطوّر، ثم اختبار استقبال الرسائل ومراقبتها لطلبات الخصوصية.
 - [ ] مراجعة سياسة الخصوصية بعد تثبيت البريد والاسم.
 - [ ] اختبار سلوك التعرف على الكلام على أجهزة Android الفعلية وتأكيد ما إذا كان الصوت يغادر الجهاز.
 - [ ] مراجعة Data Safety مع جميع مكتبات SDK وطلب البيانات الفعلي.
