@@ -93,9 +93,9 @@ test("Android bundled policy pages match current public policy files", () => {
 test("the public store page is deployed separately from the PWA application route", () => {
   const landing = read("store/index.html");
   const pagesWorkflow = read(".github/workflows/deploy-pages.yml");
-  assert.match(landing, /canonical.*store\\//);
-  assert.match(landing, /href="\\.\\.\\/privacy\\.html"/);
-  assert.match(landing, /href="\\.\\.\\/terms\\.html"/);
-  assert.match(pagesWorkflow, /cp store\\/index\\.html _site\\/store\\/index\\.html/);
-  assert.match(pagesWorkflow, /test -s _site\\/store\\/index\\.html/);
+  assert.ok(landing.includes('canonical href="https://baraagpt6-droid.github.io/dalilna/store/"'));
+  assert.ok(landing.includes('href="../privacy.html"'));
+  assert.ok(landing.includes('href="../terms.html"'));
+  assert.ok(pagesWorkflow.includes("cp store/index.html _site/store/index.html"));
+  assert.ok(pagesWorkflow.includes("test -s _site/store/index.html"));
 });
