@@ -100,13 +100,13 @@ You can browse the directory without creating a central account. Some features r
 - **Primary category:** Travel & Local. هذا هو الأنسب لأن المنتج الأساسي دليل محلي للمحلات والخدمات والمناطق. إذا أصبحت وظيفة السوق هي الغرض الرئيسي في الإصدار المنشور، أعد تقييم فئة Shopping.
 - **Tags:** اختر من الوسوم التي يعرضها Play Console فقط. أعط الأولوية للوسوم الأقرب إلى الدليل المحلي والخدمات والبحث والتسوق والوظائف إذا كانت متاحة. لا تكرر الكلمات المفتاحية بصورة غير طبيعية.
 - **Developer name:** Dalilna Team (display suggestion; confirm legal account owner)
-- **Support email:** PENDING — enter a verified monitored support/privacy email before submission
+- **Support email:** support@dalilna.app (proposed address; activate, test and monitor before submission)
 - **Website:** https://baraagpt6-droid.github.io/dalilna/store/
 - **Privacy policy:** https://baraagpt6-droid.github.io/dalilna/privacy.html
 - **Support website:** استخدم صفحة التعريف نفسها حتى يتوفر موقع دعم مستقل.
 - **Phone:** أضفه فقط إذا كان لديك رقم دعم رسمي يمكن الرد عليه.
 
-لا ترسل البطاقة قبل استبدال الاسم والبريد ببيانات صحيحة. يجب أن يكون البريد فعالاً لاستقبال طلبات الخصوصية وإزالة الإعلانات.
+لا ترسل البطاقة قبل تفعيل support@dalilna.app أو استبداله ببريد يملكه المطوّر ويستقبل فعلياً طلبات الخصوصية وإزالة الإعلانات.
 
 ## 3. ملاحظات الإصدار الأول على المتجر
 
