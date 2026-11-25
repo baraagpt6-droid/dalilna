@@ -25,15 +25,6 @@ const ALLOWED_ORIGINS = new Set([
   "https://dalilna-live.onrender.com",
   "https://appassets.androidplatform.net"
 ]);
-for (const candidate of [
-  ...String(process.env.DALILNA_ALLOWED_ORIGINS || "").split(/[\\s,]+/)
-].map(value => value.trim()).filter(Boolean)) {
-  try {
-    const origin = new URL(candidate);
-    if (origin.protocol === "https:") ALLOWED_ORIGINS.add(origin.origin);
-  } catch (_) {
-    // Ignore malformed environment values; never allow a wildcard origin.
-  }
 }
 
 function send(res, status, body) {
