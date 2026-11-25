@@ -52,7 +52,7 @@ test("Android APK build prepares matching OTA metadata before asset sync and ver
  const workflow=fs.readFileSync(path.join(root,".github/workflows/android-apk.yml"),"utf8");
  const prepare=workflow.indexOf("Prepare Android OTA metadata before packaging");
  const sync=workflow.indexOf("Sync PWA, OTA bridge, price guide and Yemen catalogue into Android assets");
- const build=workflow.indexOf("Build APK");
+ const build=workflow.indexOf("Build signed Release APK and AAB");
  const verify=workflow.indexOf("Verify APK version and signature");
  assert.ok(prepare>=0&&prepare<sync&&sync<build&&build<verify);
  assert.match(workflow,/3100000 \+ runNumber \* 100 \+ attempt/);
