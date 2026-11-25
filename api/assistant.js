@@ -26,7 +26,6 @@ const ALLOWED_ORIGINS = new Set([
   "https://appassets.androidplatform.net"
 ]);
 for (const candidate of [
-  ...String(process.env.DALILNA_NETLIFY_URL || "").split(/[\\s,]+/),
   ...String(process.env.DALILNA_ALLOWED_ORIGINS || "").split(/[\\s,]+/)
 ].map(value => value.trim()).filter(Boolean)) {
   try {
