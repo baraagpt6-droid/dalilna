@@ -141,7 +141,7 @@ jobs:
           version.versionCode = versionCode;
           version.androidVersionCode = versionCode;
           version.androidSigningMode = process.env.APK_SIGNING_MODE || "persistent";
-          version.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.1.0/app-debug.apk";
+          version.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.1.0/app-release.apk";
           version.officialWebUrl = "https://baraagpt6-droid.github.io/dalilna/";
           version.updatedAt = new Date().toISOString();
           fs.writeFileSync(file, JSON.stringify(version, null, 2));
@@ -166,9 +166,6 @@ jobs:
 
       - name: Run application, market-guide and OTA checks
         run: npm test
-
-      - name: Build APK
-        run: gradle --no-daemon :android:app:assembleDebug
 
       - name: Normalize and validate production AdMob identifiers
         id: release-ads
@@ -195,9 +192,9 @@ jobs:
           echo "ready=true" >> "$GITHUB_OUTPUT"
           echo "Production AdMob identifiers validated and normalized."
 
-      - name: Build signed Release AAB
+      - name: Build signed Release APK and AAB
         if: steps.release-ads.outputs.ready == 'true'
-        run: gradle --no-daemon :android:app:bundleRelease
+        run: gradle --no-daemon :android:app:assembleRelease :android:app:bundleRelease
 
       - name: Verify signed Release AAB
         if: steps.release-ads.outputs.ready == 'true'
@@ -211,18 +208,25 @@ jobs:
           echo "Release AAB exists and its JAR signature verifies."
 
       - name: Verify APK version and signature
+        if: steps.release-ads.outputs.ready == 'true'
         id: app-version
         shell: bash
         run: |
           set -euo pipefail
           VERSION="$(sed -n 's/^[[:space:]]*versionName = "\([^"]*\)".*/\1/p' android/app/build.gradle.kts | head -n 1)"
           VERSION_CODE="$((3100000 + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))"
-          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+          APK="android/app/build/outputs/apk/release/app-release.apk"
           if [[ "$VERSION" != "3.1.0" ]]; then
             echo "Expected versionName 3.1.0, got $VERSION"
             exit 1
           fi
           test -s "$APK"
+
+          ACTUAL_PACKAGE_NAME="$("$BUILD_TOOLS/aapt" dump badging "$APK" | sed -n "s/^package: name='\\([^'' ]*\\)'.*/\\1/p" | head -n 1)"
+          if [[ "$ACTUAL_PACKAGE_NAME" != "ye.dalilna.app" ]]; then
+            echo "APK applicationId $ACTUAL_PACKAGE_NAME does not match the production package ye.dalilna.app."
+            exit 1
+          fi
 
           SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
           if [[ -z "$SDK_ROOT" || ! -d "$SDK_ROOT/build-tools" ]]; then
@@ -252,10 +256,11 @@ jobs:
           echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
 
       - name: Upload APK workflow artifact
+        if: steps.release-ads.outputs.ready == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: dalilna-3.1.0-android-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 30
 
@@ -278,7 +283,7 @@ jobs:
           make_latest: true
           overwrite_files: true
           files: |
-            android/app/build/outputs/apk/debug/app-debug.apk
+            android/app/build/outputs/apk/release/app-release.apk
             android/app/build/outputs/bundle/release/app-release.aab
           body: |
             Dalilna 3.1.0 Android release artifacts.
@@ -320,7 +325,7 @@ jobs:
           v.versionCode = versionCode;
           v.androidVersionCode = versionCode;
           v.androidSigningMode = process.env.APK_SIGNING_MODE;
-          v.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.1.0/app-debug.apk";
+          v.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.1.0/app-release.apk";
           v.officialWebUrl = "https://baraagpt6-droid.github.io/dalilna/";
           v.updatedAt = new Date().toISOString();
           fs.writeFileSync(file, JSON.stringify(v, null, 2));
