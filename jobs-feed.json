@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "fetchedAt": "2026-11-25T14:48:23.245Z",
+  "fetchedAt": "2026-11-25T19:25:09.222Z",
   "refreshedBy": "GitHub Actions six-hour jobs refresh",
   "sources": [
     {
@@ -150,6 +150,40 @@
       "expiresAt": "2026-12-03T23:59:59.000Z"
     },
     {
+      "id": "yemenhr:5073",
+      "title": "ADVOCACY EXPERT",
+      "organization": "Action contre la Faim",
+      "location": "Aden, Yemen",
+      "city": "Aden",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-25T23:59:59.000Z",
+      "deadline": "9 ديسمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://www.unjobnet.org/jobs/detail/action-contre-la-faim-advocacy-expert-90942252",
+      "applicationUrl": "https://www.unjobnet.org/jobs/detail/action-contre-la-faim-advocacy-expert-90942252",
+      "sourceUrl": "https://t.me/hr_yemen/5073",
+      "summaryAr": "",
+      "expiresAt": "2026-12-09T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5074",
+      "title": "DEPUTY COUNTRY DIRECTOR FOR OPERATIONS – YEMEN",
+      "organization": "Action contre la Faim",
+      "location": "Aden, Yemen",
+      "city": "Aden",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-25T23:59:59.000Z",
+      "deadline": "9 ديسمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://www.unjobnet.org/jobs/detail/action-contre-la-faim-deputy-country-director-for-operations-yemen-90942251",
+      "applicationUrl": "https://www.unjobnet.org/jobs/detail/action-contre-la-faim-deputy-country-director-for-operations-yemen-90942251",
+      "sourceUrl": "https://t.me/hr_yemen/5074",
+      "summaryAr": "",
+      "expiresAt": "2026-12-09T23:59:59.000Z"
+    },
+    {
       "id": "careers-sa:senior-principal-process-systems-engineer-contractor-airproducts-2bcab92d",
       "title": "Senior Principal Process Systems Engineer (Contractor)",
       "organization": "Airproducts    Airproducts",
@@ -157,14 +191,14 @@
       "city": "Duba",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-25T14:48:23.245Z",
+      "publishedAt": "2026-11-25T19:25:09.222Z",
       "source": "Careers.sa employer listing",
       "url": "https://airproducts.wd5.myworkdayjobs.com/en-US/AP0001/job/Duba-Saudi-Arabia/Senior-Principal-Process-Systems-Engineer--Contractor-_JR-2026-23421",
       "applicationUrl": "https://airproducts.wd5.myworkdayjobs.com/en-US/AP0001/job/Duba-Saudi-Arabia/Senior-Principal-Process-Systems-Engineer--Contractor-_JR-2026-23421",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-principal-process-systems-engineer-contractor-airproducts-2bcab92d",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-09T14:48:23.245Z"
+      "expiresAt": "2026-12-09T19:25:09.222Z"
     },
     {
       "id": "careers-sa:odoo-functional-consultant-%D8%A3%D9%88%D8%AA%D8%A7%D8%AF-%D8%A7%D9%84%D8%B9%D9%82%D8%A7%D8%B1%D9%8A%D8%A9-cab6b3f0",
@@ -174,14 +208,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-25T14:48:23.245Z",
+      "publishedAt": "2026-11-25T19:25:09.222Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/awtad/j/0B8F2E554F/",
       "applicationUrl": "https://apply.workable.com/awtad/j/0B8F2E554F/",
       "sourceUrl": "https://www.careers.sa/en/jobs/odoo-functional-consultant-%D8%A3%D9%88%D8%AA%D8%A7%D8%AF-%D8%A7%D9%84%D8%B9%D9%82%D8%A7%D8%B1%D9%8A%D8%A9-cab6b3f0",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-09T14:48:23.245Z"
+      "expiresAt": "2026-12-09T19:25:09.222Z"
     },
     {
       "id": "careers-sa:collections-specialist-%D8%A3%D9%88%D8%AA%D8%A7%D8%AF-%D8%A7%D9%84%D8%B9%D9%82%D8%A7%D8%B1%D9%8A%D8%A9-b3c7056e",
@@ -191,14 +225,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-25T14:48:23.245Z",
+      "publishedAt": "2026-11-25T19:25:09.222Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/awtad/j/F596C3BA9E/",
       "applicationUrl": "https://apply.workable.com/awtad/j/F596C3BA9E/",
       "sourceUrl": "https://www.careers.sa/en/jobs/collections-specialist-%D8%A3%D9%88%D8%AA%D8%A7%D8%AF-%D8%A7%D9%84%D8%B9%D9%82%D8%A7%D8%B1%D9%8A%D8%A9-b3c7056e",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-09T14:48:23.245Z"
+      "expiresAt": "2026-12-09T19:25:09.222Z"
     },
     {
       "id": "careers-sa:marketing-specialist-bayut-dubizzle-7a8c9f0e",
@@ -208,14 +242,14 @@
       "city": "Jeddah",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-25T14:48:23.245Z",
+      "publishedAt": "2026-11-25T19:25:09.222Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/bayutdubizzle/j/7F172D9626/",
       "applicationUrl": "https://apply.workable.com/bayutdubizzle/j/7F172D9626/",
       "sourceUrl": "https://www.careers.sa/en/jobs/marketing-specialist-bayut-dubizzle-7a8c9f0e",
       "eligibility": "Saudi nationals",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-09T14:48:23.245Z"
+      "expiresAt": "2026-12-09T19:25:09.222Z"
     },
     {
       "id": "careers-sa:a427-esg-intern-halliburton-7163a856",
