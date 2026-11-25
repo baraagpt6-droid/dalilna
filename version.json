@@ -1,9 +1,9 @@
 {
   "version": "3.1.0",
-  "versionCode": 3126901,
+  "versionCode": 3127001,
   "webVersion": "3.1.0",
   "androidVersion": "3.1.0",
-  "androidVersionCode": 3126901,
+  "androidVersionCode": 3127001,
   "catalogSchemaVersion": 2,
   "catalogSnapshotDate": "2026-11-25",
   "catalogTotalCount": 24565,
@@ -20,7 +20,7 @@
     "Foursquare Open Places (via Overture)": 4
   },
   "osmDatasetSource": "BBBike Yemen OSM mirror (fallback)",
-  "updatedAt": "2026-11-25T18:45:59.680858+00:00",
+  "updatedAt": "2026-11-25T18:46:16.326Z",
   "marketPriceGuideVersion": 1,
   "marketPriceGuideUpdatedAt": "2026-11-23",
   "androidSigningMode": "persistent",
