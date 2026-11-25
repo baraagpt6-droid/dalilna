@@ -24,6 +24,6 @@
   "marketPriceGuideVersion": 1,
   "marketPriceGuideUpdatedAt": "2026-11-23",
   "androidSigningMode": "persistent",
-  "androidReleaseUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.1.0/app-debug.apk",
+  "androidReleaseUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.1.0/app-release.apk",
   "officialWebUrl": "https://baraagpt6-droid.github.io/dalilna/"
 }
