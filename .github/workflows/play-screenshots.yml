@@ -1,0 +1,16 @@
+name: Play screenshots
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/play-screenshots.yml]
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 20}
+      - run: npm install --no-save --package-lock=false playwright@1.65.1 && npx playwright install --with-deps chromium
+      - run: cat scripts/gp-capture-a.part scripts/gp-capture-b2.part scripts/gp-capture-c.part scripts/gp-capture-d.part scripts/gp-capture-d2.part > scripts/capture.cjs && node scripts/capture.cjs && echo 'Real captures: phone 1080x1920, tablet 1920x1080.' > dist/google-play-screenshots/README.txt && cd dist && zip -r dalilna-play-screenshots.zip google-play-screenshots
+      - uses: actions/upload-artifact@v4
+        with: {name: dalilna-play-screenshots, path: dist/dalilna-play-screenshots.zip, retention-days: 30}
