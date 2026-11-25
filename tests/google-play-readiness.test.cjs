@@ -99,3 +99,22 @@ test("the public store page is deployed separately from the PWA application rout
   assert.ok(pagesWorkflow.includes("cp store/index.html _site/store/index.html"));
   assert.ok(pagesWorkflow.includes("test -s _site/store/index.html"));
 });
+
+test("production runtime contains no legacy static-host origin or migration branch", () => {
+  const files = [
+    "index.html",
+    "server.js",
+    "app-native-bridge.js",
+    "android/app/src/main/java/ye/dalilna/app/MainActivity.java",
+    "android/app/src/main/assets/index.html",
+    "android/app/src/main/assets/app-native-bridge.js",
+    ".github/workflows/deploy-pages.yml",
+    ".github/workflows/android-apk.yml",
+    "package.json"
+  ];
+  const source = files.map(read).join("\\n").toLowerCase();
+  const provider = ["net", "lify"].join("");
+  const legacyOrigin = ["dalilna-ftny", provider, "app"].join(".");
+  assert.equal(source.includes(provider), false);
+  assert.equal(source.includes(legacyOrigin), false);
+});
