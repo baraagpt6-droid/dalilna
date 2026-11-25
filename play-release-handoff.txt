@@ -1,0 +1,6 @@
+Dalilna 3.1.0
+Package: ye.dalilna.app
+Version code: 3126501
+Play upload asset: app-release.aab
+Developer display suggestion: Dalilna Team
+Official support/privacy email: pending. Do not publish until a real monitored email is entered.
