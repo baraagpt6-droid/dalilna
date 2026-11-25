@@ -64,11 +64,11 @@ function parseYemenHrJobs(html){
   const next=i+1<marks.length?source.lastIndexOf('class="tgme_widget_message_wrap',marks[i+1].index):source.length;
   const block=source.slice(from,next>from?next:source.length),textMatch=block.match(/class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
   const plain=stripHtml(textMatch?textMatch[1]:block);
-  const title=(plain.match(/المسمى الوظيفي\s*[:：]\s*([^\n\r]+)/i)||[])[1];
-  const organization=(plain.match(/الجهة\s*[:：]\s*([^\n\r]+)/i)||[])[1];
-  const location=(plain.match(/الموقع\s*[:：]\s*([^\n\r]+)/i)||[])[1];
-  const published=(plain.match(/تاريخ النشر\s*[:：]\s*([^\n\r]+)/i)||[])[1];
-  const deadline=(plain.match(/آخر موعد للتقديم\s*[:：]\s*([^\n\r]+)/i)||[])[1];
+  const title=fieldValue(plain,/المسمى الوظيفي\s*[:：]?/i);
+  const organization=fieldValue(plain,/الجهة\s*[:：]?/i);
+  const location=fieldValue(plain,/الموقع\s*[:：]?/i);
+  const published=fieldValue(plain,/تاريخ النشر\s*[:：]?/i);
+  const deadline=fieldValue(plain,/آخر موعد للتقديم\s*[:：]?/i);
   if(!title||!location||!published)continue;
   const publishedAt=parseDateLabel(published);
   if(!publishedAt)continue;
