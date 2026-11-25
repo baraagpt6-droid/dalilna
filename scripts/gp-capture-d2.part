@@ -1,0 +1,1 @@
+await p.locator('#searchResultList .card').first().click();await p.screenshot({path:out+'/'+d.n+'-detail.png'});await c.close();}}finally{await b.close();}})().catch(e=>process.exit(1));
