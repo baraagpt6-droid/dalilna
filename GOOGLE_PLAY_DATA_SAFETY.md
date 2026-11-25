@@ -12,7 +12,7 @@ This worksheet is based on the checked source code and bundled SDK configuration
 |---|---|---|
 | Does the app collect or share required user data? | **Yes** | Location, listing data/photos, advertising SDK data and optional assistant/voice flows are transmitted. |
 | Is all collected user data encrypted in transit? | **Yes, subject to final endpoint audit** | App API routes use HTTPS; Google Mobile Ads uses encrypted transport. Confirm every final network endpoint and speech-recognition provider. |
-| Can users request deletion of their data? | **Yes, after the official privacy email is configured and monitored** | Users can request removal of shared listings. Local profile/favourites can be cleared from the device. There is no central customer/merchant account. |
+| Can users request deletion of their data? | **Yes, after the official privacy email is configured and monitored** | Users can request review/removal of shared listings through support@dalilna.app once that mailbox is activated and monitored. Local profile/favourites can be cleared from the device. There is no central customer/merchant account. |
 | Does the app create user accounts? | **No central customer or merchant account** | Customer/merchant profile selection and preferences are local to the device. An administrator interface exists but is not public account registration. |
 | Does the app contain ads? | **Yes** | Android includes Google Mobile Ads SDK 25.5.0 and Google UMP 4.0.0. |
 | Does the app include user-generated content? | **Yes** | Public shop/marketplace/job-seeker submissions and images; moderation and report/block controls are implemented. |
@@ -55,7 +55,7 @@ Google Play's form distinguishes data sharing with third parties from processing
 - Local profile, preferences and favourites remain on the device until the user clears app data or uninstalls the app. The app does not synchronize profile data across devices. We do not synchronize profile data across devices.
 - Shared marketplace submissions are stored on the server for moderation, publication, duplicate prevention and report handling.
 - The app does not have a central account system, so there is no central account-deletion flow.
-- Users must be able to contact the developer to request review/removal of a shared listing. Configure and monitor the real privacy email before selecting the deletion-request answer.
+- Users must be able to contact the developer to request review/removal of a shared listing. Activate and monitor support@dalilna.app (or replace it with an owner-controlled working mailbox) before selecting Yes for data deletion requests.
 - Confirm the server's database retention and backup retention schedules. Do not promise immediate deletion from backups unless that behavior is implemented.
 
 ## Encryption in transit
@@ -91,3 +91,10 @@ The checked application uses HTTPS for its Dalilna API and published web resourc
 - [Google Play SDK security guidance](https://support.google.com/googleplay/android-developer/answer/13326895)
 - [Google Mobile Ads SDK data disclosure](https://developers.google.com/admob/android/privacy/play-data-disclosure)
 - [Google Play user-generated content policy](https://support.google.com/googleplay/android-developer/answer/9876937)
+
+
+## Developer contact handoff
+
+- Display name suggestion: **Dalilna Team**.
+- Proposed support/privacy mailbox: **support@dalilna.app**.
+- This address was inserted into the public policy and store page at the developer's request. It has not been independently verified as an active mailbox. Create it, verify incoming mail, test a privacy request, and monitor it before submitting the Play listing.
