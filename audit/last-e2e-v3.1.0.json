@@ -1,0 +1,176 @@
+{
+  "version": "3.1.0",
+  "catalog": {
+    "bytes": 1111294,
+    "recordCount": 24564,
+    "governorates": 22,
+    "schemaVersion": 2,
+    "queries": {
+      "الزوقري": {
+        "matches": 2,
+        "searchMs": 1.171,
+        "within50ms": true,
+        "examples": [
+          {
+            "name": "الزوقري للسفريات والسياحة",
+            "category": "transport",
+            "governorate": "عدن",
+            "district": "المنصوره"
+          },
+          {
+            "name": "الزوقري للسفريات والسياحه وخدمات التوصيل من والى المطارات",
+            "category": "vehicles",
+            "governorate": "إب",
+            "district": "الظهار"
+          }
+        ]
+      },
+      "الناهي": {
+        "matches": 1,
+        "searchMs": 1.174,
+        "within50ms": true,
+        "examples": [
+          {
+            "name": "الناهي للإلكترونيات",
+            "category": "elec",
+            "governorate": "إب",
+            "district": "الظهار"
+          }
+        ]
+      },
+      "صيدلية": {
+        "matches": 697,
+        "searchMs": 1.171,
+        "within50ms": true,
+        "examples": [
+          {
+            "name": "صيدلية",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الحريري",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الحسام",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية العربية",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الهدى",
+            "governorate": "الضالع",
+            "district": "الضالع"
+          },
+          {
+            "name": "صيدلية الأستاذ",
+            "governorate": "عدن",
+            "district": "التواهي"
+          },
+          {
+            "name": "صيدلية الأسرار للأدوية والمستلزمات الطبية",
+            "governorate": "عدن",
+            "district": "المنصوره"
+          },
+          {
+            "name": "صيدلية البحر الأحمر",
+            "governorate": "عدن",
+            "district": "المعلا"
+          }
+        ],
+        "pharmacyCategoryRecords": 821,
+        "namedPharmacyMatches": 706,
+        "open24HoursRecords": 17
+      }
+    }
+  },
+  "live": {
+    "generatedAt": "2026-11-25T18:38:41.936Z",
+    "health": {
+      "ok": true,
+      "version": "3.1.0",
+      "ms": 236,
+      "status": 200
+    },
+    "marketplace": {
+      "databaseReady": true,
+      "databaseConfigured": true,
+      "approvedOffers": 0,
+      "returned": 0,
+      "withImages": 0,
+      "withPrice": 0,
+      "withContact": 0,
+      "ms": 159,
+      "status": 200,
+      "error": ""
+    },
+    "pharmacyLiveSearch": {
+      "ok": true,
+      "status": 200,
+      "ms": 5731,
+      "respondedWithin3Seconds": false,
+      "successfulWithin3Seconds": false,
+      "results": 7,
+      "localCatalogFallback": true,
+      "resultSource": "فهرس اليمن الوطني المحلي (OSM + Overture)",
+      "resultsWithHours": 2,
+      "twentyFourHourResults": 0,
+      "error": ""
+    },
+    "assistant": {
+      "configured": true,
+      "provider": "Gemini",
+      "model": "gemini-3.8-flash",
+      "ok": false,
+      "status": 502,
+      "ms": 9083,
+      "answerChars": 0,
+      "mode": "",
+      "error": "",
+      "providerStatus": 0,
+      "providerCode": ""
+    },
+    "publicSite": {
+      "ok": true,
+      "version": "3.1.0",
+      "signingMode": "persistent",
+      "androidVersionCode": 3126801,
+      "v3SavedHub": true,
+      "v3FlyAnimation": true,
+      "v3JobSearch": true,
+      "v3JobFeedCount": 166,
+      "assistantJobsLocal": true,
+      "assistantLocalFallback": true,
+      "jobFeedWithSourceLinks": 166,
+      "v3Styles": true,
+      "bytes": 1111294,
+      "schemaVersion": 2,
+      "records": 24564,
+      "pharmacyRecords": 821,
+      "open24Pharmacies": 17,
+      "marketplaceReferenceItems": 0,
+      "pharmacy24Shortcut": true,
+      "craftCategory": true,
+      "directoryWhatsApp": true,
+      "productWhatsApp": true,
+      "androidRelease": {
+        "ok": true,
+        "versionCode": 3126801,
+        "size": 6706448,
+        "digest": "sha256:1d35ddd9af164946832310fd43e8d0bdf0fc3c64b6035c3ae9e0026dbcb91bd2",
+        "downloadUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.1.0/app-release.apk"
+      },
+      "netlifyLegacyAlias": {
+        "ok": true,
+        "skipped": true,
+        "reason": "Legacy Netlify is not an official Dalilna deployment target; GitHub Pages and Render are authoritative."
+      }
+    }
+  }
+}
