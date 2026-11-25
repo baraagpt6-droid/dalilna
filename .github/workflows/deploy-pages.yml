@@ -129,7 +129,7 @@ jobs:
           const privacy = await privacyResponse.text();
           const storeResponse = await get("./store/");
           const storePage = await storeResponse.text();
-          if (!storePage.includes("دليلنا") || !storePage.includes("Dalilna Team") || !storePage.includes("غير معتمد بعد")) throw new Error("The public Dalilna landing page is missing the proposed developer display name or the pending-contact notice.");
+          if (!storePage.includes("دليلنا") || !storePage.includes("Dalilna Team") || !storePage.includes("support@dalilna.app") || !storePage.includes("mailto:support@dalilna.app")) throw new Error("The public Dalilna landing page is missing the developer display name or active support contact link.");
           const manifest = await manifestResponse.json();
           const pwaManifest = await pwaManifestResponse.json();
           const version = await versionResponse.json();
