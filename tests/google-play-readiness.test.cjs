@@ -89,3 +89,26 @@ test("Android bundled policy pages match current public policy files", () => {
   assert.equal(read("privacy.html"), read("android/app/src/main/assets/privacy.html"));
   assert.equal(read("terms.html"), read("android/app/src/main/assets/terms.html"));
 });
+
+test("retired hosting provider and badge code are absent from the published app surfaces", () => {
+  const app = read("index.html");
+  const androidApp = read("android/app/src/main/assets/index.html");
+  const native = read("android/app/src/main/java/ye/dalilna/app/MainActivity.java");
+  const pages = read(".github/workflows/deploy-pages.yml");
+  const androidWorkflow = read(".github/workflows/android-apk.yml");
+  const packageJson = read("package.json");
+  const publicSurface = [app, androidApp, native, pages, androidWorkflow, packageJson].join("\\n");
+  assert.doesNotMatch(publicSurface, /netlify/i);
+  assert.match(app, /confirmSensitiveLocationUse/);
+  assert.match(androidApp, /confirmSensitiveLocationUse/);
+});
+
+test("the public store page is deployed separately from the PWA application route", () => {
+  const landing = read("store/index.html");
+  const pagesWorkflow = read(".github/workflows/deploy-pages.yml");
+  assert.match(landing, /canonical.*store\\//);
+  assert.match(landing, /href="\\.\\.\\/privacy\\.html"/);
+  assert.match(landing, /href="\\.\\.\\/terms\\.html"/);
+  assert.match(pagesWorkflow, /cp store\\/index\\.html _site\\/store\\/index\\.html/);
+  assert.match(pagesWorkflow, /test -s _site\\/store\\/index\\.html/);
+});
