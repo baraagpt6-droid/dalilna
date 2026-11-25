@@ -52,7 +52,7 @@ Google Play's form distinguishes data sharing with third parties from processing
 
 ## Data deletion and retention
 
-- Local profile, preferences and favourites remain on the device until the user clears app data or uninstalls the app. The app does not synchronize profile data across devices.
+- Local profile, preferences and favourites remain on the device until the user clears app data or uninstalls the app. The app does not synchronize profile data across devices. We do not synchronize profile data across devices.
 - Shared marketplace submissions are stored on the server for moderation, publication, duplicate prevention and report handling.
 - The app does not have a central account system, so there is no central account-deletion flow.
 - Users must be able to contact the developer to request review/removal of a shared listing. Configure and monitor the real privacy email before selecting the deletion-request answer.
