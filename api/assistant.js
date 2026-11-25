@@ -25,7 +25,6 @@ const ALLOWED_ORIGINS = new Set([
   "https://dalilna-live.onrender.com",
   "https://appassets.androidplatform.net"
 ]);
-}
 
 function send(res, status, body) {
   res.statusCode = status;
