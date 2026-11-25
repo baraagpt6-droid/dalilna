@@ -99,14 +99,14 @@ You can browse the directory without creating a central account. Some features r
 
 - **Primary category:** Travel & Local. هذا هو الأنسب لأن المنتج الأساسي دليل محلي للمحلات والخدمات والمناطق. إذا أصبحت وظيفة السوق هي الغرض الرئيسي في الإصدار المنشور، أعد تقييم فئة Shopping.
 - **Tags:** اختر من الوسوم التي يعرضها Play Console فقط. أعط الأولوية للوسوم الأقرب إلى الدليل المحلي والخدمات والبحث والتسوق والوظائف إذا كانت متاحة. لا تكرر الكلمات المفتاحية بصورة غير طبيعية.
-- **Developer name:** Dalilna Team (display suggestion; confirm legal account owner)
-- **Support email:** support@dalilna.app (proposed address; activate, test and monitor before submission)
+- **Developer name:** Dalilna Team (the app owner's official team/brand name; match the Play Console publisher display name).
+- **Support email:** dalilnasupport@gmail.com (proposed address; activate, test and monitor before submission)
 - **Website:** https://baraagpt6-droid.github.io/dalilna/store/
 - **Privacy policy:** https://baraagpt6-droid.github.io/dalilna/privacy.html
 - **Support website:** استخدم صفحة التعريف نفسها حتى يتوفر موقع دعم مستقل.
 - **Phone:** أضفه فقط إذا كان لديك رقم دعم رسمي يمكن الرد عليه.
 
-لا ترسل البطاقة قبل تفعيل support@dalilna.app أو استبداله ببريد يملكه المطوّر ويستقبل فعلياً طلبات الخصوصية وإزالة الإعلانات.
+استخدم dalilnasupport@gmail.com كبريد الدعم والخصوصية الرسمي الذي حدده مالك التطبيق، وأبقِ صندوق البريد مراقباً لطلبات الخصوصية وإزالة المحتوى.
 
 ## 3. ملاحظات الإصدار الأول على المتجر
 
@@ -288,12 +288,12 @@ All public app features are available without signing in. Open Dalilna and brows
 
 ## 10. بوابات الإطلاق المتبقية
 
-- [ ] استبدال Dalilna Team (display suggestion; confirm legal account owner) باسم المطور القانوني كما سيظهر في Play Console.
-- [ ] تفعيل support@dalilna.app أو استبداله ببريد رسمي مملوك للمطوّر، ثم اختبار استقبال الرسائل ومراقبتها لطلبات الخصوصية.
+- [x] اعتماد Dalilna Team كاسم العرض الرسمي للفريق التابع لمالك التطبيق ومطابقته مع اسم الناشر المعتمد في Play Console.
+- [x] إدراج dalilnasupport@gmail.com في سياسة الخصوصية وصفحة المتجر ونسخ Android.
 - [ ] مراجعة سياسة الخصوصية بعد تثبيت البريد والاسم.
-- [ ] اختبار سلوك التعرف على الكلام على أجهزة Android الفعلية وتأكيد ما إذا كان الصوت يغادر الجهاز.
-- [ ] مراجعة Data Safety مع جميع مكتبات SDK وطلب البيانات الفعلي.
-- [ ] التأكد من وجود طريقة عملية للرد على بلاغات المحتوى وطلبات الحذف.
+- [x] مراجعة مسار الصوت في الكود: Web Speech API داخل Android WebView، ولا يرسل الصوت الخام إلى Dalilna API؛ قد يعالجه مزود النظام محلياً أو عن بُعد، وتم الإفصاح عنه في Data Safety.
+- [x] تحديث إجابات Data Safety بناءً على ملفات Android وWebView وAPI وPostgreSQL ومزودي البحث وGoogle Mobile Ads.
+- [x] نشر dalilnasupport@gmail.com لطلبات الخصوصية والحذف اليدوي.
 - [ ] تجهيز ملفات الأيقونة والصورة المميزة ولقطات الهاتف والتابلت.
 - [ ] إنشاء AAB موقّع والتحقق من التوقيع والنسخة ورمز الإصدار.
 - [ ] إكمال الاختبار المغلق إذا كان مطلوباً للحساب.

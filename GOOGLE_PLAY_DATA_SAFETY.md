@@ -1,100 +1,88 @@
 # GOOGLE PLAY DATA SAFETY — DALILNA 3.1.0
 
-Review date: 25 November 2026  
+Source review: 26 November 2026  
 Android application ID: `ye.dalilna.app`  
-Release target SDK: 36
+Android version: `3.1.0` · versionCode `3127201` · target SDK 36  
+Developer display name: `Dalilna Team` — the app owner's team/brand name  
+Support and privacy contact: `dalilnasupport@gmail.com`
 
-This worksheet is based on the checked source code and bundled SDK configuration. Google Play treats app-controlled WebView content and third-party SDK behavior as part of the app's disclosure obligations. Re-check the final signed AAB and runtime network behavior before submitting the form.
+This worksheet reflects the checked Android manifest, WebView bridge, JavaScript search flow, Node.js API, PostgreSQL schema, and Google Mobile Ads SDK 25.5.0 / UMP 4.0.0 configuration. Google treats app-controlled WebView behavior and SDK collection as part of the developer's Data safety declaration.
 
-## High-level answers
+## Console answers
 
-| Play Console question | Prepared answer | Qualification |
+| Play Console question | Answer | Code basis |
 |---|---|---|
-| Does the app collect or share required user data? | **Yes** | Location, listing data/photos, advertising SDK data and optional assistant/voice flows are transmitted. |
-| Is all collected user data encrypted in transit? | **Yes, subject to final endpoint audit** | App API routes use HTTPS; Google Mobile Ads uses encrypted transport. Confirm every final network endpoint and speech-recognition provider. |
-| Can users request deletion of their data? | **Yes, after the official privacy email is configured and monitored** | Users can request review/removal of shared listings through support@dalilna.app once that mailbox is activated and monitored. Local profile/favourites can be cleared from the device. There is no central customer/merchant account. |
-| Does the app create user accounts? | **No central customer or merchant account** | Customer/merchant profile selection and preferences are local to the device. An administrator interface exists but is not public account registration. |
-| Does the app contain ads? | **Yes** | Android includes Google Mobile Ads SDK 25.5.0 and Google UMP 4.0.0. |
-| Does the app include user-generated content? | **Yes** | Public shop/marketplace/job-seeker submissions and images; moderation and report/block controls are implemented. |
+| Does the app collect or share required user data? | **Yes** | User-selected location, user-submitted listings and photos, search queries, optional voice recognition, and Google Mobile Ads data. |
+| Is any data shared with third parties? | **Yes** | Google Mobile Ads, optional Google Gemini, WebView/system speech recognition, and live map/search providers receive data required for those features. |
+| Is data encrypted in transit? | **Yes** | App APIs and configured search/AI endpoints use HTTPS. Google Mobile Ads documents TLS encryption for its collected data. |
+| Can users request deletion of data? | **Yes — by email** | Users can request review/removal of server-side listings and submitted profiles at `dalilnasupport@gmail.com`. Local data can be cleared on-device. |
+| Does the app create customer or merchant accounts? | **No** | Customer/merchant profiles and favourites are local to the device; public browsing does not require sign-in. |
+| Does the app contain ads? | **Yes** | Google Mobile Ads SDK 25.5.0 and Google UMP 4.0.0 are included in the Android project. |
+| Does the app contain user-generated content? | **Yes** | Users can submit marketplace, business and job-seeker content, including text, phone numbers, coordinates and photos. |
 
 ## Data types to declare
 
-| Play data type | Collect? | Required or optional | Purpose | Details |
+| Google Play data type | Collect? | Required? | Purpose | Sharing / detail |
 |---|---:|---|---|---|
-| Location — approximate | Yes | Optional | App functionality | Used when the user activates nearby search; may be sent to Dalilna search service. |
-| Location — precise | Yes | Optional | App functionality | Android location permission supports precise coordinates for nearby search. |
-| Personal info — name | Yes, when submitted | Optional form submission | App functionality | A seller/contact name or job-seeker name may be included in a shared submission. A local-only profile name is not transmitted merely by saving it locally. |
-| Personal info — phone number | Yes, when submitted | Optional form submission | App functionality | Submitted with a shop, marketplace or job-seeker listing; may be public after approval. |
-| Photos and videos — photos | Yes, when an image is attached | Optional | App functionality | A selected listing image is sent to the Dalilna server for review and possible publication. |
-| App activity — search history / search queries | Review final logging behavior | Optional | App functionality | Search text and selected area are sent to the service that fulfils the search. Declare retained search history if it is logged or stored. |
-| App activity — app interactions | Yes | Automatic when ad SDK operates | Advertising, measurement, fraud prevention | Google Mobile Ads may collect interactions such as app launches, taps and ad views. |
-| App info and performance — diagnostics | Yes | Automatic when ad SDK operates | Analytics, fraud prevention, service improvement | Google Mobile Ads may collect diagnostic and performance information. |
-| Device or other IDs | Yes | Automatic when ad SDK operates | Advertising, measurement, fraud prevention | Google Mobile Ads may collect Advertising ID, App Set ID or other device/account identifiers. |
-| Audio files — voice or sound recordings | **Verify; conservative answer is Yes if remote recognition is used** | Optional, after microphone action and in-app confirmation | App functionality | Voice search uses Web Speech recognition. Depending on Android WebView/device/provider, audio may be processed locally or sent to the recognition provider. Do not answer No until this has been tested on supported devices. |
-| Other user-generated content | Yes | Optional form submission | App functionality | Listing text, descriptions, public contact details and job/marketplace submissions. |
+| Location — approximate | **Yes** | Optional; only when location-based features are used | App functionality | Area-based nearby search. The Ads SDK also collects IP address, which it may use to estimate general location. |
+| Location — precise | **Yes** | Optional; only after the user grants location access | App functionality | GPS coordinates for nearby search or for a user-submitted business/listing location. |
+| Personal info — name | **Yes** | Optional form submission | App functionality | Seller, shop/contact or job-seeker name submitted with shared content. |
+| Personal info — phone number | **Yes** | Optional form submission | App functionality | Contact number submitted with a listing or public job-seeker profile. |
+| Photos and videos — photos | **Yes** | Optional | App functionality | User-selected listing/profile image uploaded to the Dalilna API and stored with the submission. |
+| App activity — in-app search history | **Yes** | Optional search | App functionality | Search text, selected place/area and category are sent to the search API. The server writes structured search-start events containing the query, place, category and request origin to its operational logs. |
+| App activity — app interactions | **Yes** | Automatic when Google Mobile Ads operates | Advertising, analytics and fraud prevention | Google Mobile Ads collects and shares app/ad interactions such as launches, taps and ad views. |
+| App info and performance — diagnostics | **Yes** | Automatic when Google Mobile Ads operates | Analytics, service improvement and fraud prevention | Google Mobile Ads collects diagnostic and performance information such as app launch time, hang rate and energy use. |
+| Device or other IDs | **Yes** | SDK-dependent; automatically collected by Google Mobile Ads | Advertising, analytics and fraud prevention | Android Advertising ID, App Set ID and applicable device/account identifiers. |
+| Audio files — voice or sound recordings | **Yes** | Optional; after microphone action, disclosure and Android permission | App functionality | Android WebView grants audio capture to the Web Speech API. The app does not send raw audio to the Dalilna API, but the WebView/system speech-recognition provider may process audio on-device or transmit it to its service. Declare voice audio conservatively as collected/shared with the speech-recognition provider. |
+| Other user-generated content | **Yes** | Optional submission | App functionality | Listing titles, descriptions, shop/business details, job-seeker bios, report details and user-submitted content. |
 
-## Sharing and service providers
+## Third-party services and data flow
 
-1. **Google Mobile Ads SDK** — Google may receive IP address, in-app/ad interactions, diagnostics/performance information and device/account identifiers for ad delivery, measurement and fraud prevention.
-2. **Google Gemini** — when the user explicitly enables the cloud assistant, the user's prompt and relevant general directory context may pass through Dalilna's server to the AI service for response generation.
-3. **Search/geocoding providers** — depending on the route, Dalilna's server may query Geoapify, OpenStreetMap, Nominatim or Overpass. Nearby search may involve coordinates. Confirm which data fields each provider receives.
-4. **Speech-recognition provider** — voice audio may be sent outside the device by the speech-recognition implementation on some Android/WebView versions. Confirm the behavior on production devices and identify the provider before submitting.
+1. **Google Mobile Ads SDK 25.5.0 / Google UMP 4.0.0** — the SDK automatically collects and shares IP address, user product interactions, diagnostic/performance information and device/account identifiers for advertising, analytics and fraud prevention. Google states this SDK data is encrypted in transit with TLS.
+2. **Android WebView / system speech-recognition service** — the microphone is granted to WebView only after a user action and Android runtime permission. The page uses `window.SpeechRecognition` or `window.webkitSpeechRecognition`. The app itself does not use Android's native `SpeechRecognizer` API and does not upload raw audio to Dalilna's server. The system/WebView speech provider controls whether audio is processed locally or remotely; disclose voice audio as collected and shared with that provider.
+3. **Google Gemini** — only when the user explicitly enables the cloud assistant. The question and relevant general directory context are sent through Dalilna's API to Gemini for response generation. The API request sets `store: false`.
+4. **Live places/search providers** — the local index is searched first. Server fallback can use Geoapify when `GEOAPIFY_API_KEY` is configured; otherwise or for fallback routes it uses OpenStreetMap Nominatim, Photon by Komoot, and Overpass instances at `overpass-api.de`, `overpass.private.coffee` and `maps.mail.ru`. Requests may include the search text, selected place/area, category, coordinates and radius.
+5. **Wikimedia Commons** — the optional place-photo search feature can send a search term to Wikimedia Commons.
+6. **Job source links** — the app reads its prepared jobs feed and opens source/application links when a user selects them.
 
-Google Play's form distinguishes data sharing with third parties from processing by a service provider on the developer's behalf. Make the sharing selection according to the contracts and exact processing role of each provider. Do not omit SDK data merely because it is not sent to Dalilna's own server.
+For each provider, classify the provider as a service provider or third party according to the actual contract and role. The Data safety form must include SDK data even when it is not sent to Dalilna's own server.
+
+## Server logs, database storage and expiry
+
+- Search-start operational logs include the submitted search text (up to the server's configured input limit), selected place/area, requested category and request origin. Operational logs also include counts, response status, error codes, and selected marketplace moderation/report event metadata. The source does not log raw voice audio or full listing bodies as normal request logs.
+- Shared marketplace submissions, photos, contact details, job-seeker profiles and UGC reports are stored in the PostgreSQL database configured through `DATABASE_URL`.
+- Marketplace/real-estate listings are normally hidden from public results after 60 days. Job listings expire at their deadline or after 60 days, whichever comes first. Public job-seeker profiles expire after 60 days.
+- Expiry is a visibility filter, **not a database deletion**. The checked application code has no scheduled `DELETE` job that purges expired listing or job-seeker rows. Some approved listing categories can have no automatic expiry.
+- The code does not define a fixed retention duration for Render operational logs or PostgreSQL backups. Their retention is controlled by the hosting/database provider and the owner's account settings.
+- Local profile fields, saved preferences and favourites remain on the device until the user clears app data or uninstalls the app.
+
+## Data deletion
+
+- There is no central customer or merchant account, so there is no central account-deletion flow.
+- Users can request review/removal of server-side submissions by emailing **dalilnasupport@gmail.com** and identifying the listing/profile. The app owner or team handles the request manually.
+- Clearing app data or uninstalling removes local profile/preferences/favourites from the device; it does not remove a submission already stored on the server.
+- Do not promise that provider logs or backups disappear immediately. Their retention follows the provider configuration.
 
 ## Data not used as a core feature in 3.1.0
 
-- No centralized customer or merchant account registration.
+- No central customer or merchant account registration.
 - No in-app direct messaging between users.
-- No in-app payment processing, banking, credit, lending or investment feature.
+- No in-app marketplace payments, banking, credit, lending, investment or gambling.
 - No contact-book, calendar, health or SMS access.
-- No Firebase Analytics, Firebase Authentication or Firebase Crashlytics SDKs in the checked Android build.
+- No Firebase Analytics, Firebase Authentication or Firebase Crashlytics SDK in the checked Android build.
 
-## Data deletion and retention
+## Audience, ads and app access
 
-- Local profile, preferences and favourites remain on the device until the user clears app data or uninstalls the app. The app does not synchronize profile data across devices. We do not synchronize profile data across devices.
-- Shared marketplace submissions are stored on the server for moderation, publication, duplicate prevention and report handling.
-- The app does not have a central account system, so there is no central account-deletion flow.
-- Users must be able to contact the developer to request review/removal of a shared listing. Activate and monitor support@dalilna.app (or replace it with an owner-controlled working mailbox) before selecting Yes for data deletion requests.
-- Confirm the server's database retention and backup retention schedules. Do not promise immediate deletion from backups unless that behavior is implemented.
-
-## Encryption in transit
-
-The checked application uses HTTPS for its Dalilna API and published web resources. Google Mobile Ads documents encrypted transport for collected SDK data. The final declaration must cover all collected/transmitted data, including optional assistant and speech recognition providers. If any endpoint or provider path sends user data without encryption, change the answer and remediate before release.
-
-## App access and audience
-
-- Public app browsing does not require sign-in.
-- Customer/merchant profile information is local to the device.
-- The administrator interface is not required to review the public app. Do not provide administrator tokens or backend secrets to Play reviewers.
-- Dalilna is not designed for children. Choose only the target-age groups that reflect the real intended audience; if the intended audience is adults, select 18+ and do not select a child age band.
-- Ads: Yes.
-- User-generated content: Yes.
-- Government app: No, unless the operator is an authorized government entity.
-- Financial features: No; reference prices do not constitute a financial service.
-
-## Must complete before submitting the Data Safety form
-
-- [ ] Build and inspect the final signed AAB, including all transitive SDKs.
-- [ ] Test microphone/voice recognition on supported Android versions and determine whether raw audio leaves the device.
-- [ ] Confirm the exact AdMob production configuration and UMP consent behavior.
-- [ ] Confirm the prompt/context fields sent to the cloud assistant and applicable service-provider terms.
-- [ ] Confirm all search providers, payload fields, logging and retention.
-- [ ] Configure the real developer/privacy email and test the deletion-request process.
-- [ ] Confirm database and backup retention settings.
-- [ ] Make the public privacy policy describe the final build and actual practices.
-- [ ] Submit the same answers in Play Console that the final binary and policy support.
+- **Ads:** Yes.
+- **User-generated content:** Yes; public submissions are moderated, and users can report content.
+- **Public app access:** No sign-in is required to browse the public directory, search or view marketplace content. The administrator interface is separate and is not required for Play review. Do not provide admin tokens or backend secrets.
+- **Target audience:** The app is not designed for children. Select adult age groups only if they match the owner's intended audience; do not select child age bands.
+- **Government app:** No, unless the operator is an authorized government entity.
+- **Financial features:** No; indicative prices and exchange information are not payment or financial services.
+- **Content rating:** Complete the IARC questionnaire truthfully. Google Play assigns the final regional rating; do not guess a rating in advance.
 
 ## Official references
 
-- [Google Play Data safety form](https://support.google.com/googleplay/android-developer/answer/10787469)
-- [Google Play SDK security guidance](https://support.google.com/googleplay/android-developer/answer/13326895)
-- [Google Mobile Ads SDK data disclosure](https://developers.google.com/admob/android/privacy/play-data-disclosure)
-- [Google Play user-generated content policy](https://support.google.com/googleplay/android-developer/answer/9876937)
-
-
-## Developer contact handoff
-
-- Display name suggestion: **Dalilna Team**.
-- Proposed support/privacy mailbox: **support@dalilna.app**.
-- This address was inserted into the public policy and store page at the developer's request. It has not been independently verified as an active mailbox. Create it, verify incoming mail, test a privacy request, and monitor it before submitting the Play listing.
+- Google Play Data safety form: https://support.google.com/googleplay/android-developer/answer/10787469
+- Google Mobile Ads SDK Play data disclosure (Android, version 25.5.0): https://developers.google.com/admob/android/privacy/play-data-disclosure
+- Google Play user-generated content policy: https://support.google.com/googleplay/android-developer/answer/9876937

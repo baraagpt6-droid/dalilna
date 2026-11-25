@@ -40,6 +40,14 @@ on:
       - 'marketplace-api.js'
       - 'package.json'
       - '.github/workflows/android-apk.yml'
+      # Policy/store documentation updates must not rebuild or replace release binaries.
+      - '!privacy.html'
+      - '!terms.html'
+      - '!android/app/src/main/assets/privacy.html'
+      - '!android/app/src/main/assets/terms.html'
+      - '!GOOGLE_PLAY_DATA_SAFETY.md'
+      - '!tests/**'
+      - '!.github/workflows/android-apk.yml'
 
 permissions:
   contents: write

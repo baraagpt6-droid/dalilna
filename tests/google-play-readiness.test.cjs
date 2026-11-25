@@ -35,9 +35,9 @@ test("AdMob defaults are Google test IDs; production IDs are configurable and no
   assert.match(config, /release\.bannerAdUnitId=\s*$/m);
 });
 
-test("privacy policy contains bilingual disclosures, voice recognition and developer placeholders", () => {
+test("privacy policy contains bilingual disclosures, official contact and code-accurate privacy details", () => {
   const policy = read("privacy.html");
-  for (const term of ["arabicPolicy", "englishPolicy", "Google Mobile Ads", "Google Gemini", "Firebase", "الموقع الجغرافي", "المفضلة", "المحل", "البحث الصوتي", "الميكروفون", "HTTPS", "Dalilna Team", "support@dalilna.app"]) {
+  for (const term of ["arabicPolicy", "englishPolicy", "Google Mobile Ads", "Google Gemini", "Firebase", "الموقع الجغرافي", "المفضلة", "المحل", "البحث الصوتي", "الميكروفون", "HTTPS", "Dalilna Team", "dalilnasupport@gmail.com", "Web Speech API", "Nominatim", "Photon", "Overpass", "سجلات الخادم", "لا يحذف صف قاعدة البيانات تلقائياً"]) {
     assert.ok(policy.includes(term), `privacy.html must disclose: ${term}`);
   }
   assert.ok(!policy.includes("baraagpt6@gmail.com"));
@@ -54,7 +54,7 @@ test("Play Data safety worksheet explains AdMob data and local-only profiles", (
   assert.match(safety, /No Firebase Analytics/i);
   assert.match(safety, /AdMob/);
   assert.match(safety, /Audio files.*voice or sound recordings/i);
-  assert.match(safety, /12\.5|voice/i);
+  assert.match(safety, /voice/i);
 });
 
 test("privacy policy is linked from the profile/account dialog and Android assets sync it", () => {
