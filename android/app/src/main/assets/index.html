@@ -624,56 +624,6 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 .assistant-result-actions button.assistant-job-save:disabled{opacity:.75;cursor:default}
 </style>
 
-<style id="dalilna-netlify-badge-guard">
-/* Hide only the Netlify hosting badge, without affecting ordinary external links. */
-#netlify-badge,#netlifyBadge,[data-netlify-badge],[id*="netlify-badge" i],[class*="netlify-badge" i],
-iframe[src*="netlify.com/badge" i],
-a[aria-label*="Powered by Netlify" i],a[title*="Powered by Netlify" i],
-a[aria-label*="Made with Netlify" i],a[title*="Made with Netlify" i],
-img[alt*="Powered by Netlify" i],img[alt*="Made with Netlify" i] {
-  display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;
-}
-</style>
-<script id="dalilna-netlify-badge-guard-script">
-(() => {
-  "use strict";
-  if (location.hostname.toLowerCase() !== "dalilna-ftny.netlify.app") return;
-  const selectors = '#netlify-badge,#netlifyBadge,[data-netlify-badge],[id*="netlify-badge" i],[class*="netlify-badge" i],iframe[src*="netlify.com/badge" i]';
-  const badgeText = /^(?:powered\s+by|made\s+with|built\s+with)\s+netlify$/i;
-  function clean(root) {
-    if (!root) return;
-    const candidates = [];
-    if (root.nodeType === 1) {
-      try { if (root.matches(selectors)) candidates.push(root); } catch (_) {}
-    }
-    if (root.querySelectorAll) {
-      try { candidates.push(...root.querySelectorAll(selectors)); } catch (_) {}
-      try { candidates.push(...root.querySelectorAll("a,button,[role='link'],img,iframe")); } catch (_) {}
-    }
-    for (const element of new Set(candidates)) {
-      if (!element || !element.isConnected) continue;
-      const attrs = [element.getAttribute("aria-label"), element.getAttribute("title"), element.getAttribute("alt")]
-        .filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
-      const text = String(element.textContent || "").replace(/\s+/g, " ").trim();
-      const linkedBadge = element.tagName === "A"
-        && /netlify\.com/i.test(element.getAttribute("href") || "")
-        && /netlify/i.test(attrs + " " + text);
-      if (element.matches(selectors) || badgeText.test(attrs) || badgeText.test(text) || linkedBadge) {
-        const target = element.tagName === "IMG" && element.parentElement?.tagName === "A"
-          ? element.parentElement : element;
-        target.remove();
-      }
-    }
-  }
-  const start = () => {
-    clean(document.documentElement);
-    const observer = new MutationObserver(records => records.forEach(record => record.addedNodes.forEach(clean)));
-    if (document.documentElement) observer.observe(document.documentElement, {childList:true,subtree:true});
-  };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, {once:true});
-  else start();
-})();
-</script>
 </head>
 <body>
 
@@ -3718,6 +3668,8 @@ $("#mic").addEventListener("click",()=>{
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){toast("المتصفح لا يدعم البحث الصوتي، استخدم مايك لوحة المفاتيح.");$("#q").focus();return;}
   if(recog){try{recog.stop();}catch(e){}return;}
+  const voiceDisclosure=curLang==="en"?"Voice search uses your microphone to turn speech into text. Depending on your device and speech-recognition provider, audio may be processed on-device or sent to that provider. Continue?":"سيستخدم البحث الصوتي الميكروفون لتحويل كلامك إلى نص. بحسب جهازك ومزود التعرف على الكلام، قد تتم معالجة الصوت على الجهاز أو إرساله إلى مزود الخدمة. هل تريد المتابعة؟";
+  if(!window.confirm(voiceDisclosure))return;
   recog=new SR();recog.lang="ar-YE";recog.interimResults=true;
   $("#mic").classList.add("on");$("#voiceBar").hidden=false;$("#voiceTxt").textContent="جارٍ الاستماع… تحدث الآن";
   recog.onresult=e=>{
