@@ -37,7 +37,7 @@ test("AdMob defaults are Google test IDs; production IDs are configurable and no
 
 test("privacy policy contains bilingual disclosures, voice recognition and developer placeholders", () => {
   const policy = read("privacy.html");
-  for (const term of ["arabicPolicy", "englishPolicy", "Google Mobile Ads", "Google Gemini", "Firebase", "الموقع الجغرافي", "المفضلة", "المحلات", "البحث الصوتي", "الميكروفون", "HTTPS", "[اسم المطور الرسمي]", "[البريد الإلكتروني الرسمي]"]) {
+  for (const term of ["arabicPolicy", "englishPolicy", "Google Mobile Ads", "Google Gemini", "Firebase", "الموقع الجغرافي", "المفضلة", "المحل", "البحث الصوتي", "الميكروفون", "HTTPS", "[اسم المطور الرسمي]", "[البريد الإلكتروني الرسمي]"]) {
     assert.ok(policy.includes(term), `privacy.html must disclose: ${term}`);
   }
   assert.ok(!policy.includes("baraagpt6@gmail.com"));
@@ -50,7 +50,7 @@ test("Play Data safety worksheet explains AdMob data and local-only profiles", (
   assert.match(safety, /No centralized customer or merchant account registration/i);
   assert.match(safety, /No Firebase Analytics/i);
   assert.match(safety, /AdMob/);
-  assert.match(safety, /Voice or sound recordings/);
+  assert.match(safety, /Audio files.*voice or sound recordings/i);
   assert.match(safety, /12\.5|voice/i);
 });
 
@@ -93,7 +93,7 @@ test("Android bundled policy pages match current public policy files", () => {
 test("the public store page is deployed separately from the PWA application route", () => {
   const landing = read("store/index.html");
   const pagesWorkflow = read(".github/workflows/deploy-pages.yml");
-  assert.ok(landing.includes('canonical href="https://baraagpt6-droid.github.io/dalilna/store/"'));
+  assert.ok(landing.includes('rel="canonical" href="https://baraagpt6-droid.github.io/dalilna/store/"'));
   assert.ok(landing.includes('href="../privacy.html"'));
   assert.ok(landing.includes('href="../terms.html"'));
   assert.ok(pagesWorkflow.includes("cp store/index.html _site/store/index.html"));
