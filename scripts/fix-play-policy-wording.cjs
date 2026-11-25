@@ -1,1 +1,0 @@
-const fs=require('fs');for(const f of ['privacy.html','android/app/src/main/assets/privacy.html']){let s=fs.readFileSync(f,'utf8');s=s.replace('.. يجب استبدال هذا الحقل ببريد فعّال قبل النشر.','');s=s.replace('.. This placeholder must be replaced with an active email address before publication.','');fs.writeFileSync(f,s)}
