@@ -56,7 +56,7 @@ function copyPublicDirectory(relativePath) {
     recursive: true,
     filter: sourcePath => {
       const stat = fs.statSync(sourcePath);
-      return stat.isDirectory() || [".json", ".svg"].includes(path.extname(sourcePath).toLowerCase());
+      return stat.isDirectory() || [".json", ".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif"].includes(path.extname(sourcePath).toLowerCase());
     }
   });
 }
