@@ -128,6 +128,9 @@ test("direct-download APK is the signed production app variant", () => {
   assert.match(workflow, /assembleRelease/);
   assert.match(workflow, /outputs\\/apk\\/release\\/app-release\\.apk/);
   assert.match(workflow, /ACTUAL_PACKAGE_NAME/);
+  const buildToolsAssignment = workflow.indexOf('BUILD_TOOLS="$SDK_ROOT/build-tools/$BUILD_TOOLS_VERSION"');
+  const packageCheck = workflow.indexOf("ACTUAL_PACKAGE_NAME=");
+  assert.ok(buildToolsAssignment >= 0 && packageCheck > buildToolsAssignment, "package verification must run after Android build-tools are initialized");
   assert.match(workflow, /ye\\.dalilna\\.app/);
   assert.ok(workflow.includes("/releases/download/v3.1.0/app-release.apk"));
   assert.ok(version.androidReleaseUrl.endsWith("/app-release.apk"));
