@@ -3,8 +3,15 @@ const assert=require("node:assert/strict");
 const EXPECTED_VERSION=require("../package.json").version;
 const base=String(process.env.LIVE_API_BASE_URL||"https://dalilna-live.onrender.com").replace(/\/+$/,"");
 async function get(path,extraHeaders={}){
- const response=await fetch(base+path,{headers:{Accept:"application/json",...extraHeaders},cache:"no-store",signal:AbortSignal.timeout(90000)});
- const payload=await response.json().catch(()=>({}));return {response,payload};
+ let last=null;
+ for(let attempt=0;attempt<3;attempt++){
+  const response=await fetch(base+path,{headers:{Accept:"application/json",...extraHeaders},cache:"no-store",signal:AbortSignal.timeout(45000)});
+  const payload=await response.json().catch(()=>({}));
+  last={response,payload};
+  if(![502,503,504].includes(response.status)||attempt===2)return last;
+  await new Promise(resolve=>setTimeout(resolve,1500*(attempt+1)));
+ }
+ return last;
 }
 async function main(){
  const deadline=Date.now()+180000;let health=null,last="no response";
