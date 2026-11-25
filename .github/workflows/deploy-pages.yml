@@ -130,10 +130,10 @@ jobs:
           const storeResponse = await get("./store/");
           const storePage = await storeResponse.text();
           if (!storePage.includes("دليلنا") || !storePage.includes("Dalilna Team") || !storePage.includes("dalilnasupport@gmail.com") || !storePage.includes("mailto:dalilnasupport@gmail.com")) throw new Error("The public Dalilna landing page is missing the official developer display name or support contact link.");
-if (!privacy.includes("dalilnasupport@gmail.com") || !privacy.includes("mailto:dalilnasupport@gmail.com")) throw new Error("The public privacy policy is missing the official support and data-removal email.");
-const termsResponse = await get("./terms.html");
-const terms = await termsResponse.text();
-if (!terms.includes("dalilnasupport@gmail.com") || !terms.includes("mailto:dalilnasupport@gmail.com")) throw new Error("The public terms page is missing the official support contact.");
+          if (!privacy.includes("dalilnasupport@gmail.com") || !privacy.includes("mailto:dalilnasupport@gmail.com")) throw new Error("The public privacy policy is missing the official support and data-removal email.");
+          const termsResponse = await get("./terms.html");
+          const terms = await termsResponse.text();
+          if (!terms.includes("dalilnasupport@gmail.com") || !terms.includes("mailto:dalilnasupport@gmail.com")) throw new Error("The public terms page is missing the official support contact.");
           const manifest = await manifestResponse.json();
           const pwaManifest = await pwaManifestResponse.json();
           const version = await versionResponse.json();
