@@ -1,7 +1,7 @@
 # Dalilna Google Play handoff
 
 Application ID: `ye.dalilna.app`  
-Release: `3.1.0` / `3126501`  
+Release: `3.1.0` / `3126801`  
 Developer display name: **Dalilna Team**  
 Proposed support/privacy email: **support@dalilna.app**
 
