@@ -229,13 +229,10 @@ test("assistant job cards save to the shared favorites hub and conversation foll
  assert.ok(web.includes("flex-direction:column"),"assistant bubbles must use vertical layout");
 });
 
-test("Netlify static build includes public PWA assets without publishing backend code",()=>{
+test("standalone static build copies public PWA assets and excludes private backend code",()=>{
  const root=path.resolve(__dirname,"..");
- const build=fs.readFileSync(path.join(root,"scripts/build-netlify-site.cjs"),"utf8");
- const config=fs.readFileSync(path.join(root,"netlify.toml"),"utf8");
- for(const asset of ["index.html","jobs-feed.json","version.json","regional-catalog","search_index_light.json","manifest.json","sw.js"])assert.ok(build.includes(asset),asset+" must be in the public bundle");
- assert.ok(build.includes("dist"));
- assert.ok(config.includes("npm run build:netlify"));
- assert.ok(config.includes("publish = \"dist\""));
- assert.ok(!build.includes('"api"')&&!build.includes('"server.js"'),"backend source must not be copied into Netlify public output");
+ const build=fs.readFileSync(path.join(root,"scripts/build-static-site.cjs"),"utf8");
+ for(const asset of ["index.html","store/index.html","jobs-feed.json","version.json","regional-catalog","search_index_light.json","manifest.json","sw.js","privacy.html","terms.html"])assert.ok(build.includes(asset),asset+" must be in the public bundle");
+ assert.ok(build.includes('outputDirectory: "dist"'));
+ assert.ok(!build.includes('"api"')&&!build.includes('"server.js"'),"backend source must not be copied into the public bundle");
 });

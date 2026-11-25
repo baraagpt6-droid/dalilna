@@ -618,56 +618,6 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
 .assistant-result-actions button.assistant-job-save:disabled{opacity:.75;cursor:default}
 </style>
 
-<style id="dalilna-netlify-badge-guard">
-/* Hide only the Netlify hosting badge, without affecting ordinary external links. */
-#netlify-badge,#netlifyBadge,[data-netlify-badge],[id*="netlify-badge" i],[class*="netlify-badge" i],
-iframe[src*="netlify.com/badge" i],
-a[aria-label*="Powered by Netlify" i],a[title*="Powered by Netlify" i],
-a[aria-label*="Made with Netlify" i],a[title*="Made with Netlify" i],
-img[alt*="Powered by Netlify" i],img[alt*="Made with Netlify" i] {
-  display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;
-}
-</style>
-<script id="dalilna-netlify-badge-guard-script">
-(() => {
-  "use strict";
-  if (location.hostname.toLowerCase() !== "dalilna-ftny.netlify.app") return;
-  const selectors = '#netlify-badge,#netlifyBadge,[data-netlify-badge],[id*="netlify-badge" i],[class*="netlify-badge" i],iframe[src*="netlify.com/badge" i]';
-  const badgeText = /^(?:powered\s+by|made\s+with|built\s+with)\s+netlify$/i;
-  function clean(root) {
-    if (!root) return;
-    const candidates = [];
-    if (root.nodeType === 1) {
-      try { if (root.matches(selectors)) candidates.push(root); } catch (_) {}
-    }
-    if (root.querySelectorAll) {
-      try { candidates.push(...root.querySelectorAll(selectors)); } catch (_) {}
-      try { candidates.push(...root.querySelectorAll("a,button,[role='link'],img,iframe")); } catch (_) {}
-    }
-    for (const element of new Set(candidates)) {
-      if (!element || !element.isConnected) continue;
-      const attrs = [element.getAttribute("aria-label"), element.getAttribute("title"), element.getAttribute("alt")]
-        .filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
-      const text = String(element.textContent || "").replace(/\s+/g, " ").trim();
-      const linkedBadge = element.tagName === "A"
-        && /netlify\.com/i.test(element.getAttribute("href") || "")
-        && /netlify/i.test(attrs + " " + text);
-      if (element.matches(selectors) || badgeText.test(attrs) || badgeText.test(text) || linkedBadge) {
-        const target = element.tagName === "IMG" && element.parentElement?.tagName === "A"
-          ? element.parentElement : element;
-        target.remove();
-      }
-    }
-  }
-  const start = () => {
-    clean(document.documentElement);
-    const observer = new MutationObserver(records => records.forEach(record => record.addedNodes.forEach(clean)));
-    if (document.documentElement) observer.observe(document.documentElement, {childList:true,subtree:true});
-  };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, {once:true});
-  else start();
-})();
-</script>
 </head>
 <body>
 
@@ -3757,6 +3707,8 @@ $("#mic").addEventListener("click",()=>{
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){toast("المتصفح لا يدعم البحث الصوتي، استخدم مايك لوحة المفاتيح.");$("#q").focus();return;}
   if(recog){try{recog.stop();}catch(e){}return;}
+  const voiceDisclosure=curLang==="en"?"Voice search uses your microphone to turn speech into text. Depending on your device and speech-recognition provider, audio may be processed on-device or sent to that provider. Continue?":"سيستخدم البحث الصوتي الميكروفون لتحويل كلامك إلى نص. بحسب جهازك ومزود التعرف على الكلام، قد تتم معالجة الصوت على الجهاز أو إرساله إلى مزود الخدمة. هل تريد المتابعة؟";
+  if(!window.confirm(voiceDisclosure))return;
   recog=new SR();recog.lang="ar-YE";recog.interimResults=true;
   $("#mic").classList.add("on");$("#voiceBar").hidden=false;$("#voiceTxt").textContent="جارٍ الاستماع… تحدث الآن";
   recog.onresult=e=>{
@@ -3772,6 +3724,13 @@ $("#mic").addEventListener("click",()=>{
 $("#voiceStop").addEventListener("click",()=>{if(recog)try{recog.stop();}catch(e){}});
 
 /* GPS Proximity Radar */
+function confirmSensitiveLocationUse(purpose){
+ const en=curLang==="en";
+ const copy=purpose==="listing"
+  ? (en ? "Dalilna will use your device location to fill in this listing's coordinates. If you submit the listing and it is approved, those coordinates may be visible to other users. Only continue when the device is at the advertised place. You can enter the location manually instead. Continue?" : "سيستخدم دليلنا موقع جهازك لتعبئة إحداثيات هذا الإعلان. إذا أرسلت الإعلان واعتمدته الإدارة فقد تظهر الإحداثيات للمستخدمين. تابع فقط عندما يكون الجهاز في موقع المكان المعلن عنه. يمكنك إدخال الموقع يدوياً بدلاً من ذلك. هل تريد المتابعة؟")
+  : (en ? "Dalilna will send your current location coordinates to its search service to find nearby places. Your search location is not published in a public profile. You can choose an area manually instead. Continue?" : "سيرسل دليلنا إحداثيات موقعك الحالي إلى خدمة البحث لعرض الأماكن القريبة. لن ننشر موقع البحث في ملف عام. يمكنك اختيار المنطقة يدوياً بدلاً من ذلك. هل تريد المتابعة؟");
+ return window.confirm(copy);
+}
 function calcKm(lat1,lon1,lat2,lon2){
   if(![lat1,lon1,lat2,lon2].every(v=>v!==null&&v!==undefined&&v!==""&&Number.isFinite(Number(v))))return null;
   const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
@@ -3781,6 +3740,7 @@ function calcKm(lat1,lon1,lat2,lon2){
 function toggleNearRadar(){
   if(flt.near){flt.near=false;render();return;}
   if(!navigator.geolocation){toast("المتصفح لا يدعم تحديد الموقع.");return;}
+  if(!confirmSensitiveLocationUse("nearby"))return;
   toast("جارٍ تحديد موقعك لحساب الأقرب إليك…");
   navigator.geolocation.getCurrentPosition(pos=>{
     userPos={lat:pos.coords.latitude,lng:pos.coords.longitude};
@@ -4156,6 +4116,7 @@ $("#imgClearBtn").addEventListener("click",()=>{
 $("#pickListingLocation").addEventListener("click",()=>{
   const button=$("#pickListingLocation"),status=$("#listingLocationStatus");
   if(!navigator.geolocation){toast("تحديد الموقع غير متاح في هذا المتصفح.");return;}
+  if(!confirmSensitiveLocationUse("listing"))return;
   button.disabled=true;button.textContent="جارٍ تحديد الموقع…";
   navigator.geolocation.getCurrentPosition(pos=>{
     $("#f").lat.value=String(pos.coords.latitude);
@@ -5256,6 +5217,7 @@ document.addEventListener("click",event=>{
  if(event.target.closest("#liveDirectoryChooseRegion")){$("#scopeBtn").click();return;}
  if(event.target.closest("#liveDirectoryUseLocation")){
   if(!navigator.geolocation){toast("المتصفح لا يدعم تحديد الموقع.");return;}
+  if(!confirmSensitiveLocationUse("nearby"))return;
   navigator.geolocation.getCurrentPosition(pos=>{liveDirectoryCoords={lat:pos.coords.latitude,lng:pos.coords.longitude};runLiveDirectorySearch(true);},()=>toast("تعذر تحديد موقعك. اختر المنطقة يدوياً."),{enableHighAccuracy:false,timeout:12000,maximumAge:300000});
  }
 });

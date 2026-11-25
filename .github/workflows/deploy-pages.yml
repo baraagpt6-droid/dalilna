@@ -21,6 +21,7 @@ on:
       - 'v3.0.0.css'
       - 'jobs-feed.json'
       - 'privacy.html'
+      - 'store/**'
       - 'terms.html'
       - 'manifest.json'
       - 'market_items.json'
@@ -30,9 +31,6 @@ on:
       - 'regions-profiles.js'
       - 'regional-catalog/**'
       - 'icons/**'
-      - 'netlify.toml'
-      - 'scripts/build-netlify-site.cjs'
-      - '.github/workflows/deploy-netlify.yml'
       - '.github/workflows/deploy-pages.yml'
 
 permissions:
@@ -61,13 +59,15 @@ jobs:
         run: python3 scripts/build_search_index_light.py --catalog-dir regional-catalog --output regional-catalog/search_index_light.json
       - name: Prepare website files
         run: |
-          mkdir -p _site/icons _site/regional-catalog _site/market-price-images
+          mkdir -p _site/icons _site/regional-catalog _site/market-price-images _site/store
           cp index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json regional-catalog-runtime.js marketplace-client.js market_items.json features-2.1.js features-2.1.css v3.0.0.js v3.0.0.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html app-ads.txt _site/
+          cp store/index.html _site/store/index.html
           cp icons/* _site/icons/
           cp market-price-images/*.svg _site/market-price-images/
           cp regional-catalog/*.json _site/regional-catalog/
           touch _site/.nojekyll
           test -s _site/index.html
+          test -s _site/store/index.html
           test -s _site/app-ads.txt
           test -s _site/marketplace-client.js
           test -s _site/features-2.1.js
@@ -127,6 +127,9 @@ jobs:
           ]);
           const html = await page.text();
           const privacy = await privacyResponse.text();
+          const storeResponse = await get("./store/");
+          const storePage = await storeResponse.text();
+          if (!storePage.includes("دليلنا") || !storePage.includes("[اسم المطور الرسمي]") || !storePage.includes("[البريد الإلكتروني الرسمي]")) throw new Error("The public Dalilna landing page or developer placeholders are missing.");
           const manifest = await manifestResponse.json();
           const pwaManifest = await pwaManifestResponse.json();
           const version = await versionResponse.json();

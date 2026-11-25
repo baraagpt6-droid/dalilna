@@ -39,8 +39,6 @@ on:
       - 'server.js'
       - 'marketplace-api.js'
       - 'package.json'
-      - 'netlify.toml'
-      - 'scripts/build-netlify-site.cjs'
       - '.github/workflows/android-apk.yml'
 
 permissions:

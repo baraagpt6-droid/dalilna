@@ -2,18 +2,22 @@
 
 دليل الخدمات والمحلات والوظائف وسوق البيع والشراء في اليمن. الإصدار الحالي 3.1.0.
 
-## GitHub Pages official hosting
+## الاستضافة الرسمية
 
-The official PWA is published on GitHub Pages at https://baraagpt6-droid.github.io/dalilna/. Netlify remains a secondary legacy host; its static build checks that the targeted badge-removal CSS/JavaScript guard is present before publishing.
+- واجهة التطبيق وPWA الرسمية: https://baraagpt6-droid.github.io/dalilna/
+- صفحة التعريف العامة: https://baraagpt6-droid.github.io/dalilna/store/
+- سياسة الخصوصية: https://baraagpt6-droid.github.io/dalilna/privacy.html
+- شروط الاستخدام: https://baraagpt6-droid.github.io/dalilna/terms.html
+- خادم API: https://dalilna-live.onrender.com
 
-The official browser and PWA URL is https://baraagpt6-droid.github.io/dalilna/. The Netlify host https://dalilna-ftny.netlify.app/ remains a secondary entry point with a targeted badge guard. Render allows the GitHub Pages origin for assistant API requests.
+يُنشر الموقع الثابت على GitHub Pages من الفرع `main`. يمكن إعداد نشر مستقل على Cloudflare Pages باستخدام الأمر `npm run build:static` ومجلد الإخراج `dist`. لا يعتمد التطبيق على شارة أو رابط استضافة داخل الواجهة.
 
 ## المنصات والبنية
 
 - Web: تطبيق PWA الرسمي القابل للتثبيت: https://baraagpt6-droid.github.io/dalilna/
 - Android: تطبيق WebView يستخدم ملفات الواجهة الموجودة في \`android/app/src/main/assets/\`.
 - API: خادم Node.js على Render. العنوان الأساسي للمساعد والخدمات المشتركة هو \`https://dalilna-live.onrender.com\`.
-- Static hosting: GitHub Pages هو النطاق الأساسي الرسمي، وNetlify استضافة ثانوية.
+- Static hosting: GitHub Pages هو النشر الرسمي. يمكن إنشاء نسخة ثابتة مستقلة في `dist` عند إعداد استضافة بديلة.
 - Version source: ملف \`version.json\` وملف \`android/app/build.gradle.kts\`.
 
 ## الميزات
@@ -75,10 +79,10 @@ python3 scripts/test_regional_catalog.py
 
 ## النشر
 
-- تغييرات الواجهة على \`main\` تنشر الموقع الأساسي على Netlify، مع استمرار GitHub Pages كنسخة احتياطية.
+- تغييرات الواجهة على `main` تنشر الموقع الرسمي وصفحة التعريف على GitHub Pages.
 - تغييرات المشروع تشغّل بناء Android APK تجريبي عبر GitHub Actions.
 - خدمات Render تتبع فرع \`main\` وتقوم بالنشر التلقائي عند وصول commit.
-- بناء APK الناتج للتجربة، وليس إصداراً معتمداً للنشر في Google Play.
+- ينتج سير العمل APK للاختبار وAAB موقّعاً عند تحقق إعدادات الإصدار. يجب مراجعة بيانات المتجر والامتثال قبل الإرسال إلى Google Play.
 
 ## حسابات وصلاحيات الإدارة
 
