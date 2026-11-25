@@ -37,7 +37,7 @@ test("AdMob defaults are Google test IDs; production IDs are configurable and no
 
 test("privacy policy contains bilingual disclosures, voice recognition and developer placeholders", () => {
   const policy = read("privacy.html");
-  for (const term of ["arabicPolicy", "englishPolicy", "Google Mobile Ads", "Google Gemini", "Firebase", "الموقع الجغرافي", "المفضلة", "المحل", "البحث الصوتي", "الميكروفون", "HTTPS", "[اسم المطور الرسمي]", "[البريد الإلكتروني الرسمي]"]) {
+  for (const term of ["arabicPolicy", "englishPolicy", "Google Mobile Ads", "Google Gemini", "Firebase", "الموقع الجغرافي", "المفضلة", "المحل", "البحث الصوتي", "الميكروفون", "HTTPS", "Dalilna Team", "لم يتم اعتماد بريد رسمي"]) {
     assert.ok(policy.includes(term), `privacy.html must disclose: ${term}`);
   }
   assert.ok(!policy.includes("baraagpt6@gmail.com"));
@@ -68,8 +68,8 @@ test("public marketing page and neutral static build are prepared", () => {
   const builder = read("scripts/build-static-site.cjs");
   const packageJson = JSON.parse(read("package.json"));
   assert.match(landing, /دليلنا/);
-  assert.match(landing, /\[اسم المطور الرسمي\]/);
-  assert.match(landing, /\[البريد الإلكتروني الرسمي\]/);
+  assert.match(landing, /Dalilna Team/);
+  assert.match(landing, /غير معتمد بعد/);
   assert.match(builder, /store\/index\.html/);
   assert.match(builder, /outputDirectory: "dist"/);
   assert.equal(packageJson.scripts["build:static"], "node scripts/build-static-site.cjs");
