@@ -1,11 +1,11 @@
 {
   "version": "3.1.0",
-  "versionCode": 3125501,
+  "versionCode": 3125901,
   "webVersion": "3.1.0",
   "androidVersion": "3.1.0",
-  "androidVersionCode": 3125501,
+  "androidVersionCode": 3125901,
   "catalogSchemaVersion": 2,
-  "catalogSnapshotDate": "2026-11-24",
+  "catalogSnapshotDate": "2026-11-25",
   "catalogTotalCount": 24564,
   "sources": [
     "OpenStreetMap",
@@ -13,14 +13,14 @@
     "Foursquare Open Places (optional portal export)"
   ],
   "generatedAt": "2026-11-23T00:00:00Z",
-  "catalogGeneratedAt": "2026-11-24T18:55:16.847145+00:00",
+  "catalogGeneratedAt": "2026-11-25T13:09:11.118344+00:00",
   "sourceCounts": {
     "OpenStreetMap": 17042,
     "Overture Maps": 15386,
     "Foursquare Open Places (via Overture)": 4
   },
   "osmDatasetSource": "Geofabrik latest Yemen extract",
-  "updatedAt": "2026-11-24T18:57:35.171Z",
+  "updatedAt": "2026-11-25T14:51:37.906Z",
   "marketPriceGuideVersion": 1,
   "marketPriceGuideUpdatedAt": "2026-11-23",
   "androidSigningMode": "persistent",
