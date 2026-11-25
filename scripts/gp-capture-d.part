@@ -1,1 +1,1 @@
-await p.locator("button[data-go='home']").first().click();await p.locator('#q').fill(q);await p.locator('#searchSubmit').click();await p.waitForSelector('#searchResultList .card');
+await p.locator("button[data-go='home']").first().click();await p.locator('#q').fill(q);await p.locator('#searchSubmit').click();await p.waitForSelector('#liveDirectoryItems .live-directory-card',{timeout:60000});
