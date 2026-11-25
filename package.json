@@ -16,8 +16,8 @@
     "sync:daily": "node scripts/daily-sync.cjs",
     "sync:marketplace": "node scripts/refresh-marketplace-products.cjs",
     "sync:prices": "node scripts/refresh-market-prices.cjs",
-    "build:netlify": "node scripts/build-netlify-site.cjs",
-    "test:e2e": "node --test tests/e2e/*.e2e.cjs"
+    "test:e2e": "node --test tests/e2e/*.e2e.cjs",
+    "build:static": "node scripts/build-static-site.cjs"
   },
   "devDependencies": {
     "playwright": "1.65.1"
