@@ -82,7 +82,7 @@ The source-based worksheet is in `GOOGLE_PLAY_DATA_SAFETY.md`; store copy and re
 
 ## Remaining Play Console steps
 
-The signed AAB and screenshot ZIP are available, but the app has **not** been uploaded or submitted to Google Play Console by this audit.
+The signed AAB and screenshot capture workflow are available. The app has **not** been uploaded or submitted to Google Play Console by this audit. Google’s Edits API requires a first artifact upload through Play Console, so the initial Closed Testing draft upload is an owner-side bootstrap step before the API workflow can run.
 
 Before submission:
 1. Export and upload the 512×512 PNG app icon and 1024×500 feature graphic.

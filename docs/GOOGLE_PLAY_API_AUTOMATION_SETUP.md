@@ -28,16 +28,18 @@ The Android Publisher API does not provide an initial app-card creation method. 
 
 Do not create or select `dalilna.com` or `com.hubaish.guide`.
 
-## 1.1 First-upload bootstrap if Google blocks the first API edit
+## 1.1 Required first-upload bootstrap for a new Play app
 
-Google's Edits guide notes that the API is intended for an app that has already had an APK uploaded through Play Console. If the first run fails at `edits.insert` or the first bundle upload with a prerequisite error, perform this one-time bootstrap in Play Console:
+Google's Edits API documentation states that an app must already have an artifact uploaded through Play Console before the Edits API can be used. The documentation uses the older term "APK". For this AAB-based app, perform the first artifact upload in Play Console once, using the signed AAB:
 
 1. Open **Dalilna → Test and release → Testing → Closed testing**.
 2. Create the track named `Dalilna Closed Testing`.
-3. Create a draft release and upload the pinned `app-release.aab` (versionCode `3127701`).
-4. Save it as a draft only. Do not roll it out or send it for review.
+3. Create a release and upload the pinned `app-release.aab` (versionCode `3127701`).
+4. Save the release as **Draft** only. Do not click Roll out, Send for review, or any publish action.
 
-Then rerun the workflow. It checks the existing bundle list and reuses the matching versionCode/SHA-256. If the API bundle list exposes that versionCode, the script verifies the returned SHA-256 and reuses the bundle without uploading it again. If a draft release exists but the bundle list does not expose a matching hash, or if the hash differs, the workflow stops without changing the draft.
+This is a one-time Play Console bootstrap. It establishes the first uploaded artifact and the named track. After that, the API workflow can update the listing and the same draft. It checks the existing bundle list and reuses the matching versionCode/SHA-256. If Google does not expose the matching checksum, or the checksum differs, the workflow stops instead of uploading or replacing an unverified bundle.
+
+Do not make other Play Console edits while an API edit is open: Google invalidates an outstanding edit when Console changes are made.
 
 ## 2. Google Cloud — recommended Workload Identity Federation
 
