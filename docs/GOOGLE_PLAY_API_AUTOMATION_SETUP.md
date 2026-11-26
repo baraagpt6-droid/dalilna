@@ -11,7 +11,7 @@ The manual-dispatch workflow is:
 
 `.github/workflows/google-play-closed-testing-draft.yml`
 
-It downloads and verifies the signed AAB, prepares the app icon and feature graphic from source SVGs, downloads the existing phone/tablet screenshot artifact, updates Arabic and English listings, uploads images, creates the custom closed-testing track if necessary, and assigns an optional Google Group.
+It downloads and verifies the signed AAB, prepares the app icon and feature graphic from source SVGs, captures fresh phone/tablet screenshots from the live Dalilna app with Playwright, updates Arabic and English listings, uploads images, creates the custom closed-testing track if necessary, and assigns an optional Google Group.
 
 The release is always written with `status: draft`. The edit is committed using `changesNotSentForReview=true` and `changesInReviewBehavior=ERROR_IF_IN_REVIEW`. Google documents that a draft release is not served to users and that the changes are not sent for review until explicitly submitted in Play Console. The workflow contains no Production-track operation, no rollout operation, and no review-submission operation.
 

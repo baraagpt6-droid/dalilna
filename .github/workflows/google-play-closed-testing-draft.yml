@@ -85,21 +85,31 @@ jobs:
             --output dist/aab/app-release.aab
           echo "1b62ceb401001f32e652b4e185ab12d794e8ea0202487561f56910f279539f04  dist/aab/app-release.aab" | sha256sum --check
 
-      - name: Download the previously captured Play screenshot artifact
-        uses: actions/download-artifact@v4
+      - name: Set up Node.js for fresh Play screenshots
+        uses: actions/setup-node@v4
         with:
-          name: dalilna-play-screenshots
-          path: dist/screenshots-artifact
-          repository: baraagpt6-droid/dalilna
-          run-id: 45678040821
-          github-token: ${{ github.token }}
+          node-version: "22"
+
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.65.1
+          npx playwright install --with-deps chromium
+
+      - name: Capture fresh phone and tablet screenshots from live Dalilna
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/google-play-screenshots
+          cat scripts/gp-capture-a.part scripts/gp-capture-b2.part scripts/gp-capture-c.part scripts/gp-capture-d.part scripts/gp-capture-d2.part > scripts/capture.cjs
+          node scripts/capture.cjs
+          (cd dist && zip -r dalilna-play-screenshots.zip google-play-screenshots)
 
       - name: Prepare and validate all Play listing images
         shell: bash
         run: |
           set -euo pipefail
-          SCREENSHOT_ZIP="$(find dist/screenshots-artifact -maxdepth 3 -type f -name '*.zip' -print -quit)"
-          test -n "$SCREENSHOT_ZIP"
+          SCREENSHOT_ZIP="dist/dalilna-play-screenshots.zip"
+          test -s "$SCREENSHOT_ZIP"
           python scripts/prepare_google_play_assets.py \
             --screenshots-zip "$SCREENSHOT_ZIP" \
             --output-dir dist/play-assets
