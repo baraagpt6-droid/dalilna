@@ -51,7 +51,7 @@ async function main(){
    throw new Error("Unexpected provider "+url.hostname);
   };
   const started=Date.now();
-  q=new URLSearchParams({q:"مطعم",category:"food",place:"محافظة إب"});r=await get("/api/places/search?"+q,"198.51.100.9");
+  q=new URLSearchParams({q:"Dalilna integration fixture",category:"all",place:"محافظة إب"});r=await get("/api/places/search?"+q,"198.51.100.9");
   assert.equal(r.status,200);payload=JSON.parse(r.body);assert.equal(payload.items[0].name,"مطعم بعد geocoding");assert.deepEqual(hosts,["nominatim.openstreetmap.org","overpass-api.de"]);assert.ok(Date.now()-started<5000);
   write("PASS bounded geocoding preserves time for the first Overpass provider");
    global.fetch=async(input,options={})=>{const url=new URL(String(input));assert.equal(url.hostname,"commons.wikimedia.org");assert.ok(String(options.headers["User-Agent"]).includes("DalilnaDirectory/"+require("../package.json").version));return jsonResponse({query:{pages:[{title:"File:Test.jpg",imageinfo:[{thumburl:"https://upload.wikimedia.org/wikipedia/commons/thumb/test.jpg",descriptionurl:"https://commons.wikimedia.org/wiki/File:Test.jpg",extmetadata:{Artist:{value:"Photographer"},LicenseShortName:{value:"CC BY-SA 4.0"}}}]}]}});};
