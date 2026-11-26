@@ -234,16 +234,19 @@ def main() -> None:
         else:
             current_releases = list(track.get("releases", []))
 
+        existing_version_draft = None
         for release in current_releases:
             versions = {str(code) for code in release.get("versionCodes", [])}
             if str(VERSION_CODE) in versions:
+                if release.get("status") != "draft":
+                    raise RuntimeError(
+                        f"versionCode {VERSION_CODE} already exists on the target track "
+                        f"with non-draft status {release.get('status')!r}. No release was changed."
+                    )
+                existing_version_draft = release
+            elif release.get("status") == "draft":
                 raise RuntimeError(
-                    f"versionCode {VERSION_CODE} already exists on the target track "
-                    f"with status {release.get('status')!r}. No release was changed."
-                )
-            if release.get("status") == "draft":
-                raise RuntimeError(
-                    "The target track already has a draft release. Inspect it in Play Console first."
+                    "The target track already has a different draft release. Inspect it in Play Console first."
                 )
 
         # App metadata and localized store listings.
@@ -275,25 +278,55 @@ def main() -> None:
             for image_type, image_paths in assets.items():
                 upload_image_group(api, package_path, edit_id, locale, image_type, image_paths)
 
-        # Upload the exact signed AAB and verify Google's returned version code.
-        bundle = api.upload(
-            f"/applications/{quote(PACKAGE_NAME, safe='')}/edits/{quote(edit_id, safe='')}/bundles",
-            args.aab,
-            "application/octet-stream",
+        # Reuse the bundle if the owner performed the one-time Console bootstrap.
+        # Never upload a second copy of the same versionCode if Google already knows it.
+        bundles_path = f"{package_path}/edits/{quote(edit_id, safe='')}/bundles"
+        known_bundles = api.api("GET", bundles_path).get("bundles", [])
+        known_bundle = next(
+            (item for item in known_bundles if int(item.get("versionCode", 0)) == VERSION_CODE),
+            None,
         )
-        returned_version_code = int(bundle.get("versionCode", 0))
-        if returned_version_code != VERSION_CODE:
-            raise RuntimeError(
-                f"Google returned versionCode {returned_version_code}; expected {VERSION_CODE}"
+        if known_bundle:
+            known_hash = str(known_bundle.get("sha256", "")).lower()
+            if known_hash and known_hash != AAB_SHA256:
+                raise RuntimeError(
+                    "The existing bundle has the expected versionCode but a different SHA-256. "
+                    "No bundle was replaced."
+                )
+            print("Reusing the existing app bundle with the pinned versionCode.")
+        elif existing_version_draft:
+            print("Reusing the versionCode already assigned to the existing Closed Testing draft.")
+        else:
+            bundle = api.upload(
+                f"/applications/{quote(PACKAGE_NAME, safe='')}/edits/{quote(edit_id, safe='')}/bundles",
+                args.aab,
+                "application/octet-stream",
             )
+            returned_version_code = int(bundle.get("versionCode", 0))
+            if returned_version_code != VERSION_CODE:
+                raise RuntimeError(
+                    f"Google returned versionCode {returned_version_code}; expected {VERSION_CODE}"
+                )
+            returned_hash = str(bundle.get("sha256", "")).lower()
+            if returned_hash and returned_hash != AAB_SHA256:
+                raise RuntimeError("Google's AAB SHA-256 does not match the pinned signed artifact.")
 
         # Put only a draft release on the custom closed-testing track.
-        # Preserve existing non-draft releases on that track.
+        # Preserve existing non-draft releases. Replace only the matching draft
+        # when it already carries this exact versionCode.
         track_path = f"{tracks_path}/{quote(TRACK_NAME, safe='')}"
         track_after_upload = api.api("GET", track_path)
         releases = list(track_after_upload.get("releases", []))
-        if any(release.get("status") == "draft" for release in releases):
-            raise RuntimeError("A draft was detected during the edit. No existing draft was replaced.")
+        for release in releases:
+            versions = {str(code) for code in release.get("versionCodes", [])}
+            if release.get("status") == "draft" and str(VERSION_CODE) not in versions:
+                raise RuntimeError("A different draft appeared during the edit. No release was changed.")
+            if str(VERSION_CODE) in versions and release.get("status") != "draft":
+                raise RuntimeError("The target versionCode is no longer a draft. Refusing to alter it.")
+        releases = [
+            release for release in releases
+            if str(VERSION_CODE) not in {str(code) for code in release.get("versionCodes", [])}
+        ]
         releases.append(draft_release())
         api.api("PUT", track_path, json_body={"track": TRACK_NAME, "releases": releases})
 
@@ -308,7 +341,7 @@ def main() -> None:
             api.api("PUT", testers_path, json_body={"googleGroups": groups})
 
         # Validate, then commit as an unsent draft. Do not submit for review.
-        api.api("POST", f"{package_path}/edits/{quote(edit_id, safe='')}:validate", json_body={})
+        api.api("POST", f"{package_path}/edits/{quote(edit_id, safe='')}:validate")
         api.api(
             "POST",
             f"{package_path}/edits/{quote(edit_id, safe='')}:commit",
@@ -316,7 +349,6 @@ def main() -> None:
                 "changesNotSentForReview": "true",
                 "changesInReviewBehavior": "ERROR_IF_IN_REVIEW",
             },
-            json_body={},
         )
         committed = True
         print(json.dumps({

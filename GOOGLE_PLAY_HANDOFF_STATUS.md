@@ -53,12 +53,12 @@ The signed production release already exists:
 
 Release facts:
 - `versionName=3.1.0`
-- `versionCode=3127701` (Android build workflow run #274)
+- `versionCode=3127701` (Android Build #277)
 - `applicationId=ye.dalilna.app`
 - `targetSdk=36`
 - `compileSdk=36`
 - Persistent signing is configured.
-- [Android build workflow run #274](https://github.com/baraagpt6-droid/dalilna/actions/runs/45731324533) completed successfully. It built and verified the persistent-signed APK/AAB, checked their package/version metadata and published both files to Release v3.1.0. Current published assets: APK 6,708,776 bytes; AAB 8,831,823 bytes. OTA metadata is synchronized at versionCode `3127701` in the root and Android-bundled `version.json` files.
+- [Android Build #277](https://github.com/baraagpt6-droid/dalilna/actions/runs/45879298868) completed successfully. It built and verified the persistent-signed APK/AAB, checked their package/version metadata and published both files to Release v3.1.0. Current signed AAB: 8,834,761 bytes (SHA-256 recorded in the Play API automation script). OTA metadata is synchronized at versionCode `3127701` in the root and Android-bundled `version.json` files.
 
 The Google Play screenshot workflow also completed successfully:
 - [Screenshot workflow run](https://github.com/baraagpt6-droid/dalilna/actions/runs/45678040821)

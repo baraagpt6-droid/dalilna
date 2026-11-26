@@ -28,6 +28,17 @@ The Android Publisher API does not provide an initial app-card creation method. 
 
 Do not create or select `dalilna.com` or `com.hubaish.guide`.
 
+## 1.1 First-upload bootstrap if Google blocks the first API edit
+
+Google's Edits guide notes that the API is intended for an app that has already had an APK uploaded through Play Console. If the first run fails at `edits.insert` or the first bundle upload with a prerequisite error, perform this one-time bootstrap in Play Console:
+
+1. Open **Dalilna → Test and release → Testing → Closed testing**.
+2. Create the track named `Dalilna Closed Testing`.
+3. Create a draft release and upload the pinned `app-release.aab` (versionCode `3127701`).
+4. Save it as a draft only. Do not roll it out or send it for review.
+
+Then rerun the workflow. It checks the existing bundle list and reuses the matching versionCode/SHA-256. If that version is already attached as a draft to the target track, it updates the same draft rather than uploading the bundle again. If Google reports that the already-uploaded bundle hash differs, the workflow stops.
+
 ## 2. Google Cloud — recommended Workload Identity Federation
 
 Use GitHub OIDC and short-lived credentials. Do not create or store a Service Account JSON private key.
