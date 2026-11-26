@@ -47,6 +47,7 @@ on:
       - '!android/app/src/main/assets/terms.html'
       - '!GOOGLE_PLAY_DATA_SAFETY.md'
       - '!tests/**'
+      - '!server.js'
       - '!.github/workflows/android-apk.yml'
 
 permissions:

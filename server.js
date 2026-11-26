@@ -772,7 +772,8 @@ async function geocodePhotonFallback(candidates,key,deadlineAt=Date.now()+2600){
   const remaining=deadlineAt-Date.now();
   if(remaining<=120)break;
   const url=new URL("https://photon.komoot.io/api/");
-  url.search=new URLSearchParams({q:candidate,lang:"ar",limit:"10"}).toString();
+  // Photon rejects lang=ar with HTTP 400. Use its supported English locale for geocoding metadata.
+  url.search=new URLSearchParams({q:candidate,lang:"en",limit:"10"}).toString();
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Math.min(850,remaining));
   try{
    const response=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/geo+json","User-Agent":"DalilnaDirectory/"+VERSION+" (+https://dalilna-live.onrender.com)"}});

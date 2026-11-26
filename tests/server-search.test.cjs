@@ -4,6 +4,38 @@ const assert=require("node:assert/strict");
 const fs=require("node:fs");
 const {inferCategoryFromQuery,buildOverpassQuery,classifyCategory,searchPlaces,searchLocalYemenCatalog,normalizeText,overpassAttemptTimeout,createIntervalGate}=require("../server");
 
+test("Photon geocoding uses a supported locale after Nominatim returns no boundary",async()=>{
+ const originalFetch=global.fetch;
+ const requested=[];
+ global.fetch=async(input,options={})=>{
+  const url=new URL(String(input));
+  requested.push(url);
+  if(url.hostname==="nominatim.openstreetmap.org"){
+   return new Response("[]",{status:200,headers:{"content-type":"application/json"}});
+  }
+  if(url.hostname==="photon.komoot.io"){
+   assert.equal(url.searchParams.get("lang"),"en");
+   return new Response(JSON.stringify({type:"FeatureCollection",features:[{
+    type:"Feature",
+    properties:{name:"Sana'a Governorate",countrycode:"YE",extent:[44.12,15.27,44.40,15.61]},
+    geometry:{type:"Point",coordinates:[44.2,15.35]}
+   }]}),{status:200,headers:{"content-type":"application/json"}});
+  }
+  assert.ok(["overpass-api.de","overpass.private.coffee","maps.mail.ru"].includes(url.hostname),url.hostname);
+  assert.equal(options.method,"POST");
+  return new Response(JSON.stringify({elements:[]}),{status:200,headers:{"content-type":"application/json"}});
+ };
+ try{
+  const result=await searchPlaces({place:"Sanaa, Yemen",category:"all"});
+  assert.ok(requested.some(url=>url.hostname==="nominatim.openstreetmap.org"));
+  const photon=requested.find(url=>url.hostname==="photon.komoot.io");
+  assert.ok(photon,"Photon should be called when Nominatim has no result");
+  assert.equal(photon.searchParams.get("lang"),"en");
+  assert.equal(result.source,"OpenStreetMap");
+  assert.equal(result.geocodedPlace,"Sana'a Governorate");
+ }finally{global.fetch=originalFetch;}
+});
+
 
 test("global fallback searches Nominatim then the Yemen-bounded Overpass mirror",async()=>{
  const originalFetch=global.fetch;
