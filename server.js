@@ -206,8 +206,9 @@ function searchLocalYemenCatalog({query="",category="all",place="",bbox=null,lat
       const scope=/^(?:محافظة|governorate)(?:\s|$)/iu.test(original)?"governorate":
         /^(?:مديرية|عزلة|district)(?:\s|$)/iu.test(original)?"district":"any";
       const normalizedValue=normalizeLocalCatalogText(original.replace(/(?:محافظة|مديرية|عزلة|منطقة|مدينة|اليمن|yemen|governorate|district)/giu," "));
-      const value=LOCAL_GOVERNORATE_ALIASES.get(normalizedValue)||normalizedValue;
-      return {scope,value};
+      const mappedGovernorate=LOCAL_GOVERNORATE_ALIASES.get(normalizedValue);
+      const value=mappedGovernorate||normalizedValue;
+      return {scope:mappedGovernorate&&scope==="any"?"governorate":scope,value};
     })
     .filter(part=>part.value);
   const hasCoords=Number.isFinite(Number(lat))&&Number.isFinite(Number(lon))&&lat!==null&&lon!==null;
@@ -1197,6 +1198,17 @@ async function searchPlaces(params) {
     if (cached) {
       const copy = { ...cached, fetchedAt: new Date().toISOString(), cached: true };
       return filterByQuery(copy, query, category);
+    }
+  }
+
+  // The national index is the primary search source for recognized category queries.
+  // It avoids turning a healthy local search into a 503 when upstream map mirrors are busy.
+  const localCategorySearch = Boolean(query) && category !== "all" && inferCategoryFromQuery(query) === category;
+  if (!hasCoordinates && place && localCategorySearch) {
+    const local = searchLocalYemenCatalog({query,category,place});
+    if (local && local.count) {
+      console.info(JSON.stringify({event:"places.local_catalog.primary",count:local.count,category}));
+      return local;
     }
   }
 

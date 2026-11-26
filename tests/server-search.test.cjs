@@ -166,14 +166,16 @@ test("local Yemen index provides Ibb pharmacy results when map mirrors are unava
  assert.ok(result.items.every(item=>item.source==="فهرس اليمن الوطني المحلي"));
 });
 
-test("local Yemen catalogue resolves English governorate aliases",()=>{
+test("local Yemen catalogue resolves English governorate aliases without matching district-name fragments",()=>{
  const result=searchLocalYemenCatalog({query:"صيدلية",category:"pharmacy",place:"Ibb, Yemen"});
  assert.ok(result,"national local index must load");
  assert.equal(result.localCatalogFallback,true);
  assert.ok(result.count>0);
  assert.ok(result.items.every(item=>item.category==="pharmacy"));
  assert.ok(result.items.every(item=>normalizeText(item.governorate)==="اب"));
+ assert.ok(result.items.every(item=>!normalizeText(item.governorate).includes("ذمار")));
 });
+
 
 test("searchPlaces falls back to the national index when geocoding fails",async()=>{
  const originalFetch=global.fetch;
@@ -206,5 +208,20 @@ test("searchPlaces returns local catalogue results for English governorates when
   assert.ok(result.count>0);
   assert.ok(result.items.every(item=>item.category==="pharmacy"));
   assert.ok(result.items.every(item=>normalizeText(item.governorate)==="اب"));
+ }finally{global.fetch=originalFetch;}
+});
+
+test("recognized category search uses the local Yemen index before slow map providers",async()=>{
+ const originalFetch=global.fetch;
+ let networkCalls=0;
+ global.fetch=async()=>{networkCalls++;throw new Error("The local index should answer this category search first.");};
+ try{
+  const started=Date.now();
+  const result=await searchPlaces({q:"صيدلية",place:"Ibb, Yemen",category:"pharmacy"});
+  assert.equal(result.localCatalogFallback,true);
+  assert.ok(result.count>0);
+  assert.ok(result.items.every(item=>normalizeText(item.governorate)==="اب"));
+  assert.equal(networkCalls,0);
+  assert.ok(Date.now()-started<200);
  }finally{global.fetch=originalFetch;}
 });
