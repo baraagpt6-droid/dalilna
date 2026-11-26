@@ -48,6 +48,7 @@ on:
       - '!GOOGLE_PLAY_DATA_SAFETY.md'
       - '!tests/**'
       - '!server.js'
+      - '!marketplace-api.js'
       - '!.github/workflows/android-apk.yml'
 
 permissions:

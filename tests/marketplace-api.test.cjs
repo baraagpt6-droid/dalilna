@@ -132,3 +132,16 @@ test("solar, screen, battery and inverter products are valid marketplace items",
   assert.ok(PRODUCT_TYPES.has(productType),productType);
  }
 });
+
+test("marketplace submit passes exactly one value per INSERT placeholder",()=>{
+ const source=fs.readFileSync("marketplace-api.js","utf8");
+ const submit=source.slice(source.indexOf("async function submit(req,res)"),source.indexOf("async function pending(req,res)"));
+ const sqlMatch=submit.match(/const sql="INSERT INTO marketplace_listings[\\s\\S]*?VALUES \\(([^"]+)\\)/);
+ const valuesMatch=submit.match(/const values=\\[([^\\]]+)\\],r=await db\\.query\\(sql,values\\)/);
+ assert.ok(sqlMatch,"listing INSERT SQL should exist");
+ assert.ok(valuesMatch,"listing INSERT values should exist");
+ const placeholderCount=Math.max(...Array.from(sqlMatch[1].matchAll(/\\$(\\d+)/g),match=>Number(match[1])));
+ const valueCount=valuesMatch[1].split(",").length;
+ assert.equal(placeholderCount,23);
+ assert.equal(valueCount,placeholderCount);
+});
