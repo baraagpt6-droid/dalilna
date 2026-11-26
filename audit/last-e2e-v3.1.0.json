@@ -8,7 +8,7 @@
     "queries": {
       "الزوقري": {
         "matches": 2,
-        "searchMs": 1.62,
+        "searchMs": 2.333,
         "within50ms": true,
         "examples": [
           {
@@ -27,7 +27,7 @@
       },
       "الناهي": {
         "matches": 1,
-        "searchMs": 1.582,
+        "searchMs": 1.635,
         "within50ms": true,
         "examples": [
           {
@@ -40,7 +40,7 @@
       },
       "صيدلية": {
         "matches": 697,
-        "searchMs": 1.539,
+        "searchMs": 1.496,
         "within50ms": true,
         "examples": [
           {
@@ -91,11 +91,11 @@
     }
   },
   "live": {
-    "generatedAt": "2026-11-26T00:08:06.660Z",
+    "generatedAt": "2026-11-26T00:23:10.856Z",
     "health": {
       "ok": true,
       "version": "3.1.0",
-      "ms": 278,
+      "ms": 287,
       "status": 200
     },
     "marketplace": {
@@ -106,16 +106,16 @@
       "withImages": 0,
       "withPrice": 0,
       "withContact": 0,
-      "ms": 151,
+      "ms": 884,
       "status": 200,
       "error": ""
     },
     "pharmacyLiveSearch": {
       "ok": true,
       "status": 200,
-      "ms": 278,
-      "respondedWithin3Seconds": true,
-      "successfulWithin3Seconds": true,
+      "ms": 6048,
+      "respondedWithin3Seconds": false,
+      "successfulWithin3Seconds": false,
       "results": 7,
       "localCatalogFallback": true,
       "resultSource": "فهرس اليمن الوطني المحلي (OSM + Overture)",
@@ -127,11 +127,11 @@
       "configured": true,
       "provider": "Gemini",
       "model": "gemini-3.8-flash",
-      "ok": true,
-      "status": 200,
-      "ms": 3179,
-      "answerChars": 703,
-      "mode": "gemini",
+      "ok": false,
+      "status": 502,
+      "ms": 2962,
+      "answerChars": 0,
+      "mode": "",
       "error": "",
       "providerStatus": 0,
       "providerCode": ""
