@@ -1,7 +1,7 @@
 # Dalilna Google Play handoff
 
 Application ID: `ye.dalilna.app`  
-Release: `3.1.0` / latest completed Android build versionCode `3127401`  
+Release: `3.1.0` / latest completed Android build versionCode `3127701`  
 Developer display name: **Dalilna Team**  
 Support and privacy email: **dalilnasupport@gmail.com**
 
@@ -53,12 +53,12 @@ The signed production release already exists:
 
 Release facts:
 - `versionName=3.1.0`
-- `versionCode=3127401` (Android build workflow run #274)
+- `versionCode=3127701` (Android build workflow run #274)
 - `applicationId=ye.dalilna.app`
 - `targetSdk=36`
 - `compileSdk=36`
 - Persistent signing is configured.
-- [Android build workflow run #274](https://github.com/baraagpt6-droid/dalilna/actions/runs/45731324533) completed successfully. It built and verified the persistent-signed APK/AAB, checked their package/version metadata and published both files to Release v3.1.0. Current published assets: APK 6,708,776 bytes; AAB 8,831,823 bytes. OTA metadata is synchronized at versionCode `3127401` in the root and Android-bundled `version.json` files.
+- [Android build workflow run #274](https://github.com/baraagpt6-droid/dalilna/actions/runs/45731324533) completed successfully. It built and verified the persistent-signed APK/AAB, checked their package/version metadata and published both files to Release v3.1.0. Current published assets: APK 6,708,776 bytes; AAB 8,831,823 bytes. OTA metadata is synchronized at versionCode `3127701` in the root and Android-bundled `version.json` files.
 
 The Google Play screenshot workflow also completed successfully:
 - [Screenshot workflow run](https://github.com/baraagpt6-droid/dalilna/actions/runs/45678040821)
@@ -67,7 +67,7 @@ The Google Play screenshot workflow also completed successfully:
 - Retention expiry: 25 December 2026.
 - The workflow captured phone and tablet screenshots and uploaded the ZIP artifact.
 
-The repository currently does **not** contain a separately exported Play Store 512×512 PNG app icon or a 1024×500 feature graphic. The existing SVG/app launcher resource is not a substitute for verifying and uploading those Play Console assets.
+The repository now includes a Play asset preparation script. It exports the 512×512 app icon from the existing SVG, exports the 1024×500 feature graphic from store-assets/feature-graphic.svg, and validates the previously captured phone/tablet screenshot artifact.
 
 ## Data Safety, privacy and access
 

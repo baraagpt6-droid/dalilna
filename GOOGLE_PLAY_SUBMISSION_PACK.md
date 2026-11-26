@@ -1,7 +1,7 @@
 # Dalilna 3.1.0 — Google Play submission pack
 
 Application ID: `ye.dalilna.app`  
-Release: `3.1.0` · final signed Android version code: `3127201`  
+Release: `3.1.0` · final signed Android version code: `3127701`  
 Website: https://baraagpt6-droid.github.io/dalilna/store/  
 App: https://baraagpt6-droid.github.io/dalilna/  
 Privacy policy: https://baraagpt6-droid.github.io/dalilna/privacy.html  
@@ -190,4 +190,4 @@ The phone/tablet capture workflow completed successfully on 25 November 2026:
 - App icon: PNG 512 × 512.
 - Feature graphic: 1024 × 500.
 
-The repository has the SVG and Android launcher resource, but no separately exported Play Store 512 × 512 PNG app icon or 1024 × 500 feature graphic has been verified in this audit. Create/export those assets and upload them with the screenshots.
+The repository contains the SVG app icon, a 1024 × 500 feature-graphic SVG source, and a preparation script that exports the required Play PNG files and verifies the captured phone/tablet screenshots before upload.
