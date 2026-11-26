@@ -43,7 +43,7 @@ test("privacy policy contains bilingual disclosures, official contact and code-a
   assert.ok(!policy.includes("baraagpt6@gmail.com"));
   assert.ok(!policy.includes("لم يتم اعتماد بريد رسمي"));
   assert.ok(!policy.includes("Not configured yet"));
-  assert.match(policy, /mailto:support@dalilna\.app/);
+  assert.match(policy, /mailto:dalilnasupport@gmail\.com/);
 });
 
 test("Play Data safety worksheet explains AdMob data and local-only profiles", () => {
@@ -72,8 +72,8 @@ test("public marketing page and neutral static build are prepared", () => {
   const packageJson = JSON.parse(read("package.json"));
   assert.match(landing, /دليلنا/);
   assert.match(landing, /Dalilna Team/);
-  assert.match(landing, /support@dalilna\.app/);
-  assert.match(landing, /mailto:support@dalilna\.app/);
+  assert.match(landing, /dalilnasupport@gmail\.com/);
+  assert.match(landing, /mailto:dalilnasupport@gmail\.com/);
   assert.match(builder, /store\/index\.html/);
   assert.match(builder, /outputDirectory: "dist"/);
   assert.equal(packageJson.scripts["build:static"], "node scripts/build-static-site.cjs");

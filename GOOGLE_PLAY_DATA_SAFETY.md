@@ -66,6 +66,7 @@ For each provider, classify the provider as a service provider or third party ac
 ## Data not used as a core feature in 3.1.0
 
 - No central customer or merchant account registration.
+- No centralized customer or merchant account registration is provided. Local profiles and favourites remain on the device and do not synchronize profile data across devices.
 - No in-app direct messaging between users.
 - No in-app marketplace payments, banking, credit, lending, investment or gambling.
 - No contact-book, calendar, health or SMS access.

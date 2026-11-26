@@ -38,6 +38,8 @@ test("Photon geocoding uses a supported locale after Nominatim returns no bounda
 
 
 test("global fallback searches Nominatim then the Yemen-bounded Overpass mirror",async()=>{
+ // The preceding test uses the same process-wide per-provider throttle gates.
+ await new Promise(resolve=>setTimeout(resolve,1150));
  const originalFetch=global.fetch;
  const unique="dalilna-test-pharmacy-"+Date.now();
  const requested=[];
