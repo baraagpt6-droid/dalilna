@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "fetchedAt": "2026-11-25T19:25:09.222Z",
+  "fetchedAt": "2026-11-26T01:49:08.085Z",
   "refreshedBy": "GitHub Actions six-hour jobs refresh",
   "sources": [
     {
@@ -13,7 +13,7 @@
       "name": "YemenHR public channel",
       "url": "https://t.me/s/hr_yemen",
       "status": "ok",
-      "count": 19
+      "count": 17
     },
     {
       "name": "Careers.sa public listings",
@@ -30,6 +30,74 @@
     }
   ],
   "items": [
+    {
+      "id": "careers-sa:senior-principal-process-systems-engineer-contractor-airproducts-2bcab92d",
+      "title": "Senior Principal Process Systems Engineer (Contractor)",
+      "organization": "Airproducts    Airproducts",
+      "location": "Duba, Saudi Arabia",
+      "city": "Duba",
+      "country": "Saudi Arabia",
+      "countryCode": "SA",
+      "publishedAt": "2026-11-26T01:49:08.085Z",
+      "source": "Careers.sa employer listing",
+      "url": "https://airproducts.wd5.myworkdayjobs.com/en-US/AP0001/job/Duba-Saudi-Arabia/Senior-Principal-Process-Systems-Engineer--Contractor-_JR-2026-23421",
+      "applicationUrl": "https://airproducts.wd5.myworkdayjobs.com/en-US/AP0001/job/Duba-Saudi-Arabia/Senior-Principal-Process-Systems-Engineer--Contractor-_JR-2026-23421",
+      "sourceUrl": "https://www.careers.sa/en/jobs/senior-principal-process-systems-engineer-contractor-airproducts-2bcab92d",
+      "eligibility": "",
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-10T01:49:08.085Z"
+    },
+    {
+      "id": "careers-sa:project-cost-control-manager-airproducts-fc813526",
+      "title": "Project Cost Control Manager",
+      "organization": "Airproducts    Airproducts",
+      "location": "Duba, Saudi Arabia",
+      "city": "Duba",
+      "country": "Saudi Arabia",
+      "countryCode": "SA",
+      "publishedAt": "2026-11-26T01:49:08.085Z",
+      "source": "Careers.sa employer listing",
+      "url": "https://airproducts.wd5.myworkdayjobs.com/en-US/AP0001/job/Duba-Saudi-Arabia/Project-Cost-Control-Manager_JR-2026-23467",
+      "applicationUrl": "https://airproducts.wd5.myworkdayjobs.com/en-US/AP0001/job/Duba-Saudi-Arabia/Project-Cost-Control-Manager_JR-2026-23467",
+      "sourceUrl": "https://www.careers.sa/en/jobs/project-cost-control-manager-airproducts-fc813526",
+      "eligibility": "",
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-10T01:49:08.085Z"
+    },
+    {
+      "id": "careers-sa:p1-7753477-0-marriott-ksa-9a058775",
+      "title": "F B Sales Manager",
+      "organization": "Marriott (KSA)    Marriott (KSA)",
+      "location": "Saudi Arabia",
+      "city": "Saudi Arabia",
+      "country": "Saudi Arabia",
+      "countryCode": "SA",
+      "publishedAt": "2026-11-26T00:00:00.000Z",
+      "source": "Careers.sa employer listing",
+      "url": "https://careers.marriott.com/f-b-sales-manager-saudi-only/job/P1-7753477-0",
+      "applicationUrl": "https://careers.marriott.com/f-b-sales-manager-saudi-only/job/P1-7753477-0",
+      "sourceUrl": "https://www.careers.sa/en/jobs/p1-7753477-0-marriott-ksa-9a058775",
+      "eligibility": "Saudi nationals",
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-10T01:49:08.085Z"
+    },
+    {
+      "id": "careers-sa:fast-jet-opportunities-kingdom-of-saudi-arabia-ksa-00140128-bae-system-3aa2956c",
+      "title": "Fast Jet Opportunities Kingdom of Saudi Arabia KSA",
+      "organization": "BAE Systems    BAE Systems",
+      "location": "ies Kingdom of Saudi Arabia KSA at BAE Systems, Saudi Arabia",
+      "city": "ies Kingdom of Saudi Arabia KSA at BAE Systems",
+      "country": "Saudi Arabia",
+      "countryCode": "SA",
+      "publishedAt": "2026-11-26T00:00:00.000Z",
+      "source": "Careers.sa employer listing",
+      "url": "https://jobsearch.baesystems.com/job/fast-jet-opportunities-kingdom-of-saudi-arabia-ksa-00140128",
+      "applicationUrl": "https://jobsearch.baesystems.com/job/fast-jet-opportunities-kingdom-of-saudi-arabia-ksa-00140128",
+      "sourceUrl": "https://www.careers.sa/en/jobs/fast-jet-opportunities-kingdom-of-saudi-arabia-ksa-00140128-bae-system-3aa2956c",
+      "eligibility": "",
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-10T01:49:08.085Z"
+    },
     {
       "id": "yemenhr:5066",
       "title": "Fin/ HR Assistant",
@@ -182,23 +250,6 @@
       "sourceUrl": "https://t.me/hr_yemen/5074",
       "summaryAr": "",
       "expiresAt": "2026-12-09T23:59:59.000Z"
-    },
-    {
-      "id": "careers-sa:senior-principal-process-systems-engineer-contractor-airproducts-2bcab92d",
-      "title": "Senior Principal Process Systems Engineer (Contractor)",
-      "organization": "Airproducts    Airproducts",
-      "location": "Duba, Saudi Arabia",
-      "city": "Duba",
-      "country": "Saudi Arabia",
-      "countryCode": "SA",
-      "publishedAt": "2026-11-25T19:25:09.222Z",
-      "source": "Careers.sa employer listing",
-      "url": "https://airproducts.wd5.myworkdayjobs.com/en-US/AP0001/job/Duba-Saudi-Arabia/Senior-Principal-Process-Systems-Engineer--Contractor-_JR-2026-23421",
-      "applicationUrl": "https://airproducts.wd5.myworkdayjobs.com/en-US/AP0001/job/Duba-Saudi-Arabia/Senior-Principal-Process-Systems-Engineer--Contractor-_JR-2026-23421",
-      "sourceUrl": "https://www.careers.sa/en/jobs/senior-principal-process-systems-engineer-contractor-airproducts-2bcab92d",
-      "eligibility": "",
-      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-09T19:25:09.222Z"
     },
     {
       "id": "careers-sa:odoo-functional-consultant-%D8%A3%D9%88%D8%AA%D8%A7%D8%AF-%D8%A7%D9%84%D8%B9%D9%82%D8%A7%D8%B1%D9%8A%D8%A9-cab6b3f0",
@@ -1969,23 +2020,6 @@
       "expiresAt": "2026-12-13T23:59:59.000Z"
     },
     {
-      "id": "yemenhr:5056",
-      "title": "Project Coordinator Assistant",
-      "organization": "MSF",
-      "location": "Aden, Yemen",
-      "city": "Aden",
-      "country": "Yemen",
-      "countryCode": "YE",
-      "publishedAt": "2026-11-22T23:59:59.000Z",
-      "deadline": "25 نوفمبر 2026",
-      "source": "YemenHR public jobs channel",
-      "url": "https://yemenhr.com/jobs/project-coordinator-assistant-msf-aden-b2685cd3",
-      "applicationUrl": "https://yemenhr.com/jobs/project-coordinator-assistant-msf-aden-b2685cd3",
-      "sourceUrl": "https://t.me/hr_yemen/5056",
-      "summaryAr": "",
-      "expiresAt": "2026-11-25T23:59:59.000Z"
-    },
-    {
       "id": "yemenhr:5057",
       "title": "Sub-National Protection Cluster Coordinator Yemen Hodeidah",
       "organization": "Norwegian Refugee Council",
@@ -2001,23 +2035,6 @@
       "sourceUrl": "https://t.me/hr_yemen/5057",
       "summaryAr": "",
       "expiresAt": "2026-12-06T23:59:59.000Z"
-    },
-    {
-      "id": "yemenhr:5060",
-      "title": "Project Coordinator Assistant",
-      "organization": "Medecine Sans Frontiers",
-      "location": "عدن, Yemen",
-      "city": "عدن",
-      "country": "Yemen",
-      "countryCode": "YE",
-      "publishedAt": "2026-11-22T23:59:59.000Z",
-      "deadline": "25 نوفمبر 2026",
-      "source": "YemenHR public jobs channel",
-      "url": "https://eoi-ye.com/jobs/22134/",
-      "applicationUrl": "https://eoi-ye.com/jobs/22134/",
-      "sourceUrl": "https://t.me/hr_yemen/5060",
-      "summaryAr": "",
-      "expiresAt": "2026-11-25T23:59:59.000Z"
     },
     {
       "id": "careers-sa:senior-specialist-operational-readiness-50011340-da3-qiddiya-1ec8682d",
