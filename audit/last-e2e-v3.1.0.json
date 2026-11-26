@@ -1,14 +1,14 @@
 {
   "version": "3.1.0",
   "catalog": {
-    "bytes": 1111294,
-    "recordCount": 24564,
+    "bytes": 1111326,
+    "recordCount": 24565,
     "governorates": 22,
     "schemaVersion": 2,
     "queries": {
       "الزوقري": {
         "matches": 2,
-        "searchMs": 1.171,
+        "searchMs": 1.62,
         "within50ms": true,
         "examples": [
           {
@@ -27,7 +27,7 @@
       },
       "الناهي": {
         "matches": 1,
-        "searchMs": 1.174,
+        "searchMs": 1.582,
         "within50ms": true,
         "examples": [
           {
@@ -40,7 +40,7 @@
       },
       "صيدلية": {
         "matches": 697,
-        "searchMs": 1.171,
+        "searchMs": 1.539,
         "within50ms": true,
         "examples": [
           {
@@ -91,11 +91,11 @@
     }
   },
   "live": {
-    "generatedAt": "2026-11-25T18:38:41.936Z",
+    "generatedAt": "2026-11-26T00:08:06.660Z",
     "health": {
       "ok": true,
       "version": "3.1.0",
-      "ms": 236,
+      "ms": 278,
       "status": 200
     },
     "marketplace": {
@@ -106,16 +106,16 @@
       "withImages": 0,
       "withPrice": 0,
       "withContact": 0,
-      "ms": 159,
+      "ms": 151,
       "status": 200,
       "error": ""
     },
     "pharmacyLiveSearch": {
       "ok": true,
       "status": 200,
-      "ms": 5731,
-      "respondedWithin3Seconds": false,
-      "successfulWithin3Seconds": false,
+      "ms": 278,
+      "respondedWithin3Seconds": true,
+      "successfulWithin3Seconds": true,
       "results": 7,
       "localCatalogFallback": true,
       "resultSource": "فهرس اليمن الوطني المحلي (OSM + Overture)",
@@ -127,11 +127,11 @@
       "configured": true,
       "provider": "Gemini",
       "model": "gemini-3.8-flash",
-      "ok": false,
-      "status": 502,
-      "ms": 9083,
-      "answerChars": 0,
-      "mode": "",
+      "ok": true,
+      "status": 200,
+      "ms": 3179,
+      "answerChars": 703,
+      "mode": "gemini",
       "error": "",
       "providerStatus": 0,
       "providerCode": ""
@@ -140,18 +140,18 @@
       "ok": true,
       "version": "3.1.0",
       "signingMode": "persistent",
-      "androidVersionCode": 3126801,
+      "androidVersionCode": 3127201,
       "v3SavedHub": true,
       "v3FlyAnimation": true,
       "v3JobSearch": true,
-      "v3JobFeedCount": 166,
+      "v3JobFeedCount": 168,
       "assistantJobsLocal": true,
       "assistantLocalFallback": true,
-      "jobFeedWithSourceLinks": 166,
+      "jobFeedWithSourceLinks": 168,
       "v3Styles": true,
-      "bytes": 1111294,
+      "bytes": 1111326,
       "schemaVersion": 2,
-      "records": 24564,
+      "records": 24565,
       "pharmacyRecords": 821,
       "open24Pharmacies": 17,
       "marketplaceReferenceItems": 0,
@@ -161,9 +161,9 @@
       "productWhatsApp": true,
       "androidRelease": {
         "ok": true,
-        "versionCode": 3126801,
-        "size": 6706448,
-        "digest": "sha256:1d35ddd9af164946832310fd43e8d0bdf0fc3c64b6035c3ae9e0026dbcb91bd2",
+        "versionCode": 3127201,
+        "size": 6706508,
+        "digest": "sha256:1b50a6e3a2450ebbc01b83b6348104313dce52f819976cd38841ed25461de75b",
         "downloadUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.1.0/app-release.apk"
       },
       "netlifyLegacyAlias": {
