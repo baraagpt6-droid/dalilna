@@ -1,7 +1,7 @@
 # Dalilna Google Play handoff
 
 Application ID: `ye.dalilna.app`  
-Release: `3.1.0` / versionCode `3127201`  
+Release: `3.1.0` / latest completed Android build versionCode `3127301`  
 Developer display name: **Dalilna Team**  
 Support and privacy email: **dalilnasupport@gmail.com**
 
@@ -53,12 +53,12 @@ The signed production release already exists:
 
 Release facts:
 - `versionName=3.1.0`
-- `versionCode=3127201`
+- `versionCode=3127301` (Android build workflow run #273)
 - `applicationId=ye.dalilna.app`
 - `targetSdk=36`
 - `compileSdk=36`
 - Persistent signing is configured.
-- The Android build workflow completed successfully. It built the signed APK and AAB, verified their signatures and version/package metadata, and published both files.
+- [Android build workflow run #273](https://github.com/baraagpt6-droid/dalilna/actions/runs/45731239656) completed successfully. It built and verified the persistent-signed APK/AAB and published both files to Release v3.1.0. Published assets at the time of this handoff: APK 6,708,780 bytes; AAB 8,831,821 bytes. A second build run #274 is currently running because an earlier test-script commit also matched the Android workflow path filter; it may publish a higher OTA code. Recheck `version.json` and Release assets after it completes.
 
 The Google Play screenshot workflow also completed successfully:
 - [Screenshot workflow run](https://github.com/baraagpt6-droid/dalilna/actions/runs/45678040821)
