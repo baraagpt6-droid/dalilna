@@ -12,9 +12,10 @@ The active application API is **`dalilna-live`**:
 - Render workspace: My Workspace
 - Region: Frankfurt
 - Deployment branch: `main`
-- Latest application code fix: `3e4fe6cf83d96a84f7406c23e3f901bd1ccf6d04`
-- Latest Render deployment after the fix: `dep-dc3np159el5s73ahpnd0` — succeeded and live.
-- The later audit-only commit `cf3496330730821d4ec236e7f8ad9d4e95dbc63a` also deployed successfully.
+- Search fallback fix: `3e4fe6cf83d96a84f7406c23e3f901bd1ccf6d04` — English governorate aliases and local-first category search.
+- Latest marketplace API fix: `f019509a16896af7d9f7e591fd373ce3f71ad5ba` — removed a duplicate SQL bind value that could reject new listing submissions.
+- Latest Render deployment: `dep-dc3nucjbc2fs738q3hd0` — succeeded and live.
+- The later documentation commits also deployed successfully.
 
 Verified live endpoints:
 - `GET /health`: HTTP 200, `ok:true`.
@@ -35,8 +36,11 @@ The active database is Neon project **`dalilna-production-frankfurt`**, region `
 - The expected tables and indexes exist: `marketplace_listings`, `job_seekers`, `marketplace_moderation_log`, `marketplace_seller_blocks`, `marketplace_ugc_reports`, and `dalilna_schema_migrations`.
 - The listings, job-seeker, moderation, seller-block and UGC-report tables contained zero rows at the time of the read-only audit. The migration table contains three migration records.
 - Neon `history_retention_seconds` is **21,600 seconds (6 hours)**. This is the database point-in-time recovery/history window. It is not a scheduled deletion period for user data.
-- Marketplace expiry generally hides souq/land listings after 60 days; jobs expire at their deadline or after 60 days; job-seeker profiles expire after 60 days. **Expiry does not physically delete database rows.** The repository contains no scheduled purge of expired rows. Some listing types can have no expiry.
+- The current marketplace API submits pending listings with `expires_at=NULL`. On approval, souq/land listings receive 60 days; jobs receive up to 60 days, capped by the deadline; other listing categories may receive no expiry. Job-seeker profiles default to 60 days. **Expiry only hides records from public results; it does not physically delete rows.** No scheduled database purge exists in the repository.
+- Schema drift found: the live `marketplace_listings.expires_at` column has a legacy database default of 120 days, while `db/schema.sql` specifies a nullable column with no default. The active submit API explicitly writes `NULL` and the approval route assigns category-specific expiry, so the legacy default does not apply to the current submission path. Normalize this default in a separate approved migration before any future insert path relies on it.
 - Render log retention is controlled by the workspace plan. The workspace subscription level was not exposed by the inspected account metadata, so an exact Render log-retention period is not asserted here.
+
+The marketplace insert mismatch was fixed in `marketplace-api.js`: the SQL uses 23 placeholders and the value array now contains 23 values. A source-level parameter-count check passed and a regression test was added. The full `npm test` suite and an end-to-end production POST were not run; no sample listing was inserted into production.
 
 No database writes, deletions, migrations or retention-setting changes were made during this audit.
 
