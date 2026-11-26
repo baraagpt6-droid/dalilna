@@ -295,7 +295,10 @@ def main() -> None:
                 )
             print("Reusing the existing app bundle with the pinned versionCode.")
         elif existing_version_draft:
-            print("Reusing the versionCode already assigned to the existing Closed Testing draft.")
+            raise RuntimeError(
+                "The target track has a draft with this versionCode, but the API bundle list "
+                "does not expose its SHA-256. Refusing to reuse an unverified bundle."
+            )
         else:
             bundle = api.upload(
                 f"/applications/{quote(PACKAGE_NAME, safe='')}/edits/{quote(edit_id, safe='')}/bundles",

@@ -37,7 +37,7 @@ Google's Edits guide notes that the API is intended for an app that has already 
 3. Create a draft release and upload the pinned `app-release.aab` (versionCode `3127701`).
 4. Save it as a draft only. Do not roll it out or send it for review.
 
-Then rerun the workflow. It checks the existing bundle list and reuses the matching versionCode/SHA-256. If that version is already attached as a draft to the target track, it updates the same draft rather than uploading the bundle again. If Google reports that the already-uploaded bundle hash differs, the workflow stops.
+Then rerun the workflow. It checks the existing bundle list and reuses the matching versionCode/SHA-256. If the API bundle list exposes that versionCode, the script verifies the returned SHA-256 and reuses the bundle without uploading it again. If a draft release exists but the bundle list does not expose a matching hash, or if the hash differs, the workflow stops without changing the draft.
 
 ## 2. Google Cloud — recommended Workload Identity Federation
 
