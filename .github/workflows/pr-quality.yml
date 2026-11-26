@@ -44,6 +44,15 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install Google Play API test dependencies
+        run: python -m pip install "google-auth>=2.40,<3" "requests>=2.32,<3"
+
+      - name: Compile Google Play automation scripts
+        run: python -m py_compile scripts/google_play_closed_testing_draft.py scripts/test_google_play_closed_testing_draft.py
+
+      - name: Test Google Play draft safety and package scope
+        run: python scripts/test_google_play_closed_testing_draft.py
+
       - name: Build compressed full-Yemen search index
         run: python scripts/build_search_index_light.py --catalog-dir regional-catalog --output regional-catalog/search_index_light.json
 
