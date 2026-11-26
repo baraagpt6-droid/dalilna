@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "fetchedAt": "2026-11-26T13:48:07.250Z",
+  "fetchedAt": "2026-11-26T19:29:54.997Z",
   "refreshedBy": "GitHub Actions six-hour jobs refresh",
   "sources": [
     {
@@ -150,6 +150,40 @@
       "expiresAt": "2026-12-10T23:59:59.000Z"
     },
     {
+      "id": "yemenhr:5083",
+      "title": "Finance Manager",
+      "organization": "Resonate",
+      "location": "Aden, Yemen",
+      "city": "Aden",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-26T23:59:59.000Z",
+      "deadline": "11 ديسمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/finance-manager-resonate-aden-c43b4db7",
+      "applicationUrl": "https://yemenhr.com/jobs/finance-manager-resonate-aden-c43b4db7",
+      "sourceUrl": "https://t.me/hr_yemen/5083",
+      "summaryAr": "",
+      "expiresAt": "2026-12-11T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5084",
+      "title": "Liaison Officer",
+      "organization": "MSF",
+      "location": "Sana'a, Yemen",
+      "city": "Sana'a",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-11-26T23:59:59.000Z",
+      "deadline": "03 ديسمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://yemenhr.com/jobs/liaison-officer-msf-sanaa-dcf8978c",
+      "applicationUrl": "https://yemenhr.com/jobs/liaison-officer-msf-sanaa-dcf8978c",
+      "sourceUrl": "https://t.me/hr_yemen/5084",
+      "summaryAr": "",
+      "expiresAt": "2026-12-03T23:59:59.000Z"
+    },
+    {
       "id": "careers-sa:telesales-agent-bayut-dubizzle-d7916202",
       "title": "Telesales Agent",
       "organization": "Bayut | dubizzle    Bayut | dubizzle",
@@ -157,14 +191,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-26T13:48:07.250Z",
+      "publishedAt": "2026-11-26T19:29:54.997Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/bayutdubizzle/j/33C474195C/",
       "applicationUrl": "https://apply.workable.com/bayutdubizzle/j/33C474195C/",
       "sourceUrl": "https://www.careers.sa/en/jobs/telesales-agent-bayut-dubizzle-d7916202",
       "eligibility": "Saudi nationals",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-10T13:48:07.250Z"
+      "expiresAt": "2026-12-10T19:29:54.997Z"
     },
     {
       "id": "careers-sa:senior-accountant-clear-668cbec3",
@@ -174,14 +208,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-26T13:48:07.250Z",
+      "publishedAt": "2026-11-26T19:29:54.997Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/clear-4/j/8182BE90AE/",
       "applicationUrl": "https://apply.workable.com/clear-4/j/8182BE90AE/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-accountant-clear-668cbec3",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-10T13:48:07.250Z"
+      "expiresAt": "2026-12-10T19:29:54.997Z"
     },
     {
       "id": "careers-sa:microsoft-system-administrator-deep-source-42eaceac",
@@ -191,14 +225,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-26T13:48:07.250Z",
+      "publishedAt": "2026-11-26T19:29:54.997Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/deepsource/j/C3B638D22D/",
       "applicationUrl": "https://apply.workable.com/deepsource/j/C3B638D22D/",
       "sourceUrl": "https://www.careers.sa/en/jobs/microsoft-system-administrator-deep-source-42eaceac",
       "eligibility": "Saudi nationals",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-10T13:48:07.250Z"
+      "expiresAt": "2026-12-10T19:29:54.997Z"
     },
     {
       "id": "careers-sa:production-pharmacist-specialist-eva-pharma-ksa-c36d52f9",
@@ -208,14 +242,14 @@
       "city": "Hautat Sudair",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-26T13:48:07.250Z",
+      "publishedAt": "2026-11-26T19:29:54.997Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/eva-pharma/j/C270FA1F05/",
       "applicationUrl": "https://apply.workable.com/eva-pharma/j/C270FA1F05/",
       "sourceUrl": "https://www.careers.sa/en/jobs/production-pharmacist-specialist-eva-pharma-ksa-c36d52f9",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-10T13:48:07.250Z"
+      "expiresAt": "2026-12-10T19:29:54.997Z"
     },
     {
       "id": "careers-sa:project-control-manager-hanmiglobal-saudi-e4d0bfc0",
@@ -225,14 +259,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-26T13:48:07.250Z",
+      "publishedAt": "2026-11-26T19:29:54.997Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/hanmiglobal-saudi/j/2F1E091849/",
       "applicationUrl": "https://apply.workable.com/hanmiglobal-saudi/j/2F1E091849/",
       "sourceUrl": "https://www.careers.sa/en/jobs/project-control-manager-hanmiglobal-saudi-e4d0bfc0",
       "eligibility": "Saudi nationals",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-10T13:48:07.250Z"
+      "expiresAt": "2026-12-10T19:29:54.997Z"
     },
     {
       "id": "careers-sa:senior-interface-and-permit-manager-jasara-program-management-company-fb40270f",
@@ -242,14 +276,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-26T13:48:07.250Z",
+      "publishedAt": "2026-11-26T19:29:54.997Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/jasarapmc/j/3F6738E84E/",
       "applicationUrl": "https://apply.workable.com/jasarapmc/j/3F6738E84E/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-interface-and-permit-manager-jasara-program-management-company-fb40270f",
       "eligibility": "Saudi nationals",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-10T13:48:07.250Z"
+      "expiresAt": "2026-12-10T19:29:54.997Z"
     },
     {
       "id": "careers-sa:associate-director-fp-a-investor-reporting-lucidya-4d6af710",
@@ -259,14 +293,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-26T13:48:07.250Z",
+      "publishedAt": "2026-11-26T19:29:54.997Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/lucidya/j/0928C7A3A3/",
       "applicationUrl": "https://apply.workable.com/lucidya/j/0928C7A3A3/",
       "sourceUrl": "https://www.careers.sa/en/jobs/associate-director-fp-a-investor-reporting-lucidya-4d6af710",
       "eligibility": "Saudi nationals",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-10T13:48:07.250Z"
+      "expiresAt": "2026-12-10T19:29:54.997Z"
     },
     {
       "id": "careers-sa:assistant-manager-strategic-procurement-50013364-qiddiya-97d762c6",
@@ -276,14 +310,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-26T13:48:07.250Z",
+      "publishedAt": "2026-11-26T19:29:54.997Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/qiddiya-investment-company-1/j/3BADF89202/",
       "applicationUrl": "https://apply.workable.com/qiddiya-investment-company-1/j/3BADF89202/",
       "sourceUrl": "https://www.careers.sa/en/jobs/assistant-manager-strategic-procurement-50013364-qiddiya-97d762c6",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-10T13:48:07.250Z"
+      "expiresAt": "2026-12-10T19:29:54.997Z"
     },
     {
       "id": "careers-sa:senior-manager-qa-site-co-ordination-aa9-qiddiya-6f31facb",
@@ -293,14 +327,14 @@
       "city": "Qiddiya City",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-26T13:48:07.250Z",
+      "publishedAt": "2026-11-26T19:29:54.997Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/qiddiya-investment-company-1/j/73F93E5EB9/",
       "applicationUrl": "https://apply.workable.com/qiddiya-investment-company-1/j/73F93E5EB9/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-manager-qa-site-co-ordination-aa9-qiddiya-6f31facb",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-10T13:48:07.250Z"
+      "expiresAt": "2026-12-10T19:29:54.997Z"
     },
     {
       "id": "careers-sa:senior-specialist-design-review-assurance-aa9-qiddiya-0642c644",
@@ -310,14 +344,14 @@
       "city": "Qiddiya City",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-26T13:48:07.250Z",
+      "publishedAt": "2026-11-26T19:29:54.997Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/qiddiya-investment-company-1/j/B6E4D2241C/",
       "applicationUrl": "https://apply.workable.com/qiddiya-investment-company-1/j/B6E4D2241C/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-specialist-design-review-assurance-aa9-qiddiya-0642c644",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-10T13:48:07.250Z"
+      "expiresAt": "2026-12-10T19:29:54.997Z"
     },
     {
       "id": "careers-sa:senior-principal-process-systems-engineer-contractor-airproducts-2bcab92d",
