@@ -67,7 +67,7 @@ The Google Play screenshot workflow also completed successfully:
 - Retention expiry: 25 December 2026.
 - The workflow captured phone and tablet screenshots and uploaded the ZIP artifact.
 
-The repository now includes a Play asset preparation script. It exports the 512×512 app icon from the existing SVG, exports the 1024×500 feature graphic from store-assets/feature-graphic.svg, and validates the previously captured phone/tablet screenshot artifact.
+The repository now includes a Play asset preparation script and workflow. It exports the 512×512 app icon and 1024×500 feature graphic from SVG sources, then captures and validates four fresh phone and four tablet screenshots from the live Dalilna app.
 
 ## Data Safety, privacy and access
 

@@ -2,7 +2,7 @@
 
 Source review: 26 November 2026  
 Android application ID: `ye.dalilna.app`  
-Android version: `3.1.0` · versionCode `3127201` · target SDK 36  
+Android version: `3.1.0` · versionCode `3127701` · target SDK 36  
 Developer display name: `Dalilna Team` — the app owner's team/brand name  
 Support and privacy contact: `dalilnasupport@gmail.com`
 
