@@ -1,6 +1,6 @@
 # دليل إطلاق دليلنا على Google Play
 
-آخر مراجعة تقنية: 25 نوفمبر 2026  
+آخر مراجعة تقنية: 26 نوفمبر 2026  
 إصدار التطبيق الموجود في المشروع: 3.1.0  
 معرّف حزمة Android: `ye.dalilna.app`
 
@@ -100,7 +100,7 @@ You can browse the directory without creating a central account. Some features r
 - **Primary category:** Travel & Local. هذا هو الأنسب لأن المنتج الأساسي دليل محلي للمحلات والخدمات والمناطق. إذا أصبحت وظيفة السوق هي الغرض الرئيسي في الإصدار المنشور، أعد تقييم فئة Shopping.
 - **Tags:** اختر من الوسوم التي يعرضها Play Console فقط. أعط الأولوية للوسوم الأقرب إلى الدليل المحلي والخدمات والبحث والتسوق والوظائف إذا كانت متاحة. لا تكرر الكلمات المفتاحية بصورة غير طبيعية.
 - **Developer name:** Dalilna Team (the app owner's official team/brand name; match the Play Console publisher display name).
-- **Support email:** dalilnasupport@gmail.com (proposed address; activate, test and monitor before submission)
+- **Support email:** dalilnasupport@gmail.com (official support and privacy contact designated by the app owner). Keep the inbox monitored before submission.
 - **Website:** https://baraagpt6-droid.github.io/dalilna/store/
 - **Privacy policy:** https://baraagpt6-droid.github.io/dalilna/privacy.html
 - **Support website:** استخدم صفحة التعريف نفسها حتى يتوفر موقع دعم مستقل.
@@ -211,7 +211,7 @@ All public app features are available without signing in. Open Dalilna and brows
 
 ### Data Safety
 
-استخدم الملف `GOOGLE_PLAY_DATA_SAFETY.md` كمرجع للإجابات. لا تعتمد إجابة نهائية عن الصوت أو المشاركة أو الاحتفاظ قبل فحص ملف AAB والإعلانات وخدمات البحث والتعرف على الكلام. يجب أن تتطابق الإفصاحات مع التطبيق وكل مكتبات SDK والـ WebView.
+استخدم `GOOGLE_PLAY_DATA_SAFETY.md` كمرجع للإجابات. تمت مراجعة مصادر البيانات في Android وWebView وAPI وPostgreSQL وGoogle Mobile Ads. أدخل الإجابات في Play Console وراجعها مقابل ملف AAB الفعلي وكل مكتبات SDK قبل الإرسال.
 
 ### Government apps / Financial features
 
@@ -227,10 +227,18 @@ All public app features are available without signing in. Open Dalilna and brows
 - `targetSdk = 36`.
 - `minSdk = 24`.
 - `versionName = 3.1.0`.
-- رمز الإصدار الحالي في ملف البيانات `version.json` هو `3125501`. يولّد سير عمل الإصدار رمزاً متزايداً عند البناء.
+- رمز الإصدار الحالي في ملف البيانات `version.json` هو `3127201`. يولّد سير عمل الإصدار رمزاً متزايداً عند البناء.
 - سير CI يحتوي على خطوة `bundleRelease` لإنشاء AAB، ويستخدم مفتاح توقيع دائم.
 
-المطلوب قبل الرفع:
+تم إنشاء ملف الإصدار والتحقق منه بالفعل:
+
+- الإصدار المنشور: `3.1.0`، versionCode `3127201`، package `ye.dalilna.app`.
+- ملف AAB موقع بمفتاح الإصدار الدائم، وقد اجتاز التحقق من التوقيع.
+- ملف APK موقع أيضاً، واجتاز التحقق من رقم الإصدار ومعرّف الحزمة.
+- GitHub Release: https://github.com/baraagpt6-droid/dalilna/releases/tag/v3.1.0
+- AAB: https://github.com/baraagpt6-droid/dalilna/releases/download/v3.1.0/app-release.aab
+
+المتبقي هو رفع AAB إلى Play Console واختباره هناك.
 
 1. افتح GitHub Actions وشغّل أو راجع آخر تشغيل ناجح لسير بناء Android.
 2. حمّل ملف `app-release.aab` من مخرجات الإصدار المنشور، لا تستخدم APK التجريبي بدلاً منه.
@@ -290,10 +298,11 @@ All public app features are available without signing in. Open Dalilna and brows
 
 - [x] اعتماد Dalilna Team كاسم العرض الرسمي للفريق التابع لمالك التطبيق ومطابقته مع اسم الناشر المعتمد في Play Console.
 - [x] إدراج dalilnasupport@gmail.com في سياسة الخصوصية وصفحة المتجر ونسخ Android.
-- [ ] مراجعة سياسة الخصوصية بعد تثبيت البريد والاسم.
+- [x] مراجعة سياسة الخصوصية وبيانات التواصل بعد تثبيت البريد والاسم.
 - [x] مراجعة مسار الصوت في الكود: Web Speech API داخل Android WebView، ولا يرسل الصوت الخام إلى Dalilna API؛ قد يعالجه مزود النظام محلياً أو عن بُعد، وتم الإفصاح عنه في Data Safety.
 - [x] تحديث إجابات Data Safety بناءً على ملفات Android وWebView وAPI وPostgreSQL ومزودي البحث وGoogle Mobile Ads.
 - [x] نشر dalilnasupport@gmail.com لطلبات الخصوصية والحذف اليدوي.
-- [ ] تجهيز ملفات الأيقونة والصورة المميزة ولقطات الهاتف والتابلت.
-- [ ] إنشاء AAB موقّع والتحقق من التوقيع والنسخة ورمز الإصدار.
+- [x] إنشاء لقطات الهاتف والتابلت في ZIP عبر GitHub Actions. شغّل workflow run 45678040821، artifact id 15052333473؛ ينتهي الاحتفاظ به في 25 ديسمبر 2026.
+- [ ] تصدير أيقونة Play PNG بمقاس 512×512 وصورة مميزة بمقاس 1024×500.
+- [x] إنشاء AAB وAPK موقعين والتحقق من التوقيع والنسخة ورمز الإصدار. AAB الحالي versionCode 3127201.
 - [ ] إكمال الاختبار المغلق إذا كان مطلوباً للحساب.
