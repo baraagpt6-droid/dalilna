@@ -6,7 +6,7 @@ Android version: `3.1.0` · versionCode `3127201` · target SDK 36
 Developer display name: `Dalilna Team` — the app owner's team/brand name  
 Support and privacy contact: `dalilnasupport@gmail.com`
 
-This worksheet reflects the checked Android manifest, WebView bridge, JavaScript search flow, Node.js API, PostgreSQL schema, and Google Mobile Ads SDK 25.5.0 / UMP 4.0.0 configuration. Google treats app-controlled WebView behavior and SDK collection as part of the developer's Data safety declaration.
+This worksheet reflects the checked Android manifest, WebView bridge, JavaScript search flow, Node.js API, PostgreSQL schema, and Google Mobile Ads (AdMob) SDK 25.5.0 / UMP 4.0.0 configuration. Google treats app-controlled WebView behavior and SDK collection as part of the developer's Data safety declaration.
 
 ## Console answers
 
