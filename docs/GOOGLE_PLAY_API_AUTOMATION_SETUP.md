@@ -118,11 +118,12 @@ In Play Console → Users and permissions → Invite new users, enter the servic
 
 Grant access to **this app only**, with these permissions:
 
+- View app information (read-only)
 - Release apps to testing tracks
 - Manage testing tracks and edit tester lists
-- Manage store presence
+- Manage store presence (required for store text and image uploads)
 
-Do not grant Admin, financial permissions, or the production-release permission. Google documents that the testing-track upload and tester-management permissions do not grant the ability to publish to Production.
+Grant these at **app level for ye.dalilna.app only**, not account-wide. Do not grant Admin, financial permissions, policy-declaration permissions, or **Release to production, exclude devices, and use Play App Signing**. Google confirms the testing-track permissions do not permit Production publishing. Note that Google's broad **Manage store presence** permission also includes access to edit pricing and distribution in the Console; the workflow does not call any pricing, billing, payment, or country-targeting endpoint. If you do not want to grant that broader app-level capability, leave store listing text and images for manual upload and use the API automation only for the testing track.
 
 ## 4. Add GitHub repository variables
 
