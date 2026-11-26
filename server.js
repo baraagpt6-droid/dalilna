@@ -162,6 +162,36 @@ function normalizeLocalCatalogText(value) {
     .map(token=>token.startsWith("ال")&&token.length>4?token.slice(2):token).join(" ");
 }
 
+const LOCAL_GOVERNORATE_ALIASES = new Map();
+for (const [canonical, aliases] of Object.entries({
+  "أبين":["Abyan"],
+  "الضالع":["Al Dhale'e","Al Dhale","Ad Dali","Dhale"],
+  "حضرموت":["Hadramout","Hadhramaut","Hadramawt"],
+  "الحديدة":["Al Hudaydah","Hodeidah","Hodeida"],
+  "صعدة":["Saada","Sa'dah","Sadah"],
+  "إب":["Ibb"],
+  "مأرب":["Marib","Ma'rib","Mareb"],
+  "البيضاء":["Al Bayda","Al-Bayda","Bayda"],
+  "عمران":["Amran","Omran"],
+  "عدن":["Aden"],
+  "المهرة":["Al Mahrah","Mahra"],
+  "الجوف":["Al Jawf","Jawf"],
+  "لحج":["Lahij","Lahej"],
+  "ذمار":["Dhamar"],
+  "صنعاء":["Sana'a Governorate","Sanaa Governorate","San'a Governorate"],
+  "أمانة العاصمة":["Sanaa","Sana'a","San'a","Sana'a City","Amanat al Asimah","Amanat Al Asimah","Amanat al-Asimah"],
+  "شبوة":["Shabwah","Shabwa"],
+  "سقطرى":["Socotra","Soqotra"],
+  "حجة":["Hajjah","Hajja"],
+  "ريمة":["Raymah","Raimah","Reimah"],
+  "المحويت":["Al Mahwit","Mahwit"],
+  "تعز":["Taiz","Ta'iz","Taizz"]
+})) {
+  const canonicalValue=normalizeLocalCatalogText(canonical);
+  LOCAL_GOVERNORATE_ALIASES.set(canonicalValue,canonicalValue);
+  for (const alias of aliases) LOCAL_GOVERNORATE_ALIASES.set(normalizeLocalCatalogText(alias),canonicalValue);
+}
+
 function searchLocalYemenCatalog({query="",category="all",place="",bbox=null,lat=null,lon=null,radius=7000}={}) {
   const payload=loadLocalYemenIndex();
   if(!payload)return null;
@@ -175,7 +205,8 @@ function searchLocalYemenCatalog({query="",category="all",place="",bbox=null,lat
       const original=String(part).trim();
       const scope=/^(?:محافظة|governorate)(?:\s|$)/iu.test(original)?"governorate":
         /^(?:مديرية|عزلة|district)(?:\s|$)/iu.test(original)?"district":"any";
-      const value=normalizeLocalCatalogText(original.replace(/(?:محافظة|مديرية|عزلة|منطقة|مدينة|اليمن|yemen|governorate|district)/giu," "));
+      const normalizedValue=normalizeLocalCatalogText(original.replace(/(?:محافظة|مديرية|عزلة|منطقة|مدينة|اليمن|yemen|governorate|district)/giu," "));
+      const value=LOCAL_GOVERNORATE_ALIASES.get(normalizedValue)||normalizedValue;
       return {scope,value};
     })
     .filter(part=>part.value);
@@ -1207,7 +1238,9 @@ async function searchPlaces(params) {
   try {
     items = await fetchOverpass(area.bbox, category, area.label || usedPlace,deadlineAt);
   } catch(error) {
-    const local=searchLocalYemenCatalog({query,category,place:usedPlace,bbox:area.bbox,lat:hasCoordinates?lat:null,lon:hasCoordinates?lon:null,radius});
+    // A failed live map query falls back to the national catalogue for the selected governorate.
+    // Do not apply a geocoder's approximate bounding box to this fallback: it can hide valid local rows.
+    const local=searchLocalYemenCatalog({query,category,place:usedPlace,lat:hasCoordinates?lat:null,lon:hasCoordinates?lon:null,radius});
     if(local&&local.count){
       console.info(JSON.stringify({event:"places.local_catalog.fallback",count:local.count,category,reason:"overpass_unavailable",upstreamStatus:Number(error.statusCode)||503}));
       const localKey="local-catalog:"+cacheKey;
