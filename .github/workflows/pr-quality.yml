@@ -44,14 +44,22 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install Google Play API test dependencies
-        run: python -m pip install "google-auth>=2.40,<3" "requests>=2.32,<3"
+      - name: Install Play listing asset test dependencies
+        run: python -m pip install "Pillow>=11,<13" "CairoSVG>=2.8,<3"
 
-      - name: Compile Google Play automation scripts
-        run: python -m py_compile scripts/google_play_closed_testing_draft.py scripts/test_google_play_closed_testing_draft.py
+      - name: Compile and test Google Play asset preparation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/prepare_google_play_assets.py scripts/test_google_play_assets.py
+          python scripts/test_google_play_assets.py
 
-      - name: Test Google Play draft safety and package scope
-        run: python scripts/test_google_play_closed_testing_draft.py
+      - name: Validate Playwright store screenshot capture script
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat scripts/gp-capture-a.part scripts/gp-capture-b2.part scripts/gp-capture-c.part scripts/gp-capture-d.part scripts/gp-capture-d2.part > scripts/capture.cjs
+          node --check scripts/capture.cjs
 
       - name: Build compressed full-Yemen search index
         run: python scripts/build_search_index_light.py --catalog-dir regional-catalog --output regional-catalog/search_index_light.json
