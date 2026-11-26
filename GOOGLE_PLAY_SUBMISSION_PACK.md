@@ -176,10 +176,18 @@ The Node.js server logs search text, place/area, category and request origin for
 See `GOOGLE_PLAY_DATA_SAFETY.md` for the detailed data mapping and code audit.
 
 ## 3. Graphics and screenshots
-The final media ZIP is intended to include:
-- Phone screenshots at 1080 × 1920.
-- Tablet screenshots at 1920 × 1080.
-- App icon at 512 × 512.
-- Feature graphic at 1024 × 500.
 
-Upload the icon, feature graphic and screenshots under **Grow users → Store presence → Main store listing → Graphics**. The screenshots are captured from the live app. The marketplace screenshot shows the actual empty state because no approved sale/buy listings were present at capture time.
+### Captured screenshot artifact
+The phone/tablet capture workflow completed successfully on 25 November 2026:
+- Workflow: https://github.com/baraagpt6-droid/dalilna/actions/runs/45678040821
+- Artifact: `dalilna-play-screenshots` ZIP (about 1.4 MB), artifact ID `15052333473`.
+- Retention expires on 25 December 2026. Download it from the workflow run before expiry, then upload the extracted screenshots under **Grow users → Store presence → Main store listing → Graphics**.
+- Screenshots were captured from the live application. The marketplace screenshot shows the actual empty state because no approved sale/buy listings were present at capture time.
+
+### Still required before store listing submission
+- Phone screenshots: 1080 × 1920.
+- Tablet screenshots: 1920 × 1080.
+- App icon: PNG 512 × 512.
+- Feature graphic: 1024 × 500.
+
+The repository has the SVG and Android launcher resource, but no separately exported Play Store 512 × 512 PNG app icon or 1024 × 500 feature graphic has been verified in this audit. Create/export those assets and upload them with the screenshots.

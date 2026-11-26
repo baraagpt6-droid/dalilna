@@ -4,7 +4,7 @@
 إصدار التطبيق الموجود في المشروع: 3.1.0  
 معرّف حزمة Android: `ye.dalilna.app`
 
-> هذه الوثيقة تجهيز للنشر وليست بديلاً عن مراجعة ملف AAB الفعلي بعد بنائه. يجب استبدال حقول المطور والبريد قبل إرسال السياسة أو بطاقة المتجر.
+> هذه الوثيقة تجهيز للنشر. اسم العرض وبريد الدعم والخصوصية حُدّثا في صفحات المشروع. لم يتم الدخول إلى Play Console للتحقق من تطابق اسم الناشر أو إدخال البيانات هناك.
 
 ## 1. روابط المشروع
 
@@ -99,7 +99,7 @@ You can browse the directory without creating a central account. Some features r
 
 - **Primary category:** Travel & Local. هذا هو الأنسب لأن المنتج الأساسي دليل محلي للمحلات والخدمات والمناطق. إذا أصبحت وظيفة السوق هي الغرض الرئيسي في الإصدار المنشور، أعد تقييم فئة Shopping.
 - **Tags:** اختر من الوسوم التي يعرضها Play Console فقط. أعط الأولوية للوسوم الأقرب إلى الدليل المحلي والخدمات والبحث والتسوق والوظائف إذا كانت متاحة. لا تكرر الكلمات المفتاحية بصورة غير طبيعية.
-- **Developer name:** Dalilna Team (the app owner's official team/brand name; match the Play Console publisher display name).
+- **Developer name:** Dalilna Team (the app owner's designated team/brand name). Confirm that this exactly matches the publisher display name in Play Console before submission; the Play Console profile was not inspected in this audit.
 - **Support email:** dalilnasupport@gmail.com (official support and privacy contact designated by the app owner). Keep the inbox monitored before submission.
 - **Website:** https://baraagpt6-droid.github.io/dalilna/store/
 - **Privacy policy:** https://baraagpt6-droid.github.io/dalilna/privacy.html
@@ -166,6 +166,13 @@ First public release of Dalilna on Google Play.
 6. معلومات السوق — النص: **راجع الأسعار الاسترشادية ومصادرها**.
 
 اجعل النص التسويقي المضاف فوق اللقطة محدوداً ولا يغطي واجهة التطبيق. لا تستخدم واجهات تخيلية أو أرقاماً أو تقييماً غير حقيقي.
+
+### Screenshot artifact already captured
+
+- GitHub Actions run: https://github.com/baraagpt6-droid/dalilna/actions/runs/45678040821
+- Artifact name: `dalilna-play-screenshots` (ZIP, about 1.4 MB).
+- Artifact ID: `15052333473`.
+- Retention expiry: 25 December 2026. Download the ZIP from the workflow run and upload its images to Play Console. The artifact contains captured phone/tablet images, not the app icon or feature graphic.
 
 ### Tablet screenshots
 
@@ -296,7 +303,8 @@ All public app features are available without signing in. Open Dalilna and brows
 
 ## 10. بوابات الإطلاق المتبقية
 
-- [x] اعتماد Dalilna Team كاسم العرض الرسمي للفريق التابع لمالك التطبيق ومطابقته مع اسم الناشر المعتمد في Play Console.
+- [x] تثبيت Dalilna Team كاسم العرض المقترح للفريق التابع لمالك التطبيق.
+- [ ] التحقق من مطابقة Dalilna Team مع اسم الناشر الفعلي داخل Play Console.
 - [x] إدراج dalilnasupport@gmail.com في سياسة الخصوصية وصفحة المتجر ونسخ Android.
 - [x] مراجعة سياسة الخصوصية وبيانات التواصل بعد تثبيت البريد والاسم.
 - [x] مراجعة مسار الصوت في الكود: Web Speech API داخل Android WebView، ولا يرسل الصوت الخام إلى Dalilna API؛ قد يعالجه مزود النظام محلياً أو عن بُعد، وتم الإفصاح عنه في Data Safety.
