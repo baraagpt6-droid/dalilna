@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Create an unsubmitted Google Play Closed Testing draft for Dalilna only.
+"""Manage a Google Play Closed Testing release for Dalilna only.
 
 Hard safety scope:
 - package: ye.dalilna.app
 - version: 3.1.0 / versionCode 4128701
 - custom Closed Testing track: Dalilna Closed Testing
-- release status: draft
-- inspection-only is supported and does not modify the app state
-- any commit requires an explicit --submit-for-review flag and sends all changes for review
-- never call Production, rollout, pricing or account-level access methods
+- STAGE_ONLY retains a draft; explicit submission sets only this closed track to completed
+- inspection-only is read-only and deletes its temporary edit
+- any commit requires --submit-for-review and sends the edit for review
+- never call Production, pricing or account-level access methods
 """
 
 from __future__ import annotations
@@ -716,9 +716,9 @@ def main() -> None:
             if returned_hash and returned_hash != AAB_SHA256:
                 raise RuntimeError("Google's AAB SHA-256 does not match the pinned signed artifact.")
 
-        # Put only a draft release on the custom closed-testing track.
-        # Preserve existing non-draft releases. Replace only the matching draft
-        # when it already carries this exact versionCode.
+        # Change only the custom Closed Testing track.
+        # STAGE_ONLY writes a draft; explicit submission marks it completed.
+        # Preserve every existing non-draft release on this track.
         track_path = f"{tracks_path}/{quote(TRACK_NAME, safe='')}"
         track_after_upload = api.api("GET", track_path)
         target_release_status = "draft" if args.stage_only else "completed"
