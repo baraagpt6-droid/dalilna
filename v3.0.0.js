@@ -10,15 +10,27 @@
   const jobKey = job => String(job?.id||job?.url||job?.title||"");
   const safeUrl = value => {try{const u=new URL(String(value||""),location.href);return ["https:","tel:"].includes(u.protocol)?u.href:"";}catch(_){return "";}};
   const node = (tag,value,cls) => {const n=document.createElement(tag);n.textContent=String(value||"");if(cls)n.className=cls;return n;};
-  function customerProfile(){try{const p=JSON.parse(localStorage.getItem("dalilna-v3-customer-profile")||"null");return p&&p.name&&p.phone?p:null;}catch(_){return null;}}
-  function customerGate(trigger){
-    let dlg=$("v3CustomerDialog");if(!dlg){dlg=document.createElement("dialog");dlg.id="v3CustomerDialog";dlg.className="v3-saved-dialog";
-      const form=node("form","","v3-customer-form");form.innerHTML="<div class=\"v3-saved-heading\"><h2>تسجيل بيانات المستفيد</h2><button type=\"button\" class=\"v3-close\" aria-label=\"إغلاق\">×</button></div><p class=\"v3-saved-meta\">أدخل الاسم ورقم الجوال للمتابعة في إضافة إعلان أو تقييم. الحفظ فوري ومحلي على جهازك، ولا يتطلب تأكيداً عبر البريد الإلكتروني.</p><label>الاسم<input name=\"name\" maxlength=80 required></label><label>رقم الجوال<input name=\"phone\" type=\"tel\" inputmode=\"tel\" dir=\"ltr\" maxlength=24 required></label><p class=\"v3-customer-error\"></p><button type=\"submit\" class=\"v3-job-apply\">حفظ والمتابعة</button>";
-      form.querySelector(".v3-close").addEventListener("click",()=>dlg.close());
-      form.addEventListener("submit",event=>{event.preventDefault();const name=form.elements.name.value.trim(),phone=form.elements.phone.value.trim(),digits=phone.replace(/\D/g,"");if(!name||digits.length<8){form.querySelector(".v3-customer-error").textContent="أدخل اسماً ورقم جوال صحيحاً.";return;}localStorage.setItem("dalilna-v3-customer-profile",JSON.stringify({name,phone,updatedAt:new Date().toISOString()}));dlg.close();toast("تم حفظ بيانات المستفيد على هذا الجهاز");if(trigger?.isConnected)setTimeout(()=>trigger.click(),90);else if(bridge()?.snapshot?.().onboarded!==true)$("roleClientBtn")?.click();});
-      dlg.append(form);document.body.append(dlg);
+  function customerProfile(){
+    const current=bridge()?.profile?.();
+    if(current&&typeof current==="object"){
+      const name=current.activeRole==="merchant"?current.storeName:current.customerName;
+      return name&&current.phone?current:null;
     }
-    if(dlg.showModal)dlg.showModal();else dlg.setAttribute("open","");
+    try{
+      const legacy=JSON.parse(localStorage.getItem("dalilna-v3-customer-profile")||"null");
+      return legacy&&legacy.name&&legacy.phone?{customerName:legacy.name,phone:legacy.phone,storeName:"",activeRole:"customer"}:null;
+    }catch(_){return null;}
+  }
+  function customerGate(trigger){
+    const api=bridge();
+    if(typeof api?.openProfileEditor==="function"){
+      api.openProfileEditor({
+        initial:true,
+        afterSave:()=>{if(trigger?.isConnected)window.setTimeout(()=>trigger.click(),90);}
+      });
+      return;
+    }
+    toast("افتح الملف الشخصي لتسجيل الاسم ورقم الجوال أولاً.");
   }
   async function loadMarketplaceSaved(){
     const ids=readArray(KEYS.market).map(String),records=readMap(KEYS.marketRecords),missing=ids.filter(id=>!records[id]);if(!missing.length)return;
@@ -103,15 +115,11 @@
     tab=next;await Promise.all([loadFeed(),loadMarketplaceSaved()]);draw();const dlg=ensureDialog();if(!dlg.open){if(dlg.showModal)dlg.showModal();else dlg.setAttribute("open","");}
   }
   function gate(){
-    const dlg=$("accountDlg"),ready=bridge()?.snapshot?.().onboarded===true;
-    if(dlg)dlg.classList.toggle("v3-gate",!ready);
-    const desc=$("roleClientBtn")?.querySelector(".where");if(desc)desc.textContent="تصفح كزائر فوراً، وسجّل عند الحاجة لإضافة إعلان أو تقييم";
-  }
-  function roleButtons(){
-    document.querySelectorAll("[data-v3-role]").forEach(b=>b.addEventListener("click",()=>{
-      const role=b.dataset.v3Role,selector=role==="client"?"#roleClientBtn":role==="merchant"?"#roleMerchantBtn":"#roleAdminBtn";
-      $(selector.slice(1))?.click();
-    }));
+    const dlg=$("accountDlg");
+    if(dlg)dlg.classList.remove("v3-gate");
+    const profile=customerProfile();
+    const desc=$("roleClientBtn")?.querySelector(".where");
+    if(desc)desc.textContent=profile?"الملف الشخصي محفوظ على هذا الجهاز.":"تصفح كزائر، وسجّل بياناتك عند إضافة إعلان أو تقييم.";
   }
   function animate(detail){
     updateCount();const target=$("savedHubBtn"),source=detail?.source;if(!target)return;
@@ -136,9 +144,16 @@
   function bind(){
     $("savedHubBtn")?.addEventListener("click",()=>openHub("shops"));
     $("profileSavedHub")?.addEventListener("click",()=>openHub("shops"));
-    roleButtons();updateCount();gate();
-    const clientRole=$("roleClientBtn");if(clientRole&&!$("v3CustomerRegisterBtn")){const register=node("button","تسجيل الاسم ورقم الجوال","v3-customer-register");register.id="v3CustomerRegisterBtn";register.type="button";register.addEventListener("click",()=>customerGate(null));clientRole.insertAdjacentElement("afterend",register);}
-    document.addEventListener("click",event=>{const action=event.target.closest("#navAdd,#addJob,#sqSell,#sqBuy,[data-rate-id]");if(!action)return;const role=bridge()?.snapshot?.().role||"client";if(role==="client"&&!customerProfile()){event.preventDefault();event.stopImmediatePropagation();customerGate(action);}},true);
+    updateCount();gate();
+    document.addEventListener("click",event=>{
+      const action=event.target.closest("#addFreeAdCard,#addJob,#sqSell,#sqBuy,[data-rate-id]");
+      if(!action)return;
+      if(!customerProfile()){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        customerGate(action);
+      }
+    },true);
     const dlg=$("accountDlg");if(dlg){new MutationObserver(gate).observe(dlg,{attributes:true,attributeFilter:["open"]});dlg.addEventListener("close",gate);}
     $("profileLogoutBtn")?.addEventListener("click",()=>setTimeout(()=>{gate();if(dlg&&!dlg.open)$("accountBtn")?.click();},100));
     window.addEventListener("dalilna:favorite-change",event=>{animate(event.detail||{});updateCount();});
