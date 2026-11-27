@@ -51,8 +51,8 @@ android {
 
     val workflowRunNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 0
     val workflowAttempt = System.getenv("GITHUB_RUN_ATTEMPT")?.toIntOrNull() ?: 1
-    val versionCodeBase = System.getenv("DALILNA_VERSION_CODE_BASE")?.toIntOrNull() ?: 3_100_000
-    val versionCodeForBuild = versionCodeBase + (workflowRunNumber * 100) + workflowAttempt
+    val versionCodeOffset = System.getenv("DALILNA_VERSION_CODE_OFFSET")?.toIntOrNull() ?: 0
+    val versionCodeForBuild = 3_100_000 + (workflowRunNumber * 100) + workflowAttempt + versionCodeOffset
 
     val persistentSigning = if (persistentSigningConfigured) {
         signingConfigs.create("persistent") {
