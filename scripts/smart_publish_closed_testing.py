@@ -76,15 +76,12 @@ def promote_to_single_completed_release(releases: list[dict], version_code: int)
         result[target_index] = target
         return result
 
-    # Google Play accepts only one completed release object on a track.
-    # Merge the new code into the existing completed release, keeping its
-    # rollout object and historical version codes, and remove the draft object.
+    # Google Play accepts one completed release object and will reject old
+    # lower versionCodes that no device can receive after the newer bundle is
+    # added. Keep the existing rollout object but point it only at the new code.
     completed_index = other_completed[0]
     completed = dict(result[completed_index])
-    codes = [str(code) for code in completed.get("versionCodes", [])]
-    if str(version_code) not in codes:
-        codes.append(str(version_code))
-    completed["versionCodes"] = codes
+    completed["versionCodes"] = [str(version_code)]
     result[completed_index] = completed
     return [item for index, item in enumerate(result) if index != target_index]
 
