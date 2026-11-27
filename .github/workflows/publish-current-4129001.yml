@@ -1,4 +1,4 @@
-name: One-time smart publish for Dalilna 3.1.0 Closed Testing
+name: Smart publish Dalilna 3.1.0 Closed Testing draft 4129001
 
 on:
   push:
