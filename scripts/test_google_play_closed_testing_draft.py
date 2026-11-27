@@ -35,7 +35,7 @@ class DraftSafetyTests(unittest.TestCase):
     def test_release_is_always_draft(self):
         release = draft_release()
         self.assertEqual(release["status"], "draft")
-        self.assertEqual(release["versionCodes"], ["4128401"])
+        self.assertEqual(release["versionCodes"], ["4128601"])
         self.assertNotIn("userFraction", release)
         self.assertNotIn("countryTargeting", release)
 
@@ -56,7 +56,7 @@ class DraftSafetyTests(unittest.TestCase):
             },
         ]
         updated = prepare_closed_track_releases(original)
-        self.assertEqual(updated[0]["versionCodes"], ["4128401"])
+        self.assertEqual(updated[0]["versionCodes"], ["4128601"])
         self.assertEqual(updated[0]["status"], "draft")
         self.assertEqual(updated[0]["countryTargeting"], original[0]["countryTargeting"])
         self.assertEqual(updated[0]["inAppUpdatePriority"], 0)
@@ -81,16 +81,21 @@ class DraftSafetyTests(unittest.TestCase):
         updated = prepare_closed_track_releases(completed)
         self.assertEqual(len(updated), 2)
         self.assertEqual(updated[-1]["status"], "draft")
-        self.assertEqual(updated[-1]["versionCodes"], ["4128401"])
+        self.assertEqual(updated[-1]["versionCodes"], ["4128601"])
 
 
     def test_play_mode_requires_exactly_one_action(self):
-        validate_play_mode(True, False)
-        validate_play_mode(False, True)
+        validate_play_mode(True, False, False)
+        validate_play_mode(False, True, False)
+        validate_play_mode(False, False, True)
         with self.assertRaises(ValueError):
-            validate_play_mode(False, False)
+            validate_play_mode(False, False, False)
         with self.assertRaises(ValueError):
-            validate_play_mode(True, True)
+            validate_play_mode(True, True, False)
+        with self.assertRaises(ValueError):
+            validate_play_mode(True, False, True)
+        with self.assertRaises(ValueError):
+            validate_play_mode(False, True, True)
 
     def test_read_only_inspection_reuses_existing_edit_without_mutation(self):
         class FakeApi:
@@ -105,11 +110,11 @@ class DraftSafetyTests(unittest.TestCase):
                             {"name": "Internal", "status": "completed", "versionCodes": ["4100101"]}
                         ]},
                         {"track": TRACK_NAME, "releases": [
-                            {"name": "Dalilna", "status": "draft", "versionCodes": ["4128401"]}
+                            {"name": "Dalilna", "status": "draft", "versionCodes": ["4128601"]}
                         ]},
                     ]}
                 if path.endswith("/bundles"):
-                    return {"bundles": [{"versionCode": 4128401, "sha256": "abc", "size": 100}]}
+                    return {"bundles": [{"versionCode": 4128601, "sha256": "abc", "size": 100}]}
                 if "/testers/" in path:
                     return {"googleGroups": [], "allUsers": False}
                 if path.endswith("/details"):
@@ -127,8 +132,8 @@ class DraftSafetyTests(unittest.TestCase):
             state = inspect_play_state(fake, "active-edit")
         self.assertTrue(state["inspectionOnly"])
         self.assertTrue(state["existingEditReused"])
-        self.assertEqual(state["highestVersionCodeAcrossTracks"], 4128401)
-        self.assertEqual(state["bundles"][0]["versionCode"], 4128401)
+        self.assertEqual(state["highestVersionCodeAcrossTracks"], 4128601)
+        self.assertEqual(state["bundles"][0]["versionCode"], 4128601)
         self.assertEqual(state["testers"]["googleGroupCount"], 0)
         self.assertFalse(any(method in {"POST", "PUT", "PATCH", "DELETE"} for method, _ in fake.calls))
 
