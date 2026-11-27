@@ -38,7 +38,7 @@ test("manual refresh buttons are absent and Souq is not a home directory categor
 test("profile settings, logout and local-auth limitations are present",()=>{
  for(const token of ['id="profilePanel"','id="profileDefaultGovernorate"','id="profileLanguageBtn"','id="profileThemeBtn"','id="profileNotificationsBtn"','id="profileLogoutBtn"','defaultGovernorate','notificationsEnabled','function renderProfilePanel()'])
   assert.ok(html.includes(token),token);
- assert.ok(html.includes("لا يستخدم دليلنا حالياً نظام مصادقة مركزي"));
+ assert.ok(html.includes("لا تمثل هذه البيانات حساباً مركزياً موثقاً"));
 });
 test("static English labels and bilingual regional search are wired",()=>{
  for(const token of ["const STATIC_UI_EN=","function applyStaticBilingualLabels()","document.documentElement.dir=curLang===","const GOVS_EN=","function governorateLabel(name)","Search Yemen's shops and services"])
