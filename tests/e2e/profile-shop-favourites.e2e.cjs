@@ -103,6 +103,19 @@ test("customer and merchant identities stay separate; Add hub and shop journey w
     await page.goto(origin + "/index.html", { waitUntil: "domcontentloaded" });
     await page.locator("#accountDlg").waitFor({ state: "visible", timeout: 15000 });
     await page.locator("#profileEditForm").waitFor({ state: "visible" });
+    const profileTitleMetrics = await page.locator("#accountDlg .dlg-body > h2").evaluate(el => {
+      const style = getComputedStyle(el);
+      return { lineHeight: parseFloat(style.lineHeight), fontSize: parseFloat(style.fontSize), paddingBottom: parseFloat(style.paddingBottom), overflow: style.overflow };
+    });
+    const submissionsTitleMetrics = await page.locator("#accountDlg .dlg-body > .panel + .panel h3").evaluate(el => {
+      const style = getComputedStyle(el);
+      return { lineHeight: parseFloat(style.lineHeight), fontSize: parseFloat(style.fontSize), paddingBottom: parseFloat(style.paddingBottom), overflow: style.overflow };
+    });
+    for (const metrics of [profileTitleMetrics, submissionsTitleMetrics]) {
+      assert.ok(metrics.lineHeight >= metrics.fontSize * 1.5, "Arabic headings should reserve descender line space.");
+      assert.ok(metrics.paddingBottom >= 4, "Arabic headings should have a bottom padding allowance.");
+      assert.equal(metrics.overflow, "visible", "Arabic glyph descenders must not be clipped.");
+    }
 
     const customerName = "براء اختبار العميل";
     const merchantName = "محلات الناهي للاختبار";
@@ -122,8 +135,14 @@ test("customer and merchant identities stay separate; Add hub and shop journey w
       activeRole: "customer"
     });
 
-    // Switching to seller first time asks for store name only; personal name and phone stay intact.
+    // Switching the top role control closes an open edit form immediately.
     await page.locator("#accountBtn").click();
+    await page.locator("#profileEditToggle").click();
+    await page.locator("#profileEditForm").waitFor({ state: "visible" });
+    await page.locator('#v3RoleSwitcher [data-profile-role="customer"]').click();
+    await page.locator("#profileEditForm").waitFor({ state: "hidden" });
+
+    // Switching to seller first time asks for store name only; personal name and phone stay intact.
     await page.locator('#v3RoleSwitcher [data-profile-role="merchant"]').click();
     await page.locator("#profileEditForm").waitFor({ state: "visible" });
     await page.locator("#profileStoreNameRow").waitFor({ state: "visible" });
