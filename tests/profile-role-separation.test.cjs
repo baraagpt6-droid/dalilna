@@ -8,6 +8,7 @@ const assert = require("node:assert/strict");
 const root = path.resolve(__dirname, "..");
 const read = file => fs.readFileSync(path.join(root, file), "utf8");
 const html = read("index.html");
+const css = read("v3.0.0.css");
 
 test("the unified profile has distinct customerName and storeName fields", () => {
   assert.match(html, /profile:\{customerName:"",storeName:"",phone:"",activeRole:"customer"\}/);
@@ -76,6 +77,25 @@ test("the app exposes one profile bridge and no second customer profile form", (
   assert.doesNotMatch(bridgeScript, /v3CustomerDialog|v3CustomerRegisterBtn|roleButtons\(\)/);
 });
 
+test("Arabic profile headings reserve space for descenders and avoid clipping", () => {
+  assert.match(css, /#accountDlg \.dlg-body > h2,[\s\S]*?#accountDlg \.dlg-body > \.panel h3\s*\{[\s\S]*?line-height:\s*1\.55[\s\S]*?padding-bottom:\s*4px[\s\S]*?overflow:\s*visible/);
+  assert.ok(html.includes("لا توجد إعلانات سوق مرتبطة برقم هذا الحساب."));
+  assert.ok(!html.includes("لا توجد إعلانات سوق مرتبطة برقم هذا التاجر."));
+});
+
+test("switching account role closes the open edit form before changing role", () => {
+  const start = html.indexOf('document.querySelectorAll("#v3RoleSwitcher [data-profile-role]")');
+  const end = html.indexOf('$("#profileEditToggle").addEventListener', start);
+  assert.ok(start >= 0 && end > start, "role switch listener exists");
+  const handler = html.slice(start, end);
+  const closeForm = handler.indexOf('$("#profileEditForm").hidden=true');
+  const clearCallback = handler.indexOf("profileAfterSave=null");
+  const switchRole = handler.indexOf("setProfileRole(role)");
+  assert.ok(closeForm >= 0 && closeForm < switchRole, "the editor closes before the role is switched");
+  assert.ok(clearCallback >= 0 && clearCallback < switchRole, "an edit callback from the previous form is discarded");
+  assert.ok(handler.includes('$("#profileEditToggle").hidden=false'));
+});
+
 test("Google Play remains the only update destination and Service Worker cache is versioned", () => {
   const version = JSON.parse(read("version.json"));
   const updater = read("app-update.js");
@@ -84,5 +104,5 @@ test("Google Play remains the only update destination and Service Worker cache i
   assert.equal(Object.hasOwn(version, "androidReleaseUrl"), false);
   assert.ok(updater.includes("window.location.assign(PLAY_STORE_URL)"));
   assert.doesNotMatch(updater, /github\.com|app-release\.apk|androidReleaseUrl/i);
-  assert.ok(sw.includes('CACHE_PREFIX + "v3.1.0-profile-identity1"'));
+  assert.ok(sw.includes('CACHE_PREFIX + "v3.1.0-profile-polish1"'));
 });
