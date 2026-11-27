@@ -368,15 +368,15 @@ def main() -> None:
         os.environ.get("PLAY_TRACK_NAME", TRACK_NAME),
     )
 
+    if args.stage_only and not args.existing_edit_id.strip():
+        parser.error("--stage-only requires --existing-edit-id to preserve the current Play edit")
+    if not args.inspect_only and (args.aab is None or args.assets_dir is None):
+        parser.error("--stage-only and --submit-for-review require --aab and --assets-dir")
+
     api = PlayApi()
     if args.inspect_only:
         inspect_play_state(api, args.existing_edit_id.strip() or None)
         return
-
-    if args.stage_only and not args.existing_edit_id.strip():
-        parser.error("--stage-only requires --existing-edit-id to preserve the current Play edit")
-    if args.aab is None or args.assets_dir is None:
-        parser.error("--stage-only and --submit-for-review require --aab and --assets-dir")
     if not args.aab.is_file():
         raise FileNotFoundError(args.aab)
     if not args.assets_dir.is_dir():
@@ -387,6 +387,8 @@ def main() -> None:
         raise ValueError(f"Pinned AAB SHA-256 mismatch: {actual_hash}")
 
     google_group = args.testers_google_group.strip()
+    if args.stage_only and google_group:
+        raise ValueError("--stage-only must not change the existing tester configuration")
     if google_group and not re.fullmatch(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+", google_group):
         raise ValueError("Google Group address is not valid")
 
