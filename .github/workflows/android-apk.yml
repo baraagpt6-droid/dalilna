@@ -285,7 +285,7 @@ jobs:
           create_credentials_file: true
           export_environment_variables: true
 
-      - name: Stage signed AAB as a non-live Closed Testing draft only
+      - name: Smart-publish signed AAB to Closed Testing with safe draft fallback
         if: steps.release-ads.outputs.ready == 'true'
         shell: bash
         run: |
