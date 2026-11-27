@@ -58,7 +58,9 @@ test('account icon opens the dialog and discreet admin footer reveals the login 
   const accountBody = captureHandler('#accountBtn', 'click');
   assert.ok(accountBody, 'account button click handler exists');
   const openAccount = vm.runInNewContext('(()=>{' + accountBody + '})', {
-    $, S: { session: { role: 'client', merchant: null }, merchantProfile: {} },
+    $, S: { session: { role: 'client', merchant: null }, profile: { activeRole: 'customer' }, merchantProfile: {} },
+    syncProfileSession: () => {},
+    renderProfilePanel: () => {},
     showDlg: selector => shown.push(selector),
   });
   openAccount();
