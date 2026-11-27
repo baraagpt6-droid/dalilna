@@ -20,6 +20,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/google-play-closed-testing-draft.yml"
+      - "scripts/google_play_closed_testing_draft.py"
 
 permissions:
   contents: read
