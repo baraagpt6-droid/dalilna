@@ -11,6 +11,10 @@ on:
       - ".github/workflows/play-status-monitor.yml"
       - "scripts/play_status_monitor.py"
       - "scripts/test_play_status_monitor.py"
+      - "scripts/stage_google_play_draft.py"
+      - "scripts/test_stage_google_play_draft.py"
+      - "scripts/publish_approved_release.py"
+      - "scripts/test_publish_approved_release.py"
 
 permissions:
   contents: read
