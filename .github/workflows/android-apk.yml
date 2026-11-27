@@ -65,6 +65,8 @@ on:
       - '!scripts/test_stage_google_play_draft.py'
       - '!scripts/publish_approved_release.py'
       - '!scripts/test_publish_approved_release.py'
+      - '!scripts/smart_publish_closed_testing.py'
+      - '!scripts/test_smart_publish_closed_testing.py'
       - '!.github/workflows/publish-approved-release.yml'
       - '!.github/workflows/play-status-monitor.yml'
       - '!google-play/**'
@@ -86,7 +88,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: dalilna-v3.1.0-android-release
+  group: dalilna-play-closed-testing-publication
   cancel-in-progress: false
 
 jobs:
@@ -271,6 +273,7 @@ jobs:
           scripts.test_play_status_monitor
           scripts.test_stage_google_play_draft
           scripts.test_publish_approved_release
+          scripts.test_smart_publish_closed_testing
           -v
 
       - name: Authenticate to Google Cloud using Workload Identity Federation
