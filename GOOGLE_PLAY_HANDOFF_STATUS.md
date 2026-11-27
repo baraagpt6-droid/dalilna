@@ -120,3 +120,10 @@ The technical release artifacts are built and signed. Store listing assets and P
 - Public directory / marketplace verification run [45939045681](https://github.com/baraagpt6-droid/dalilna/actions/runs/45939045681) succeeded, including live Render and DB probes.
 - Play still shows the previously completed internal release `4100101`; the new `4128401` AAB has not been uploaded to Google Play.
 - The service-account workflow authenticated via WIF, but store-listing commit returned HTTP 403. No closed-test opt-in link or new tester list has been confirmed.
+
+
+## Closed testing preflight — 27 November 2026
+
+The current `Dalilna Closed Testing` track already contains one unsubmitted `draft` release named `3127701 (3.1.0)`, versionCode `3127701`. Android Publisher read-back confirms the highest code across all app tracks is `4100101` (completed on internal). The current signed GitHub AAB is `4128401`, higher than both. The diagnostic run did not change the draft, release tracks, tester configuration, images or bundle. The updated automation refreshes this single older draft in place while preserving its other fields and non-draft releases.
+
+The Android Publisher Testers API exposes Google Groups but not saved individual email lists. The existing account-wide `Hubaish Testers` email list is not copied, renamed, deleted or altered. The Dalilna track's Google Group configuration is read and preserved. No opt-in link is available while the app remains Draft/Pending publication.
