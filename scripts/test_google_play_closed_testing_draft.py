@@ -106,8 +106,7 @@ class DraftSafetyTests(unittest.TestCase):
 
     def test_stage_only_requires_existing_edit_and_preserves_testers(self):
         validate_stage_only_inputs("13370413812168476918", "")
-        with self.assertRaises(ValueError):
-            validate_stage_only_inputs("", "")
+        validate_stage_only_inputs("", "")
         with self.assertRaises(ValueError):
             validate_stage_only_inputs("13370413812168476918", "dalilna-testers@example.com")
 
@@ -154,6 +153,45 @@ class DraftSafetyTests(unittest.TestCase):
         self.assertIn("editMetadataMatchesRepository", state)
         self.assertEqual(state["testers"]["googleGroupCount"], 0)
         self.assertFalse(any(method in {"POST", "PUT", "PATCH", "DELETE"} for method, _ in fake.calls))
+
+    def test_read_only_inspection_replaces_expired_edit_with_disposable_edit(self):
+        class FakeApi:
+            def __init__(self):
+                self.calls = []
+
+            def api(self, method, path, **kwargs):
+                self.calls.append((method, path))
+                if path.endswith("/edits/expired-edit") and method == "GET":
+                    raise RuntimeError("Google Play API returned HTTP 400: This edit has expired, please create a new Edit.")
+                if path.endswith("/edits") and method == "POST":
+                    return {"id": "temporary-edit"}
+                if path.endswith("/tracks"):
+                    return {"tracks": [{"track": "internal", "releases": []}]}
+                if path.endswith("/bundles"):
+                    return {"bundles": []}
+                if "/testers/" in path:
+                    return {"googleGroups": [], "allUsers": False}
+                if path.endswith("/details"):
+                    return {"defaultLanguage": "ar", "contactWebsite": "x", "contactEmail": "x"}
+                if "/listings/" in path and path.rsplit("/", 1)[-1] in {"ar", "en-US"}:
+                    return {"title": "x", "shortDescription": "x", "fullDescription": "x"}
+                if any(path.endswith("/" + image_type) for image_type in ("icon", "featureGraphic", "phoneScreenshots", "tenInchScreenshots")):
+                    return {"images": []}
+                if path.endswith("/edits/temporary-edit") and method == "GET":
+                    return {"id": "temporary-edit", "expiryTimeSeconds": "60"}
+                if path.endswith("/edits/temporary-edit") and method == "DELETE":
+                    return {}
+                return {}
+
+        fake = FakeApi()
+        with contextlib.redirect_stdout(io.StringIO()):
+            state = inspect_play_state(fake, "expired-edit")
+        self.assertTrue(state["expiredEditReplaced"])
+        self.assertFalse(state["existingEditReused"])
+        self.assertEqual(state["requestedEditId"], "expired-edit")
+        self.assertEqual(state["editId"], "temporary-edit")
+        self.assertIn(("DELETE", "/applications/ye.dalilna.app/edits/temporary-edit"), fake.calls)
+        self.assertFalse(any(method in {"PUT", "PATCH"} for method, _ in fake.calls))
 
     def test_stage_only_updates_existing_edit_without_validate_or_commit(self):
         class FakeApi:
@@ -239,6 +277,8 @@ class DraftSafetyTests(unittest.TestCase):
         self.assertFalse(any(path.endswith(":commit") or path.endswith(":validate") for _, path, _ in fake.calls))
         self.assertFalse(any(method == "POST" and path.endswith("/edits") for method, path, _ in fake.calls))
         self.assertFalse(any(method == "PUT" and "/testers/" in path for method, path, _ in fake.calls))
+        self.assertFalse(any(method == "PATCH" or (method == "PUT" and "/listings/" in path)
+                             for method, path, _ in fake.calls))
 
     def test_stage_only_rejects_tester_changes(self):
         with self.assertRaises(ValueError):
