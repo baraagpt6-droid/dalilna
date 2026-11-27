@@ -55,5 +55,4 @@ jobs:
       - name: Inspect committed Play tracks and summarize in Arabic
         env:
           PACKAGE_NAME: "ye.dalilna.app"
-          GITHUB_STEP_SUMMARY: ${{ github.step_summary }}
         run: python scripts/play_status_monitor.py
