@@ -50,8 +50,10 @@ RELEASE_NOTES = {
 
 
 def validate_stage_only_inputs(existing_edit_id: str, testers_google_group: str) -> None:
-    # A fresh isolated edit is valid after the separate read-only preflight.
-    # An optional existing edit is reused only if Google confirms it is active.
+    # Stage Only must never reuse an edit that could contain unrelated pending
+    # app/listing changes. It always starts a fresh edit from committed state.
+    if existing_edit_id.strip():
+        raise ValueError("--stage-only never reuses an existing Play edit; omit --existing-edit-id")
     if testers_google_group.strip():
         raise ValueError("--stage-only must preserve the existing tester configuration")
 
@@ -487,27 +489,12 @@ def main() -> None:
     api = PlayApi()
     package_path = f"/applications/{quote(PACKAGE_NAME, safe='')}"
 
-    # Stage-only uses a fresh isolated edit after the workflow's read-only
-    # preflight. An explicitly supplied edit is reused only while still active.
+    # Never reuse an existing Play Edit in Stage Only. A fresh Edit starts
+    # from committed state so prior unpublished metadata/assets cannot be
+    # committed accidentally with this release.
+    preflight = api.api("POST", f"{package_path}/edits", json_body={})
+    edit_id = preflight["id"]
     edit_reused = False
-    if args.stage_only and args.existing_edit_id.strip():
-        candidate_id = args.existing_edit_id.strip()
-        try:
-            api.api("GET", f"{package_path}/edits/{quote(candidate_id, safe='')}")
-            edit_id = candidate_id
-            edit_reused = True
-        except RuntimeError as exc:
-            if "This edit has expired" not in str(exc):
-                raise
-            print("PLAY_STAGE_OLD_EDIT_EXPIRED=" + json.dumps({
-                "editId": candidate_id,
-                "action": "create_fresh_stage_edit",
-            }))
-            preflight = api.api("POST", f"{package_path}/edits", json_body={})
-            edit_id = preflight["id"]
-    else:
-        preflight = api.api("POST", f"{package_path}/edits", json_body={})
-        edit_id = preflight["id"]
     print("PLAY_STAGE_EDIT=" + json.dumps({
         "editId": edit_id,
         "existingEditReused": edit_reused,
