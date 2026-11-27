@@ -29,11 +29,20 @@ val releaseAdMobAppId = adsValue("ADMOB_APP_ID", "release.appId")
 val releaseBannerAdUnitId = adsValue("ADMOB_BANNER_AD_UNIT_ID", "release.bannerAdUnitId")
 
 val persistentKeystorePath = System.getenv("ANDROID_KEYSTORE_FILE")
+val persistentKeystorePassword = System.getenv("KEYSTORE_PASSWORD")
+    ?.takeIf { it.isNotBlank() }
+    ?: System.getenv("ANDROID_KEYSTORE_PASSWORD")
+val persistentKeyAlias = System.getenv("KEY_ALIAS")
+    ?.takeIf { it.isNotBlank() }
+    ?: System.getenv("ANDROID_KEY_ALIAS")
+val persistentKeyPassword = System.getenv("KEY_PASSWORD")
+    ?.takeIf { it.isNotBlank() }
+    ?: System.getenv("ANDROID_KEY_PASSWORD")
 val persistentSigningConfigured = listOf(
     persistentKeystorePath,
-    System.getenv("ANDROID_KEYSTORE_PASSWORD"),
-    System.getenv("ANDROID_KEY_ALIAS"),
-    System.getenv("ANDROID_KEY_PASSWORD")
+    persistentKeystorePassword,
+    persistentKeyAlias,
+    persistentKeyPassword
 ).all { !it.isNullOrBlank() }
 
 android {
@@ -42,14 +51,15 @@ android {
 
     val workflowRunNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 0
     val workflowAttempt = System.getenv("GITHUB_RUN_ATTEMPT")?.toIntOrNull() ?: 1
-    val versionCodeForBuild = 3_100_000 + (workflowRunNumber * 100) + workflowAttempt
+    val versionCodeBase = System.getenv("DALILNA_VERSION_CODE_BASE")?.toIntOrNull() ?: 3_100_000
+    val versionCodeForBuild = versionCodeBase + (workflowRunNumber * 100) + workflowAttempt
 
     val persistentSigning = if (persistentSigningConfigured) {
         signingConfigs.create("persistent") {
             storeFile = file(persistentKeystorePath!!)
-            storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
-            keyAlias = System.getenv("ANDROID_KEY_ALIAS")
-            keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+            storePassword = persistentKeystorePassword
+            keyAlias = persistentKeyAlias
+            keyPassword = persistentKeyPassword
         }
     } else null
 
