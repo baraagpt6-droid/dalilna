@@ -18,7 +18,7 @@ concurrency:
 jobs:
   publish-current-draft:
     if: ${{ github.repository == 'baraagpt6-droid/dalilna' && github.ref == 'refs/heads/main' }}
-    name: Promote only the verified 4129001 Closed Testing draft
+    name: Promote the verified 4129001 draft into the single completed release record
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
