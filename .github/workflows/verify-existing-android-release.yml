@@ -1,4 +1,4 @@
-name: Verify existing Dalilna Android GitHub Release
+name: Verify and exercise existing Dalilna Android GitHub Release
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
       - ".github/workflows/verify-existing-android-release.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: dalilna-existing-android-release-audit
@@ -19,30 +19,78 @@ jobs:
   verify-release:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify the pinned v3.1.0 release and existing assets
+      - name: Download and verify the already-published v3.1.0 release assets
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: v3.1.0
         shell: bash
         run: |
           set -euo pipefail
+          release_dir="$RUNNER_TEMP/dalilna-existing-release"
+          mkdir -p "$release_dir"
           gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
-            --json tagName,name,isDraft,isPrerelease,url,assets > "$RUNNER_TEMP/release.json"
-          node - "$RUNNER_TEMP/release.json" <<'NODE'
+            --json tagName,name,body,isDraft,isPrerelease,url,assets > "$RUNNER_TEMP/release-before.json"
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
+            --dir "$release_dir" --pattern "app-release.apk" --pattern "app-release.aab"
+
+          node - "$RUNNER_TEMP/release-before.json" "$release_dir" "$RUNNER_TEMP" <<'NODE'
           const fs = require("node:fs");
-          const release = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+          const path = require("node:path");
+          const crypto = require("node:crypto");
+          const [metadataPath, directory, temp] = process.argv.slice(2);
+          const release = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
           const required = ["app-release.apk", "app-release.aab"];
-          const assets = new Map((release.assets || []).map(asset => [asset.name, Number(asset.size)]));
           if (release.tagName !== "v3.1.0" || release.isDraft || release.isPrerelease) {
             throw new Error("Expected published, non-prerelease v3.1.0 release.");
           }
           for (const name of required) {
-            if (!(assets.get(name) > 0)) throw new Error("Missing or empty release asset: " + name);
+            const asset = (release.assets || []).find(item => item.name === name);
+            const filename = path.join(directory, name);
+            if (!asset || !fs.existsSync(filename)) throw new Error("Missing existing release asset: " + name);
+            const bytes = fs.readFileSync(filename);
+            if (bytes.length !== Number(asset.size)) throw new Error("Asset size mismatch: " + name);
+            const digest = "sha256:" + crypto.createHash("sha256").update(bytes).digest("hex");
+            if (asset.digest && digest !== asset.digest) throw new Error("Asset digest mismatch: " + name);
+            console.log(JSON.stringify({name, size: bytes.length, digest}));
+          }
+          fs.writeFileSync(path.join(temp, "release-title.txt"), release.name || "");
+          fs.writeFileSync(path.join(temp, "release-notes.md"), release.body || "");
+          NODE
+
+          # Re-exercise the exact gh CLI publishing operations against the existing
+          # verified assets. No Gradle task, AAB build or Google Play upload.
+          release_title="$(cat "$RUNNER_TEMP/release-title.txt")"
+          gh release edit "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
+            --title "$release_title" --notes-file "$RUNNER_TEMP/release-notes.md"
+          gh release upload "$RELEASE_TAG" \
+            "$release_dir/app-release.apk" "$release_dir/app-release.aab" \
+            --repo "$GITHUB_REPOSITORY" --clobber
+
+          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
+            --json tagName,name,isDraft,isPrerelease,url,assets > "$RUNNER_TEMP/release-after.json"
+          node - "$RUNNER_TEMP/release-before.json" "$RUNNER_TEMP/release-after.json" <<'NODE'
+          const fs = require("node:fs");
+          const before = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+          const after = JSON.parse(fs.readFileSync(process.argv[3], "utf8"));
+          const required = ["app-release.apk", "app-release.aab"];
+          if (after.tagName !== "v3.1.0" || after.isDraft || after.isPrerelease) {
+            throw new Error("GitHub Release metadata changed unexpectedly.");
+          }
+          const original = new Map((before.assets || []).map(asset => [asset.name, asset]));
+          const current = new Map((after.assets || []).map(asset => [asset.name, asset]));
+          for (const name of required) {
+            const oldAsset = original.get(name), newAsset = current.get(name);
+            if (!oldAsset || !newAsset || Number(oldAsset.size) !== Number(newAsset.size)) {
+              throw new Error("Release asset missing or size changed: " + name);
+            }
+            if (oldAsset.digest && newAsset.digest !== oldAsset.digest) {
+              throw new Error("Release asset content changed: " + name);
+            }
           }
           console.log(JSON.stringify({
-            tag: release.tagName,
-            title: release.name,
-            url: release.url,
-            assets: required.map(name => ({name, size: assets.get(name)}))
+            tag: after.tagName,
+            title: after.name,
+            url: after.url,
+            identicalExistingAssets: required
           }, null, 2));
           NODE
