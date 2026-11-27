@@ -293,6 +293,84 @@ class DraftSafetyTests(unittest.TestCase):
         self.assertFalse(any(method == "PATCH" or (method == "PUT" and "/listings/" in path)
                              for method, path, _ in fake.calls))
 
+    def test_stage_only_creates_fresh_edit_without_assets_and_exports_edit_id(self):
+        class FakeApi:
+            def __init__(self):
+                self.calls = []
+                self.track_payload = None
+
+            def api(self, method, path, **kwargs):
+                self.calls.append((method, path, kwargs))
+                if method == "POST" and path.endswith("/edits"):
+                    return {"id": "new-stage-edit"}
+                if method == "GET" and path.endswith("/tracks"):
+                    return {"tracks": [
+                        {"track": "internal", "releases": [
+                            {"name": "Internal", "status": "completed", "versionCodes": ["4100101"]}
+                        ]},
+                        {"track": TRACK_NAME, "releases": [
+                            {"name": "Previous draft", "status": "draft", "versionCodes": ["3127701"]}
+                        ]},
+                    ]}
+                if method == "GET" and path.endswith("/bundles"):
+                    return {"bundles": []}
+                if method == "GET" and path.endswith("/tracks/" + TRACK_NAME.replace(" ", "%20")):
+                    return {"releases": [
+                        {"name": "Previous draft", "status": "draft", "versionCodes": ["3127701"]}
+                    ]}
+                if method == "PUT" and path.endswith("/tracks/" + TRACK_NAME.replace(" ", "%20")):
+                    self.track_payload = kwargs.get("json_body")
+                    return {}
+                if method == "GET" and "/testers/" in path:
+                    return {"googleGroups": [], "allUsers": False}
+                return {}
+
+            def upload(self, path, file_path, mime_type):
+                self.calls.append(("UPLOAD", path, {"file": str(file_path), "mime": mime_type}))
+                return {"versionCode": VERSION_CODE, "sha256": play_module.AAB_SHA256}
+
+        fake = FakeApi()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            aab = root / "app-release.aab"
+            aab.write_bytes(b"fresh isolated fake AAB")
+            output_path = root / "github-output.txt"
+            env = {
+                "PACKAGE_NAME": PACKAGE_NAME,
+                "EXPECTED_VERSION_CODE": str(VERSION_CODE),
+                "PLAY_TRACK_NAME": TRACK_NAME,
+            }
+            argv = [
+                "google_play_closed_testing_draft.py",
+                "--stage-only",
+                "--aab", str(aab),
+                "--github-output", str(output_path),
+            ]
+            fake_hash = hashlib.sha256(aab.read_bytes()).hexdigest()
+            with contextlib.ExitStack() as stack:
+                stack.enter_context(mock.patch.object(play_module, "PlayApi", return_value=fake))
+                stack.enter_context(mock.patch.object(play_module, "AAB_SHA256", fake_hash))
+                stack.enter_context(mock.patch.dict(os.environ, env, clear=False))
+                stack.enter_context(mock.patch.object(sys, "argv", argv))
+                stack.enter_context(contextlib.redirect_stdout(io.StringIO()))
+                stack.enter_context(contextlib.redirect_stderr(io.StringIO()))
+                play_module.main()
+
+            self.assertEqual(output_path.read_text(encoding="utf-8"), "edit_id=new-stage-edit\n")
+
+        self.assertEqual(
+            sum(1 for method, path, _ in fake.calls if method == "POST" and path.endswith("/edits")),
+            1,
+        )
+        self.assertTrue(any(method == "UPLOAD" for method, _, _ in fake.calls))
+        self.assertIsNotNone(fake.track_payload)
+        closed = next(item for item in fake.track_payload["releases"] if item["status"] == "draft")
+        self.assertEqual(closed["versionCodes"], [str(VERSION_CODE)])
+        self.assertFalse(any(path.endswith(":validate") or path.endswith(":commit") for _, path, _ in fake.calls))
+        self.assertFalse(any(method == "PUT" and "/testers/" in path for method, path, _ in fake.calls))
+        self.assertFalse(any(method == "PATCH" or (method == "PUT" and "/listings/" in path)
+                             for method, path, _ in fake.calls))
+
     def test_stage_only_rejects_tester_changes(self):
         with self.assertRaises(ValueError):
             validate_stage_only_inputs("13370413812168476918", "dalilna-testers@example.com")
