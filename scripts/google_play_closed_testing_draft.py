@@ -69,6 +69,30 @@ def draft_release() -> dict:
     }
 
 
+def commit_unsubmitted_edit(api, package_path: str, edit_id: str) -> dict:
+    """Commit only when Google accepts its explicit unsent-review safety flag."""
+    path = f"{package_path}/edits/{quote(edit_id, safe='')}:commit"
+    try:
+        return api.api(
+            "POST",
+            path,
+            params={
+                "changesNotSentForReview": "true",
+                "changesInReviewBehavior": "ERROR_IF_IN_REVIEW",
+            },
+        )
+    except RuntimeError as exc:
+        message = str(exc)
+        if "changesNotSentForReview must not be set" in message:
+            raise RuntimeError(
+                "Google Play says this app's current state sends edits for review automatically "
+                "and rejects changesNotSentForReview. Refusing to retry without this flag because "
+                "that would submit the store and closed-testing changes for review. The edit was "
+                "not committed; save the changes from Play Console using its unsent-review controls."
+            ) from exc
+        raise
+
+
 def validate_listing(listing: dict, language: str) -> None:
     for key in ("title", "shortDescription", "fullDescription"):
         value = listing.get(key)
@@ -432,14 +456,7 @@ def main() -> None:
 
         # Validate, then commit as an unsent draft. Do not submit for review.
         api.api("POST", f"{package_path}/edits/{quote(edit_id, safe='')}:validate")
-        api.api(
-            "POST",
-            f"{package_path}/edits/{quote(edit_id, safe='')}:commit",
-            params={
-                "changesNotSentForReview": "true",
-                "changesInReviewBehavior": "ERROR_IF_IN_REVIEW",
-            },
-        )
+        commit_unsubmitted_edit(api, package_path, edit_id)
         committed = True
         print(json.dumps({
             "result": "committed_unsubmitted_draft",
