@@ -11,6 +11,7 @@ from google_play_closed_testing_draft import (
     VERSION_CODE,
     draft_release,
     prepare_closed_track_releases,
+    commit_unsubmitted_edit,
     validate_listing,
     validate_target,
 )
@@ -78,6 +79,22 @@ class DraftSafetyTests(unittest.TestCase):
         self.assertEqual(len(updated), 2)
         self.assertEqual(updated[-1]["status"], "draft")
         self.assertEqual(updated[-1]["versionCodes"], ["4128401"])
+
+    def test_does_not_retry_when_google_rejects_unsent_review_flag(self):
+        class FakeApi:
+            def __init__(self):
+                self.calls = 0
+
+            def api(self, method, path, **kwargs):
+                self.calls += 1
+                raise RuntimeError(
+                    "Google Play API returned HTTP 400: changesNotSentForReview must not be set"
+                )
+
+        fake = FakeApi()
+        with self.assertRaisesRegex(RuntimeError, "Refusing to retry without this flag"):
+            commit_unsubmitted_edit(fake, "/applications/ye.dalilna.app", "test-edit")
+        self.assertEqual(fake.calls, 1)
 
     def test_listing_limits(self):
         good = {
