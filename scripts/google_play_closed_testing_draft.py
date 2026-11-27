@@ -49,6 +49,13 @@ RELEASE_NOTES = {
 }
 
 
+def validate_play_mode(inspect_only: bool, submit_for_review: bool) -> None:
+    if inspect_only == submit_for_review:
+        raise ValueError(
+            "Select exactly one mode: --inspect-only or --submit-for-review."
+        )
+
+
 def validate_target(package_name: str, version_code: int, track_name: str) -> None:
     if package_name != PACKAGE_NAME:
         raise ValueError(f"Refusing package {package_name!r}; only {PACKAGE_NAME} is permitted")
@@ -348,13 +355,10 @@ def main() -> None:
     parser.add_argument("--testers-google-group", default="")
     args = parser.parse_args()
 
-    if args.inspect_only and args.submit_for_review:
-        parser.error("--inspect-only and --submit-for-review cannot be combined")
-    if not args.inspect_only and not args.submit_for_review:
-        parser.error(
-            "Choose --inspect-only or explicitly authorize --submit-for-review. "
-            "The Publishing API cannot commit an ordinary edit as an unsent draft."
-        )
+    try:
+        validate_play_mode(args.inspect_only, args.submit_for_review)
+    except ValueError as exc:
+        parser.error(str(exc))
 
     root = Path(__file__).resolve().parents[1]
     validate_target(
