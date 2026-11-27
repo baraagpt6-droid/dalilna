@@ -63,7 +63,7 @@ const publicFiles = [
 ];
 const secretPatterns = [
   ["private key", /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/],
-  ["Google key", /AIza[0-9A-Za-z_-]{35}/],
+  ["Google API key", /(?:^|[^A-Za-z0-9_-])AIzaSy[A-Za-z0-9_-]{33}(?:$|[^A-Za-z0-9_-])/],
   ["AWS key", /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/],
   ["GitHub token", /\b(?:gh[pousr]|github_pat)_[A-Za-z0-9_]{20,}\b/],
   ["Stripe secret", /\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{16,}\b/],
