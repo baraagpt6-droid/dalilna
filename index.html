@@ -758,13 +758,41 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <div id="admBody"></div>
   </section>
 
-  <section class="panel merchant-tools" id="merchantToolsPanel" hidden>
-    <div class="adm-head" style="margin-bottom:8px">
-      <div><h2 style="font-size:17px;color:var(--acc)">إدارة التاجر</h2><span class="where" id="merchantToolsSummary"></span></div>
-      <div class="fbtn"><button type="button" class="add" id="merchantAddBtn" style="min-height:36px">إضافة خدمة</button><button type="button" class="ghost" id="merchantPromoBtn" style="min-height:36px">إعلان مجاني</button></div>
+    <!-- Add hub: actions are separated from the merchant management panel. -->
+  <section id="vAdd" hidden>
+    <div class="add-hub-heading">
+      <button type="button" class="ghost" data-go="home">رجوع</button>
+      <div><h2>أضف إلى دليلنا</h2><p id="addHubSummary" class="where">اختر ما تريد إضافته إلى دليل اليمن.</p></div>
     </div>
-    <div id="merchantOwnedItems"></div>
-    <p class="dialog-hint">حساب التاجر في هذه النسخة محفوظ محلياً على الجهاز. توثيق رقم الهاتف يحتاج خدمة تحقق على الخادم.</p>
+    <div class="add-hub-grid">
+      <button type="button" class="add-hub-card" id="addFreeAdCard">
+        <span class="add-hub-icon add-hub-icon-gold" aria-hidden="true">＋</span>
+        <span class="add-hub-card-copy"><b>إضافة إعلان مجاني</b><small>قدّم إعلانك للمراجعة ضمن عرض البداية.</small></span>
+        <span class="add-hub-arrow" aria-hidden="true">←</span>
+      </button>
+      <button type="button" class="add-hub-card" id="addMerchantListingCard">
+        <span class="add-hub-icon add-hub-icon-teal" aria-hidden="true">⌂</span>
+        <span class="add-hub-card-copy"><b id="addMerchantCardTitle">إضافة محل أو خدمة</b><small id="addMerchantCardHint">لأصحاب المحلات. يمكنك تفعيل صفة البائع عند الاختيار.</small></span>
+        <span class="add-hub-arrow" aria-hidden="true">←</span>
+      </button>
+      <button type="button" class="add-hub-card" id="addJobPortalCard">
+        <span class="add-hub-icon add-hub-icon-blue" aria-hidden="true">▣</span>
+        <span class="add-hub-card-copy"><b>بوابة الوظائف</b><small>افتح قسم الوظائف مستقلاً لاستعراض الفرص أو إضافة وظيفة.</small></span>
+        <span class="add-hub-arrow" aria-hidden="true">←</span>
+      </button>
+    </div>
+    <div class="add-merchant-setup" id="addMerchantSetupHint" hidden>
+      <div><b>أكمل بيانات متجرك</b><p class="where">صفة البائع مفعّلة. أضف اسم المحل للمتابعة، وسيبقى رقم جوالك كما هو.</p></div>
+      <button type="button" class="ghost" id="addMerchantSetupButton">إكمال بيانات المحل</button>
+    </div>
+    <section class="panel merchant-tools" id="merchantToolsPanel" hidden>
+      <div class="adm-head" style="margin-bottom:8px">
+        <div><h2 style="font-size:17px;color:var(--acc)">إدارة التاجر</h2><span class="where" id="merchantToolsSummary"></span></div>
+        <div class="fbtn"><button type="button" class="add" id="merchantAddBtn" style="min-height:36px">إضافة خدمة</button><button type="button" class="ghost" id="merchantPromoBtn" style="min-height:36px">إعلان مجاني</button></div>
+      </div>
+      <div id="merchantOwnedItems"></div>
+      <p class="dialog-hint">حساب التاجر في هذه النسخة محفوظ محلياً على الجهاز. توثيق رقم الهاتف يحتاج خدمة تحقق على الخادم.</p>
+    </section>
   </section>
 
   <!-- Home View -->
@@ -1034,24 +1062,49 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
   </div>
 </dialog>
 
-<!-- Smart Account Switcher Modal -->
+<!-- Unified local profile and role switcher -->
 <dialog id="accountDlg">
   <div class="dlg-body">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h2 style="font-size:20px">اختيار صفة الحساب</h2>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <h2 style="font-size:20px">ملفي الشخصي</h2>
       <button type="button" class="x" id="accClose">✕</button>
     </div>
     <section class="panel" id="profilePanel" style="margin:10px 0">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
         <h3 id="profileHeading" style="margin:0">ملفي الشخصي</h3>
-        <span id="profileBadge" class="tag">غير موثّق</span>
+        <span id="profileBadge" class="tag">مستفيد</span>
       </div>
       <div style="display:grid;gap:4px;margin:10px 0">
         <b id="profileName">مستفيد</b>
-        <span id="profileContact" class="where">لا توجد بيانات تواصل للحساب الحالي.</span>
+        <span id="profileContact" class="where">لا يوجد رقم جوال محفوظ.</span>
+        <span id="profileRoleSummary" class="where">الصفة النشطة: عميل</span>
         <span id="profileDaysLeft" class="where">متبقي 60 يوماً من عرض الإعلانات المجاني</span>
       </div>
-      <div id="v3RoleSwitcher" class="v3-role-switcher" aria-label="تبديل صفة الحساب"><span>صفة الاستخدام</span><div><button type="button" data-v3-role="client">عميل</button><button type="button" data-v3-role="merchant">بائع</button></div></div>
+      <div id="v3RoleSwitcher" class="v3-role-switcher" aria-label="تبديل صفة الحساب">
+        <span>صفة الاستخدام</span>
+        <div>
+          <button type="button" data-profile-role="customer" aria-pressed="true">عميل</button>
+          <button type="button" data-profile-role="merchant" aria-pressed="false">بائع</button>
+        </div>
+      </div>
+      <button type="button" class="ghost profile-edit-toggle" id="profileEditToggle">تعديل الاسم أو الرقم</button>
+      <form id="profileEditForm" class="profile-edit-form" hidden>
+        <div id="profileCustomerNameRow">
+          <label>اسم المستفيد<input id="profileCustomerNameInput" maxlength="80" autocomplete="name" placeholder="اسمك الشخصي"></label>
+        </div>
+        <div id="profileStoreNameRow" hidden>
+          <label>اسم المحل أو النشاط<input id="profileStoreNameInput" maxlength="80" autocomplete="organization" placeholder="مثلاً: محلات الناهي"></label>
+        </div>
+        <div id="profilePhoneRow">
+          <label>رقم الجوال الموحد<input id="profilePhoneInput" type="tel" inputmode="tel" dir="ltr" maxlength="24" autocomplete="tel" placeholder="77xxxxxxx"></label>
+        </div>
+        <p class="dialog-hint" id="profileEditHint">تُحفظ البيانات محلياً على هذا الجهاز دون تأكيد عبر البريد الإلكتروني.</p>
+        <p class="err" id="profileEditError"></p>
+        <div class="fbtn">
+          <button type="submit" class="add" id="profileEditSave">حفظ التعديلات</button>
+          <button type="button" class="ghost" id="profileEditCancel">إلغاء</button>
+        </div>
+      </form>
       <button type="button" class="v3-profile-saved" id="profileSavedHub">♥ المفضلة والمحفوظات <span id="profileSavedHubCount">0</span></button>
       <button type="button" class="ghost" id="profileBlockedSellersBtn">إدارة البائعين المحظورين على هذا الجهاز</button>
       <div class="profile-metrics">
@@ -1071,41 +1124,16 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
         <a class="ghost" id="profileStoreUpdateLink" href="https://play.google.com/store/apps/details?id=ye.dalilna.app" target="_blank" rel="noopener noreferrer">تحديث التطبيق من Google Play</a>
         <a class="ghost" id="profilePrivacyLink" href="./privacy.html">سياسة الخصوصية</a>
       </div>
-      <p id="profileLocalNote" class="where" style="margin:8px 0 0">الملف المحلي محفوظ على هذا الجهاز، ولا يمثل حساباً مركزياً موثقاً.</p>
+      <p id="profileLocalNote" class="where" style="margin:8px 0 0">بيانات الملف محفوظة محلياً على هذا الجهاز.</p>
     </section>
     <section class="panel" style="margin:10px 0">
       <h3 style="margin:0 0 6px">إضافاتي</h3>
       <p class="where" style="margin:0 0 8px">انقل الإضافات القديمة المحفوظة على هذا الجهاز إلى قائمة مراجعة الإدارة.</p>
       <button type="button" class="ghost" id="sharedMigrateLocalButton">نقل إضافاتي القديمة للمراجعة</button>
     </section>
-    <p class="where" style="margin:0">اختر كيف ترغب في استخدام التطبيق الآن:</p>
-
-    <button type="button" class="role-opt" id="roleClientBtn">
-      <div class="role-ic"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-      <div>
-        <b style="display:block;font-size:15px">مستفيد / عميل</b>
-        <span class="where">تصفح المحلات، البحث الصوتي، التقييم، وحفظ المفضلة.</span>
-      </div>
-    </button>
-
-    <button type="button" class="role-opt" id="roleMerchantBtn">
-      <div class="role-ic"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-      <div>
-        <b style="display:block;font-size:15px">صاحب محل / بائع</b>
-        <span class="where">إدارة محلاتك وإضافة عروضك وإعلاناتك برقم جوالك.</span>
-      </div>
-    </button>
-
-    <div id="merchantBox" hidden style="background:var(--bg);padding:12px;border-radius:12px;border:1px solid var(--line);display:grid;gap:8px">
-      <label>اسم التاجر أو المحل<input id="merchName" placeholder="مثلاً: محلات الأمل"></label>
-      <label>رقم الجوال / واتساب<input id="merchPhone" dir="ltr" inputmode="tel" placeholder="77xxxxxxx"></label>
-      <button type="button" class="add" id="merchSave">تفعيل حساب التاجر</button>
-    </div>
-
     <div class="admin-entry-footer">
       <button type="button" class="admin-entry-link" id="roleAdminBtn" aria-controls="adminLoginForm" aria-expanded="false">دخول المشرف</button>
     </div>
-
     <p class="dialog-hint" id="adminAccessHint" hidden>ملاحظة: حسابات الإدارة في هذه النسخة محفوظة محلياً على الجهاز، وليست مصادقة مركزية لخدمة عامة.</p>
     <form id="adminLoginForm" hidden style="padding:12px;background:var(--bg);border-radius:12px;border:1px solid var(--gold)">
       <label>البريد الإلكتروني<input id="admEmail" type="email" dir="ltr" required placeholder="admin@dalilna.ye"></label>
@@ -2954,6 +2982,7 @@ const DEFAULT_STATE={
   admins:[
     {email:"admin@dalilna.ye",name:"المشرف العام",hash:ADMIN_DEFAULT_HASH,perms:["add","edit","delete","verify","review","ads","fx","perms","logs","backup","block"]}
   ],
+  profile:{customerName:"",storeName:"",phone:"",activeRole:"customer"},
   session:{role:"client",adminEmail:"",merchant:null},
   merchantProfile:{name:"",phone:"",area:""},
   tickets:[],
@@ -3022,8 +3051,20 @@ function normalizeState(raw){
     root.perms=[...new Set([...(root.perms||[]),"add","edit","delete","verify","review","ads","fx","perms","logs","backup","block"])];
   }
   const sessionRaw=raw.session&&typeof raw.session==="object"?raw.session:{};
-  const role=["client","merchant","admin"].includes(sessionRaw.role)?sessionRaw.role:"client";
   const merchantRaw=sessionRaw.merchant&&typeof sessionRaw.merchant==="object"?sessionRaw.merchant:null;
+  const profileRaw=raw.profile&&typeof raw.profile==="object"&&!Array.isArray(raw.profile)?raw.profile:{};
+  const legacyMerchant=raw.merchantProfile&&typeof raw.merchantProfile==="object"?raw.merchantProfile:merchantRaw||{};
+  let legacyCustomer={};
+  try{
+    const value=JSON.parse(localStorage.getItem("dalilna-v3-customer-profile")||"null");
+    if(value&&typeof value==="object"&&!Array.isArray(value))legacyCustomer=value;
+  }catch(_){}
+  const profile={
+    customerName:cleanText(profileRaw.customerName||legacyCustomer.customerName||legacyCustomer.name||raw.customerName,80),
+    storeName:cleanText(profileRaw.storeName||legacyMerchant.storeName||legacyMerchant.name||merchantRaw?.name,80),
+    phone:cleanText(profileRaw.phone||legacyCustomer.phone||legacyMerchant.phone||merchantRaw?.phone,40),
+    activeRole:profileRaw.activeRole==="merchant"||raw.activeRole==="merchant"||sessionRaw.activeRole==="merchant"||sessionRaw.role==="merchant"?"merchant":"customer"
+  };
   const ratesRaw=raw.rates&&typeof raw.rates==="object"?raw.rates:{};
   const rates={};
   for(const [id,r] of Object.entries(ratesRaw))if(r&&typeof r==="object")rates[cleanText(id,80)]={n:cleanNumber(r.n,0,0,1e9),sum:cleanNumber(r.sum,0,0,5e9)};
@@ -3074,9 +3115,10 @@ function normalizeState(raw){
     perms:{visitorCanPost:raw.perms?.visitorCanPost!==false,souqEnabled:raw.perms?.souqEnabled!==false,ratingsEnabled:raw.perms?.ratingsEnabled!==false},
     admins,
     adminCredentialVersion:ADMIN_CREDENTIAL_VERSION,
-    // Local-only profile is stored separately; privileged sessions never survive reloads.
-    merchantProfile:(()=>{const m=raw.merchantProfile&&typeof raw.merchantProfile==="object"?raw.merchantProfile:merchantRaw||{};return {name:cleanText(m.name,80),phone:cleanText(m.phone,40),area:cleanText(m.area,100)};})(),
-    session:{role:"client",adminEmail:"",merchant:null},
+    profile,
+    merchantProfile:{name:profile.storeName,phone:profile.phone,area:cleanText(legacyMerchant.area,100)},
+    // Privileged sessions never survive reloads. The selected customer/merchant role does.
+    session:{role:profile.activeRole==="merchant"?"merchant":"client",adminEmail:"",merchant:profile.activeRole==="merchant"?{name:profile.storeName,phone:profile.phone}:null},
     tickets:arrayOfObjects(raw.tickets).slice(0,500).map((t,i)=>({id:cleanText(t.id,80)||"ticket_"+i,type:cleanText(t.type,60),name:cleanText(t.name,80),phone:cleanText(t.phone,40),text:cleanText(t.text,1200),at:cleanNumber(t.at,Date.now(),0,Number.MAX_SAFE_INTEGER),status:t.status==="closed"?"closed":"open"})),
     blocks:arrayOfObjects(raw.blocks).slice(0,1000).map((b,i)=>({id:cleanText(b.id,80)||"block_"+i,phone:phoneKey(cleanText(b.phone,24)),reason:cleanText(b.reason,240)||"مخالفة شروط الدليل",at:cleanNumber(b.at,Date.now(),0,Number.MAX_SAFE_INTEGER),by:cleanText(b.by,160)||"المشرف",active:b.active!==false})).filter(b=>b.phone.length>=9),
     installDate:cleanNumber(raw.installDate,base.installDate,1,Number.MAX_SAFE_INTEGER),
