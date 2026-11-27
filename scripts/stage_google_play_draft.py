@@ -138,9 +138,10 @@ def stage_draft(api: PlayApi, aab_path: Path, metadata_path: Path) -> dict:
     if not edit_id:
         raise RuntimeError("Google Play did not return a temporary edit ID")
     edit_path = package_path + f"/edits/{quote(str(edit_id), safe='')}"
+    tracks_path = edit_path + "/tracks"
     committed = False
     try:
-        tracks = api.request("GET", edit_path + "/tracks").get("tracks", []) or []
+        tracks = api.request("GET", tracks_path).get("tracks", []) or []
         max_existing = max(
             (
                 int(code)
