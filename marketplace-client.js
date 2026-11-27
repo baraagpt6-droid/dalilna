@@ -8,7 +8,7 @@
     "جوال":"Mobile phone","إكسسوارات جوال":"Phone accessories","ساعة":"Watch","كمبيوتر / لابتوب":"Computer / laptop","ملحقات كمبيوتر":"Computer accessories","جهاز لوحي":"Tablet","كاميرا":"Camera","سيارة":"Car","دراجة نارية":"Motorcycle","قطع غيار مركبات":"Vehicle parts","أرض":"Land","عقار":"Property","شقة":"Apartment","منزل":"House","أجهزة منزلية":"Home appliances","أثاث":"Furniture","ملابس":"Clothing","أحذية":"Shoes","ذهب ومجوهرات":"Gold and jewellery","عسل":"Honey","بن وقهوة":"Coffee","بهارات":"Spices","مواشٍ":"Livestock","منتجات زراعية":"Farm products","كتب":"Books","قرطاسية وأدوات مدرسية":"Stationery","عطور":"Perfume","مستحضرات تجميل":"Cosmetics","معدات طاقة شمسية":"Solar equipment","أدوات ومعدات":"Tools and equipment","مستلزمات منزلية":"Household goods","أدوات مطبخ":"Kitchenware","منتجات أطفال":"Baby products","ألعاب":"Toys","معدات رياضية":"Sports equipment","أعلاف":"Animal feed","بذور ومحاصيل":"Seeds and crops","معدات إنشاءات":"Construction equipment",
     "أمانة العاصمة":"Amanat Al Asimah","صنعاء":"Sana'a","عدن":"Aden","تعز":"Taiz","إب":"Ibb","الحديدة":"Al Hudaydah","ذمار":"Dhamar","البيضاء":"Al Bayda","لحج":"Lahj","أبين":"Abyan","الضالع":"Al Dhale'e","مأرب":"Marib","الجوف":"Al Jawf","صعدة":"Saada","حجة":"Hajjah","عمران":"Amran","المحويت":"Al Mahwit","ريمة":"Raymah","حضرموت":"Hadramout","شبوة":"Shabwah","المهرة":"Al Mahrah","سقطرى":"Socotra",
     "صورة الإعلان":"Listing image","لا توجد صورة مرفقة":"No image attached","إعلان":"Listing","البائع: ":"Seller: ","جديد":"New","مستعمل":"Used","للبيع":"For sale","للإيجار":"For rent","مطلوب":"Wanted","مقايضة":"Barter","مجاني":"Free","أوقات العمل: ":"Opening hours: ","الموقع الإلكتروني":"Website","آخر موعد للتقديم: ":"Application deadline: ","واتساب البائع":"Seller WhatsApp","اتصال":"Call","عرض الخريطة":"View map","موقع الإعلان":"Listing location","فتح الموقع في OpenStreetMap":"Open in OpenStreetMap","إعلان مجاني · مدة الصلاحية 60 يوماً":"Free listing · 60-day validity","إعلان مجاني · ينتهي ":"Free listing · expires ","مشاركة":"Share","★ مفضلة":"★ Favourite","☆ مفضلة":"☆ Favourite","إبلاغ عن الإعلان":"Report listing","إبلاغ عن البائع":"Report seller","حظر البائع":"Block seller","تم إخفاء إعلانات هذا البائع على هذا الجهاز.":"This seller is now hidden on this device.","تم إرسال البلاغ إلى فريق المراجعة.":"The report was sent to the moderation team.","لا يمكن تنفيذ البلاغ دون اختيار سبب.":"Choose a reason before sending the report.",
-    "جارٍ تحميل الإعلانات المعتمدة من قاعدة البيانات المشتركة…":"Loading approved listings from the shared database…","خدمة البيانات المشتركة لم تُفعّل بعد. سيظهر المحتوى هنا بعد ربط قاعدة البيانات.":"The shared data service is not enabled yet. Listings will appear after the database is connected.","تعذر تحميل الإعلانات المشتركة. ":"Could not load shared listings. ","كل الأقسام":"All categories","كل المحافظات":"All governorates","ملاحظة للمراجعة (اختياري)":"Review note (optional)","موافقة ونشر":"Approve and publish","رفض":"Reject","لا توجد إعلانات تنتظر المراجعة.":"No listings are waiting for review.","طلبات تنتظر المراجعة: ":"Listings awaiting review: ","جارٍ تحميل طلبات المراجعة…":"Loading review requests…","تم اعتماد الإعلان ونشره للجميع.":"The listing was approved and published.","تم رفض الإعلان.":"The listing was rejected.","هذا الإعلان سبق إرساله للمراجعة.":"This listing has already been submitted for review.","تم استلام الإعلان. سيظهر لجميع المستخدمين بعد موافقة الإدارة.":"Your listing was received and will appear to users after admin approval.","حُفظ الإعلان على هذا الجهاز، لكن تعذرت مزامنته: ":"The listing was saved on this device, but could not be synced: "
+    "جارٍ تحميل الإعلانات المعتمدة من قاعدة البيانات المشتركة…":"Loading approved listings from the shared database…","خدمة الإعلانات المشتركة غير متاحة حالياً. حاول مرة أخرى بعد قليل.":"Shared listings are temporarily unavailable. Please try again shortly.","تعذر تحميل الإعلانات المشتركة الآن. حاول مرة أخرى بعد قليل.":"Shared listings are unavailable right now. Please try again shortly.","كل الأقسام":"All categories","كل المحافظات":"All governorates","ملاحظة للمراجعة (اختياري)":"Review note (optional)","موافقة ونشر":"Approve and publish","رفض":"Reject","لا توجد إعلانات تنتظر المراجعة.":"No listings are waiting for review.","طلبات تنتظر المراجعة: ":"Listings awaiting review: ","جارٍ تحميل طلبات المراجعة…":"Loading review requests…","تم اعتماد الإعلان ونشره للجميع.":"The listing was approved and published.","تم رفض الإعلان.":"The listing was rejected.","هذا الإعلان سبق إرساله للمراجعة.":"This listing has already been submitted for review.","تم استلام الإعلان. سيظهر لجميع المستخدمين بعد موافقة الإدارة.":"Your listing was received and will appear to users after admin approval.","حُفظ الإعلان على هذا الجهاز، لكن تعذرت مشاركته حالياً.":"The listing was saved on this device, but could not be submitted right now."
   };
   const ui = (ar,en) => isEnglish() ? en : ar;
   const label = value => isEnglish() ? (UI_EN[value] || value) : value;
@@ -193,7 +193,7 @@
       flash(label("تم إرسال البلاغ إلى فريق المراجعة."));
       return result;
     } catch(error) {
-      flash("تعذر إرسال البلاغ إلى الخادم: "+error.message);
+      flash(label("تعذر إرسال البلاغ الآن. حاول مرة أخرى بعد قليل."));
       return null;
     }
   }
@@ -452,9 +452,7 @@
         : "";
       return result;
     } catch (e) {
-      if (!hadLoadedData) status.textContent = e.status === 503
-        ? label("خدمة البيانات المشتركة لم تُفعّل بعد. سيظهر المحتوى هنا بعد ربط قاعدة البيانات.")
-        : label("تعذر تحميل الإعلانات المشتركة. ") + e.message;
+      if (!hadLoadedData) status.textContent = label("تعذر تحميل الإعلانات المشتركة الآن. حاول مرة أخرى بعد قليل.");
       return null;
     }
   }
@@ -519,7 +517,7 @@
       });
       flash(label(result.duplicate ? "هذا الإعلان سبق إرساله للمراجعة." : "تم استلام الإعلان. سيظهر لجميع المستخدمين بعد موافقة الإدارة."));
     } catch (e) {
-      flash(label("حُفظ الإعلان على هذا الجهاز، لكن تعذرت مزامنته: ") + e.message);
+      flash(label("حُفظ الإعلان على هذا الجهاز، لكن تعذرت مشاركته حالياً."));
     }
   }
   async function review(id, decision, note) {
@@ -537,7 +535,7 @@
         adminToken = "";
         window.sessionStorage.removeItem("dalilna-shared-admin-token");
       }
-      flash("تعذرت مراجعة الإعلان: " + e.message);
+      flash(label("تعذرت مراجعة الإعلان الآن. حاول مرة أخرى بعد قليل."));
     }
   }
   async function loadAdminQueue() {
@@ -546,7 +544,7 @@
     if (!adminToken) {
       adminToken = window.sessionStorage.getItem("dalilna-shared-admin-token") || "";
       if (!adminToken) {
-        const token = window.prompt("أدخل رمز إدارة الخادم DALILNA_ADMIN_TOKEN.");
+        const token = window.prompt("أدخل رمز الإدارة للمتابعة.");
         if (!token) return;
         adminToken = token.trim();
         window.sessionStorage.setItem("dalilna-shared-admin-token",adminToken);
@@ -590,7 +588,7 @@
         adminToken = "";
         window.sessionStorage.removeItem("dalilna-shared-admin-token");
       }
-      status.textContent = "تعذر تحميل الطلبات. " + e.message;
+      status.textContent = label("تعذر تحميل طلبات المراجعة الآن. حاول مرة أخرى بعد قليل.");
     }
   }
   async function loadAdminReports() {
@@ -599,7 +597,7 @@
     if(!adminToken){
       adminToken=window.sessionStorage.getItem("dalilna-shared-admin-token")||"";
       if(!adminToken){
-        const token=window.prompt("أدخل رمز إدارة الخادم DALILNA_ADMIN_TOKEN.");
+        const token=window.prompt("أدخل رمز إدارة الخادم رمز الإدارة.");
         if(!token)return;
         adminToken=token.trim();
         window.sessionStorage.setItem("dalilna-shared-admin-token",adminToken);
@@ -636,7 +634,7 @@
       });
     }catch(error){
       if(error.status===401||error.status===403){adminToken="";window.sessionStorage.removeItem("dalilna-shared-admin-token");}
-      status.textContent="تعذر تحميل البلاغات: "+error.message;
+      status.textContent=label("تعذر تحميل البلاغات الآن. حاول مرة أخرى بعد قليل.");
     }
   }
   async function reviewUgcReport(id,decision,note){
@@ -649,7 +647,7 @@
       await loadAdminReports();
       await Promise.all([loadHome(),loadSouq(),loadJobs()]);
     }catch(error){
-      flash("تعذر تنفيذ قرار البلاغ: "+error.message);
+      flash(label("تعذر تنفيذ القرار الآن. حاول مرة أخرى بعد قليل."));
     }
   }
   async function migrateLocal() {
@@ -720,7 +718,7 @@
     loadCategoryCounts();
     api("/api/marketplace/status").then(result => {
       const el=$("sharedDirectoryStatus");
-      if(el&&!result.ready)el.textContent="واجهة السوق المشترك جاهزة، وتنتظر تهيئة قاعدة PostgreSQL.";
+      if(el&&!result.ready)el.textContent=label("خدمة الإعلانات المشتركة غير متاحة حالياً. حاول مرة أخرى بعد قليل.");
     }).catch(()=>{});
     window.addEventListener("focus",()=>{loadHome();if($("vSouq")&&!$("vSouq").hidden)loadSouq();if($("vJobs")&&!$("vJobs").hidden)loadJobs();});
     document.addEventListener("visibilitychange",()=>{if(!document.hidden){loadHome();if($("vSouq")&&!$("vSouq").hidden)loadSouq();if($("vJobs")&&!$("vJobs").hidden)loadJobs();}});

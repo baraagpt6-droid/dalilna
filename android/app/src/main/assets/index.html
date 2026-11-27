@@ -737,7 +737,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <button type="button" class="adm-pending-shortcut" id="admPendingShortcut" hidden><span>طلبات بانتظار المراجعة<small>افتح لمراجعة الطلبات وقبولها أو رفضها</small></span><span class="adm-pending-count">0</span></button>
     <section class="panel" id="sharedAdminPanel">
       <div class="shared-marketplace-head"><h3>مراجعة الإعلانات المشتركة</h3><button type="button" class="ghost" id="sharedAdminReviewButton">تحميل طلبات المراجعة</button></div>
-      <div class="shared-marketplace-status" id="sharedAdminStatus">يتطلب ربط PostgreSQL ورمز إدارة الخادم.</div>
+      <div class="shared-marketplace-status" id="sharedAdminStatus">أدوات إدارة الإعلانات متاحة للمستخدمين المخولين فقط.</div>
       <div class="shared-admin-box" id="sharedAdminQueue"></div>
     </section>
     <section class="panel" id="sharedAdminReportsPanel">
@@ -845,7 +845,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <div class="shared-marketplace-head"><h2>الإعلانات المعتمدة في دليلنا</h2><span class="tag">تظهر للجميع</span></div>
       <p class="shared-marketplace-status">تظهر هنا إضافات المستخدمين التي اعتمدتها الإدارة، وتدخل أيضاً في نتائج البحث حسب المنطقة.</p>
       
-      <div class="shared-marketplace-status" id="sharedDirectoryStatus" aria-live="polite">جارٍ التحقق من قاعدة البيانات المشتركة…</div>
+      <div class="shared-marketplace-status" id="sharedDirectoryStatus" aria-live="polite">جارٍ تحميل الإعلانات المشتركة…</div>
       <div class="shared-marketplace-list" id="sharedDirectoryItems"></div>
     </section>
 
@@ -2616,7 +2616,7 @@ const STATIC_UI_EN={
 "متبقي 60 يوماً":"60 days remaining","اطلب إعلانك المجاني":"Request your free advert","لوحة تحكم المشرف":"Admin dashboard",
 "+ إضافة موثّقة":"+ Add verified listing","خروج":"Exit","طلبات بانتظار المراجعة":"Pending review requests",
 "افتح لمراجعة الطلبات وقبولها أو رفضها":"Open to review, approve or reject requests","مراجعة الإعلانات المشتركة":"Review shared adverts",
-"تحميل طلبات المراجعة":"Load review requests","يتطلب ربط PostgreSQL ورمز إدارة الخادم.":"Requires PostgreSQL and a server admin token.",
+"تحميل طلبات المراجعة":"Load review requests","أدوات إدارة الإعلانات متاحة للمستخدمين المخولين فقط.":"Requires PostgreSQL and a server admin token.",
 "نظرة عامة":"Overview","الإدراجات والحذف":"Listings and deletion","المراجعة":"Review","الصلاحيات":"Permissions",
 "الإعلانات":"Adverts","الصرف والطوارئ":"Rates and emergencies","البلاغات والسجل":"Reports and activity log",
 "الحظر والإيقاف":"Blocks and suspensions","النسخ الاحتياطي":"Backup","إدارة التاجر":"Merchant management",
@@ -2627,7 +2627,7 @@ const STATIC_UI_EN={
 "شاهدته مؤخراً":"Recently viewed","مسح":"Clear","أُضيف حديثاً":"Recently added","عرض المزيد":"Show more",
 "الإعلانات المعتمدة في دليلنا":"Approved Dalilna adverts","تظهر للجميع":"Visible to everyone",
 "تظهر هنا إضافات المستخدمين التي اعتمدتها الإدارة، وتدخل أيضاً في نتائج البحث حسب المنطقة.":"Approved user submissions appear here and are included in regional search results.",
-"جارٍ التحقق من قاعدة البيانات المشتركة…":"Checking the shared database…","معلومات المنطقة":"Region information",
+"جارٍ تحميل الإعلانات المشتركة…":"Loading shared listings…","معلومات المنطقة":"Region information",
 "عن المنطقة المختارة في دليلنا":"About the selected region","محل وخدمة في الفهرس":"Shops and services in the catalogue",
 "أقسام ممثلة":"Categories represented","موثّق":"Verified","شارك معلومات منطقتك":"Share information about your region",
 "أضف اسم معلم أو وصفًا أو صورة للمساعدة في إثراء الملف.":"Add a landmark, description or photo to enrich this region profile.",
@@ -4516,7 +4516,7 @@ async function loadLiveFx(force){
    return liveFxData;
   }catch(error){
    liveFxData=null;liveFxFetchedAt=0;
-   liveFxError=controller.signal.aborted?"انتهت مهلة الاتصال بمصدر الأسعار.":"تعذر جلب الأسعار الحية: "+String(error?.message||"خطأ اتصال");
+   liveFxError=curLang==="en"?"Live prices are temporarily unavailable. Please try again shortly.":"تعذر تحميل الأسعار حالياً. حاول مرة أخرى بعد قليل.";
    return null;
   }finally{
    clearTimeout(timeout);
@@ -4820,7 +4820,7 @@ async function liveFetchJson(path,params,signal,retries=1){
    const response=await fetch(url,{headers:{Accept:"application/json"},signal,cache:"no-store"});
    const data=await response.json().catch(()=>({}));
    if(!response.ok){
-    const error=new Error(data.error||("تعذر الاتصال بخادم الإعلانات (HTTP "+response.status+")."));
+    const error=new Error("request_failed");
     error.status=response.status;
     if(attempt<retries&&(response.status>=500||response.status===429)){lastError=error;await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)));continue;}
     throw error;
@@ -4833,7 +4833,7 @@ async function liveFetchJson(path,params,signal,retries=1){
    await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)));
   }
  }
- throw lastError||new Error("تعذر الوصول إلى خادم الإعلانات.");
+ throw lastError||new Error("request_failed");
 }
 let liveCatalogManifestPromise=null,liveCatalogManifest=null,liveCatalogFiles=new Map(),liveSharedLoadError="",liveCatalogLoadError="";
 let liveMarketplaceCounts={all:{},governorates:{}};
@@ -4874,7 +4874,7 @@ async function loadRegionalCatalogManifest(force){
   const data=await response.json();if(!data||!Array.isArray(data.governorates))throw new Error("صيغة فهرس المحافظات غير صالحة.");
   if(Number(data.totalCount||0)<1||!Array.isArray(data.districtCounts)||data.districtCounts.length!==335)throw new Error("فهرس المحافظات لا يحتوي إحصاءات المديريات الـ335.");
   liveCatalogManifest=data;liveCatalogLoadError="";buildScopeSelector();renderCategories();renderRegionInfo();return data;
- }).catch(error=>{liveCatalogManifestPromise=null;liveCatalogLoadError=error?.message||"تعذر تحميل الفهرس";buildScopeSelector();throw error;});
+ }).catch(error=>{liveCatalogManifestPromise=null;liveCatalogLoadError="catalogue_unavailable";buildScopeSelector();throw error;});
  return liveCatalogManifestPromise;
 }
 const LIVE_CATALOG_CACHE_DB="dalilna-regional-cache-v271";
@@ -5115,7 +5115,7 @@ async function loadLiveMarketplaceMatches(query,category,productType,signal,forc
   const result=await liveFetchJson("/api/marketplace/listings",params,signal,1);
   if(Array.isArray(result.items))liveSharedMatches=categoryProductTypes?result.items.filter(item=>categoryProductTypes.includes(item.productType)):result.items;
   liveSharedCache.set(key,{items:liveSharedMatches,at:Date.now()});
- }catch(error){liveSharedLoadError=String(error&&error.message||"تعذر الاتصال بخدمة الإعلانات.");liveSharedMatches=[];}
+ }catch(_){liveSharedLoadError="unavailable";liveSharedMatches=[];}
  return liveSharedMatches;
 }
 async function searchLiveDirectoryFallback(query,category,context,signal,force){
@@ -5323,7 +5323,7 @@ async function runLiveDirectorySearch(force){
   }catch(error){
    if(isCurrent()){
     status.textContent=curLang==="en"?"The regional catalogue manifest is temporarily unavailable.":"تعذر تحميل فهرس المحافظات حالياً.";
-    box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">'+esc(error?.message||"")+'</div>';
+    box.innerHTML=liveDirectorySharedMatchesHTML()+'<div class="live-directory-empty">' +(curLang==="en"?"The catalogue is temporarily unavailable. Please try again shortly.":"تعذر تحميل الفهرس حالياً. حاول مرة أخرى بعد قليل.")+'</div>';
    }
    finishRequest();
    return;
@@ -5405,7 +5405,7 @@ async function loadLiveCommonsPhotos(button){
   const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||"تعذر جلب الصور.");
   panel.innerHTML=data.items&&data.items.length?'<div class="live-directory-photo-grid">'+data.items.map(p=>'<figure><a href="'+esc(p.sourceUrl)+'" target="_blank" rel="noopener noreferrer"><img src="'+esc(p.imageUrl)+'" alt="'+esc(p.title)+'" loading="lazy"></a><figcaption>'+esc(p.title)+'<br>المصور: '+esc(p.author||"غير مذكور")+'<br>الترخيص: '+esc(p.license||"راجع صفحة الملف")+'<br><a href="'+esc(p.sourceUrl)+'" target="_blank" rel="noopener noreferrer">صفحة الصورة</a></figcaption></figure>').join("")+'</div>':'<p>لم نجد صوراً مرتبطة بعبارة البحث. جرّب الاسم بالإنجليزية.</p>';
   panel.dataset.loaded="true";button.textContent="إخفاء الصور";
- }catch(error){panel.textContent=error.message||"تعذر جلب الصور.";button.textContent="إعادة البحث";}
+ }catch(_){panel.textContent=curLang==="en"?"Photos are temporarily unavailable. Please try again shortly.":"تعذر تحميل الصور الآن. حاول مرة أخرى بعد قليل.";button.textContent="إعادة البحث";}
  finally{button.disabled=false;}
 }
 document.addEventListener("click",event=>{

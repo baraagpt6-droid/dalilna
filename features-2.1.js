@@ -14,7 +14,7 @@
   "لا توجد ملفات منشورة لهذه الدولة حالياً.":"No job seeker profiles are published for this country yet.","تم نشر ملفك. سيبقى متاحاً لمدة 60 يوماً.":"Your profile is published and will remain available for 60 days.","يجب الموافقة على عرض معلوماتك قبل النشر.":"You must consent to publishing your information before submitting.","جارٍ إرسال ملفك إلى دليلنا…":"Submitting your profile to Dalilna…","وظيفة":"Job","باحث عن عمل":"Job seeker",
   "مثلاً: محاسب، مبرمج، فني كهرباء":"e.g. accountant, programmer, electrician","اكتب مهاراتك ونوع العمل الذي تبحث عنه":"Describe your skills and the work you are seeking",
   "المؤهلات / الشروط: ":"Eligibility / requirements: ","آخر موعد للتقديم: ":"Application deadline: ","عدد الوظائف: ":"Jobs: ","ملفات منشورة بموافقة أصحابها: ":"Profiles published with consent: ","آخر مزامنة: ":"Last sync: ","غير متاح":"unavailable",
-  "تعذر تحميل الوظائف من الخادم. ":"Could not load jobs from server. ","تعذر تحميل الباحثين عن عمل. ":"Could not load job seeker profiles. ","تعذر نشر الملف. ":"Could not publish profile. "
+  "تعذر تحميل الوظائف الآن. حاول مرة أخرى بعد قليل.":"Could not load jobs right now. Please try again shortly.","تعذر تحميل الباحثين عن عمل الآن. حاول مرة أخرى بعد قليل.":"Could not load job seeker profiles right now. Please try again shortly.","تعذر نشر الملف الآن. تحقق من البيانات وحاول مرة أخرى.":"Could not submit the profile. Check the details and try again."
  };
  function translateFeatureTree(root=document.body){
   if(!root||typeof document.createTreeWalker!=="function")return;
@@ -78,6 +78,44 @@
   });
   if(text!==undefined)node.textContent=text;
   return node;
+ }
+ const API_TIMEOUT_MS=12000;
+ const API_RETRYABLE_GET_STATUSES=new Set([408,425,429,500,502,503,504]);
+ const waitForApiRetry=delay=>new Promise(resolve=>window.setTimeout(resolve,delay));
+ async function requestJobsApi(path,options={}){
+  const method=String(options.method||"GET").toUpperCase();
+  const retries=method==="GET"?1:0;
+  for(let attempt=0;attempt<=retries;attempt++){
+   const controller=new AbortController();
+   let timedOut=false;
+   const timer=window.setTimeout(()=>{timedOut=true;controller.abort();},API_TIMEOUT_MS);
+   try{
+    const response=await fetch(API+path,{cache:"no-store",...options,signal:controller.signal,
+     headers:{Accept:"application/json",...(options.headers||{})}});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok){
+     const error=new Error("request_failed");
+     error.status=response.status;
+     if(method==="GET"&&attempt<retries&&API_RETRYABLE_GET_STATUSES.has(response.status)){
+      await waitForApiRetry(300*(attempt+1));continue;
+     }
+     throw error;
+    }
+    return data;
+   }catch(error){
+    const networkFailure=timedOut||error.name==="AbortError"||error instanceof TypeError;
+    if(method==="GET"&&attempt<retries&&networkFailure){
+     await waitForApiRetry(300*(attempt+1));continue;
+    }
+    if(timedOut){
+     const timeoutError=new Error("request_timeout");
+     timeoutError.code="DALILNA_JOBS_TIMEOUT";
+     throw timeoutError;
+    }
+    throw error;
+   }finally{window.clearTimeout(timer);}
+  }
+  throw new Error("request_failed");
  }
  function openDialog(dialog){
   if(dialog.showModal)dialog.showModal();
@@ -168,9 +206,7 @@
   if(!status||!box)return;
   status.textContent="";
   try{
-   const response=await fetch(API+"/api/jobs?country="+encodeURIComponent(country)+"&limit=60",{cache:"no-store",headers:{Accept:"application/json"}});
-   const data=await response.json().catch(()=>({}));
-   if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
+   const data=await requestJobsApi("/api/jobs?country="+encodeURIComponent(country)+"&limit=60");
    if(!Array.isArray(data.items)||!data.items.length){
     box.replaceChildren();
     status.textContent="لا توجد وظائف مطابقة في آخر مزامنة. استخدم روابط المنصات أعلاه للبحث المباشر.";
@@ -213,7 +249,7 @@
    applyJobFilters();
    translateFeatureTree(box);
    translateFeatureTree(status.parentElement||status);
-  }catch(error){if(!box.childElementCount){status.textContent="تعذر تحميل الوظائف من الخادم. "+error.message;translateFeatureTree(status);}}
+  }catch(_){if(!box.childElementCount){status.textContent="تعذر تحميل الوظائف الآن. حاول مرة أخرى بعد قليل.";translateFeatureTree(status);}}
  }
  function waUrl(phone){
   const digits=String(phone||"").replace(/[^0-9]/g,"");
@@ -239,9 +275,7 @@
   status.textContent="";
   try{
    const countryName=COUNTRY_NAMES[country]||"all";
-   const response=await fetch(API+"/api/jobs/candidates?country="+encodeURIComponent(countryName),{cache:"no-store",headers:{Accept:"application/json"}});
-   const data=await response.json().catch(()=>({}));
-   if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
+   const data=await requestJobsApi("/api/jobs/candidates?country="+encodeURIComponent(countryName));
    if(!Array.isArray(data.items)||!data.items.length){box.replaceChildren();status.textContent="لا توجد ملفات منشورة لهذه الدولة حالياً.";translateFeatureTree(status);return;}
    const visibleItems=data.items.filter(person=>!isBlockedJobSeeker(person.whatsapp));
    if(!visibleItems.length){box.replaceChildren();status.textContent="لا توجد ملفات منشورة ظاهرة حالياً.";translateFeatureTree(status);return;}
@@ -269,7 +303,7 @@
    box.replaceChildren(fragment);
    translateFeatureTree(box);
    translateFeatureTree(status.parentElement||status);
-  }catch(error){if(!box.childElementCount){status.textContent="تعذر تحميل الباحثين عن عمل. "+error.message;translateFeatureTree(status);}}
+  }catch(_){if(!box.childElementCount){status.textContent="تعذر تحميل الباحثين عن عمل الآن. حاول مرة أخرى بعد قليل.";translateFeatureTree(status);}}
  }
  async function submitCandidate(event){
   event.preventDefault();
@@ -288,13 +322,11 @@
   if(!payload.consentPublic||!payload.termsAccepted){status.textContent="يجب الموافقة على عرض معلوماتك وشروط المحتوى قبل النشر.";return;}
   button.disabled=true;status.textContent="جارٍ إرسال ملفك إلى دليلنا…";
   try{
-   const response=await fetch(API+"/api/jobs/candidates",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)});
-   const data=await response.json().catch(()=>({}));
-   if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
+   await requestJobsApi("/api/jobs/candidates",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
    form.reset();closeDialog($("jobSeekerDlg"));
    const visible=$("jobSeekersStatus");if(visible)visible.textContent="تم نشر ملفك. سيبقى متاحاً لمدة 60 يوماً.";
    await loadCandidates();
-  }catch(error){status.textContent="تعذر نشر الملف. "+error.message;}
+  }catch(_){status.textContent="تعذر نشر الملف الآن. تحقق من البيانات وحاول مرة أخرى.";}
   finally{button.disabled=false;}
  }
  function syncSearch(){
