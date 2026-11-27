@@ -79,7 +79,7 @@ class DraftSafetyTests(unittest.TestCase):
             prepare_closed_track_releases(releases)
 
     def test_existing_draft_above_target_is_refused(self):
-        releases = [{"versionCodes": ["4128402"], "status": "draft"}]
+        releases = [{"versionCodes": ["4128602"], "status": "draft"}]
         with self.assertRaises(RuntimeError):
             prepare_closed_track_releases(releases)
 
