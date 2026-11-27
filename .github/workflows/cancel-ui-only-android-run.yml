@@ -1,0 +1,48 @@
+name: Cancel the accidental Android build from Pages-only UI cleanup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/cancel-ui-only-android-run.yml"
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  cancel-exact-android-run:
+    if: \${{ github.repository == 'baraagpt6-droid/dalilna' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel only the Android run created by the UI-only cleanup commit
+        env:
+          GH_TOKEN: \${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          repo="baraagpt6-droid/dalilna"
+          run_id="46084313263"
+          response="$(curl --fail-with-body --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$repo/actions/runs/$run_id")"
+          test "$(jq -r '.repository.full_name' <<< "$response")" = "$repo"
+          test "$(jq -r '.path' <<< "$response")" = ".github/workflows/android-apk.yml"
+          test "$(jq -r '.head_sha' <<< "$response")" = "$GITHUB_SHA"
+          status="$(jq -r '.status' <<< "$response")"
+          if [[ "$status" == "queued" || "$status" == "in_progress" || "$status" == "pending" ]]; then
+            curl --fail-with-body --silent --show-error -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              "https://api.github.com/repos/$repo/actions/runs/$run_id/cancel"
+            echo "Cancelled only Android run $run_id."
+          else
+            echo "Android run $run_id is already $status; no other run was touched."
+          fi
+          {
+            echo "## Pages-only cleanup guard"
+            echo "- Exact accidental Android run: $run_id"
+            echo "- Google Play upload: not requested by this helper"
+            echo "- Production modified: no"
+          } >> "$GITHUB_STEP_SUMMARY"
