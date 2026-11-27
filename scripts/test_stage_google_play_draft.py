@@ -36,12 +36,14 @@ class DraftStagingTests(unittest.TestCase):
             })
 
     def test_draft_payload_is_pinned_to_closed_testing_preview(self):
-        release = stage.build_draft_release(4129001, "3.1.0")
-        self.assertEqual(release["status"], "draft")
+        release = stage.build_draft_release(4129001, "3.1.0", "completed")
+        self.assertEqual(release["status"], "completed")
         self.assertEqual(release["versionCodes"], ["4129001"])
         self.assertNotIn("userFraction", release)
+        draft = stage.build_draft_release(4129001, "3.1.0", "draft")
+        self.assertEqual(draft["status"], "draft")
         with self.assertRaises(ValueError):
-            stage.validate_release_status("completed")
+            stage.validate_release_status("halted")
 
     def test_existing_draft_is_never_overwritten(self):
         with self.assertRaises(RuntimeError):
