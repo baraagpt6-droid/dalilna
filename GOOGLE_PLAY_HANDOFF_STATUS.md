@@ -1,7 +1,7 @@
 # Dalilna Google Play handoff
 
 Application ID: `ye.dalilna.app`  
-Release: `3.1.0` / Google Play internal-track versionCode `4100101` completed; latest signed GitHub AAB versionCode `4128401` (not yet uploaded to Play)  
+Release: `3.1.0` / Google Play internal-track versionCode `4100101` completed; latest signed GitHub AAB versionCode `4128401` uploaded inside an uncommitted Play edit, not committed to a track  
 Developer display name: **Dalilna Team**  
 Support and privacy email: **dalilnasupport@gmail.com**
 
@@ -9,7 +9,7 @@ Support and privacy email: **dalilnasupport@gmail.com**
 
 - Google Play package `ye.dalilna.app`, track `internal`, versionCode `4100101` is `completed`. The state was read back successfully through Android Publisher API after the upload and again during the 27 November recheck.
 - The successful upload emitted the Internal App Sharing direct link: https://play.google.com/apps/test/ye.dalilna.app/4100101. This is not the internal-testing opt-in link. The latest API read reports zero tester Google Groups and zero tester email lists configured on the internal track.
-- The Arabic (`ar`) and English (`en-US`) listing payloads are in `scripts/publish_google_play_internal.py`. The API accepted each listing PUT but rejected edit commit with `HTTP 403 PERMISSION_DENIED`. Required app-scoped permission: `Manage store presence` for service account `dalilna-play-automation@dalilna-play-automation-516000.iam.gserviceaccount.com`.
+- The historical listing edit in run `45927261168` failed commit with `HTTP 403 PERMISSION_DENIED`. A later authenticated run `45945373618` accepted Arabic/English listing updates and image uploads inside an edit, but the commit returned `HTTP 400 INVALID_ARGUMENT`: `changesNotSentForReview` is not accepted for the app's current state. This newer response is not a permissions denial; app-scoped `Manage store presence` is not proven to be the current blocker.
 - Bilingual privacy policy: https://baraagpt6-droid.github.io/dalilna/privacy.html
 - Data deletion request page: https://baraagpt6-droid.github.io/dalilna/data-deletion.html
 - Data Safety import file: `data-safety.csv`; source mapping: `GOOGLE_PLAY_DATA_SAFETY.md`. The CSV has not been imported into Play Console. Internal-only testing does not require the Data safety form; re-evaluate before closed/open/production distribution.
@@ -118,12 +118,25 @@ The technical release artifacts are built and signed. Store listing assets and P
 - AAB: 8,838,161 bytes, SHA-256 `3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026`.
 - APK: 6,715,031 bytes, SHA-256 `2664437d32bea2a0c9c09eef60700aa71a65cd3c995a19a8d855dcf79851e1e7`.
 - Public directory / marketplace verification run [45939045681](https://github.com/baraagpt6-droid/dalilna/actions/runs/45939045681) succeeded, including live Render and DB probes.
-- Play still shows the previously completed internal release `4100101`; the new `4128401` AAB has not been uploaded to Google Play.
+- Play still shows the completed internal release `4100101` and the pre-existing Closed Testing draft `3127701`. AAB `4128401`, listing updates and images were uploaded/staged within edit `13370413812168476918`; the edit was not committed, so no new track release or live store listing change is confirmed.
 - The service-account workflow authenticated via WIF, but store-listing commit returned HTTP 403. No closed-test opt-in link or new tester list has been confirmed.
 
 
 ## Closed testing preflight — 27 November 2026
 
-The current `Dalilna Closed Testing` track already contains one unsubmitted `draft` release named `3127701 (3.1.0)`, versionCode `3127701`. Android Publisher read-back confirms the highest code across all app tracks is `4100101` (completed on internal). The current signed GitHub AAB is `4128401`, higher than both. The diagnostic run did not change the draft, release tracks, tester configuration, images or bundle. The updated automation refreshes this single older draft in place while preserving its other fields and non-draft releases.
+The current `Dalilna Closed Testing` track already contains one unsubmitted `draft` release named `3127701 (3.1.0)`, versionCode `3127701`. Android Publisher read-back confirms the highest code across all app tracks is `4100101` (completed on internal). The current signed GitHub AAB is `4128401`, higher than both. Run `45945373618` attempted to replace the older draft and stage its assets, but Google rejected the edit commit. No new closed-testing release was committed. The track's currently committed draft remains `3127701`.
 
-The Android Publisher Testers API exposes Google Groups but not saved individual email lists. The existing account-wide `Hubaish Testers` email list is not copied, renamed, deleted or altered. The Dalilna track's Google Group configuration is read and preserved. No opt-in link is available while the app remains Draft/Pending publication.
+The Android Publisher Testers API exposes Google Groups but not saved individual email lists. The current edit read returned zero Google Groups and `allUsers=false`. The existing account-wide `Hubaish Testers` email list was not copied, renamed, deleted or altered. No opt-in link is confirmed.
+
+## Latest Play API result and safe review gate — 27 November 2026
+
+- Workflow: [run 45945373618](https://github.com/baraagpt6-droid/dalilna/actions/runs/45945373618).
+- WIF/OIDC authentication, AAB SHA-256 validation, screenshot capture and asset preparation succeeded.
+- The edit read-back found `Dalilna Closed Testing` Draft `3127701` and highest versionCode `4100101` across tracks.
+- Within the uncommitted edit `13370413812168476918`, API calls accepted the Arabic and English listing payloads, icon, feature graphic, four phone screenshots and four tablet screenshots for each locale. The signed AAB `4128401` was also uploaded into that edit.
+- Tester precheck: `googleGroupCount=0`, `allUsers=false`. No email list was changed.
+- `edits.commit` failed with HTTP 400 `INVALID_ARGUMENT`: `changesNotSentForReview` is not accepted for the app's current state. The edit was not committed. No new track version, saved listing, live artwork or review submission is confirmed.
+- Google documents `changesNotSentForReview` for rejection scenarios; it is not a general-purpose save-as-draft option. Without that parameter, an API commit sends the app's pending changes for review when no existing review blocks it. `changesInReviewBehavior=ERROR_IF_IN_REVIEW` only prevents cancelling an existing review; it does not prevent submitting a new one.
+- The UI alternative is Play Console → Publishing overview → Changes not yet sent for review → Save for later. This requires the signed-in Console UI; no app connector currently exposes this action. The available browser runner has a negative wallet balance, and no paid top-up was made.
+- The Play workflow now separates read-only inspection from explicit review submission. Routine pushes can run only the read-only inspection marker. A review submission requires a manual `SUBMIT_FOR_REVIEW` mode and affirmative Dalilna-only scope.
+- Account-level `Account admin`, billing, financial details, and the separate `com.hubaish.guide` app were not changed.
