@@ -15,6 +15,8 @@ on:
       - "scripts/test_stage_google_play_draft.py"
       - "scripts/publish_approved_release.py"
       - "scripts/test_publish_approved_release.py"
+      - "marketplace-client.js"
+      - "tests/marketplace-api-resilience.test.cjs"
       - "scripts/smart_publish_closed_testing.py"
       - "scripts/test_smart_publish_closed_testing.py"
       - ".github/workflows/stage-current-play-draft.yml"
@@ -48,6 +50,13 @@ jobs:
 
       - name: Test monitor logic without network access
         run: python -m unittest scripts.test_play_status_monitor scripts.test_stage_google_play_draft scripts.test_publish_approved_release scripts.test_smart_publish_closed_testing -v
+
+      - name: Test marketplace API timeout and retry behavior
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run marketplace API resilience tests
+        run: node --test tests/marketplace-api-resilience.test.cjs
 
       - name: Authenticate with Google Cloud using Workload Identity Federation
         id: auth
