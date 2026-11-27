@@ -30,7 +30,7 @@ The current listing content has been written into a Play edit for both languages
 - Prepared Google Play import file: [data-safety.csv](./data-safety.csv)
 - Data deletion request instructions: [data-deletion.html](./data-deletion.html)
 
-The CSV has 782 answer rows and uses the published Google Play Data safety import schema. It is prepared from the inspected Android manifest, WebView flows, listing/job-seeker forms, marketplace API and Google Mobile Ads SDK 25.5.0 disclosure. It has **not** been imported into Play Console. Review the classifications against the real service-provider contracts before importing; Google Play warns that CSV import replaces existing form answers. The Data safety form is exempt while the app is distributed only on the internal testing track.
+The CSV has 782 answer rows and uses the published Google Play Data safety import schema. It does not select home or mailing address. Its sharing flags are limited to the automatically shared Google Mobile Ads SDK disclosures; review the user-initiated transfer exception and provider contracts before importing. It is prepared from the inspected Android manifest, WebView flows, listing/job-seeker forms, marketplace API and Google Mobile Ads SDK 25.5.0 disclosure. It has **not** been imported into Play Console. Review the classifications against the real service-provider contracts before importing; Google Play warns that CSV import replaces existing form answers. The Data safety form is exempt while the app is distributed only on the internal testing track.
 
 ## Internal testing
 
