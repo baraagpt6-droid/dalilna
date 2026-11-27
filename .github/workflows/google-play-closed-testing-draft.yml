@@ -21,7 +21,7 @@ on:
           - SUBMIT_FOR_REVIEW
         default: INSPECT_ONLY
       existing_edit_id:
-        description: "Optional active edit ID for read-only inspection"
+        description: "Active Play edit ID for read-only inspection or stage-only mode; required for STAGE_ONLY"
         required: false
         type: string
         default: "13370413812168476918"
