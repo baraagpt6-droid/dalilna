@@ -20,7 +20,7 @@
 .v3-toast{position:fixed;z-index:100001;inset:auto 50% calc(90px + env(safe-area-inset-bottom,0px)) auto;transform:translateX(50%);padding:10px 15px;background:var(--card);border:1px solid var(--acc);border-radius:999px;color:var(--ink);box-shadow:0 8px 28px #0006;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s}
 .v3-toast.show{opacity:1;transform:translateX(50%) translateY(-5px)}
 .v3-role-switcher{display:grid;gap:7px;margin:8px 0 12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:12px;color:var(--mute)}
-.v3-role-switcher>div,.v3-role-switcher-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.v3-role-switcher>div,.v3-role-switcher-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 .v3-role-switcher button{min-height:34px;padding:0 6px;background:var(--chip);border:1px solid var(--line);font-size:12px}
 .v3-profile-saved{width:100%;margin:0 0 10px;background:var(--chip);border:1px solid var(--line);font-weight:700}
 .jobs-feed-controls{display:grid;grid-template-columns:1fr auto;gap:8px;margin:9px 0}.jobs-feed-controls input{min-height:38px;padding:7px 10px;font-size:13px}
@@ -31,15 +31,41 @@
 .job-feed-actions .job-source-link{background:var(--green);color:#fff;font-weight:800}
 .assistant-origin-badge{display:inline-flex;align-items:center;width:max-content;max-width:100%;margin:0 0 8px;padding:4px 10px;border-radius:999px;background:rgba(56,182,166,.13);border:1px solid rgba(56,182,166,.45);color:var(--acc);font-size:10.5px;font-weight:700}
 .v3-gate .dlg-body{width:min(100%,560px);max-height:90vh;padding:clamp(18px,4vw,28px);margin:0 auto;align-content:start}
-.v3-gate #profilePanel,.v3-gate #profilePanel+.panel{display:none!important}
 .v3-gate .role-opt{border:1px solid var(--line);border-radius:15px;padding:13px;background:var(--bg);animation:v3GateEnter .42s both}
 .v3-gate #roleClientBtn{animation-delay:.04s}.v3-gate #roleMerchantBtn{animation-delay:.12s}.v3-gate #roleAdminBtn{animation-delay:.2s}
 @keyframes v3GateEnter{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(max-width:480px){.v3-favorite-trigger .lbl{display:none}.jobs-feed-controls{grid-template-columns:1fr}.v3-saved-dialog{width:96vw}}
 @media(prefers-reduced-motion:reduce){.v3-fly-item,.v3-gate .role-opt,.v3-favorite-trigger.v3-pulse{animation:none!important;transition:none!important}}
- .v3-customer-register{display:block;width:100%;margin:6px 0 12px;min-height:38px;background:var(--chip);border:1px solid var(--acc);color:var(--acc);font-size:12px;font-weight:700}
-.v3-customer-form{display:grid;gap:10px;padding:16px;color:var(--ink)}
-.v3-customer-form label{display:grid;gap:5px;font-size:12px;color:var(--mute)}
-.v3-customer-form input{min-height:42px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
-.v3-customer-form .v3-close{justify-self:end}
-.v3-customer-error{margin:0;color:var(--danger);font-size:12px}
+
+/* Unified customer/store identity editor */
+.profile-edit-toggle{width:100%;min-height:34px;margin:0 0 9px;border:1px solid var(--line);background:var(--chip);font-size:12px;color:var(--acc)}
+.profile-edit-form{display:grid;gap:10px;padding:12px;margin:0 0 12px;border:1px solid var(--acc);border-radius:13px;background:var(--bg)}
+.profile-edit-form[hidden]{display:none!important}
+.profile-edit-form label{display:grid;gap:5px;font-size:12px;color:var(--mute)}
+.profile-edit-form input{min-height:42px;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);padding:8px 10px}
+.profile-edit-form .fbtn{display:flex;gap:8px;flex-wrap:wrap}
+.v3-role-switcher>div{grid-template-columns:repeat(2,minmax(0,1fr))}
+.v3-role-switcher button[aria-pressed=true]{background:var(--acc);color:#10201e;border-color:var(--acc);font-weight:800}
+.v3-role-switcher button{min-height:38px;font-size:13px}
+.v3-role-switcher[hidden]{display:none!important}
+
+/* Dedicated Add tab */
+.add-hub-heading{display:flex;align-items:center;gap:12px;margin:14px 0 12px}
+.add-hub-heading>div{min-width:0}.add-hub-heading h2{font-size:20px}
+.add-hub-heading .where{margin:2px 0 0;font-size:12px}
+.add-hub-grid{display:grid;gap:10px;margin:10px 0 14px}
+.add-hub-card{display:grid;grid-template-columns:46px minmax(0,1fr) auto;align-items:center;gap:11px;min-height:82px;width:100%;padding:12px;text-align:start;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px}
+.add-hub-card:focus-visible,.add-hub-card:hover{border-color:var(--acc);outline:none}
+.add-hub-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:13px;font-size:25px;font-weight:700}
+.add-hub-icon-gold{background:rgba(232,160,37,.16);color:var(--gold)}
+.add-hub-icon-teal{background:rgba(56,182,166,.15);color:var(--acc)}
+.add-hub-icon-blue{background:rgba(58,126,194,.17);color:#6ca8e4}
+.add-hub-card-copy{display:grid;gap:3px;min-width:0}
+.add-hub-card-copy b{font-size:14px}
+.add-hub-card-copy small{font-size:11.5px;line-height:1.55;color:var(--mute);font-weight:400}
+.add-hub-arrow{font-size:20px;color:var(--mute)}
+.add-merchant-setup{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:8px 0 14px;padding:12px;border:1px dashed var(--acc);border-radius:13px;background:rgba(56,182,166,.07)}
+.add-merchant-setup p{margin:4px 0 0;font-size:11.5px}
+.add-merchant-setup button{min-height:34px;font-size:12px}
+#merchantToolsPanel[hidden]{display:none!important}
+@media(min-width:620px){.add-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.add-hub-card{min-height:94px}}
