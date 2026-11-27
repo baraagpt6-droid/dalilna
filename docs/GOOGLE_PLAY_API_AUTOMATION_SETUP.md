@@ -160,3 +160,20 @@ The workflow only prepares an unsubmitted Closed Testing draft. It never changes
 ## Explicit execution trigger
 
 The workflow can also start from a merge to `main` only when the merge commit message contains `[run-dalilna-closed-draft]`. An ordinary merge or push does not start the Play edit. This marker is used only after the pull-request quality checks pass. A `workflow_dispatch` run still requires selecting the affirmative Dalilna-only confirmation option.
+
+
+## Google Play commit limitation — 27 November 2026
+
+The automation successfully authenticated with WIF, read the existing Dalilna closed-testing draft (`3127701`), staged the Arabic/English listing updates, uploaded the new `4128401` bundle and listing assets inside a temporary edit, and read the tester configuration (`googleGroupCount=0`, `allUsers=false`). The final `edits.commit` was rejected with HTTP 400:
+
+`Changes are sent for review automatically. The query parameter changesNotSentForReview must not be set.`
+
+The edit was not committed. The staged bundle, text and images therefore must not be treated as live in Play Console. The old track draft remains the last confirmed committed state. The script now explicitly refuses to retry without `changesNotSentForReview`, because Google says the ordinary commit would automatically send these changes for review. It will not bypass this guard.
+
+The Android Publisher documentation states the `changesNotSentForReview` parameter applies when a rejection happens; the console Publishing overview is the mechanism for saving reviewable changes for later. The remaining safe step needs Play Console UI access to save the staged changes without sending them for review. The connected browser automation was unavailable because its wallet could not fund the run. No review, rollout or Production action was taken.
+
+Tester API read-back:
+- Google Groups: `0`
+- `allUsers`: `false`
+- Saved individual email lists are not exposed by Android Publisher API and were not modified.
+- No opt-in link is available while the app remains in Draft/Pending publication.
