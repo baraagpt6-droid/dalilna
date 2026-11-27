@@ -59,6 +59,9 @@ jobs:
       EXISTING_EDIT_ID: ${{ inputs.existing_edit_id }}
       TESTERS_GOOGLE_GROUP: ${{ inputs.testers_google_group }}
       PLAY_MODE: ${{ inputs.mode }}
+      GITHUB_EVENT_NAME: ${{ github.event_name }}
+      GITHUB_EVENT_HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+      EXISTING_EDIT_ID: ${{ inputs.existing_edit_id || '13370413812168476918' }}
     steps:
       - name: Checkout Dalilna main
         uses: actions/checkout@v4
