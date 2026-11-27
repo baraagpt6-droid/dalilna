@@ -19,7 +19,14 @@ function makeElements() {
   const elements = new Map();
   const $ = selector => {
     if (!elements.has(selector)) {
-      elements.set(selector, { value: '', textContent: '', hidden: false, type: 'password' });
+      elements.set(selector, {
+        value: '',
+        textContent: '',
+        hidden: false,
+        type: 'password',
+        attributes: {},
+        setAttribute(name, value) { this.attributes[name] = value; },
+      });
     }
     return elements.get(selector);
   };
@@ -45,7 +52,7 @@ test('logo long-press login mechanism and stale click state are removed', () => 
   assert.doesNotMatch(logoClick, /adminLongPress/);
 });
 
-test('account icon opens the dialog and admin option reveals the login form', () => {
+test('account icon opens the dialog and discreet admin footer reveals the login form', () => {
   const { $, elements } = makeElements();
   const shown = [];
   const accountBody = captureHandler('#accountBtn', 'click');
@@ -64,6 +71,7 @@ test('account icon opens the dialog and admin option reveals the login form', ()
   assert.equal($('#adminLoginForm').hidden, false);
   assert.equal($('#adminAccessHint').hidden, false);
   assert.equal($('#merchantBox').hidden, true);
+  assert.equal($('#roleAdminBtn').attributes['aria-expanded'], 'true');
 });
 
 test('actual admin login handler accepts valid test credentials and rejects an invalid password', async () => {
