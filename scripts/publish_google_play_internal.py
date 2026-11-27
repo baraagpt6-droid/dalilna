@@ -169,10 +169,7 @@ def save_store_listings(session: AuthorizedSession) -> None:
             print(f"STORE_LISTING_UPDATED={language}")
         call(session, "POST",
              f"/applications/{PACKAGE_NAME}/edits/{edit_id}:commit",
-             params={
-                 "changesNotSentForReview": "true",
-                 "changesInReviewBehavior": "ERROR_IF_IN_REVIEW"
-             })
+             params={"changesInReviewBehavior": "ERROR_IF_IN_REVIEW"})
         committed = True
         print("STORE_LISTINGS_COMMIT=saved_not_sent_for_review")
     except Exception as error:
