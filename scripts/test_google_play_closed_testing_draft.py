@@ -347,15 +347,16 @@ class DraftSafetyTests(unittest.TestCase):
                 "--github-output", str(output_path),
             ]
             fake_hash = hashlib.sha256(aab.read_bytes()).hexdigest()
-            with mock.patch.object(play_module, "PlayApi", return_value=fake), \\
-                 mock.patch.object(play_module, "AAB_SHA256", fake_hash), \\
-                 mock.patch.dict(os.environ, env, clear=False), \\
-                 mock.patch.object(sys, "argv", argv), \\
-                 contextlib.redirect_stdout(io.StringIO()), \\
-                 contextlib.redirect_stderr(io.StringIO()):
+            with contextlib.ExitStack() as stack:
+                stack.enter_context(mock.patch.object(play_module, "PlayApi", return_value=fake))
+                stack.enter_context(mock.patch.object(play_module, "AAB_SHA256", fake_hash))
+                stack.enter_context(mock.patch.dict(os.environ, env, clear=False))
+                stack.enter_context(mock.patch.object(sys, "argv", argv))
+                stack.enter_context(contextlib.redirect_stdout(io.StringIO()))
+                stack.enter_context(contextlib.redirect_stderr(io.StringIO()))
                 play_module.main()
 
-            self.assertEqual(output_path.read_text(encoding="utf-8"), "edit_id=new-stage-edit\\n")
+            self.assertEqual(output_path.read_text(encoding="utf-8"), "edit_id=new-stage-edit\n")
 
         self.assertEqual(
             sum(1 for method, path, _ in fake.calls if method == "POST" and path.endswith("/edits")),
