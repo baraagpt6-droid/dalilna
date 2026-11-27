@@ -1,7 +1,7 @@
 # Dalilna Google Play handoff
 
 Application ID: `ye.dalilna.app`  
-Release: `3.1.0` / Google Play internal-track versionCode `4100101` completed; latest signed GitHub AAB versionCode `4128301` (not yet uploaded to Play)  
+Release: `3.1.0` / Google Play internal-track versionCode `4100101` completed; latest signed GitHub AAB versionCode `4128401` (not yet uploaded to Play)  
 Developer display name: **Dalilna Team**  
 Support and privacy email: **dalilnasupport@gmail.com**
 
@@ -113,10 +113,10 @@ The technical release artifacts are built and signed. Store listing assets and P
 ## Latest signed GitHub artifact — 27 November 2026
 
 - Main commit: `84ca8b10b7ae81794285fb8e2fb321d5b5317d6f` before this Closed Testing automation PR.
-- Current Android package: `ye.dalilna.app`, versionName `3.1.0`, versionCode `4128301`.
-- Android build run [45939045693](https://github.com/baraagpt6-droid/dalilna/actions/runs/45939045693) completed successfully. Release AAB and APK signatures and version metadata passed verification; the GitHub Release was updated.
-- AAB: 8,838,161 bytes, SHA-256 `000bad420c5b6844c3ee6552dc2eb8364a51ddcef263bfc756b36e82d88ff86e`.
-- APK: 6,715,031 bytes, SHA-256 `dae102c1370a8e69f58ce0b31321c81e01c1a64044a1705999495bc46bef7813`.
+- Current Android package: `ye.dalilna.app`, versionName `3.1.0`, versionCode `4128401`.
+- Android build run [45943431867](https://github.com/baraagpt6-droid/dalilna/actions/runs/45943431867) completed successfully. Release AAB and APK signatures and version metadata passed verification; the GitHub Release was updated.
+- AAB: 8,838,161 bytes, SHA-256 `3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026`.
+- APK: 6,715,031 bytes, SHA-256 `2664437d32bea2a0c9c09eef60700aa71a65cd3c995a19a8d855dcf79851e1e7`.
 - Public directory / marketplace verification run [45939045681](https://github.com/baraagpt6-droid/dalilna/actions/runs/45939045681) succeeded, including live Render and DB probes.
-- Play still shows the previously completed internal release `4100101`; the new `4128301` AAB has not been uploaded to Google Play.
+- Play still shows the previously completed internal release `4100101`; the new `4128401` AAB has not been uploaded to Google Play.
 - The service-account workflow authenticated via WIF, but store-listing commit returned HTTP 403. No closed-test opt-in link or new tester list has been confirmed.

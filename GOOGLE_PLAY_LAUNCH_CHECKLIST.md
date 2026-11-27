@@ -3,7 +3,7 @@
 آخر مراجعة تقنية: 27 نوفمبر 2026  
 إصدار التطبيق الموجود في المشروع: 3.1.0  
 معرّف حزمة Android: `ye.dalilna.app`  
-أحدث AAB موقّع في GitHub: `3.1.0` / versionCode `4128301`، بينما إصدار Play الداخلي المكتمل ما زال `4100101`.
+أحدث AAB موقّع في GitHub: `3.1.0` / versionCode `4128401`، بينما إصدار Play الداخلي المكتمل ما زال `4100101`.
 
 > هذه الوثيقة تجهيز للنشر. اسم العرض وبريد الدعم والخصوصية حُدّثا في صفحات المشروع. لم يتم الدخول إلى Play Console للتحقق من تطابق اسم الناشر أو إدخال البيانات هناك.
 
@@ -337,8 +337,8 @@ All public app features are available without signing in. Open Dalilna and brows
 
 ## الحالة الفعلية للإصدار — 27 نوفمبر 2026
 
-- بناء الإصدار الموقّع واختباره: [run 45939045693](https://github.com/baraagpt6-droid/dalilna/actions/runs/45939045693) — نجاح.
+- بناء الإصدار الموقّع واختباره: [run 45943431867](https://github.com/baraagpt6-droid/dalilna/actions/runs/45943431867) — نجاح.
 - التحقق من خدمات الدليل والسوق وRender وNeon: [run 45939045681](https://github.com/baraagpt6-droid/dalilna/actions/runs/45939045681) — نجاح.
-- الإصدار الحالي في GitHub Release: `4128301`. لا تخلطه مع إصدار Play الداخلي المكتمل `4100101`.
-- رفع `4128301` إلى Closed Testing، وإعداد قائمة المختبرين، ونشر رابط Opt-in لم تكتمل بعد.
+- الإصدار الحالي في GitHub Release: `4128401`. لا تخلطه مع إصدار Play الداخلي المكتمل `4100101`.
+- رفع `4128401` إلى Closed Testing، وإعداد قائمة المختبرين، ونشر رابط Opt-in لم تكتمل بعد.
 - لا يظهر رابط Opt-in لمسار مغلق عندما تكون حالة التطبيق Draft أو Pending publication؛ يلزم ظهور حالة Published أولاً.

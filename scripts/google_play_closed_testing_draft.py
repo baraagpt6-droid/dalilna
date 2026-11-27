@@ -3,7 +3,7 @@
 
 Hard safety scope:
 - package: ye.dalilna.app
-- version: 3.1.0 / versionCode 4128301
+- version: 3.1.0 / versionCode 4128401
 - custom Closed Testing track: Dalilna Closed Testing
 - release status: draft
 - commit with changesNotSentForReview=true
@@ -25,14 +25,14 @@ from urllib.parse import quote
 
 PACKAGE_NAME = "ye.dalilna.app"
 VERSION_NAME = "3.1.0"
-VERSION_CODE = 4128301
+VERSION_CODE = 4128401
 TRACK_NAME = "Dalilna Closed Testing"
 SUPPORT_EMAIL = "dalilnasupport@gmail.com"
 WEBSITE = "https://baraagpt6-droid.github.io/dalilna/store/"
 OAUTH_SCOPE = "https://www.googleapis.com/auth/androidpublisher"
 API_ROOT = "https://androidpublisher.googleapis.com/androidpublisher/v3"
 UPLOAD_ROOT = "https://androidpublisher.googleapis.com/upload/androidpublisher/v3"
-AAB_SHA256 = "000bad420c5b6844c3ee6552dc2eb8364a51ddcef263bfc756b36e82d88ff86e"
+AAB_SHA256 = "3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026"
 
 RELEASE_NOTES = {
     "ar": "• تحديث دليل الأماكن والبحث في المحافظات والمديريات.\n"

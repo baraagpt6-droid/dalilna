@@ -39,7 +39,7 @@ jobs:
     timeout-minutes: 30
     env:
       PACKAGE_NAME: ye.dalilna.app
-      EXPECTED_VERSION_CODE: "4128301"
+      EXPECTED_VERSION_CODE: "4128401"
       PLAY_TRACK_NAME: Dalilna Closed Testing
       TESTERS_GOOGLE_GROUP: ${{ inputs.testers_google_group }}
     steps:
@@ -51,14 +51,14 @@ jobs:
       - name: Validate the fixed repository and target
         shell: bash
         env:
-          WIF_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          WIF_SERVICE_ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          WIF_PROVIDER: projects/28058491662/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+          WIF_SERVICE_ACCOUNT: dalilna-play-automation@dalilna-play-automation-516000.iam.gserviceaccount.com
         run: |
           set -euo pipefail
           [[ "$GITHUB_REPOSITORY" == "baraagpt6-droid/dalilna" ]]
           [[ "$GITHUB_REF" == "refs/heads/main" ]]
           [[ "$PACKAGE_NAME" == "ye.dalilna.app" ]]
-          [[ "$EXPECTED_VERSION_CODE" == "4128301" ]]
+          [[ "$EXPECTED_VERSION_CODE" == "4128401" ]]
           [[ "$PLAY_TRACK_NAME" == "Dalilna Closed Testing" ]]
           [[ -n "$WIF_PROVIDER" ]] || { echo "::error::Missing repository variable GCP_WORKLOAD_IDENTITY_PROVIDER"; exit 1; }
           [[ -n "$WIF_SERVICE_ACCOUNT" ]] || { echo "::error::Missing repository variable GCP_SERVICE_ACCOUNT"; exit 1; }
@@ -77,8 +77,8 @@ jobs:
       - name: Authenticate to Google Cloud using GitHub OIDC
         uses: google-github-actions/auth@v3
         with:
-          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          workload_identity_provider: "projects/28058491662/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "dalilna-play-automation@dalilna-play-automation-516000.iam.gserviceaccount.com"
           create_credentials_file: true
           export_environment_variables: true
 
@@ -90,7 +90,7 @@ jobs:
           curl --fail --location --retry 3 --retry-delay 2 \
             "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.1.0/app-release.aab" \
             --output dist/aab/app-release.aab
-          echo "000bad420c5b6844c3ee6552dc2eb8364a51ddcef263bfc756b36e82d88ff86e  dist/aab/app-release.aab" | sha256sum --check
+          echo "3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026  dist/aab/app-release.aab" | sha256sum --check
 
       - name: Set up Node.js for fresh Play screenshots
         uses: actions/setup-node@v4
@@ -142,7 +142,7 @@ jobs:
             echo
             echo "- Package: `ye.dalilna.app`"
             echo "- Version: `3.1.0`"
-            echo "- versionCode: `4128301`"
+            echo "- versionCode: `4128401`"
             echo "- Track: `Dalilna Closed Testing`"
             echo "- Release status: `draft`"
             echo "- Production track touched: **No**"

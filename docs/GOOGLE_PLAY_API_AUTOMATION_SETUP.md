@@ -4,7 +4,7 @@ Scope is fixed to:
 
 - Application ID: `ye.dalilna.app`
 - Version: `3.1.0`
-- versionCode: `4128301` (Build #283)
+- versionCode: `4128401` (Build #284)
 - Closed testing track: `Dalilna Closed Testing`
 
 The manual-dispatch workflow is:
@@ -30,7 +30,7 @@ Do not create or select `dalilna.com` or `com.hubaish.guide`.
 
 ## 1.1 Existing Play artifact and API bootstrap
 
-The app already has a completed internal-test release at versionCode `4100101`, so its first Play artifact bootstrap is complete. The current GitHub Release AAB is versionCode `4128301` and SHA-256 `000bad420c5b6844c3ee6552dc2eb8364a51ddcef263bfc756b36e82d88ff86e`.
+The app already has a completed internal-test release at versionCode `4100101`, so its first Play artifact bootstrap is complete. The current GitHub Release AAB is versionCode `4128401` and SHA-256 `3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026`.
 
 The workflow verifies this exact file before it opens a Play edit. It refuses any versionCode below the highest value on any app track. It checks existing bundles and reuses a matching bundle only when the hash agrees. If the new bundle is absent, it uploads the signed AAB to `ye.dalilna.app` only. It creates only an unsubmitted Closed Testing draft. It does not send changes for review or roll out the release.
 
@@ -115,16 +115,15 @@ Grant **Admin (all permissions)** at the app scope for `ye.dalilna.app` only, ma
 
 If the owner later chooses a least-privilege alternative, the API roles required for this workflow are app-level `CAN_VIEW_NON_FINANCIAL_DATA`, `CAN_MANAGE_TRACK_APKS`, `CAN_MANAGE_TRACK_USERS`, and `CAN_MANAGE_PUBLIC_LISTING`. The explicit target for the current setup remains app-level Admin only on Dalilna, without any account-level permissions. Do not alter the separate `com.hubaish.guide` app or its tester lists.
 
-## 4. Add GitHub repository variables
+## 4. WIF values used by the workflow
 
-Open repository Settings → Secrets and variables → Actions → Variables. Add:
+The workflow uses the already-tested GitHub OIDC / Workload Identity Federation provider and dedicated service account directly. These identifiers are not private keys or access tokens:
 
-| Variable | Value |
-|---|---|
-| `GCP_WORKLOAD_IDENTITY_PROVIDER` | `projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github-dalilna/providers/github` |
-| `GCP_SERVICE_ACCOUNT` | `dalilna-play-automation@PROJECT_ID.iam.gserviceaccount.com` |
+- Provider: `projects/28058491662/locations/global/workloadIdentityPools/github-pool/providers/github-provider`
+- Service account: `dalilna-play-automation@dalilna-play-automation-516000.iam.gserviceaccount.com`
 
-No credential or private key is stored in GitHub.
+No service-account JSON key and no additional GitHub repository variables are required. The workflow uses GitHub OIDC with `id-token: write`, short-lived credentials and the existing provider binding scoped to `baraagpt6-droid/dalilna` on `main`.
+
 
 ## 5. Optional tester Google Group
 

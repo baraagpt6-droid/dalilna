@@ -2,7 +2,7 @@
 
 Application ID: `ye.dalilna.app`  
 App version: `3.1.0`  
-Google Play internal-track AAB: versionCode `4100101` — status `completed`. Latest GitHub signed AAB: versionCode `4128301`, not yet uploaded to Play.  
+Google Play internal-track AAB: versionCode `4100101` — status `completed`. Latest GitHub signed AAB: versionCode `4128401`, not yet uploaded to Play.  
 Target SDK: 36  
 Developer display name proposed in the listing: `Dalilna Team` — confirm it matches the Play Console publisher profile.  
 Support/privacy contact: `dalilnasupport@gmail.com`
@@ -70,9 +70,9 @@ The GitHub Release is separate from the Play internal-track artifact. The curren
 
 - Current app package: `ye.dalilna.app`
 - Version name: `3.1.0`
-- Signed AAB versionCode: `4128301`
-- AAB SHA-256: `000bad420c5b6844c3ee6552dc2eb8364a51ddcef263bfc756b36e82d88ff86e`
+- Signed AAB versionCode: `4128401`
+- AAB SHA-256: `3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026`
 - AAB size: 8,838,161 bytes
-- APK SHA-256: `dae102c1370a8e69f58ce0b31321c81e01c1a64044a1705999495bc46bef7813`
-- Build: [GitHub Actions 45939045693](https://github.com/baraagpt6-droid/dalilna/actions/runs/45939045693)
+- APK SHA-256: `2664437d32bea2a0c9c09eef60700aa71a65cd3c995a19a8d855dcf79851e1e7`
+- Build: [GitHub Actions 45943431867](https://github.com/baraagpt6-droid/dalilna/actions/runs/45943431867)
 - The completed Play internal track is still versionCode `4100101`. The newer AAB is only published as a GitHub Release asset at this checkpoint.
