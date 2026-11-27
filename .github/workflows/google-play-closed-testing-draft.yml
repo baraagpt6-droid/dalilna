@@ -167,11 +167,12 @@ jobs:
             --output-dir dist/play-assets
 
       - name: Stage only the Dalilna bundle and Closed Testing track
+        id: stage_play
         if: env.PLAY_MODE == 'STAGE_ONLY'
         shell: bash
         run: |
           set -euo pipefail
-          ARGS=(--stage-only --aab dist/aab/app-release.aab)
+          ARGS=(--stage-only --aab dist/aab/app-release.aab --github-output "$GITHUB_OUTPUT")
           if [[ -n "$EXISTING_EDIT_ID" ]]; then
             ARGS+=(--existing-edit-id "$EXISTING_EDIT_ID")
           fi
@@ -182,9 +183,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          [[ -n "${{ steps.stage_play.outputs.edit_id }}" ]]
           python scripts/google_play_closed_testing_draft.py \
             --inspect-only \
-            --existing-edit-id "$EXISTING_EDIT_ID"
+            --existing-edit-id "${{ steps.stage_play.outputs.edit_id }}"
 
       - name: Submit Dalilna changes for Google Play review
         if: env.PLAY_MODE == 'SUBMIT_FOR_REVIEW'
@@ -209,11 +211,14 @@ jobs:
               echo "- App changes committed: **No**"
               echo "- Changes submitted for review: **No**"
             elif [[ "$PLAY_MODE" == "STAGE_ONLY" ]]; then
-              echo "- Mode: stage inside existing uncommitted edit"
+              echo "- Mode: stage the bundle and Closed Testing release in an isolated uncommitted edit"
               echo "- Package: `ye.dalilna.app`"
               echo "- Closed Testing versionCode: `4128701`"
               echo "- App changes committed: **No**"
               echo "- Changes submitted for review: **No**"
+              echo "- Store listing metadata changed: **No**"
+              echo "- Store artwork changed: **No**"
+              echo "- Tester configuration changed: **No**"
               echo "- Production track touched: **No**"
             else
               echo "- Mode: submit for Google Play review"
