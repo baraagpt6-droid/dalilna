@@ -11,9 +11,9 @@ The manual-dispatch workflow is:
 
 `.github/workflows/google-play-closed-testing-draft.yml`
 
-It downloads and verifies the signed AAB, prepares the app icon and feature graphic from source SVGs, captures fresh phone/tablet screenshots from the live Dalilna app with Playwright, updates Arabic and English listings, uploads images, creates the custom closed-testing track if necessary, and assigns an optional Google Group.
+The workflow has two modes. `INSPECT_ONLY` reads the existing edit, bundles, tracks, localized listings, images and tester settings without writing app data. `SUBMIT_FOR_REVIEW` downloads and verifies the AAB, captures fresh screenshots, updates Arabic/English listings and artwork, refreshes the closed-testing draft and commits the edit for Google review.
 
-The release is always written with `status: draft`. The edit is committed using `changesNotSentForReview=true` and `changesInReviewBehavior=ERROR_IF_IN_REVIEW`. Google documents that a draft release is not served to users and that the changes are not sent for review until explicitly submitted in Play Console. The workflow contains no Production-track operation, no rollout operation, and no review-submission operation.
+The track release payload is written with `status: draft`, but this does not mean the surrounding Play edit can be committed without review. Google documents `changesNotSentForReview` for cases where changes were rejected; in run `45945373618` the parameter was rejected with HTTP 400 `INVALID_ARGUMENT`. Removing it would send all changes for review when no review is already in progress. Therefore the workflow defaults to `INSPECT_ONLY`; `SUBMIT_FOR_REVIEW` is a separate manual mode and knowingly submits the entire edit to Google review. Neither mode changes Production or performs a rollout.
 
 ## 1. Create the app card once in Play Console
 
@@ -32,7 +32,7 @@ Do not create or select `dalilna.com` or `com.hubaish.guide`.
 
 The app already has a completed internal-test release at versionCode `4100101`, so its first Play artifact bootstrap is complete. The current GitHub Release AAB is versionCode `4128401` and SHA-256 `3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026`.
 
-The workflow verifies this exact file before it opens a Play edit. It refuses any versionCode below the highest value on any app track. It checks existing bundles and reuses a matching bundle only when the hash agrees. If the new bundle is absent, it uploads the signed AAB to `ye.dalilna.app` only. It creates only an unsubmitted Closed Testing draft. It does not send changes for review or roll out the release.
+The submit mode verifies this exact file before opening a Play edit. It refuses any versionCode below the highest value on any app track, checks existing bundles, and uploads only when a matching bundle is absent. Its commit submits changes for review. The inspect-only mode does not upload anything and can reuse the current uncommitted edit ID for read-back.
 
 Do not make other Play Console edits while an API edit is open: Google invalidates an outstanding edit when Console changes are made.
 
@@ -135,15 +135,14 @@ The API does not set the feedback contact email or create the tester opt-in link
 
 ## 6. Run the workflow after the app card and permissions are ready
 
-After merging this PR, creating the app card, configuring WIF, inviting the service account, and adding the two GitHub variables:
+After merging the workflow changes, WIF and app access are configured for Dalilna. The workflow uses the existing provider and service-account identifiers directly; no additional GitHub variables are required.
 
-1. Open Actions → Prepare Dalilna Google Play Closed Testing Draft.
-2. Select branch `main`.
-3. Select `YES — ye.dalilna.app draft only`.
-4. Optionally enter the tester Google Group email.
-5. Run the workflow.
+1. Open Actions → Inspect or submit Dalilna Google Play changes.
+2. Select branch `main` and confirm `YES — ye.dalilna.app only`.
+3. Keep mode as `INSPECT_ONLY` for read-back. `SUBMIT_FOR_REVIEW` sends all staged changes to Google review and must be used only after every policy and testing prerequisite is verified.
+4. The current uncommitted edit ID from run `45945373618` is `13370413812168476918`.
 
-The workflow refuses a versionCode below the highest code across tracks. If the named track already has exactly one older draft (the currently read-back draft is versionCode `3127701`), the workflow refreshes that draft in place with the pinned newer AAB `4128401`, preserving its other release fields and every non-draft release. It refuses multiple drafts or a draft with a higher versionCode. Existing image groups are read and preserved; uploads are added only to empty groups. Existing tester configuration is read and preserved unless an explicit Google Group is supplied. The Android Publisher Testers API exposes Google Groups but not saved individual email lists, so the `Hubaish Testers` list is not read, copied, or modified by this workflow. It does not delete tester lists, images, completed releases or any other app's data.
+The currently committed target-track draft is versionCode `3127701`, and the latest verified AAB is `4128401`. The API attempt staged the replacement inside an edit but could not commit it without submitting changes for review. The API read returned zero Google Groups and `allUsers=false`. The Android Publisher API does not expose saved individual-email lists; the `Hubaish Testers` Console list is not read, copied, renamed or changed.
 
 ## 7. Remaining owner actions in Play Console
 
@@ -154,9 +153,13 @@ The workflow refuses a versionCode below the highest code across tracks. If the 
 - Review any Play Console validation warnings.
 - Keep all review submission and release decisions with the account owner.
 
-The workflow only prepares an unsubmitted Closed Testing draft. It never changes the Production track and never sends changes for review.
+The workflow's default mode is read-only. The manual submission mode sends changes for review; it never changes the Production track or starts a rollout.
 
 
 ## Explicit execution trigger
 
-The workflow can also start from a merge to `main` only when the merge commit message contains `[run-dalilna-closed-draft]`. An ordinary merge or push does not start the Play edit. This marker is used only after the pull-request quality checks pass. A `workflow_dispatch` run still requires selecting the affirmative Dalilna-only confirmation option.
+A push to `main` only starts inspection when the commit message contains `[inspect-dalilna-play-state]`. An ordinary merge or push does not submit or update Play. Review submission is available only through `workflow_dispatch` with affirmative Dalilna-only scope and mode `SUBMIT_FOR_REVIEW`.
+
+## Why API save-as-draft is not available here
+
+The `changesNotSentForReview` parameter is documented for changes after a rejection. The actual commit response for this app was HTTP 400 `INVALID_ARGUMENT`: it said changes are sent for review automatically and the parameter must not be set. Google also documents that, without a rejected state, a successful API commit sends all pending app changes for review. To hold changes without submitting them, use Play Console Publishing overview → Changes not yet sent for review → Save for later. This browser-console action has not been performed from the connected tools.
