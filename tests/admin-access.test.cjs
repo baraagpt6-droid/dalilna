@@ -70,8 +70,8 @@ test('account icon opens the dialog and discreet admin footer reveals the login 
   revealAdmin();
   assert.equal($('#adminLoginForm').hidden, false);
   assert.equal($('#adminAccessHint').hidden, false);
-  assert.equal($('#merchantBox').hidden, true);
   assert.equal($('#roleAdminBtn').attributes['aria-expanded'], 'true');
+  assert.ok(!accountDialog.includes('id="merchantBox"'), 'legacy duplicate merchant registration panel is removed from the account dialog');
 });
 
 test('actual admin login handler accepts valid test credentials and rejects an invalid password', async () => {
