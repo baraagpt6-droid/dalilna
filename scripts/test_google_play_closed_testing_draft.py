@@ -15,6 +15,7 @@ from google_play_closed_testing_draft import (
     prepare_closed_track_releases,
     inspect_play_state,
     validate_play_mode,
+    validate_stage_only_inputs,
     validate_listing,
     validate_target,
 )
@@ -96,6 +97,13 @@ class DraftSafetyTests(unittest.TestCase):
             validate_play_mode(True, False, True)
         with self.assertRaises(ValueError):
             validate_play_mode(False, True, True)
+
+    def test_stage_only_requires_existing_edit_and_preserves_testers(self):
+        validate_stage_only_inputs("13370413812168476918", "")
+        with self.assertRaises(ValueError):
+            validate_stage_only_inputs("", "")
+        with self.assertRaises(ValueError):
+            validate_stage_only_inputs("13370413812168476918", "dalilna-testers@example.com")
 
     def test_read_only_inspection_reuses_existing_edit_without_mutation(self):
         class FakeApi:
