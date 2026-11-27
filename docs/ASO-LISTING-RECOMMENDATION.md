@@ -1,7 +1,7 @@
 # Dalilna — Google Play ASO listing proposal
 
 Prepared: 28 November 2026  
-Package: \`ye.dalilna.app\`  
+Package: `ye.dalilna.app`  
 Status: draft copy for owner approval. This file does not modify or submit Play Console listing metadata.
 
 ## Arabic (default locale)
@@ -90,7 +90,7 @@ Yemen directory, Yemen shops, local services in Yemen, nearby places, Yemen rest
 
 ## ASO implementation notes
 
-- Google Play does not provide a separate keyword field for standard app listings. Use these phrases naturally in the title, short description and full description; do not paste the keyword list as a keyword-stuffed paragraph.
+- The standard main listing has no standalone keyword metadata field. Play Console separately supports custom store listings targeted to selected search keywords. Use the phrases naturally in the main title and descriptions; create keyword-targeted custom listings only when there is a clear audience or country-specific message. Do not paste the keyword list as a keyword-stuffed paragraph.
 - Keep the title and short description within the character counts shown above.
 - Preserve the data-coverage, business-verification and payment disclosures. Do not imply that every business is verified, that every district has complete records, or that the app processes payments.
 - The proposal is not uploaded to Google Play. Approval and submission remain a separate owner decision.
