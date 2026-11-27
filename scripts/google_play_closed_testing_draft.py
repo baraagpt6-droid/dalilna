@@ -74,11 +74,13 @@ def validate_target(package_name: str, version_code: int, track_name: str) -> No
         raise ValueError(f"Refusing track {track_name!r}; expected {TRACK_NAME}")
 
 
-def draft_release() -> dict:
+def draft_release(status: str = "draft") -> dict:
+    if status not in {"draft", "completed"}:
+        raise ValueError("Closed Testing release status must be draft or completed")
     return {
         "name": "Dalilna Closed Testing — 3.1.0",
         "versionCodes": [str(VERSION_CODE)],
-        "status": "draft",
+        "status": status,
         "releaseNotes": [
             {"language": language, "text": notes}
             for language, notes in RELEASE_NOTES.items()
@@ -201,8 +203,12 @@ def upload_image_group(api: PlayApi, package_path: str, edit_id: str,
         print(f"Uploaded {locale}/{image_type}: {image_path.name}")
 
 
-def prepare_closed_track_releases(existing_releases: list[dict]) -> list[dict]:
-    """Update one existing closed-track draft in place; preserve live releases."""
+def prepare_closed_track_releases(
+    existing_releases: list[dict], release_status: str = "draft"
+) -> list[dict]:
+    """Update only the target Closed Testing draft; preserve all other releases."""
+    if release_status not in {"draft", "completed"}:
+        raise ValueError("Closed Testing release status must be draft or completed")
     releases = [dict(item) for item in existing_releases]
     draft_indexes = [
         index for index, release in enumerate(releases)
@@ -213,7 +219,7 @@ def prepare_closed_track_releases(existing_releases: list[dict]) -> list[dict]:
             "The target track contains multiple draft releases. No release was changed."
         )
 
-    replacement = draft_release()
+    replacement = draft_release(release_status)
     if not draft_indexes:
         return releases + [replacement]
 
@@ -231,7 +237,7 @@ def prepare_closed_track_releases(existing_releases: list[dict]) -> list[dict]:
     existing.update({
         "name": replacement["name"],
         "versionCodes": replacement["versionCodes"],
-        "status": "draft",
+        "status": release_status,
         "releaseNotes": replacement["releaseNotes"],
     })
     releases[index] = existing
@@ -425,9 +431,77 @@ def inspect_play_state(api: PlayApi, existing_edit_id: str | None = None) -> dic
                 )
 
 
+def verify_closed_testing_state(state: dict) -> dict:
+    """Require the exact signed bundle to be committed on the Closed Testing track."""
+    target = next(
+        (item for item in state.get("tracks", []) if item.get("track") == TRACK_NAME),
+        None,
+    )
+    if target is None:
+        raise RuntimeError(f"Committed Google Play track {TRACK_NAME!r} was not found")
+    release = next(
+        (
+            item for item in target.get("releases", [])
+            if str(VERSION_CODE) in item.get("versionCodes", [])
+        ),
+        None,
+    )
+    if release is None:
+        raise RuntimeError(f"Closed Testing does not contain versionCode {VERSION_CODE}")
+    if release.get("status") != "completed":
+        raise RuntimeError(
+            f"Closed Testing release {VERSION_CODE} status is {release.get('status')!r}, not 'completed'"
+        )
+    bundle = next(
+        (
+            item for item in state.get("bundles", [])
+            if int(item.get("versionCode", 0)) == VERSION_CODE
+        ),
+        None,
+    )
+    if bundle is None or str(bundle.get("sha256", "")).lower() != AAB_SHA256:
+        raise RuntimeError("Google Play bundle read-back did not match the pinned AAB SHA-256")
+    if state.get("appDetails", {}).get("matchesRepository") is not True:
+        raise RuntimeError("Google Play app details did not match the repository values")
+    expected_counts = {
+        "icon": 1,
+        "featureGraphic": 1,
+        "phoneScreenshots": 4,
+        "tenInchScreenshots": 4,
+    }
+    for locale in ("ar", "en-US"):
+        listing = state.get("listings", {}).get(locale, {})
+        if listing.get("matchesRepository") is not True:
+            raise RuntimeError(f"Google Play {locale} store listing did not match repository content")
+        images = listing.get("images", {})
+        for image_type, count in expected_counts.items():
+            values = images.get(image_type, [])
+            if not isinstance(values, list) or len(values) != count:
+                raise RuntimeError(
+                    f"Google Play {locale}/{image_type} expected {count} images, got "
+                    f"{len(values) if isinstance(values, list) else 'unreadable'}"
+                )
+    summary = {
+        "packageName": PACKAGE_NAME,
+        "track": TRACK_NAME,
+        "versionName": VERSION_NAME,
+        "versionCode": VERSION_CODE,
+        "releaseStatus": release.get("status"),
+        "bundleSha256": bundle.get("sha256"),
+        "appDetailsMatch": True,
+        "arabicListingMatch": True,
+        "englishListingMatch": True,
+        "artworkCountsVerified": True,
+        "productionTrackTouched": False,
+    }
+    print("PLAY_CLOSED_TESTING_VERIFICATION=" + json.dumps(summary, ensure_ascii=False))
+    return summary
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--inspect-only", action="store_true")
+    parser.add_argument("--verify-closed-testing", action="store_true")
     parser.add_argument("--stage-only", action="store_true")
     parser.add_argument("--existing-edit-id", default="")
     parser.add_argument("--submit-for-review", action="store_true")
@@ -451,8 +525,12 @@ def main() -> None:
 
     if args.inspect_only:
         api = PlayApi()
-        inspect_play_state(api, args.existing_edit_id.strip() or None)
+        state = inspect_play_state(api, args.existing_edit_id.strip() or None)
+        if args.verify_closed_testing:
+            verify_closed_testing_state(state)
         return
+    if args.verify_closed_testing:
+        parser.error("--verify-closed-testing can only be used with --inspect-only")
 
     if args.aab is None:
         parser.error("--stage-only and --submit-for-review require --aab")
@@ -643,8 +721,10 @@ def main() -> None:
         # when it already carries this exact versionCode.
         track_path = f"{tracks_path}/{quote(TRACK_NAME, safe='')}"
         track_after_upload = api.api("GET", track_path)
+        target_release_status = "draft" if args.stage_only else "completed"
         releases = prepare_closed_track_releases(
-            list(track_after_upload.get("releases", []))
+            list(track_after_upload.get("releases", [])),
+            release_status=target_release_status,
         )
         api.api("PUT", track_path, json_body={"track": TRACK_NAME, "releases": releases})
 
@@ -705,12 +785,14 @@ def main() -> None:
             "versionName": VERSION_NAME,
             "versionCode": VERSION_CODE,
             "track": TRACK_NAME,
-            "releaseStatus": "draft",
+            "releaseStatus": "completed",
             "googleGroupConfigured": bool(google_group),
             "productionTouched": False,
             "changesSentForReview": True,
             "existingImagesDeleted": False,
         }, ensure_ascii=False, indent=2))
+        committed_state = inspect_play_state(api)
+        verify_closed_testing_state(committed_state)
     finally:
         if not committed:
             print(
