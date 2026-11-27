@@ -3469,12 +3469,12 @@ document.addEventListener("click",event=>{
  openDetail(record);
 });
 $("#accountBtn").addEventListener("click",()=>{
-  $("#merchantBox").hidden=S.session.role!=="merchant";
   $("#adminLoginForm").hidden=true;
-  const mp=S.session.merchant||S.merchantProfile||{};
-  $("#merchName").value=mp.name||"";
-  $("#merchPhone").value=mp.phone||"";
-  if(typeof renderProfilePanel==="function")renderProfilePanel();
+  $("#adminAccessHint").hidden=true;
+  $("#profileEditForm").hidden=true;
+  $("#profileEditToggle").hidden=false;
+  syncProfileSession();
+  renderProfilePanel();
   showDlg("#accountDlg");
 });
 $("#accClose").addEventListener("click",()=>{S.onboarded=true;saveState();closeDlg("#accountDlg");});
@@ -3524,43 +3524,38 @@ $("#profileBlockedSellersBtn").addEventListener("click",()=>{
  toast("تم إلغاء حظر البائع على هذا الجهاز.");
 });
 $("#profileLogoutBtn").addEventListener("click",()=>{
- S.session={role:"client",adminEmail:"",merchant:null};
- S.onboarded=false;
- saveState();syncRoleUI();render();renderProfilePanel();closeDlg("#accountDlg");
- toast(curLang==="en"?"Signed out on this device.":"تم تسجيل الخروج من هذا الجهاز.");
+  syncProfileSession();
+  saveState();
+  syncRoleUI();render();renderProfilePanel();closeDlg("#accountDlg");
+  toast(curLang==="en"?"Your local profile remains saved on this device.":"بقي ملفك الشخصي محفوظاً على هذا الجهاز.");
 });
 
 $("#accountDlg").addEventListener("close",()=>{
   $("#adminAccessHint").hidden=true;
   $("#adminLoginForm").hidden=true;
   $("#roleAdminBtn").setAttribute("aria-expanded","false");
+  $("#profileEditForm").hidden=true;
+  $("#profileEditToggle").hidden=false;
 });
-$("#roleClientBtn").addEventListener("click",()=>{
-  S.onboarded=true;
-  S.session={role:"client",adminEmail:"",merchant:null};
-  saveState();syncRoleUI();render();closeDlg("#accountDlg");
-  toast("تم التبديل إلى حساب مستفيد / عميل");
+document.querySelectorAll("#v3RoleSwitcher [data-profile-role]").forEach(button=>{
+  button.addEventListener("click",()=>{
+    const role=button.dataset.profileRole==="merchant"?"merchant":"customer";
+    setProfileRole(role);
+    if(role==="customer"&&(!S.profile.customerName||!S.profile.phone))openProfileEditor({initial:true});
+  });
 });
-$("#roleMerchantBtn").addEventListener("click",()=>{
-  $("#merchantBox").hidden=false;$("#adminLoginForm").hidden=true;
-  $("#merchName").value=S.merchantProfile?.name||"";
-  $("#merchPhone").value=S.merchantProfile?.phone||"";
-});
-$("#merchSave").addEventListener("click",()=>{
-  const name=$("#merchName").value.trim(),phone=$("#merchPhone").value.trim();
-  if(!name||phoneKey(phone).length<9){toast("أدخل اسم المحل ورقم جوال صحيحاً");return;}
-  if(isPhoneBlocked(phone)){toast("هذا الرقم موقوف من الإدارة على هذا الجهاز. تواصل مع الإدارة للمراجعة.");return;}
-  S.onboarded=true;
-  S.merchantProfile={name,phone,area:S.merchantProfile?.area||""};
-  S.session={role:"merchant",adminEmail:"",merchant:{name,phone}};
-  saveState();syncRoleUI();render();closeDlg("#accountDlg");
-  toast("مرحباً "+name+"! تم تفعيل حساب التاجر");
+$("#profileEditToggle").addEventListener("click",()=>openProfileEditor({full:true}));
+$("#profileEditForm").addEventListener("submit",saveProfileEditor);
+$("#profileEditCancel").addEventListener("click",()=>{
+  $("#profileEditForm").hidden=true;
+  $("#profileEditToggle").hidden=false;
+  $("#profileEditError").textContent="";
+  renderProfilePanel();
 });
 $("#roleAdminBtn").addEventListener("click",()=>{
   $("#adminLoginForm").hidden=false;
   $("#adminAccessHint").hidden=false;
   $("#roleAdminBtn").setAttribute("aria-expanded","true");
-  $("#merchantBox").hidden=true;
   $("#admLoginErr").textContent="";
 });
 $("#adminLoginForm").addEventListener("submit",async e=>{
@@ -3598,6 +3593,7 @@ function go(v,c){
   if(v!=="cat"||c!=="pharmacy")flt.open24=false;
   view=v;curCat=c||"";
   $("#vHome").hidden=v!=="home";
+  $("#vAdd").hidden=v!=="add";
   $("#vCat").hidden=v!=="cat";
   $("#vJobs").hidden=v!=="jobs";
   $("#vSouq").hidden=v!=="souq";
@@ -3606,6 +3602,7 @@ function go(v,c){
   document.querySelectorAll(".bottom [data-go]").forEach(b=>{
     b.toggleAttribute("aria-current",b.dataset.go===(v==="cat"?"home":v));
   });
+  $("#navAdd").toggleAttribute("aria-current",v==="add");
   if(v==="cat"){$("#catT").textContent=catLabel(c);$("#area").value="";$("#areaLbl").textContent=curLang==="en"?"All Areas":"كل المناطق";}
   window.scrollTo(0,0);
   render();
@@ -4066,12 +4063,13 @@ function canDelete(it){return (S.session.role==="admin"&&hasPerm("delete"))||isM
 function renderMerchantTools(){
   const box=$("#merchantToolsPanel");
   if(!box)return;
-  const active=S.session.role==="merchant"&&S.session.merchant;
+  const profile=S.profile||{};
+  const active=view==="add"&&S.session.role==="merchant"&&profile.activeRole==="merchant"&&!!profile.storeName&&!!profile.phone;
   box.hidden=!active;
   if(!active)return;
   const owned=S.items.filter(isMerchantOwner);
-  $("#merchantToolsSummary").textContent=`${S.session.merchant.name} · ${owned.length} إدراج مرتبط برقم حسابك`;
-  $("#merchantOwnedItems").innerHTML=owned.length?owned.map(it=>`<div class="merchant-item"><div><b>${esc(it.name)}</b><div class="where">${esc(CN[it.cat]||it.cat)} · ${esc(it.area||"")}</div></div><div class="fbtn"><button type="button" class="ghost" data-edit="${esc(it.id)}" style="min-height:32px;font-size:12px">تعديل</button><button type="button" class="del" data-del="${esc(it.id)}" style="color:var(--danger)">حذف</button></div></div>`).join(""):`<div class="empty">لم تضف خدمات بعد. أضف أول محل أو خدمة من الزر أعلاه.</div>`;
+  $("#merchantToolsSummary").textContent=profile.storeName+" · "+owned.length+" إدراج مرتبط برقم حسابك";
+  $("#merchantOwnedItems").innerHTML=owned.length?owned.map(it=>'<div class="merchant-item"><div><b>'+esc(it.name)+'</b><div class="where">'+esc(CN[it.cat]||it.cat)+' · '+esc(it.area||"")+'</div></div><div class="fbtn"><button type="button" class="ghost" data-edit="'+esc(it.id)+'" style="min-height:32px;font-size:12px">تعديل</button><button type="button" class="del" data-del="'+esc(it.id)+'" style="color:var(--danger)">حذف</button></div></div>').join(""):'<div class="empty">لم تضف خدمات بعد. أضف أول محل أو خدمة من الزر أعلاه.</div>';
 }
 $("#merchantAddBtn").addEventListener("click",()=>openAdd("grocery"));
 $("#merchantPromoBtn").addEventListener("click",()=>showDlg("#promoReleaseDlg"));
@@ -4343,7 +4341,24 @@ function openEdit(id){
   $("#dlgTitle").textContent="تعديل البيانات";
   syncFormFields();showDlg("#dlg");
 }
-$("#navAdd").addEventListener("click",()=>openAdd(view==="cat"?curCat:view==="jobs"?"jobs":view==="souq"?"souq":"grocery"));
+$("#navAdd").addEventListener("click",()=>go("add"));
+$("#addFreeAdCard").addEventListener("click",()=>$("#openPromoRelease").click());
+$("#addMerchantListingCard").addEventListener("click",()=>{
+  if(S.session.role!=="merchant"||S.profile.activeRole!=="merchant")setProfileRole("merchant",{openEditor:false,toast:false});
+  if(!S.profile.storeName||!S.profile.phone){
+    showDlg("#accountDlg");
+    renderProfilePanel();
+    openProfileEditor({merchantSetup:true,afterSave:()=>openAdd("grocery")});
+    return;
+  }
+  openAdd("grocery");
+});
+$("#addJobPortalCard").addEventListener("click",()=>go("jobs"));
+$("#addMerchantSetupButton").addEventListener("click",()=>{
+  showDlg("#accountDlg");
+  renderProfilePanel();
+  openProfileEditor({merchantSetup:true});
+});
 $("#addJob").addEventListener("click",()=>openAdd("jobs"));
 $("#sqSell").addEventListener("click",()=>openAdd("souq"));
 $("#sqBuy").addEventListener("click",()=>{openAdd("souq");if($("#f").listingType)$("#f").listingType.value="wanted";});
@@ -6602,8 +6617,8 @@ function refreshPromoCountdown(){
 }
 $("#openPromoRelease").addEventListener("click",()=>{
   if(Date.now()-S.installDate>=60*86400000){toast("انتهت مدة العرض المجاني على هذا الجهاز.");return;}
-  if(S.session.merchant?.phone)$("#promoReleasePhone").value=S.session.merchant.phone;
-  else if(S.merchantProfile?.phone)$("#promoReleasePhone").value=S.merchantProfile.phone;
+  $("#promoReleasePhone").value=S.profile?.phone||S.session.merchant?.phone||S.merchantProfile?.phone||"";
+  if(!$("#promoReleaseName").value.trim())$("#promoReleaseName").value=S.profile?.storeName||S.profile?.customerName||"";
   showDlg("#promoReleaseDlg");
 });
 $("#promoReleaseClose").addEventListener("click",()=>closeDlg("#promoReleaseDlg"));
@@ -6625,8 +6640,9 @@ $("#promoReleaseWa").addEventListener("click",()=>{
 });
 $("#supportClose").addEventListener("click",()=>closeDlg("#supportDlg"));
 $("#openSupportTicket").addEventListener("click",()=>{
-  const p=S.session.merchant||S.merchantProfile||{};
-  $("#ticketName").value=p.name||"";$("#ticketPhone").value=p.phone||"";
+  const p=S.profile||{};
+  $("#ticketName").value=S.profile?.activeRole==="merchant"?(p.storeName||""):(p.customerName||"");
+  $("#ticketPhone").value=p.phone||"";
   showDlg("#supportDlg");
 });
 $("#ticketForm").addEventListener("submit",e=>{
