@@ -117,9 +117,7 @@
   function gate(){
     const dlg=$("accountDlg");
     if(dlg)dlg.classList.remove("v3-gate");
-    const profile=customerProfile();
-    const desc=$("roleClientBtn")?.querySelector(".where");
-    if(desc)desc.textContent=profile?"الملف الشخصي محفوظ على هذا الجهاز.":"تصفح كزائر، وسجّل بياناتك عند إضافة إعلان أو تقييم.";
+    customerProfile();
   }
   function animate(detail){
     updateCount();const target=$("savedHubBtn"),source=detail?.source;if(!target)return;
