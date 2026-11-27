@@ -3,7 +3,7 @@
 
 Hard safety scope:
 - package: ye.dalilna.app
-- version: 3.1.0 / versionCode 4128401
+- version: 3.1.0 / versionCode 4128601
 - custom Closed Testing track: Dalilna Closed Testing
 - release status: draft
 - inspection-only is supported and does not modify the app state
@@ -26,14 +26,14 @@ from urllib.parse import quote
 
 PACKAGE_NAME = "ye.dalilna.app"
 VERSION_NAME = "3.1.0"
-VERSION_CODE = 4128401
+VERSION_CODE = 4128601
 TRACK_NAME = "Dalilna Closed Testing"
 SUPPORT_EMAIL = "dalilnasupport@gmail.com"
 WEBSITE = "https://baraagpt6-droid.github.io/dalilna/store/"
 OAUTH_SCOPE = "https://www.googleapis.com/auth/androidpublisher"
 API_ROOT = "https://androidpublisher.googleapis.com/androidpublisher/v3"
 UPLOAD_ROOT = "https://androidpublisher.googleapis.com/upload/androidpublisher/v3"
-AAB_SHA256 = "3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026"
+AAB_SHA256 = "5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a"
 
 RELEASE_NOTES = {
     "ar": "• تحديث دليل الأماكن والبحث في المحافظات والمديريات.\n"
@@ -49,10 +49,10 @@ RELEASE_NOTES = {
 }
 
 
-def validate_play_mode(inspect_only: bool, submit_for_review: bool) -> None:
-    if inspect_only == submit_for_review:
+def validate_play_mode(inspect_only: bool, stage_only: bool, submit_for_review: bool) -> None:
+    if sum((inspect_only, stage_only, submit_for_review)) != 1:
         raise ValueError(
-            "Select exactly one mode: --inspect-only or --submit-for-review."
+            "Select exactly one mode: --inspect-only, --stage-only or --submit-for-review."
         )
 
 
@@ -348,6 +348,7 @@ def inspect_play_state(api: PlayApi, existing_edit_id: str | None = None) -> dic
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--inspect-only", action="store_true")
+    parser.add_argument("--stage-only", action="store_true")
     parser.add_argument("--existing-edit-id", default="")
     parser.add_argument("--submit-for-review", action="store_true")
     parser.add_argument("--aab", type=Path)
@@ -356,7 +357,7 @@ def main() -> None:
     args = parser.parse_args()
 
     try:
-        validate_play_mode(args.inspect_only, args.submit_for_review)
+        validate_play_mode(args.inspect_only, args.stage_only, args.submit_for_review)
     except ValueError as exc:
         parser.error(str(exc))
 
@@ -372,8 +373,10 @@ def main() -> None:
         inspect_play_state(api, args.existing_edit_id.strip() or None)
         return
 
+    if args.stage_only and not args.existing_edit_id.strip():
+        parser.error("--stage-only requires --existing-edit-id to preserve the current Play edit")
     if args.aab is None or args.assets_dir is None:
-        parser.error("--submit-for-review requires --aab and --assets-dir")
+        parser.error("--stage-only and --submit-for-review require --aab and --assets-dir")
     if not args.aab.is_file():
         raise FileNotFoundError(args.aab)
     if not args.assets_dir.is_dir():
@@ -401,10 +404,15 @@ def main() -> None:
     api = PlayApi()
     package_path = f"/applications/{quote(PACKAGE_NAME, safe='')}"
 
-    # Preflight: refuse duplicate/in-progress versions before opening an edit.
-    # Only the exact custom closed-testing track is read.
-    preflight = api.api("POST", f"{package_path}/edits", json_body={})
-    edit_id = preflight["id"]
+    # Stage-only must reuse the explicitly supplied active edit so the current
+    # Play draft remains isolated from any new edit that could supersede it.
+    if args.stage_only:
+        edit_id = args.existing_edit_id.strip()
+        api.api("GET", f"{package_path}/edits/{quote(edit_id, safe='')}")
+    else:
+        # Submission mode gets its own isolated edit.
+        preflight = api.api("POST", f"{package_path}/edits", json_body={})
+        edit_id = preflight["id"]
     committed = False
     try:
         tracks_path = f"{package_path}/edits/{quote(edit_id, safe='')}/tracks"
@@ -568,6 +576,23 @@ def main() -> None:
         if google_group:
             groups = sorted(set(existing_groups) | {google_group})
             api.api("PUT", testers_path, json_body={"googleGroups": groups})
+
+        if args.stage_only:
+            print(json.dumps({
+                "result": "staged_uncommitted",
+                "editId": edit_id,
+                "packageName": PACKAGE_NAME,
+                "versionName": VERSION_NAME,
+                "versionCode": VERSION_CODE,
+                "track": TRACK_NAME,
+                "releaseStatus": "draft",
+                "googleGroupCount": len(existing_groups),
+                "productionTouched": False,
+                "changesCommitted": False,
+                "changesSentForReview": False,
+                "existingImagesDeleted": False,
+            }, ensure_ascii=False, indent=2))
+            return
 
         # This commit intentionally sends all staged edits for Google review.
         # The CLI refuses to reach this point without --submit-for-review.
