@@ -342,3 +342,8 @@ All public app features are available without signing in. Open Dalilna and brows
 - الإصدار الحالي في GitHub Release: `4128401`. لا تخلطه مع إصدار Play الداخلي المكتمل `4100101`.
 - رفع `4128401` إلى Closed Testing، وإعداد قائمة المختبرين، ونشر رابط Opt-in لم تكتمل بعد.
 - لا يظهر رابط Opt-in لمسار مغلق عندما تكون حالة التطبيق Draft أو Pending publication؛ يلزم ظهور حالة Published أولاً.
+
+
+## Closed testing draft found — 27 November 2026
+
+Android Publisher read-back found a single Draft release on `Dalilna Closed Testing`: versionCode `3127701`. The latest signed AAB is `4128401`, above the completed internal code `4100101`. The draft has not yet been updated by the automation. The refresh workflow preserves this existing draft's non-version fields, leaves completed releases and tester configuration unchanged, and replaces only its draft artifact with the verified newer AAB. The existing `Hubaish Testers` saved email list is not touched.
