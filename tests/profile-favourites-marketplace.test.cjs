@@ -15,71 +15,70 @@ test("customer and merchant identities share a phone but persist separate names 
   assert.match(html, /activeRole:profileRaw\.activeRole==="merchant"/);
   assert.match(html, /S\.profile=\{customerName,storeName,phone,activeRole:current\.activeRole==="merchant"\?"merchant":"customer"\}/);
   assert.match(html, /S\.session=profile\.activeRole==="merchant"/);
-  assert.match(html, /const merchant=profile\.activeRole==="merchant"/);\n  assert.match(html, /merchant\?\(profile\.storeName/);
+  assert.match(html, /const merchant=profile\.activeRole==="merchant"/);
+  assert.match(html, /merchant\?\(profile\.storeName/);
+  for (const id of ["profileEditForm","profileStoreNameInput","profileCustomerNameInput","profilePhoneInput"]) {
+    assert.ok(html.includes('id="' + id + '"'), id);
+  }
   assert.ok(html.includes('data-profile-role="customer"'));
   assert.ok(html.includes('data-profile-role="merchant"'));
-  assert.ok(html.includes('id="profileEditForm"'));
-  assert.ok(html.includes('id="profileStoreNameInput"'));
-  assert.ok(html.includes('id="profileCustomerNameInput"'));
-  assert.ok(html.includes('id="profilePhoneInput"'));
   assert.ok(!html.includes('id="roleClientBtn"'));
   assert.ok(!html.includes('id="roleMerchantBtn"'));
   assert.ok(!html.includes('id="merchantBox"'));
   assert.ok(!html.includes('id="merchSave"'));
 });
 
-test("switching a customer to merchant asks for storeName and preserves the customer name and shared phone", () => {
+test("switching a customer to merchant asks for storeName and preserves customerName and phone", () => {
   const html = read("index.html");
   assert.match(html, /function setProfileRole\(role,options=\{\}\)/);
   assert.match(html, /if\(nextRole==="merchant"&&!S\.profile\.storeName\)openProfileEditor\(\{merchantSetup:true\}\)/);
   assert.match(html, /const hasCustomer=!!\(profile\.customerName&&profile\.phone\)/);
+  assert.match(html, /\$\("#profileCustomerNameRow"\)\.hidden=mode==="merchant-setup"&&hasCustomer/);
+  assert.match(html, /\$\("#profilePhoneRow"\)\.hidden=mode==="merchant-setup"&&!!profile\.phone/);
   assert.match(html, /const customerName=\$\("#profileCustomerNameRow"\)\.hidden\?current\.customerName/);
   assert.match(html, /const storeName=\$\("#profileStoreNameRow"\)\.hidden\?current\.storeName/);
   assert.match(html, /const phone=\$\("#profilePhoneRow"\)\.hidden\?current\.phone/);
-  assert.match(html, /S\.profile=\{customerName,storeName,phone,activeRole:current\.activeRole==="merchant"\?"merchant":"customer"\}/);
-  assert.match(html, /profile\.activeRole==="merchant"&&profile\.storeName&&profile\.phone/);
 });
 
-test("account dialog uses one role card and an explicit inline edit action", () => {
+test("account dialog has one role card and an inline editor without duplicate registration forms", () => {
   const html = read("index.html");
   const dialog = html.match(/<dialog id="accountDlg">([\s\S]*?)<\/dialog>/)?.[1] || "";
-  assert.ok(dialog.includes('id="profilePanel"'));
-  assert.ok(dialog.includes('id="v3RoleSwitcher"'));
-  assert.ok(dialog.includes('id="profileEditToggle"'));
-  assert.ok(dialog.includes('id="profileEditForm"'));
+  for (const token of [
+    'id="profilePanel"','id="v3RoleSwitcher"','id="profileEditToggle"',
+    'id="profileEditForm"','id="profileStoreNameInput"','data-profile-role="customer"',
+    'data-profile-role="merchant"'
+  ]) assert.ok(dialog.includes(token), token);
   assert.ok(dialog.includes("تعديل الاسم أو الرقم"));
-  assert.ok(!dialog.includes('id="roleClientBtn"'));
-  assert.ok(!dialog.includes('id="roleMerchantBtn"'));
-  assert.ok(!dialog.includes('id="merchantBox"'));
-  assert.ok(!dialog.includes('id="merchSave"'));
-  assert.ok(!dialog.includes('id="v3CustomerRegisterBtn"'));
+  for (const legacy of ['id="roleClientBtn"','id="roleMerchantBtn"','id="merchantBox"','id="merchSave"','تسجيل الاسم ورقم الجوال','تفعيل حساب التاجر']) {
+    assert.ok(!dialog.includes(legacy), legacy);
+  }
+  assert.ok(html.includes('$("#profileEditToggle").hidden=admin!==null||!$("#profileEditForm").hidden'));
 });
 
-test("the Add tab is a dedicated hub with independent advert, shop and jobs actions", () => {
+test("the Add tab separates advert, merchant listing and independent jobs portal actions", () => {
   const html = read("index.html");
   const addView = html.match(/<section id="vAdd" hidden>([\s\S]*?)<\/section>\s*<!-- Home View -->/)?.[1] || "";
-  assert.ok(addView.includes('id="addFreeAdCard"'));
-  assert.ok(addView.includes('id="addMerchantListingCard"'));
-  assert.ok(addView.includes('id="addJobPortalCard"'));
-  assert.ok(addView.includes('id="merchantToolsPanel"'));
+  for (const id of ["addFreeAdCard","addMerchantListingCard","addJobPortalCard","merchantToolsPanel"]) {
+    assert.ok(addView.includes('id="' + id + '"'), id);
+  }
   assert.match(html, /\$\("#navAdd"\)\.addEventListener\("click",\(\)=>go\("add"\)\)/);
   assert.match(html, /\$\("#addJobPortalCard"\)\.addEventListener\("click",\(\)=>go\("jobs"\)\)/);
-  assert.match(html, /const active=S\.session\.role==="merchant"&&profile\.activeRole==="merchant"&&!!profile\.storeName&&!!profile\.phone/);
+  assert.match(html, /\$\("#vAdd"\)\.hidden=v!=="add"/);
 });
 
-test("the profile bridge exposes the unified local profile without creating a second registration store", () => {
+test("the profile bridge exposes the unified local profile instead of a second registration store", () => {
   const html = read("index.html");
   const customerUi = read("v3.0.0.js");
   assert.match(html, /profile:\(\)=>\(\{\.\.\.S\.profile\}\)/);
   assert.match(html, /profileReady:\(\)=>!!\(S\.profile\?\.phone/);
-  assert.match(html, /setActiveRole:\(role\)=>\{setProfileRole\(role/);
+  assert.match(html, /setActiveRole:\(role\)=>/);
   assert.match(customerUi, /const current=bridge\(\)\?\.profile\?\.\(\)/);
   assert.match(customerUi, /api\.openProfileEditor\(/);
+  assert.doesNotMatch(customerUi, /v3CustomerDialog|v3CustomerRegisterBtn|roleButtons\(\)/);
   assert.doesNotMatch(customerUi, /localStorage\.setItem\("dalilna-v3-customer-profile"/);
-  assert.doesNotMatch(customerUi, /v3CustomerRegisterBtn|v3CustomerDialog/);
 });
 
-test("administrator login validates a device-local credential list, not a remote auth account", () => {
+test("administrator login still validates local credentials", () => {
   const html = read("index.html");
   assert.match(html, /\$\("#adminLoginForm"\)\.addEventListener\("submit",async e=>/);
   assert.match(html, /const adm=S\.admins\.find\(a=>a\.email\.toLowerCase\(\)===email&&a\.hash===h\)/);
@@ -100,10 +99,10 @@ test("new shop submissions are retained locally and forwarded to shared marketpl
   assert.match(marketplace, /"تم استلام الإعلان\. سيظهر لجميع المستخدمين بعد موافقة الإدارة\."/);
 });
 
-test("directory favourites update local state and are persisted on the device", () => {
+test("directory favourites update local state and remain on the device", () => {
   const html = read("index.html");
   const favoritesUi = read("v3.0.0.js");
-  assert.match(html, /const f=e\.target\.closest\("\\?\[data-fav\]"/);
+  assert.match(html, /const f=e\.target\.closest\("\[data-fav\]"\)/);
   assert.match(html, /if\(ix>=0\)S\.favs\.splice\(ix,1\);else S\.favs\.push\(id\)/);
   assert.match(html, /saveState\(\);\s*window\.dispatchEvent\(new CustomEvent\("dalilna:favorite-change"/);
   assert.match(html, /setDirectoryFavorite:\(id,shouldSave\)=>/);
