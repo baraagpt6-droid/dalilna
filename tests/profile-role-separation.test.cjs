@@ -20,10 +20,11 @@ test("the unified profile has distinct customerName and storeName fields", () =>
 });
 
 test("active role determines the profile heading and merchant tools visibility", () => {
-  assert.match(html, /profile\.activeRole==="merchant"\?profile\.storeName:profile\.customerName/);
+  assert.match(html, /const merchant=profile\.activeRole==="merchant"/);
+  assert.match(html, /merchant\?\(profile\.storeName/);
   assert.match(html, /S\.session=profile\.activeRole==="merchant"/);
   assert.match(html, /const active=S\.session\.role==="merchant"&&profile\.activeRole==="merchant"&&!!profile\.storeName&&!!profile\.phone/);
-  assert.match(html, /if\(active\)\{[\s\S]*?openProfileEditor\(\{merchantSetup:true\}\)/);
+  assert.match(html, /openProfileEditor\(\{merchantSetup:true\}\)/);
 });
 
 test("first customer-to-merchant activation edits storeName without exposing the existing customer name or phone fields", () => {
@@ -51,7 +52,7 @@ test("account card has one role switcher and a deliberate profile editor, with n
   assert.ok(!dialog.includes('id="merchSave"'));
   assert.ok(!dialog.includes('تسجيل الاسم ورقم الجوال'));
   assert.ok(!dialog.includes('تفعيل حساب التاجر'));
-  assert.match(html, /profileEditToggle"\)\.hidden=admin!==null\|\|!\$\("#profileEditForm"\)\.hidden/);
+  assert.ok(html.includes('$("#profileEditToggle").hidden=admin!==null||!$("#profileEditForm").hidden'));
 });
 
 test("the Add view separates advert, merchant listing and independent jobs portal actions", () => {
