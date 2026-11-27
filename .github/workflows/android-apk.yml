@@ -80,7 +80,6 @@ on:
       - '!v3.0.0.css'
       - '!sw.js'
       - '!android/app/src/main/assets/**'
-      - '!.github/workflows/android-apk.yml'
 
 permissions:
   contents: write
