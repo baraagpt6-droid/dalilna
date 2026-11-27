@@ -1,0 +1,64 @@
+name: Complete Dalilna Internal Release 4100101
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/complete-play-internal.yml"
+      - "scripts/publish_google_play_internal.py"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: dalilna-play-internal-4100101
+  cancel-in-progress: false
+
+jobs:
+  publish-internal:
+    if: contains(github.event.head_commit.message, '[complete-play-internal-4100101]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Google authentication library
+        run: python -m pip install --disable-pip-version-check "google-auth>=2.35,<3"
+
+      - name: Authenticate to Google Cloud using Workload Identity Federation
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: "projects/28058491662/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "dalilna-play-automation@dalilna-play-automation-516000.iam.gserviceaccount.com"
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: Complete existing internal release and save store listings
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: \${{ steps.auth.outputs.credentials_file_path }}
+        run: python scripts/publish_google_play_internal.py
+
+      - name: Summarize Play Console update
+        if: success()
+        run: |
+          {
+            echo "## Dalilna internal release"
+            echo
+            echo "- Package: ye.dalilna.app"
+            echo "- Track: internal"
+            echo "- Version code: 4100101"
+            echo "- Release status: completed"
+            echo "- No AAB upload or Android build was performed"
+            echo "- Production track was not modified"
+          } >> "$GITHUB_STEP_SUMMARY"

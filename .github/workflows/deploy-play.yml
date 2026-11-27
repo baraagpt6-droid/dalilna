@@ -9,9 +9,6 @@ on:
         type: choice
         options:
           - internal
-          - alpha
-          - beta
-          - production
         default: internal
   push:
     branches: [main]
@@ -139,7 +136,7 @@ jobs:
           packageName: ${{ env.PACKAGE_NAME }}
           releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
           track: ${{ github.event.inputs.track || 'internal' }}
-          status: draft
+          status: completed
 
       - name: Summarize deployment
         if: success()
@@ -150,7 +147,7 @@ jobs:
             echo
             echo "- Package: $PACKAGE_NAME"
             echo "- Track: ${{ github.event.inputs.track || 'internal' }}"
-            echo "- Release status: draft"
+            echo "- Release status: completed"
             echo "- Version code: $((3100000 + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT + DALILNA_VERSION_CODE_OFFSET))"
             echo "- Production rollout: not performed"
           } >> "$GITHUB_STEP_SUMMARY"
