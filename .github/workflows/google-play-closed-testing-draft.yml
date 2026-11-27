@@ -132,13 +132,13 @@ jobs:
           echo "5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a  dist/aab/app-release.aab" | sha256sum --check
 
       - name: Set up Node.js for fresh Play screenshots
-        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'SUBMIT_FOR_REVIEW'
+        if: github.event_name == 'workflow_dispatch' && (inputs.mode == 'STAGE_ONLY' || inputs.mode == 'SUBMIT_FOR_REVIEW')
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
       - name: Capture and prepare Play listing images
-        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'SUBMIT_FOR_REVIEW'
+        if: github.event_name == 'workflow_dispatch' && (inputs.mode == 'STAGE_ONLY' || inputs.mode == 'SUBMIT_FOR_REVIEW')
         shell: bash
         run: |
           set -euo pipefail
