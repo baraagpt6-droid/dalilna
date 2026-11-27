@@ -61,12 +61,8 @@ on:
       - '!scripts/play_status_monitor.py'
       - '!scripts/test_play_status_monitor.py'
       # Play draft staging helpers execute inside this release workflow; editing them alone must not rebuild Android.
-      - '!scripts/stage_google_play_draft.py'
-      - '!scripts/test_stage_google_play_draft.py'
       - '!scripts/publish_approved_release.py'
       - '!scripts/test_publish_approved_release.py'
-      - '!scripts/smart_publish_closed_testing.py'
-      - '!scripts/test_smart_publish_closed_testing.py'
       - '!.github/workflows/publish-approved-release.yml'
       - '!.github/workflows/play-status-monitor.yml'
       - '!google-play/**'
@@ -362,7 +358,7 @@ jobs:
           create_credentials_file: true
           export_environment_variables: true
 
-      - name: Smart-publish signed AAB to Closed Testing with safe draft fallback
+      - name: Smart-publish signed AAB to Closed Testing with tested review-safe draft fallback
         if: steps.release-ads.outputs.ready == 'true'
         shell: bash
         run: |
