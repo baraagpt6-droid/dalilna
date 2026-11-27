@@ -143,7 +143,7 @@ After merging this PR, creating the app card, configuring WIF, inviting the serv
 4. Optionally enter the tester Google Group email.
 5. Run the workflow.
 
-The first run stops if the app is not accessible, if the AAB checksum or versionCode does not match, if image groups are already populated, or if a different draft/version already exists on the named track. It does not delete existing images or existing releases.
+The workflow refuses a versionCode below the highest code across tracks. If the named track already has exactly one older draft (the currently read-back draft is versionCode `3127701`), the workflow refreshes that draft in place with the pinned newer AAB `4128401`, preserving its other release fields and every non-draft release. It refuses multiple drafts or a draft with a higher versionCode. Existing image groups are read and preserved; uploads are added only to empty groups. Existing tester configuration is read and preserved unless an explicit Google Group is supplied. The Android Publisher Testers API exposes Google Groups but not saved individual email lists, so the `Hubaish Testers` list is not read, copied, or modified by this workflow. It does not delete tester lists, images, completed releases or any other app's data.
 
 ## 7. Remaining owner actions in Play Console
 

@@ -76,3 +76,12 @@ The GitHub Release is separate from the Play internal-track artifact. The curren
 - APK SHA-256: `2664437d32bea2a0c9c09eef60700aa71a65cd3c995a19a8d855dcf79851e1e7`
 - Build: [GitHub Actions 45943431867](https://github.com/baraagpt6-droid/dalilna/actions/runs/45943431867)
 - The completed Play internal track is still versionCode `4100101`. The newer AAB is only published as a GitHub Release asset at this checkpoint.
+
+
+## Closed test preflight state — 27 November 2026
+
+- Existing `Dalilna Closed Testing` release: Draft versionCode `3127701`.
+- Highest versionCode on other app tracks: `4100101` (internal, completed).
+- Current verified signed AAB: `4128401`.
+- The older draft has not yet been updated. The next automation run is configured to refresh that single draft in place.
+- No tester email lists or other app tracks are modified.
