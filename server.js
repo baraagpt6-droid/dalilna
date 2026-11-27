@@ -5,6 +5,7 @@ const { URL } = require("node:url");
 const { handleMarketplaceRequest } = require("./marketplace-api");
 const { handleJobsRequest } = require("./jobs-api");
 const geminiAssistantHandler = require("./api/assistant");
+const { getClientIp } = require("./client-ip");
 
 const PORT = Number(process.env.PORT || 10000);
 const VERSION = require("./package.json").version;
@@ -67,6 +68,19 @@ function json(res, status, payload, extraHeaders = {}) {
 
 function setCors(req, res) {
   const pathname = String(req.url || "").split("?")[0];
+  const sensitiveMarketplacePath = pathname.startsWith("/api/marketplace/admin/")
+    || pathname === "/api/marketplace/feed-sync";
+  if (sensitiveMarketplacePath) {
+    const origin = req.headers.origin;
+    res.setHeader("Vary", "Origin");
+    if (origin && ALLOWED_ORIGINS.has(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Accept, Content-Type, Authorization");
+      res.setHeader("Access-Control-Max-Age", "600");
+    }
+    return;
+  }
   if (pathname === "/api/assistant") {
     const origin = req.headers.origin;
     if (origin && ALLOWED_ORIGINS.has(origin)) {
@@ -302,8 +316,7 @@ function readCache(cache, key) {
 }
 
 function rateLimit(req) {
-  const forwarded = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim();
-  const ip = forwarded || req.socket.remoteAddress || "unknown";
+  const ip = getClientIp(req);
   const now = Date.now();
   const bucket = (rateBuckets.get(ip) || []).filter(t => now - t < 60_000);
   if (bucket.length >= 8) {
@@ -1475,4 +1488,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildOverpassQuery, buildYemenOverpassQuery, searchYemenOverpass, inferCategoryFromQuery, categoryRuleMatches, categoriesForTags, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyRectFilter, geoapifyCategoryLabel, createIntervalGate, overpassAttemptTimeout, searchCommonsPhotos, searchLocalYemenCatalog, loadLocalYemenIndex, server };
+module.exports = { setCors, buildOverpassQuery, buildYemenOverpassQuery, searchYemenOverpass, inferCategoryFromQuery, categoryRuleMatches, categoriesForTags, classifyCategory, normalizeElement, normalizeText, searchPlaces, searchGeoapifyPlaces, geoapifyEnabled, geoapifyRectFilter, geoapifyCategoryLabel, createIntervalGate, overpassAttemptTimeout, searchCommonsPhotos, searchLocalYemenCatalog, loadLocalYemenIndex, server };
