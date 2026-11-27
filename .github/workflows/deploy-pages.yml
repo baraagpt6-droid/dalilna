@@ -4,35 +4,6 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - 'index.html'
-      - 'app-native-bridge.js'
-      - 'app-update.js'
-      - 'market-price-guide.js'
-      - 'market-price-guide.css'
-      - 'market_prices_yemen.json'
-      - 'market-price-images/**'
-      - 'market-price-images/**'
-      - 'regional-catalog-runtime.js'
-      - 'marketplace-client.js'
-      - 'features-2.1.js'
-      - 'features-2.1.css'
-      - 'v3.0.0.js'
-      - 'v3.0.0.css'
-      - 'jobs-feed.json'
-      - 'privacy.html'
-      - 'data-deletion.html'
-      - 'store/**'
-      - 'terms.html'
-      - 'manifest.json'
-      - 'market_items.json'
-      - 'version.json'
-      - 'sw.js'
-      - 'regions-yemen.js'
-      - 'regions-profiles.js'
-      - 'regional-catalog/**'
-      - 'icons/**'
-      - '.github/workflows/deploy-pages.yml'
 
 permissions:
   contents: read
