@@ -47,7 +47,7 @@ function createStaticServer() {
   });
 }
 
-test("merchant profile, shop submission and directory favourites work in a real browser", {
+test("customer and merchant identities stay separate; Add hub and shop journey work in a real browser", {
   timeout: 90000
 }, async () => {
   const server = createStaticServer();
@@ -72,7 +72,6 @@ test("merchant profile, shop submission and directory favourites work in a real 
     const page = await context.newPage();
     page.on("pageerror", error => pageErrors.push(error.message));
 
-    // Keep the journey deterministic and offline. Only the shared listing POST is stubbed.
     await page.route("**/*", async route => {
       const request = route.request();
       const url = new URL(request.url());
@@ -103,15 +102,57 @@ test("merchant profile, shop submission and directory favourites work in a real 
 
     await page.goto(origin + "/index.html", { waitUntil: "domcontentloaded" });
     await page.locator("#accountDlg").waitFor({ state: "visible", timeout: 15000 });
+    await page.locator("#profileEditForm").waitFor({ state: "visible" });
 
-    const merchantName = "متجر دليلنا لاختبار المتصفح";
-    const merchantPhone = "771234567";
-    await page.locator("#roleMerchantBtn").click();
-    await page.locator("#merchName").fill(merchantName);
-    await page.locator("#merchPhone").fill(merchantPhone);
-    await page.locator("#merchSave").click();
+    const customerName = "براء اختبار العميل";
+    const merchantName = "محلات الناهي للاختبار";
+    const sharedPhone = "771234567";
+
+    // First registration writes only the personal name and shared phone.
+    await page.locator("#profileCustomerNameInput").fill(customerName);
+    await page.locator("#profilePhoneInput").fill(sharedPhone);
+    await page.locator("#profileEditSave").click();
+    await page.locator("#accountDlg").waitFor({ state: "hidden" });
+
+    let profile = await page.evaluate(() => JSON.parse(localStorage.getItem("dalilna_app_v6") || "{}").profile);
+    assert.deepEqual(profile, {
+      customerName,
+      storeName: "",
+      phone: sharedPhone,
+      activeRole: "customer"
+    });
+
+    // Switching to seller first time asks for store name only; personal name and phone stay intact.
+    await page.locator("#accountBtn").click();
+    await page.locator('#v3RoleSwitcher [data-profile-role="merchant"]').click();
+    await page.locator("#profileEditForm").waitFor({ state: "visible" });
+    await page.locator("#profileStoreNameRow").waitFor({ state: "visible" });
+    assert.equal(await page.locator("#profileCustomerNameRow").isVisible(), false);
+    assert.equal(await page.locator("#profilePhoneRow").isVisible(), false);
+    assert.equal(await page.locator("#profilePhoneInput").inputValue(), sharedPhone);
+    await page.locator("#profileStoreNameInput").fill(merchantName);
+    await page.locator("#profileEditSave").click();
+    await page.locator("#accountDlg").waitFor({ state: "hidden" });
+
+    profile = await page.evaluate(() => JSON.parse(localStorage.getItem("dalilna_app_v6") || "{}").profile);
+    assert.deepEqual(profile, {
+      customerName,
+      storeName: merchantName,
+      phone: sharedPhone,
+      activeRole: "merchant"
+    });
+
+    // The plus tab is its own hub. Jobs opens a separate view; merchant tools remain on Add only.
+    await page.locator("#navAdd").click();
+    await page.locator("#vAdd").waitFor({ state: "visible" });
+    await page.locator("#merchantToolsPanel").waitFor({ state: "visible" });
+    await page.locator("#addJobPortalCard").click();
+    await page.locator("#vJobs").waitFor({ state: "visible" });
+    assert.equal(await page.locator("#merchantToolsPanel").isVisible(), false);
+    await page.locator("#navAdd").click();
     await page.locator("#merchantToolsPanel").waitFor({ state: "visible" });
 
+    // Add a shop using the same unified phone number.
     const shopName = "Dalilna E2E Shop";
     await page.locator("#merchantAddBtn").click();
     await page.locator("#dlg").waitFor({ state: "visible" });
@@ -121,7 +162,7 @@ test("merchant profile, shop submission and directory favourites work in a real 
     await page.locator("#pickerSearch").fill("حبيش");
     await page.locator('#pickerList [data-pval="حبيش"]').click();
     await page.locator('#f input[name="name"]').fill(shopName);
-    await page.locator('#f input[name="phone"]').fill(merchantPhone);
+    await page.locator('#f input[name="phone"]').fill(sharedPhone);
     await page.locator("#ugcTermsAccept").check();
     await page.locator("#save").click();
 
@@ -146,7 +187,7 @@ test("merchant profile, shop submission and directory favourites work in a real 
       new Promise((_, reject) => setTimeout(() => reject(new Error("Marketplace POST was not observed after the local shop save.")), 10000))
     ]);
 
-    // Make sure the app is showing the complete directory, not a prior region scope.
+    await page.locator("#logoHome").click();
     await page.locator("#q").fill("");
     await page.locator("#scopeBtn").click();
     await page.locator('#pickerList [data-pval=""]').click();
@@ -161,22 +202,39 @@ test("merchant profile, shop submission and directory favourites work in a real 
     const shopCard = page.locator('#list .card[data-open="' + shopId + '"]').first();
     await shopCard.waitFor({ state: "visible", timeout: 15000 });
     await shopCard.locator("[data-fav]").click();
-    let saved = await page.evaluate(() => JSON.parse(localStorage.getItem("dalilna_app_v6") || "{}"));
-    assert.ok(saved.items.some(item => item.id === shopId && item.name === shopName), "The new shop should be stored locally.");
-    assert.ok(saved.favs.includes(shopId), "The shop should be stored in directory favourites.");
+    let state = await page.evaluate(() => JSON.parse(localStorage.getItem("dalilna_app_v6") || "{}"));
+    assert.ok(state.items.some(item => item.id === shopId && item.name === shopName), "The new shop should be stored locally.");
+    assert.ok(state.favs.includes(shopId), "The shop should be stored in directory favourites.");
     assert.equal(marketplacePayload?.title, shopName, "The shared marketplace API should receive the shop title.");
-    assert.equal(marketplacePayload?.phone, merchantPhone, "The shared marketplace API should receive the submitted contact number.");
+    assert.equal(marketplacePayload?.phone, sharedPhone, "The shared marketplace API should receive the shared contact number.");
 
     await page.reload({ waitUntil: "domcontentloaded" });
-    saved = await page.evaluate(() => JSON.parse(localStorage.getItem("dalilna_app_v6") || "{}"));
-    assert.ok(saved.items.some(item => item.id === shopId), "The shop should survive an app reload.");
-    assert.ok(saved.favs.includes(shopId), "The favourite should survive an app reload.");
+    state = await page.evaluate(() => JSON.parse(localStorage.getItem("dalilna_app_v6") || "{}"));
+    assert.ok(state.items.some(item => item.id === shopId), "The shop should survive an app reload.");
+    assert.ok(state.favs.includes(shopId), "The favourite should survive an app reload.");
+    assert.deepEqual(state.profile, {
+      customerName,
+      storeName: merchantName,
+      phone: sharedPhone,
+      activeRole: "merchant"
+    });
 
     await page.locator("#accountBtn").click();
     await page.locator("#accountDlg").waitFor({ state: "visible" });
-    await page.locator("#roleMerchantBtn").click();
-    assert.equal(await page.locator("#merchName").inputValue(), merchantName, "The merchant profile should be restored from local storage.");
-    assert.equal(await page.locator("#merchPhone").inputValue(), merchantPhone, "The merchant phone should be restored from local storage.");
+    assert.equal(await page.locator("#profileName").textContent(), merchantName);
+    await page.locator('#v3RoleSwitcher [data-profile-role="customer"]').click();
+    assert.equal(await page.locator("#profileName").textContent(), customerName);
+    await page.locator("#accClose").click();
+
+    await page.locator("#navAdd").click();
+    assert.equal(await page.locator("#merchantToolsPanel").isVisible(), false);
+
+    await page.locator("#accountBtn").click();
+    await page.locator('#v3RoleSwitcher [data-profile-role="merchant"]').click();
+    assert.equal(await page.locator("#profileName").textContent(), merchantName);
+    await page.locator("#accClose").click();
+    await page.locator("#navAdd").click();
+    await page.locator("#merchantToolsPanel").waitFor({ state: "visible" });
 
     assert.deepEqual(pageErrors, [], "The tested browser journey should not produce uncaught JavaScript errors.");
     await context.close();
