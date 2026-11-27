@@ -171,6 +171,15 @@ jobs:
             --aab dist/aab/app-release.aab \
             --assets-dir dist/play-assets
 
+      - name: Verify staged Play edit with read-only API inspection
+        if: env.PLAY_MODE == 'STAGE_ONLY'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/google_play_closed_testing_draft.py \
+            --inspect-only \
+            --existing-edit-id "$EXISTING_EDIT_ID"
+
       - name: Submit Dalilna changes for Google Play review
         if: env.PLAY_MODE == 'SUBMIT_FOR_REVIEW'
         shell: bash
