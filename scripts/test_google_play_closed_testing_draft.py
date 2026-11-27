@@ -30,7 +30,7 @@ class DraftSafetyTests(unittest.TestCase):
     def test_release_is_always_draft(self):
         release = draft_release()
         self.assertEqual(release["status"], "draft")
-        self.assertEqual(release["versionCodes"], ["4128301"])
+        self.assertEqual(release["versionCodes"], ["4128401"])
         self.assertNotIn("userFraction", release)
         self.assertNotIn("countryTargeting", release)
 
