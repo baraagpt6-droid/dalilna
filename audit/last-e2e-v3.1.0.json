@@ -8,7 +8,7 @@
     "queries": {
       "الزوقري": {
         "matches": 2,
-        "searchMs": 1.93,
+        "searchMs": 1.334,
         "within50ms": true,
         "examples": [
           {
@@ -27,7 +27,7 @@
       },
       "الناهي": {
         "matches": 1,
-        "searchMs": 1.628,
+        "searchMs": 1.234,
         "within50ms": true,
         "examples": [
           {
@@ -40,7 +40,7 @@
       },
       "صيدلية": {
         "matches": 697,
-        "searchMs": 1.503,
+        "searchMs": 1.174,
         "within50ms": true,
         "examples": [
           {
@@ -91,11 +91,11 @@
     }
   },
   "live": {
-    "generatedAt": "2026-11-27T16:15:34.441Z",
+    "generatedAt": "2026-11-27T16:43:59.374Z",
     "health": {
       "ok": true,
       "version": "3.1.0",
-      "ms": 212,
+      "ms": 296,
       "status": 200
     },
     "marketplace": {
@@ -106,14 +106,14 @@
       "withImages": 0,
       "withPrice": 0,
       "withContact": 0,
-      "ms": 162,
+      "ms": 186,
       "status": 200,
       "error": ""
     },
     "pharmacyLiveSearch": {
       "ok": true,
       "status": 200,
-      "ms": 231,
+      "ms": 776,
       "respondedWithin3Seconds": true,
       "successfulWithin3Seconds": true,
       "results": 7,
@@ -129,8 +129,8 @@
       "model": "gemini-3.8-flash",
       "ok": true,
       "status": 200,
-      "ms": 6298,
-      "answerChars": 503,
+      "ms": 2339,
+      "answerChars": 840,
       "mode": "gemini",
       "error": "",
       "providerStatus": 0,
