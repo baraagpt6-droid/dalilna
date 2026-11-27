@@ -1,0 +1,101 @@
+name: Stage existing Dalilna 3.1.0 AAB as Closed Testing draft
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/stage-current-play-draft.yml"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: dalilna-stage-current-4129001
+  cancel-in-progress: false
+
+jobs:
+  stage-existing-aab:
+    name: Verify and stage the pinned 4129001 bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout Dalilna main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Android and Play verification dependencies
+        run: |
+          python -m pip install "google-auth>=2.40,<3" "requests>=2.32,<3"
+          test -d "$ANDROID_HOME/build-tools"
+
+      - name: Download the already-built v3.1.0 release artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/dalilna-4129001"
+          gh release download v3.1.0 \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern app-release.aab \
+            --pattern app-release.apk \
+            --dir "$RUNNER_TEMP/dalilna-4129001"
+          test -s "$RUNNER_TEMP/dalilna-4129001/app-release.aab"
+          test -s "$RUNNER_TEMP/dalilna-4129001/app-release.apk"
+          echo "DALILNA_RELEASE_DIR=$RUNNER_TEMP/dalilna-4129001" >> "$GITHUB_ENV"
+
+      - name: Verify exact package, APK version and AAB signature
+        shell: bash
+        run: |
+          set -euo pipefail
+          RELEASE_DIR="$DALILNA_RELEASE_DIR"
+          BUILD_TOOLS_VERSION="$(ls -1 "$ANDROID_HOME/build-tools" | sort -V | tail -n 1)"
+          BUILD_TOOLS="$ANDROID_HOME/build-tools/$BUILD_TOOLS_VERSION"
+          BADGING="$("$BUILD_TOOLS/aapt" dump badging "$RELEASE_DIR/app-release.apk")"
+          PACKAGE="$(sed -n "s/^package: name='\([^']*\)'.*/\1/p" <<< "$BADGING" | head -n 1)"
+          APK_CODE="$(sed -n "s/.*versionCode='\([0-9]*\)'.*/\1/p" <<< "$BADGING" | head -n 1)"
+          APK_NAME="$(sed -n "s/.*versionName='\([^']*\)'.*/\1/p" <<< "$BADGING" | head -n 1)"
+          [[ "$PACKAGE" == "ye.dalilna.app" ]] || { echo "::error::Wrong APK package: $PACKAGE"; exit 1; }
+          [[ "$APK_CODE" == "4129001" ]] || { echo "::error::Unexpected APK versionCode: $APK_CODE"; exit 1; }
+          [[ "$APK_NAME" == "3.1.0" ]] || { echo "::error::Unexpected APK versionName: $APK_NAME"; exit 1; }
+          jarsigner -verify -verbose "$RELEASE_DIR/app-release.aab" >/dev/null
+          keytool -printcert -jarfile "$RELEASE_DIR/app-release.aab" >/dev/null
+          node - <<'NODE'
+          const fs = require("node:fs");
+          const version = JSON.parse(fs.readFileSync("version.json", "utf8"));
+          const gradle = fs.readFileSync("android/app/build.gradle.kts", "utf8");
+          const appId = gradle.match(/applicationId\s*=\s*"([^"]+)"/)?.[1];
+          const name = gradle.match(/versionName\s*=\s*"([^"]+)"/)?.[1];
+          if (appId !== "ye.dalilna.app") throw new Error("Gradle applicationId mismatch.");
+          if (name !== "3.1.0" || version.androidVersion !== name) throw new Error("versionName mismatch.");
+          if (Number(version.androidVersionCode) !== 4129001 || Number(version.versionCode) !== 4129001) {
+            throw new Error("version.json does not match the pinned 4129001 release.");
+          }
+          const metadata = {
+            applicationId: appId,
+            elements: [{ versionCode: 4129001, versionName: name, outputFile: "app-release.aab" }]
+          };
+          fs.writeFileSync(process.env.RUNNER_TEMP + "/dalilna-4129001/output-metadata.json", JSON.stringify(metadata, null, 2));
+          NODE
+          echo "APK package, version code, version name and signed AAB verified."
+
+      - name: Authenticate to Google Cloud using Workload Identity Federation
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: "projects/28058491662/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "dalilna-play-automation@dalilna-play-automation-516000.iam.gserviceaccount.com"
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: Stage the AAB as a non-live Closed Testing draft
+        run: |
+          python scripts/stage_google_play_draft.py \
+            --aab "$DALILNA_RELEASE_DIR/app-release.aab" \
+            --metadata "$DALILNA_RELEASE_DIR/output-metadata.json"
