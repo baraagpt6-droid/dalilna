@@ -56,7 +56,6 @@ jobs:
       PACKAGE_NAME: ye.dalilna.app
       EXPECTED_VERSION_CODE: "4128401"
       PLAY_TRACK_NAME: Dalilna Closed Testing
-      EXISTING_EDIT_ID: ${{ inputs.existing_edit_id }}
       TESTERS_GOOGLE_GROUP: ${{ inputs.testers_google_group }}
       PLAY_MODE: ${{ inputs.mode }}
       GITHUB_EVENT_NAME: ${{ github.event_name }}
