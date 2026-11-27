@@ -21,10 +21,10 @@ on:
           - SUBMIT_FOR_REVIEW
         default: INSPECT_ONLY
       existing_edit_id:
-        description: "Active Play edit ID for read-only inspection or stage-only mode; required for STAGE_ONLY"
+        description: "Optional existing Play edit ID. Leave blank to inspect via a disposable edit or create a fresh isolated Stage Only edit."
         required: false
         type: string
-        default: "13370413812168476918"
+        default: ""
       testers_google_group:
         description: "Optional Google Groups email to add on review submission; saved individual email lists are not exposed by the API"
         required: false
@@ -62,7 +62,7 @@ jobs:
       PLAY_MODE: ${{ inputs.mode || (contains(github.event.head_commit.message || '', '[stage-dalilna-play-edit]') && 'STAGE_ONLY') || 'INSPECT_ONLY' }}
       GITHUB_EVENT_NAME: ${{ github.event_name }}
       GITHUB_EVENT_HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-      EXISTING_EDIT_ID: ${{ inputs.existing_edit_id || '13370413812168476918' }}
+      EXISTING_EDIT_ID: ${{ inputs.existing_edit_id || '' }}
     steps:
       - name: Checkout Dalilna main
         uses: actions/checkout@v4
@@ -127,6 +127,13 @@ jobs:
           fi
           python scripts/google_play_closed_testing_draft.py "${ARGS[@]}"
 
+      - name: Read committed Play state before isolated Stage Only
+        if: env.PLAY_MODE == 'STAGE_ONLY'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/google_play_closed_testing_draft.py --inspect-only
+
       - name: Download pinned signed Dalilna AAB
         if: env.PLAY_MODE == 'STAGE_ONLY' || env.PLAY_MODE == 'SUBMIT_FOR_REVIEW'
         shell: bash
@@ -139,13 +146,13 @@ jobs:
           echo "6e70daa8cdbdd93f9ce069223514bfb5129e2b462e9ff278f9cd91ef7ae24ca0  dist/aab/app-release.aab" | sha256sum --check
 
       - name: Set up Node.js for fresh Play screenshots
-        if: env.PLAY_MODE == 'STAGE_ONLY' || env.PLAY_MODE == 'SUBMIT_FOR_REVIEW'
+        if: env.PLAY_MODE == 'SUBMIT_FOR_REVIEW'
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
       - name: Capture and prepare Play listing images
-        if: env.PLAY_MODE == 'STAGE_ONLY' || env.PLAY_MODE == 'SUBMIT_FOR_REVIEW'
+        if: env.PLAY_MODE == 'SUBMIT_FOR_REVIEW'
         shell: bash
         run: |
           set -euo pipefail
@@ -159,17 +166,16 @@ jobs:
             --screenshots-zip dist/dalilna-play-screenshots.zip \
             --output-dir dist/play-assets
 
-      - name: Stage Dalilna release inside the existing Play edit only
+      - name: Stage only the Dalilna bundle and Closed Testing track
         if: env.PLAY_MODE == 'STAGE_ONLY'
         shell: bash
         run: |
           set -euo pipefail
-          [[ -n "$EXISTING_EDIT_ID" ]]
-          python scripts/google_play_closed_testing_draft.py \
-            --stage-only \
-            --existing-edit-id "$EXISTING_EDIT_ID" \
-            --aab dist/aab/app-release.aab \
-            --assets-dir dist/play-assets
+          ARGS=(--stage-only --aab dist/aab/app-release.aab)
+          if [[ -n "$EXISTING_EDIT_ID" ]]; then
+            ARGS+=(--existing-edit-id "$EXISTING_EDIT_ID")
+          fi
+          python scripts/google_play_closed_testing_draft.py "${ARGS[@]}"
 
       - name: Verify staged Play edit with read-only API inspection
         if: env.PLAY_MODE == 'STAGE_ONLY'
