@@ -317,7 +317,7 @@ All public app features are available without signing in. Open Dalilna and brows
 - [ ] تصدير أيقونة Play PNG بمقاس 512×512 وصورة مميزة بمقاس 1024×500.
 - [x] إنشاء AAB وAPK موقعين والتحقق من التوقيع والنسخة ورمز الإصدار. AAB الحالي versionCode 3127201.
 - [ ] إضافة حسابات المختبرين أو Google Group لمسار internal. قراءة API بتاريخ 27 نوفمبر 2026 أكدت أن عدد المجموعات وقوائم البريد الحالية يساوي صفراً؛ بعد الإضافة انسخ رابط opt-in الرسمي.
-- [ ] منح حساب الخدمة صلاحية Manage store presence على تطبيق Dalilna حتى تنجح عملية حفظ نصوص المتجر؛ آخر API recheck رجع HTTP 403.
+- [ ] التحقق من صلاحيات Play Console على التطبيق من واجهة Console. خطأ 403 السابق تاريخي؛ التشغيل الأحدث وصل إلى اعتماد Edit ورجع 400 بسبب معامل `changesNotSentForReview`، فلا تعتبره دليلاً على نقص Manage store presence.
 - [ ] رفع أيقونة 512×512 PNG ورسمة Feature Graphic ‏1024×500 ولقطات الشاشة من Artifact إلى Play Console.
 - [ ] إكمال إقرارات Ads وApp content وIARC داخل Play Console قبل أي مسار مغلق/مفتوح/إنتاجي.
 - [ ] إكمال الاختبار المغلق إذا كان مطلوباً للحساب.
@@ -330,9 +330,9 @@ All public app features are available without signing in. Open Dalilna and brows
 - هذا الرابط ليس رابط قبول الدعوة لاختبار المسار الداخلي. رابط الانضمام الرسمي يظهر بعد إضافة المختبرين من Play Console.
 - صفحة حذف البيانات المنشورة: https://baraagpt6-droid.github.io/dalilna/data-deletion.html
 - ملف الاستيراد: `data-safety.csv`. لا يحتاجه المسار الداخلي وحده ما دام التوزيع حصرياً للاختبار الداخلي؛ جهّزه للمسارات المفتوحة أو الإنتاجية.
-- بطاقة المتجر العربية والإنجليزية جرى تجهيزها وإرسالها إلى API، لكن اعتماد التعديلات رُفض بـ `403 PERMISSION_DENIED`. المطلوب صلاحية `Manage store presence` لحساب الخدمة على تطبيق Dalilna.
+- بطاقة المتجر العربية والإنجليزية والأصول رُفعت داخل Edit غير معتمد. رفض Google اعتماد Edit برمز `400 INVALID_ARGUMENT` لأن `changesNotSentForReview` غير مقبول في حالة التطبيق الحالية. لم تُحفظ هذه التعديلات في المتجر.
 - لا يوجد إطلاق Production. لا تنفّذ رفع AAB جديداً لمجرد إعادة اختبار صلاحية المتجر.
-- ما زال ملف أيقونة Play بصيغة PNG ‏512×512 ورسمة Feature Graphic ‏1024×500 غير موجودين كملفين مُثبتين في المستودع.
+- جرى توليد أيقونة Play بمقاس 512×512 وصورة Feature Graphic بمقاس 1024×500، ورفعها داخل Edit غير معتمد. يلزم اعتمادها أو حفظها من Publishing overview قبل اعتبارها محفوظة.
 
 
 ## الحالة الفعلية للإصدار — 27 نوفمبر 2026
@@ -346,4 +346,8 @@ All public app features are available without signing in. Open Dalilna and brows
 
 ## Closed testing draft found — 27 November 2026
 
-Android Publisher read-back found a single Draft release on `Dalilna Closed Testing`: versionCode `3127701`. The latest signed AAB is `4128401`, above the completed internal code `4100101`. The draft has not yet been updated by the automation. The refresh workflow preserves this existing draft's non-version fields, leaves completed releases and tester configuration unchanged, and replaces only its draft artifact with the verified newer AAB. The existing `Hubaish Testers` saved email list is not touched.
+Android Publisher read-back found a single Draft release on `Dalilna Closed Testing`: versionCode `3127701`. The latest signed AAB is `4128401`, above the completed internal code `4100101`. Run `45945373618` staged the AAB, listings and images inside an uncommitted edit, then Google rejected commit with HTTP 400 because the app is not in a rejection state that allows `changesNotSentForReview`. The committed track remains on `3127701`. The existing `Hubaish Testers` saved email list was not touched.
+
+## Review submission safety — 27 November 2026
+
+The Android Publisher `edits.commit` endpoint currently sends changes for review automatically for this app. Google's `changesNotSentForReview` query parameter is documented for rejected-change scenarios and was rejected with HTTP 400 in run [45945373618](https://github.com/baraagpt6-droid/dalilna/actions/runs/45945373618). Do not remove that parameter and retry unless the project is intentionally ready for review, because omitting it would submit the changes. To hold changes, use Publishing overview → Changes not yet sent for review → Save for later. The workflow now defaults to read-only inspection; review submission is a separate explicit mode.
