@@ -50,6 +50,10 @@ jobs:
             echo "::error::This workflow is restricted to baraagpt6-droid/dalilna."
             exit 1
           }
+          [[ "$GITHUB_REF" == "refs/heads/main" ]] || {
+            echo "::error::Dispatch this workflow from the main branch only."
+            exit 1
+          }
           APP_ID="$(sed -n 's/^[[:space:]]*applicationId = "\([^"]*\)"/\1/p' android/app/build.gradle.kts | head -n 1)"
           [[ "$APP_ID" == "$PACKAGE_NAME" ]] || {
             echo "::error::PACKAGE_NAME does not match android/app/build.gradle.kts applicationId."
