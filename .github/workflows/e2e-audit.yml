@@ -1,6 +1,6 @@
 name: Dalilna v3.1.0 live E2E audit
-# Final signed APK metadata is published before this live audit runs.
-# Re-run live probes after the signed APK and assistant fallback are deployed.
+# Validate the published Play Store-only update flow and live app services.
+# Direct APK self-updates are intentionally blocked; Google Play is the only update destination.
 
 on:
   pull_request:
@@ -133,13 +133,15 @@ jobs:
             }
             const versionRes=await getPublic("version.json?audit="+process.env.GITHUB_SHA);
             const version=await versionRes.json();
-            const [pageRes,marketRes,indexRes,clientRes,v3jsRes,v3cssRes,featuresRes,jobsRes]=await Promise.all([
+            const [pageRes,marketRes,indexRes,clientRes,v3jsRes,v3cssRes,featuresRes,jobsRes,updateRes,swRes]=await Promise.all([
               getPublic("index.html"),getPublic("market_items.json"),
               getPublic("regional-catalog/search_index_light.json?v=3.1.0-pharmacy24"),getPublic("marketplace-client.js"),
-              getPublic("v3.0.0.js?v=3.1.0"),getPublic("v3.0.0.css?v=3.1.0"),getPublic("features-2.1.js?v=3.1.0"),getPublic("jobs-feed.json")
+              getPublic("v3.0.0.js?v=3.1.0"),getPublic("v3.0.0.css?v=3.1.0"),getPublic("features-2.1.js?v=3.1.0"),getPublic("jobs-feed.json"),
+              getPublic("app-update.js?v=3.1.0-store-safe1"),getPublic("sw.js")
             ]);
             const pageText=await pageRes.text(),market=await marketRes.json(),clientText=await clientRes.text();
             const v3js=await v3jsRes.text(),v3css=await v3cssRes.text(),featuresText=await featuresRes.text(),jobsFeed=await jobsRes.json();
+            const updaterText=await updateRes.text(),serviceWorkerText=await swRes.text();
             const {gunzipSync}=await import("node:zlib");
             const publicBytes=await indexRes.arrayBuffer();
             const publicEnvelope=JSON.parse(new TextDecoder().decode(publicBytes));
@@ -160,23 +162,12 @@ jobs:
               craftCategory:pageText.includes("craft:")||pageText.includes('"craft"'),
               directoryWhatsApp:pageText.includes("مشاركة واتساب"),
               productWhatsApp:clientText.includes("مشاركة واتساب")};
-            let release=null,apk=null,lastReleaseError=null;
-            for(let attempt=0;attempt<90;attempt++){
-              try{
-                const releaseResponse=await fetch("https://api.github.com/repos/baraagpt6-droid/dalilna/releases/tags/v3.1.0",{headers:{Accept:"application/vnd.github+json",Authorization:"Bearer "+process.env.GH_TOKEN}});
-                if(releaseResponse.ok){
-                  release=await releaseResponse.json();
-                  apk=release.assets?.find(asset=>asset.name==="app-release.apk");
-                  if(apk&&apk.browser_download_url===version.androidReleaseUrl&&String(release.body||"").includes("Signing mode: persistent"))break;
-                  lastReleaseError=new Error("GitHub v3.1.0 release asset is not ready.");
-                }else lastReleaseError=new Error("GitHub v3.1.0 release HTTP "+releaseResponse.status);
-              }catch(error){lastReleaseError=error;}
-              await new Promise(resolve=>setTimeout(resolve,2000));
-            }
-            if(!apk||apk.browser_download_url!==version.androidReleaseUrl||!String(release?.body||"").includes("Signing mode: persistent"))throw lastReleaseError||new Error("The persistent v3.1.0 Android APK release asset is missing.");
+            if(version.androidVersion!=="3.1.0"||version.androidStoreUrl!=="https://play.google.com/store/apps/details?id=ye.dalilna.app"||Object.hasOwn(version,"androidReleaseUrl"))throw new Error("Android update metadata must expose only the official Google Play URL and must not contain a direct APK URL.");
+            if(!updaterText.includes("getVersionName")||!updaterText.includes("https://play.google.com/store/apps/details?id=ye.dalilna.app")||!updaterText.includes("window.location.assign(PLAY_STORE_URL)")||/github\\.com|app-release\\.apk|androidReleaseUrl/i.test(updaterText))throw new Error("The in-app updater does not route exclusively to the official Google Play listing.");
+            if(!serviceWorkerText.includes('CACHE_PREFIX + "v3.1.0-store-safe1"')||!serviceWorkerText.includes('url.pathname.endsWith("/app-update.js")')||!serviceWorkerText.includes('url.pathname.endsWith("/version.json")'))throw new Error("The service worker is not configured to refresh the Google Play-safe updater and version metadata.");
             if(publicSite.version!=="3.1.0"||publicSite.signingMode!=="persistent"||version.officialWebUrl!==publicBase||!pageText.includes('<link rel="canonical" href="'+publicBase+'">'))throw new Error("Published GitHub Pages version, canonical URL or Android signing mode is not aligned to v3.1.0.");
             if(assistantStatus.corsOrigin!=="https://baraagpt6-droid.github.io")throw new Error("Render assistant CORS does not allow the official GitHub Pages origin.");
-            publicSite.androidRelease={ok:true,versionCode:version.androidVersionCode,size:apk.size,digest:apk.digest,downloadUrl:apk.browser_download_url};
+            publicSite.androidUpdate={ok:true,versionCode:version.androidVersionCode,storeUrl:version.androidStoreUrl,directApkMetadataBlocked:true};
             publicSite.netlifyLegacyAlias={ok:true,skipped:true,reason:"Legacy Netlify is not an official Dalilna deployment target; GitHub Pages and Render are authoritative."};
 
             if(!publicSite.v3SavedHub||!publicSite.v3FlyAnimation||!publicSite.v3JobSearch||!publicSite.v3Styles||!publicSite.assistantJobsLocal||!publicSite.assistantLocalFallback||publicSite.jobFeedWithSourceLinks===0)throw new Error("A v3 saved hub, animation, job filter, local jobs assistant or source-link asset is missing.");
