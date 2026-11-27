@@ -2616,7 +2616,7 @@ const STATIC_UI_EN={
 "متبقي 60 يوماً":"60 days remaining","اطلب إعلانك المجاني":"Request your free advert","لوحة تحكم المشرف":"Admin dashboard",
 "+ إضافة موثّقة":"+ Add verified listing","خروج":"Exit","طلبات بانتظار المراجعة":"Pending review requests",
 "افتح لمراجعة الطلبات وقبولها أو رفضها":"Open to review, approve or reject requests","مراجعة الإعلانات المشتركة":"Review shared adverts",
-"تحميل طلبات المراجعة":"Load review requests","أدوات إدارة الإعلانات متاحة للمستخدمين المخولين فقط.":"Requires PostgreSQL and a server admin token.",
+"تحميل طلبات المراجعة":"Load review requests","أدوات إدارة الإعلانات متاحة للمستخدمين المخولين فقط.":"Ad moderation tools are available to authorised users only.",
 "نظرة عامة":"Overview","الإدراجات والحذف":"Listings and deletion","المراجعة":"Review","الصلاحيات":"Permissions",
 "الإعلانات":"Adverts","الصرف والطوارئ":"Rates and emergencies","البلاغات والسجل":"Reports and activity log",
 "الحظر والإيقاف":"Blocks and suspensions","النسخ الاحتياطي":"Backup","إدارة التاجر":"Merchant management",
@@ -6520,7 +6520,7 @@ function render(){
     const jobs=applyFilters(S.items.filter(i=>i.cat==="jobs"&&match(i)));
     $("#jobs").innerHTML=jobs.map(cardHTML).join("")||`<div class="empty">لا توجد وظائف متاحة حالياً.</div>`;
   }else if(view==="souq"){
-    // Product listings come from the shared PostgreSQL marketplace only.
+    // Product listings come from the shared marketplace only.
   }
   const showTopSearch=searchActive;
   const topSection=$("#searchResultsTop"),topList=$("#searchResultList"),homeSlot=$("#homeListSlot");

@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+      - name: Verify public UI error handling and public asset secrets
+        run: node --test tests/public-ui-safety.test.cjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:

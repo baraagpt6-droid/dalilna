@@ -75,6 +75,9 @@ on:
       - '!v3.0.0.js'
       - '!v3.0.0.css'
       - '!sw.js'
+      - '!marketplace-client.js'
+      - '!features-2.1.js'
+      - '!.github/workflows/android-apk.yml'
       - '!android/app/src/main/assets/**'
 
 permissions:
