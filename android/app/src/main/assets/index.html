@@ -374,6 +374,9 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
   background:var(--bg);border:1px solid var(--line);text-align:start;cursor:pointer;width:100%;
 }
 .role-opt:hover,.role-opt.sel{border-color:var(--acc);background:rgba(56,182,166,.1)}
+.admin-entry-footer{display:flex;justify-content:center;margin:14px 0 2px;padding-top:8px;border-top:1px solid var(--line)}
+.admin-entry-link{min-height:26px!important;padding:2px 8px!important;background:transparent!important;border:0!important;border-radius:7px!important;color:var(--mute)!important;font-size:11px!important;font-weight:500;text-decoration:underline;text-underline-offset:3px;opacity:.78}
+.admin-entry-link:hover,.admin-entry-link:focus-visible{color:var(--gold)!important;opacity:1}
 .role-ic{width:42px;height:42px;border-radius:11px;background:var(--chip);display:grid;place-items:center;flex:none;color:var(--acc)}
 .role-ic svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
 
@@ -1048,7 +1051,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
         <span id="profileContact" class="where">لا توجد بيانات تواصل للحساب الحالي.</span>
         <span id="profileDaysLeft" class="where">متبقي 60 يوماً من عرض الإعلانات المجاني</span>
       </div>
-      <div id="v3RoleSwitcher" class="v3-role-switcher" aria-label="تبديل صفة الحساب"><span>صفة الاستخدام</span><div><button type="button" data-v3-role="client">عميل</button><button type="button" data-v3-role="merchant">بائع</button><button type="button" data-v3-role="admin">مشرف</button></div></div>
+      <div id="v3RoleSwitcher" class="v3-role-switcher" aria-label="تبديل صفة الحساب"><span>صفة الاستخدام</span><div><button type="button" data-v3-role="client">عميل</button><button type="button" data-v3-role="merchant">بائع</button></div></div>
       <button type="button" class="v3-profile-saved" id="profileSavedHub">♥ المفضلة والمحفوظات <span id="profileSavedHubCount">0</span></button>
       <button type="button" class="ghost" id="profileBlockedSellersBtn">إدارة البائعين المحظورين على هذا الجهاز</button>
       <div class="profile-metrics">
@@ -1065,6 +1068,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
         <button type="button" class="ghost" id="profileThemeBtn">تبديل المظهر</button>
         <button type="button" class="ghost" id="profileNotificationsBtn">إدارة الإشعارات</button>
         <button type="button" class="ghost" id="profileLogoutBtn">تسجيل الخروج</button>
+        <a class="ghost" id="profileStoreUpdateLink" href="https://play.google.com/store/apps/details?id=ye.dalilna.app" target="_blank" rel="noopener noreferrer">تحديث التطبيق من Google Play</a>
         <a class="ghost" id="profilePrivacyLink" href="./privacy.html">سياسة الخصوصية</a>
       </div>
       <p id="profileLocalNote" class="where" style="margin:8px 0 0">الملف المحلي محفوظ على هذا الجهاز، ولا يمثل حساباً مركزياً موثقاً.</p>
@@ -1098,13 +1102,9 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <button type="button" class="add" id="merchSave">تفعيل حساب التاجر</button>
     </div>
 
-    <button type="button" class="role-opt" id="roleAdminBtn">
-      <div class="role-ic" style="color:var(--gold)"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-      <div>
-        <b style="display:block;font-size:15px;color:var(--gold)">دخول المشرف</b>
-        <span class="where">للمشرفين فقط — الدخول بالبريد الإلكتروني وكلمة المرور.</span>
-      </div>
-    </button>
+    <div class="admin-entry-footer">
+      <button type="button" class="admin-entry-link" id="roleAdminBtn" aria-controls="adminLoginForm" aria-expanded="false">دخول المشرف</button>
+    </div>
 
     <p class="dialog-hint" id="adminAccessHint" hidden>ملاحظة: حسابات الإدارة في هذه النسخة محفوظة محلياً على الجهاز، وليست مصادقة مركزية لخدمة عامة.</p>
     <form id="adminLoginForm" hidden style="padding:12px;background:var(--bg);border-radius:12px;border:1px solid var(--gold)">
@@ -2644,7 +2644,7 @@ const STATIC_UI_EN={
 "مستفيد / عميل":"Visitor / customer","تصفح المحلات، البحث الصوتي، التقييم، وحفظ المفضلة.":"Browse shops, use voice search, rate and save favorites.",
 "صاحب محل / بائع":"Shop owner / seller","إدارة محلاتك وإضافة عروضك وإعلاناتك برقم جوالك.":"Manage shops and add offers and adverts using your phone number.",
 "اسم التاجر أو المحل":"Merchant or shop name","رقم الجوال / واتساب":"Phone number / WhatsApp","تفعيل حساب التاجر":"Activate merchant profile",
-"دخول المشرف":"Admin sign-in","للمشرفين فقط — الدخول بالبريد الإلكتروني وكلمة المرور.":"Administrators only — sign in with email and password.",
+"دخول المشرف":"Admin sign-in","تحديث التطبيق من Google Play":"Update app from Google Play","للمشرفين فقط — الدخول بالبريد الإلكتروني وكلمة المرور.":"Administrators only — sign in with email and password.",
 "ملاحظة: حسابات الإدارة في هذه النسخة محفوظة محلياً على الجهاز، وليست مصادقة مركزية لخدمة عامة.":"Admin accounts in this version are stored locally on this device; they are not central authentication for a public service.",
 "البريد الإلكتروني":"Email","كلمة المرور":"Password","إظهار":"Show","إخفاء":"Hide",
 "طلب إعلان مجاني لمدة 60 يوماً":"Request a free 60-day advert","المدة محسوبة من أول تشغيل للتطبيق على هذا الجهاز. يراجع المشرف الإعلان قبل نشره.":"The period starts on the first app launch on this device. An administrator reviews adverts before publication.",
@@ -3358,6 +3358,7 @@ $("#profileLogoutBtn").addEventListener("click",()=>{
 $("#accountDlg").addEventListener("close",()=>{
   $("#adminAccessHint").hidden=true;
   $("#adminLoginForm").hidden=true;
+  $("#roleAdminBtn").setAttribute("aria-expanded","false");
 });
 $("#roleClientBtn").addEventListener("click",()=>{
   S.onboarded=true;
@@ -3383,6 +3384,7 @@ $("#merchSave").addEventListener("click",()=>{
 $("#roleAdminBtn").addEventListener("click",()=>{
   $("#adminLoginForm").hidden=false;
   $("#adminAccessHint").hidden=false;
+  $("#roleAdminBtn").setAttribute("aria-expanded","true");
   $("#merchantBox").hidden=true;
   $("#admLoginErr").textContent="";
 });
@@ -6487,7 +6489,7 @@ window.DalilnaMarketplaceBridge={
 </script>
 <script src="./marketplace-client.js"></script>
 <script src="./market-price-guide.js?v=3.1.0" defer></script>
-<script src="./app-update.js?v=3.1.0" defer></script>
+<script src="./app-update.js?v=3.1.0-store-safe1" defer></script>
 <script src="./features-2.1.js?v=3.1.0" defer></script>
 <script src="./v3.0.0.js?v=3.1.0" defer></script>
 </body>

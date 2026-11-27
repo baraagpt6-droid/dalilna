@@ -26,12 +26,16 @@ function makeElements() {
   return { $, elements };
 }
 
-test('admin login option is visible in the account menu', () => {
+test('admin login is a discreet footer action, not a prominent role card', () => {
   assert.ok(accountDialog, 'account dialog exists');
-  const button = accountDialog.match(/<button\b[^>]*id="roleAdminBtn"[^>]*>/)?.[0];
-  assert.ok(button, 'admin login button exists inside account dialog');
-  assert.doesNotMatch(button, /\shidden(?:\s|>|=)/, 'admin login button is not hidden');
-  assert.match(accountDialog, /دخول المشرف/);
+  const footerStart = accountDialog.indexOf('<div class="admin-entry-footer">');
+  const footerEnd = accountDialog.indexOf('</div>', footerStart);
+  const footer = footerStart >= 0 && footerEnd > footerStart ? accountDialog.slice(footerStart, footerEnd) : '';
+  assert.ok(footer.includes('class="admin-entry-link" id="roleAdminBtn"'));
+  assert.ok(footer.includes('aria-controls="adminLoginForm"'));
+  assert.ok(!accountDialog.includes('class="role-opt" id="roleAdminBtn"'));
+  assert.ok(!accountDialog.includes('data-v3-role="admin"'));
+  assert.ok(html.includes('.admin-entry-link{') && html.includes('font-size:11px'));
 });
 
 test('logo long-press login mechanism and stale click state are removed', () => {

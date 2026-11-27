@@ -124,10 +124,13 @@ test("production runtime contains no legacy static-host origin or migration bran
   assert.equal(source.includes(legacyOrigin), false);
 });
 
-test("direct-download APK is the signed production app variant", () => {
+test("Android update notices and settings route only to the official Google Play listing", () => {
   const workflow = read(".github/workflows/android-apk.yml");
   const gradle = read("android/app/build.gradle.kts");
   const version = JSON.parse(read("version.json"));
+  const update = read("app-update.js");
+  const html = read("index.html");
+  const customerScript = read("v3.0.0.js");
   assert.ok(gradle.includes('applicationId = "ye.dalilna.app"'));
   assert.ok(gradle.includes('applicationIdSuffix = ".debug"'));
   assert.ok(workflow.includes("assembleRelease"));
@@ -136,9 +139,17 @@ test("direct-download APK is the signed production app variant", () => {
   const buildToolsAssignment = workflow.indexOf('BUILD_TOOLS="$SDK_ROOT/build-tools/$BUILD_TOOLS_VERSION"');
   const packageCheck = workflow.indexOf("ACTUAL_PACKAGE_NAME=");
   assert.ok(buildToolsAssignment >= 0 && packageCheck > buildToolsAssignment, "package verification must run after Android build-tools are initialized");
-  assert.ok(workflow.includes("ye.dalilna.app"));
-  assert.ok(workflow.includes("/releases/download/v3.1.0/app-release.apk"));
-  assert.ok(version.androidReleaseUrl.endsWith("/app-release.apk"));
-  assert.ok(!version.androidReleaseUrl.endsWith("/app-debug.apk"));
+  assert.ok(workflow.includes('version.androidStoreUrl = "https://play.google.com/store/apps/details?id=ye.dalilna.app"'));
+  assert.ok(workflow.includes('v.androidStoreUrl = "https://play.google.com/store/apps/details?id=ye.dalilna.app"'));
+  assert.equal(version.androidVersion, "3.1.0");
+  assert.equal(version.androidStoreUrl, "https://play.google.com/store/apps/details?id=ye.dalilna.app");
+  assert.equal(Object.hasOwn(version, "androidReleaseUrl"), false);
+  assert.ok(update.includes("getVersionName"));
+  assert.ok(update.includes("PLAY_STORE_URL"));
+  assert.ok(update.includes("window.location.assign(PLAY_STORE_URL)"));
+  assert.doesNotMatch(update, /github\.com|androidReleaseUrl|app-release\.apk/i);
+  assert.ok(html.includes('id="profileStoreUpdateLink" href="https://play.google.com/store/apps/details?id=ye.dalilna.app"'));
+  assert.ok(customerScript.includes("الحفظ فوري ومحلي على جهازك، ولا يتطلب تأكيداً عبر البريد الإلكتروني."));
   assert.equal(read("version.json"), read("android/app/src/main/assets/version.json"));
+  assert.equal(read("app-update.js"), read("android/app/src/main/assets/app-update.js"));
 });

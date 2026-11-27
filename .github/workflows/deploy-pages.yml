@@ -124,7 +124,7 @@ jobs:
             get("./market_prices_yemen.json"),
             get("./market-price-guide.js?v=3.1.0"),
             get("./app-native-bridge.js?v=3.1.0"),
-            get("./app-update.js?v=3.1.0"),
+            get("./app-update.js?v=3.1.0-store-safe1"),
             get("./jobs-feed.json")
           ]);
           const html = await page.text();
@@ -171,8 +171,8 @@ jobs:
           for (const item of priceGuide.items) {
             if (!item.sourceUrl?.startsWith("https://") || !item.image || !(await fetch(new URL("./market-price-images/" + item.image, base))).ok) throw new Error("A market-price card is missing its source or local illustration: " + item.id);
           }
-          if (!priceGuideJs.includes("DalilnaPriceGuide") || !nativeBridge.includes("switchToRemote") || !appUpdate.includes("androidVersionCode")) throw new Error("Price guide, OTA bridge or update notice was not published.");
-          if (Number(version.androidVersionCode) > 280 && !version.androidReleaseUrl?.startsWith("https://")) throw new Error("A published Android update is missing its release URL.");
+          if (!priceGuideJs.includes("DalilnaPriceGuide") || !nativeBridge.includes("switchToRemote") || !appUpdate.includes("getVersionName") || !appUpdate.includes("play.google.com/store/apps/details?id=ye.dalilna.app")) throw new Error("Price guide, OTA bridge or Google Play update handoff was not published.");
+          if (version.androidStoreUrl !== "https://play.google.com/store/apps/details?id=ye.dalilna.app" || Object.hasOwn(version, "androidReleaseUrl")) throw new Error("Android updates must route to Google Play only; direct APK metadata is blocked.");
           if (!Array.isArray(manifest.governorates) || manifest.governorates.length !== 22) throw new Error("Published regional manifest does not contain all 22 governorates.");
           if (!Array.isArray(manifest.districtCounts) || manifest.districtCounts.length !== 335) throw new Error("Published regional manifest does not contain all 335 districts.");
           const governorateTotal = manifest.governorates.reduce((sum, item) => sum + Number(item.count || 0), 0);

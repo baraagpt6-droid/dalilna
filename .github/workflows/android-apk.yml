@@ -168,7 +168,8 @@ jobs:
           version.versionCode = versionCode;
           version.androidVersionCode = versionCode;
           version.androidSigningMode = process.env.APK_SIGNING_MODE || "persistent";
-          version.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.1.0/app-release.apk";
+          delete version.androidReleaseUrl;
+          version.androidStoreUrl = "https://play.google.com/store/apps/details?id=ye.dalilna.app";
           version.officialWebUrl = "https://baraagpt6-droid.github.io/dalilna/";
           version.updatedAt = new Date().toISOString();
           fs.writeFileSync(file, JSON.stringify(version, null, 2));
@@ -390,7 +391,8 @@ jobs:
           v.versionCode = versionCode;
           v.androidVersionCode = versionCode;
           v.androidSigningMode = process.env.APK_SIGNING_MODE;
-          v.androidReleaseUrl = "https://github.com/" + process.env.GITHUB_REPOSITORY + "/releases/download/v3.1.0/app-release.apk";
+          delete v.androidReleaseUrl;
+          v.androidStoreUrl = "https://play.google.com/store/apps/details?id=ye.dalilna.app";
           v.officialWebUrl = "https://baraagpt6-droid.github.io/dalilna/";
           v.updatedAt = new Date().toISOString();
           fs.writeFileSync(file, JSON.stringify(v, null, 2));
