@@ -2,7 +2,7 @@
 
 Source review: 27 November 2026  
 Android application ID: `ye.dalilna.app`  
-Android version: `3.1.0` · latest signed GitHub AAB versionCode `4128301` (not yet uploaded to Play) · Google Play internal-track versionCode `4100101` completed · target SDK 36  
+Android version: `3.1.0` · latest signed GitHub AAB versionCode `4128401` (not yet uploaded to Play) · Google Play internal-track versionCode `4100101` completed · target SDK 36  
 Developer display name: `Dalilna Team` — the app owner's team/brand name  
 Support and privacy contact: `dalilnasupport@gmail.com`
 
@@ -99,4 +99,4 @@ For each provider, classify the provider as a service provider or third party ac
 
 ## Release artifact status — 27 November 2026
 
-The current signed AAB in GitHub Release `v3.1.0` is versionCode `4128301`, SHA-256 `000bad420c5b6844c3ee6552dc2eb8364a51ddcef263bfc756b36e82d88ff86e`. The completed Google Play internal track remains `4100101`. This worksheet describes app data behavior; it is not evidence that the Play Data Safety form has been submitted or approved. The newest signed AAB has not been uploaded to Play as of this note.
+The current signed AAB in GitHub Release `v3.1.0` is versionCode `4128401`, SHA-256 `3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026`. The completed Google Play internal track remains `4100101`. This worksheet describes app data behavior; it is not evidence that the Play Data Safety form has been submitted or approved. The newest signed AAB has not been uploaded to Play as of this note.
