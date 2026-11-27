@@ -105,3 +105,20 @@ The current signed AAB in GitHub Release `v3.1.0` is versionCode `4128401`, SHA-
 ## Play Console submission status
 
 This Data Safety worksheet is derived from the project implementation and is not evidence of the Play Console questionnaire being submitted or approved. The latest signed AAB is versionCode `4128401`; the closed-testing track has a previous unsubmitted draft `3127701`. The latest AAB has not yet been committed to that draft. App content declarations and account-specific review requirements still require a Play Console read-back.
+
+
+## Google Play commit limitation — 27 November 2026
+
+The automation successfully authenticated with WIF, read the existing Dalilna closed-testing draft (`3127701`), staged the Arabic/English listing updates, uploaded the new `4128401` bundle and listing assets inside a temporary edit, and read the tester configuration (`googleGroupCount=0`, `allUsers=false`). The final `edits.commit` was rejected with HTTP 400:
+
+`Changes are sent for review automatically. The query parameter changesNotSentForReview must not be set.`
+
+The edit was not committed. The staged bundle, text and images therefore must not be treated as live in Play Console. The old track draft remains the last confirmed committed state. The script now explicitly refuses to retry without `changesNotSentForReview`, because Google says the ordinary commit would automatically send these changes for review. It will not bypass this guard.
+
+The Android Publisher documentation states the `changesNotSentForReview` parameter applies when a rejection happens; the console Publishing overview is the mechanism for saving reviewable changes for later. The remaining safe step needs Play Console UI access to save the staged changes without sending them for review. The connected browser automation was unavailable because its wallet could not fund the run. No review, rollout or Production action was taken.
+
+Tester API read-back:
+- Google Groups: `0`
+- `allUsers`: `false`
+- Saved individual email lists are not exposed by Android Publisher API and were not modified.
+- No opt-in link is available while the app remains in Draft/Pending publication.
