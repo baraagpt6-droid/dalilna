@@ -42,7 +42,7 @@ class DraftSafetyTests(unittest.TestCase):
     def test_release_is_always_draft(self):
         release = draft_release()
         self.assertEqual(release["status"], "draft")
-        self.assertEqual(release["versionCodes"], ["4128601"])
+        self.assertEqual(release["versionCodes"], ["4128701"])
         self.assertNotIn("userFraction", release)
         self.assertNotIn("countryTargeting", release)
 
@@ -63,7 +63,7 @@ class DraftSafetyTests(unittest.TestCase):
             },
         ]
         updated = prepare_closed_track_releases(original)
-        self.assertEqual(updated[0]["versionCodes"], ["4128601"])
+        self.assertEqual(updated[0]["versionCodes"], ["4128701"])
         self.assertEqual(updated[0]["status"], "draft")
         self.assertEqual(updated[0]["countryTargeting"], original[0]["countryTargeting"])
         self.assertEqual(updated[0]["inAppUpdatePriority"], 0)
@@ -79,7 +79,7 @@ class DraftSafetyTests(unittest.TestCase):
             prepare_closed_track_releases(releases)
 
     def test_existing_draft_above_target_is_refused(self):
-        releases = [{"versionCodes": ["4128602"], "status": "draft"}]
+        releases = [{"versionCodes": ["4128702"], "status": "draft"}]
         with self.assertRaises(RuntimeError):
             prepare_closed_track_releases(releases)
 
@@ -88,7 +88,7 @@ class DraftSafetyTests(unittest.TestCase):
         updated = prepare_closed_track_releases(completed)
         self.assertEqual(len(updated), 2)
         self.assertEqual(updated[-1]["status"], "draft")
-        self.assertEqual(updated[-1]["versionCodes"], ["4128601"])
+        self.assertEqual(updated[-1]["versionCodes"], ["4128701"])
 
 
     def test_play_mode_requires_exactly_one_action(self):
@@ -124,11 +124,11 @@ class DraftSafetyTests(unittest.TestCase):
                             {"name": "Internal", "status": "completed", "versionCodes": ["4100101"]}
                         ]},
                         {"track": TRACK_NAME, "releases": [
-                            {"name": "Dalilna", "status": "draft", "versionCodes": ["4128601"]}
+                            {"name": "Dalilna", "status": "draft", "versionCodes": ["4128701"]}
                         ]},
                     ]}
                 if path.endswith("/bundles"):
-                    return {"bundles": [{"versionCode": 4128601, "sha256": "abc", "size": 100}]}
+                    return {"bundles": [{"versionCode": 4128701, "sha256": "abc", "size": 100}]}
                 if "/testers/" in path:
                     return {"googleGroups": [], "allUsers": False}
                 if path.endswith("/details"):
@@ -146,8 +146,12 @@ class DraftSafetyTests(unittest.TestCase):
             state = inspect_play_state(fake, "active-edit")
         self.assertTrue(state["inspectionOnly"])
         self.assertTrue(state["existingEditReused"])
-        self.assertEqual(state["highestVersionCodeAcrossTracks"], 4128601)
-        self.assertEqual(state["bundles"][0]["versionCode"], 4128601)
+        self.assertEqual(state["highestVersionCodeAcrossTracks"], 4128701)
+        self.assertEqual(state["bundles"][0]["versionCode"], 4128701)
+        self.assertFalse(state["appDetails"]["matchesRepository"])
+        self.assertFalse(state["listings"]["ar"]["matchesRepository"])
+        self.assertEqual(len(state["listings"]["ar"]["metadataSha256"]), 64)
+        self.assertIn("editMetadataMatchesRepository", state)
         self.assertEqual(state["testers"]["googleGroupCount"], 0)
         self.assertFalse(any(method in {"POST", "PUT", "PATCH", "DELETE"} for method, _ in fake.calls))
 
@@ -167,7 +171,7 @@ class DraftSafetyTests(unittest.TestCase):
                             {"name": "Internal", "status": "completed", "versionCodes": ["4100101"]}
                         ]},
                         {"track": TRACK_NAME, "releases": [
-                            {"name": "Previous draft", "status": "draft", "versionCodes": ["4128401"]}
+                            {"name": "Previous draft", "status": "draft", "versionCodes": ["4128601"]}
                         ]},
                     ]}
                 if path.endswith("/bundles"):
@@ -176,7 +180,7 @@ class DraftSafetyTests(unittest.TestCase):
                     return {"googleGroups": [], "allUsers": False}
                 if path.endswith("/tracks/" + TRACK_NAME.replace(" ", "%20")) and method == "GET":
                     return {"releases": [
-                        {"name": "Previous draft", "status": "draft", "versionCodes": ["4128401"]}
+                        {"name": "Previous draft", "status": "draft", "versionCodes": ["4128601"]}
                     ]}
                 if path.endswith("/tracks/" + TRACK_NAME.replace(" ", "%20")) and method == "PUT":
                     self.track_payload = kwargs.get("json_body")
