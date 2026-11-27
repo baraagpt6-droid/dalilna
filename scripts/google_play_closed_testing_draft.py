@@ -361,7 +361,7 @@ def main() -> None:
                 },
             )
 
-        # Never delete or replace existing artwork. Stop if any image group is occupied.
+        # Preserve existing artwork; fill only image groups that are currently empty.
         for locale in ("ar", "en-US"):
             for image_type, image_paths in assets.items():
                 upload_image_group(api, package_path, edit_id, locale, image_type, image_paths)
