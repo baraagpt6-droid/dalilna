@@ -98,7 +98,7 @@ class SmartPublishTests(unittest.TestCase):
         self.assertEqual(api.status, "completed")
         self.assertEqual(api.commits, 1)
         self.assertEqual(len(api.persisted_releases), 1)
-        self.assertEqual(api.persisted_releases[0]["versionCodes"], [OLD_VERSION, str(VERSION_CODE)])
+        self.assertEqual(api.persisted_releases[0]["versionCodes"], [str(VERSION_CODE)])
 
     def test_active_review_falls_back_to_persisted_draft_without_cancelling_review(self):
         api = FakeApi(review_in_progress=True)
@@ -154,7 +154,7 @@ class SmartPublishTests(unittest.TestCase):
         changed = smart.promote_to_single_completed_release(releases, VERSION_CODE)
         self.assertEqual(len(changed), 1)
         self.assertEqual(changed[0]["status"], "completed")
-        self.assertEqual(changed[0]["versionCodes"], [OLD_VERSION, str(VERSION_CODE)])
+        self.assertEqual(changed[0]["versionCodes"], [str(VERSION_CODE)])
         self.assertEqual(len(releases), 2)
 
     def test_review_fallback_restores_draft_while_preserving_old_completed_release(self):
