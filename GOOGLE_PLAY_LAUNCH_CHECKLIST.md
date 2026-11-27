@@ -233,29 +233,22 @@ All public app features are available without signing in. Open Dalilna and brows
 تم التحقق من إعدادات المشروع الحالية:
 
 - Application ID: `ye.dalilna.app`.
-- `compileSdk = 36`.
-- `targetSdk = 36`.
-- `minSdk = 24`.
+- `compileSdk = 36`، `targetSdk = 36`، `minSdk = 24`.
 - `versionName = 3.1.0`.
-- رمز الإصدار الموجود في بيانات OTA الجذرية ليس مرجعاً لحزمة Google Play الداخلية. رمز الإصدار المؤكد في Play عبر API هو `4100101`؛ لا تغيّره ولا ترفع فوقه إصداراً جديداً في هذه المهمة.
-- سير CI يحتوي على خطوة `bundleRelease` لإنشاء AAB، ويستخدم مفتاح توقيع دائم.
+- مسار Google Play الداخلي المكتمل: `4100101`، والحالة `completed`.
+- أحدث AAB موقّع في GitHub: `4128601`، من Build #286.
+- SHA-256 للـ AAB: `5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a`.
+- حجم AAB: `8,838,656` بايت.
+- اجتاز AAB فحص توقيع JAR في GitHub Actions، كما طابق SHA-256 المحدد في تشغيل STAGE_ONLY.
+- تم رفع AAB `4128601` إلى Google Play Edit الموجود `13370413812168476918`، وقرأت Google Play API الحزمة مرة أخرى بنفس رمز الإصدار والبصمة.
+- إصدار Closed Testing داخل Edit الحالي حالته `draft`. لم يُعتمد Edit ولم يُرسل للمراجعة.
+- لا تخلط بين رمز إصدار OTA/الويب وبين رمز الإصدار الخاص بحزمة Google Play.
 
-تم إنشاء ملف الإصدار والتحقق منه بالفعل:
+روابط التحقق:
 
-- إصدار Web/OTA المحفوظ في أصول GitHub Release التاريخية: `3.1.0`، وقد سُجل versionCode `3127401` لتلك الأصول. حزمة Google Play الداخلية مستقلة ورقمها المؤكد عبر API هو `4100101`.
-- ملف AAB موقع بمفتاح الإصدار الدائم، وقد اجتاز التحقق من التوقيع.
-- ملف APK موقع أيضاً، واجتاز التحقق من رقم الإصدار ومعرّف الحزمة.
+- بناء Android الموقّع: https://github.com/baraagpt6-droid/dalilna/actions/runs/45949440829
+- تجهيز Google Play بوضع STAGE_ONLY: https://github.com/baraagpt6-droid/dalilna/actions/runs/45952854092
 - GitHub Release: https://github.com/baraagpt6-droid/dalilna/releases/tag/v3.1.0
-- AAB: https://github.com/baraagpt6-droid/dalilna/releases/download/v3.1.0/app-release.aab
-
-المتبقي هو رفع AAB إلى Play Console واختباره هناك.
-
-1. افتح GitHub Actions وشغّل أو راجع آخر تشغيل ناجح لسير بناء Android.
-2. حمّل ملف `app-release.aab` من مخرجات الإصدار المنشور، لا تستخدم APK التجريبي بدلاً منه.
-3. تأكد من أن الحزمة تحمل `ye.dalilna.app` وأنها موقعة بمفتاح الرفع الدائم.
-4. فعّل Google Play App Signing عند إنشاء التطبيق، واحتفظ بنسخة آمنة من مفتاح الرفع خارج المستودع.
-5. لا تضع ملف JKS أو كلمات المرور داخل GitHub أو في ملف عام.
-6. لا تغيّر Application ID بعد إنشاء سجل التطبيق في Play Console.
 
 أسماء أسرار GitHub المطلوبة للبناء الموقّع:
 
@@ -264,20 +257,23 @@ All public app features are available without signing in. Open Dalilna and brows
 - `ANDROID_KEY_ALIAS`
 - `ANDROID_KEY_PASSWORD`
 
-معرّفات الإعلانات ليست مفاتيح سرية، لكنها يجب أن تطابق تطبيق الإنتاج وحساب الإعلانات.
+لا تضع ملف JKS أو كلمات المرور داخل GitHub أو في ملف عام. لا تغيّر Application ID بعد إنشاء سجل التطبيق في Play Console.
+
+
 
 ## 7. مسار الاختبار والنشر
 
-1. أنشئ التطبيق في Play Console بالمعرّف `ye.dalilna.app`.
-2. أكمل معلومات المطور، بطاقة المتجر، سياسة الخصوصية، الإعلانات، الوصول، الجمهور، التصنيف، وأمان البيانات.
-3. ارفع AAB إلى Internal testing وشغّل الاختبارات على أجهزة فعلية.
-4. افحص الروابط، الموقع، الميكروفون، إعلانات UMP، نشر الإعلانات، حذف المحتوى، والتصفح دون تسجيل دخول.
-5. انتقل إلى Closed testing. إذا كان الحساب من نوع Personal وأُنشئ بعد 13 نوفمبر 2023، فالمتطلب المنشور هو 12 مختبراً على الأقل اشتركوا باستمرار في الاختبار المغلق مدة 14 يوماً قبل طلب الوصول إلى Production.
-6. بعد إكمال المتطلب، أرسل طلب Production access وأجب عن أسئلة Google حول الاختبار والتغييرات.
-7. افحص Pre-launch report، وأصلح الأعطال والتحذيرات التي تؤثر على الأمان أو الوظائف.
-8. أنشئ Production release، راجع البلدان والتوفر وبيانات الإصدار، ثم أرسل للمراجعة.
+1. تم إنشاء سجل التطبيق بالمعرّف `ye.dalilna.app`، والمسار الداخلي `4100101` مكتمل.
+2. تم تجهيز إصدار Closed Testing رقم `4128601` كـ `draft` داخل Edit غير معتمد. هذا لا يعني أن الإصدار أصبح متاحاً للمختبرين.
+3. أكمل بيانات المطور، وبطاقة المتجر، وسياسة الخصوصية، وإقرارات Ads وApp access وTarget audience وIARC.
+4. راجع إجابات Data Safety مقابل الكود ومزودي الخدمة الفعليين قبل استيراد `data-safety.csv`. لا تستورد CSV قبل هذه المراجعة لأنه يستبدل إجابات النموذج الحالية.
+5. أضف مختبري دليلنا أو Google Group خاصاً بدليلنا إلى Closed Testing من Play Console، واحفظ الإعدادات. لا تستخدم قوائم مختبري تطبيق دليل حبيش.
+6. بعد نشر مسار الاختبار، استخرج رابط Opt-in الرسمي من Play Console ووزعه على المختبرين. رابط Internal App Sharing ليس رابط Opt-in.
+7. إذا كان حساب المطور شخصياً وأُنشئ بعد 13 نوفمبر 2023، تشترط Google حالياً 12 مختبراً على الأقل ظلوا مشتركين في Closed Testing بصورة متصلة مدة 14 يوماً قبل التقديم على Production access. راجع نوع الحساب في Console؛ لا تفترض انطباق الشرط على حساب مؤسسة أو حساب شخصي أقدم.
+8. اجمع ملاحظات المختبرين، وافحص الأعطال وPre-launch report بعد إتاحة الإصدار للاختبار.
+9. بعد استكمال شروط الحساب والسياسات والاختبار، يمكن تقديم طلب Production access ثم إعداد إصدار Production بصورة مستقلة. لا تنفّذ هذه الخطوات ضمن STAGE_ONLY.
 
-قد يحتاج الحساب أو الإصدار إلى مراجعة إضافية. لا توجد طريقة تضمن قبول التطبيق أو تختصر مراجعة Google.
+
 
 ## 8. أين يوضع كل رابط؟
 
@@ -306,33 +302,31 @@ All public app features are available without signing in. Open Dalilna and brows
 
 ## 10. بوابات الإطلاق المتبقية
 
-- [x] تثبيت Dalilna Team كاسم العرض المقترح للفريق التابع لمالك التطبيق.
+- [x] تثبيت اسم Dalilna Team وبريد الدعم `dalilnasupport@gmail.com` في صفحات المشروع.
 - [ ] التحقق من مطابقة Dalilna Team مع اسم الناشر الفعلي داخل Play Console.
-- [x] إدراج dalilnasupport@gmail.com في سياسة الخصوصية وصفحة المتجر ونسخ Android.
-- [x] مراجعة سياسة الخصوصية وبيانات التواصل بعد تثبيت البريد والاسم.
-- [x] مراجعة مسار الصوت في الكود: Web Speech API داخل Android WebView، ولا يرسل الصوت الخام إلى Dalilna API؛ قد يعالجه مزود النظام محلياً أو عن بُعد، وتم الإفصاح عنه في Data Safety.
-- [x] تحديث إجابات Data Safety بناءً على ملفات Android وWebView وAPI وPostgreSQL ومزودي البحث وGoogle Mobile Ads.
-- [x] نشر dalilnasupport@gmail.com لطلبات الخصوصية والحذف اليدوي.
-- [x] إنشاء لقطات الهاتف والتابلت في ZIP عبر GitHub Actions. شغّل workflow run 45678040821، artifact id 15052333473؛ ينتهي الاحتفاظ به في 25 ديسمبر 2026.
-- [ ] تصدير أيقونة Play PNG بمقاس 512×512 وصورة مميزة بمقاس 1024×500.
-- [x] إنشاء AAB وAPK موقعين والتحقق من التوقيع والنسخة ورمز الإصدار. AAB الحالي versionCode 3127201.
-- [ ] إضافة حسابات المختبرين أو Google Group لمسار internal. قراءة API بتاريخ 27 نوفمبر 2026 أكدت أن عدد المجموعات وقوائم البريد الحالية يساوي صفراً؛ بعد الإضافة انسخ رابط opt-in الرسمي.
-- [ ] التحقق من صلاحيات Play Console على التطبيق من واجهة Console. خطأ 403 السابق تاريخي؛ التشغيل الأحدث وصل إلى اعتماد Edit ورجع 400 بسبب معامل `changesNotSentForReview`، فلا تعتبره دليلاً على نقص Manage store presence.
-- [ ] رفع أيقونة 512×512 PNG ورسمة Feature Graphic ‏1024×500 ولقطات الشاشة من Artifact إلى Play Console.
-- [ ] إكمال إقرارات Ads وApp content وIARC داخل Play Console قبل أي مسار مغلق/مفتوح/إنتاجي.
-- [ ] إكمال الاختبار المغلق إذا كان مطلوباً للحساب.
-
+- [x] نشر سياسة الخصوصية وصفحة طلب حذف البيانات وربطهما بالتطبيق.
+- [x] مراجعة إفصاح الميكروفون والبحث الصوتي وGoogle Mobile Ads وبيانات البحث والمحتوى الذي يرسله المستخدم.
+- [x] إعداد `GOOGLE_PLAY_DATA_SAFETY.md` وملف `data-safety.csv` للمراجعة.
+- [x] بناء AAB وAPK موقعين والتحقق من التوقيع ورمز الإصدار. AAB الحالي `4128601`.
+- [x] تجهيز AAB `4128601` داخل Edit `13370413812168476918` بحالة Closed Testing `draft` دون اعتماد أو إرسال للمراجعة.
+- [x] التحقق من وجود صورة أيقونة واحدة وصورة Feature Graphic واحدة وأربع لقطات هاتف وأربع لقطات جهاز لوحي لكل لغة داخل Edit. أظهر API أعداد الملفات، لكنه لم يعرض الأبعاد؛ هذا ليس فحصاً بصرياً لمحتوى الصور.
+- [ ] مراجعة الصور والأيقونات وأبعادها بصرياً من واجهة Play Console قبل أي إرسال للمراجعة.
+- [ ] تأكيد صلاحيات التطبيق المخصصة في Play Console من الواجهة. لا تمنح صلاحيات Account admin أو صلاحيات حساب عامة لمعالجة خطأ غير مثبت.
+- [ ] إكمال Ads وApp access وTarget audience وIARC وأي إقرارات App content مطلوبة.
+- [ ] مراجعة كل تصنيف Data Safety ومزودي الخدمة والعقود قبل استيراد CSV؛ لم يتم استيراده.
+- [ ] إضافة مختبري دليلنا أو Google Group تابعاً له إلى Closed Testing. قراءة API الحالية تظهر `googleGroups=0` و`allUsers=false`. لا تعرض Publisher API قوائم البريد الفردية المحفوظة.
+- [ ] بعد تفعيل الاختبار، نسخ رابط Opt-in الرسمي والتحقق منه مع حساب مختبر.
+- [ ] متابعة ملاحظات الاختبار وPre-launch report بعد إتاحة المسار.
+- [ ] التحقق مما إذا كان نوع حساب المطور يتطلب 12 مختبراً لمدة 14 يوماً قبل طلب Production access.
 
 ## 6. حالة الإصدار الداخلي — 27 نوفمبر 2026
 
-- رقم الإصدار على Play: `4100101`، والمسار `internal`، والحالة `completed` مؤكدة بقراءة API بعد التحديث.
-- رابط Internal App Sharing المباشر: https://play.google.com/apps/test/ye.dalilna.app/4100101
-- هذا الرابط ليس رابط قبول الدعوة لاختبار المسار الداخلي. رابط الانضمام الرسمي يظهر بعد إضافة المختبرين من Play Console.
-- صفحة حذف البيانات المنشورة: https://baraagpt6-droid.github.io/dalilna/data-deletion.html
-- ملف الاستيراد: `data-safety.csv`. لا يحتاجه المسار الداخلي وحده ما دام التوزيع حصرياً للاختبار الداخلي؛ جهّزه للمسارات المفتوحة أو الإنتاجية.
-- بطاقة المتجر العربية والإنجليزية والأصول رُفعت داخل Edit غير معتمد. رفض Google اعتماد Edit برمز `400 INVALID_ARGUMENT` لأن `changesNotSentForReview` غير مقبول في حالة التطبيق الحالية. لم تُحفظ هذه التعديلات في المتجر.
-- لا يوجد إطلاق Production. لا تنفّذ رفع AAB جديداً لمجرد إعادة اختبار صلاحية المتجر.
-- جرى توليد أيقونة Play بمقاس 512×512 وصورة Feature Graphic بمقاس 1024×500، ورفعها داخل Edit غير معتمد. يلزم اعتمادها أو حفظها من Publishing overview قبل اعتبارها محفوظة.
+- رقم الإصدار على Play: `4100101`، والمسار `internal`، والحالة `completed` مؤكدة بقراءة API.
+- رابط Internal App Sharing: https://play.google.com/apps/test/ye.dalilna.app/4100101
+- الرابط أعلاه ليس رابط Opt-in لاختبار Internal أو Closed Testing.
+- Edit الحالي لمسار Closed Testing يحتوي `4128601` بحالة `draft`، ولم يُعتمد بعد.
+- إعداد المختبرين المقروء للمسار المغلق: صفر Google Groups و`allUsers=false`. قوائم البريد الفردية المحفوظة لا يمكن قراءتها عبر Android Publisher API.
+- لا يوجد إطلاق Production ضمن هذا العمل.
 
 
 ## الحالة الفعلية للإصدار — 27 نوفمبر 2026
@@ -344,18 +338,33 @@ All public app features are available without signing in. Open Dalilna and brows
 - لا يظهر رابط Opt-in لمسار مغلق عندما تكون حالة التطبيق Draft أو Pending publication؛ يلزم ظهور حالة Published أولاً.
 
 
-## Closed testing draft found — 27 November 2026
+## Closed testing draft before STAGE_ONLY — 27 November 2026
 
 Android Publisher read-back found a single Draft release on `Dalilna Closed Testing`: versionCode `3127701`. The latest signed AAB is `4128401`, above the completed internal code `4100101`. Run `45945373618` staged the AAB, listings and images inside an uncommitted edit, then Google rejected commit with HTTP 400 because the app is not in a rejection state that allows `changesNotSentForReview`. The committed track remains on `3127701`. The existing `Hubaish Testers` saved email list was not touched.
 
 ## Review submission safety — 27 November 2026
 
 The Android Publisher `edits.commit` endpoint currently sends changes for review automatically for this app. Google's `changesNotSentForReview` query parameter is documented for rejected-change scenarios and was rejected with HTTP 400 in run [45945373618](https://github.com/baraagpt6-droid/dalilna/actions/runs/45945373618). Do not remove that parameter and retry unless the project is intentionally ready for review, because omitting it would submit the changes. To hold changes, use Publishing overview → Changes not yet sent for review → Save for later. The workflow now defaults to read-only inspection; review submission is a separate explicit mode.
-## Confirmed contents of the uncommitted Play edit — 27 November 2026
+## Contents of the uncommitted Play edit before STAGE_ONLY — 27 November 2026
 
 Read-only API inspection run 45947016030 confirms that edit 13370413812168476918 contains the exact bundle versionCode 4128401 and matching SHA-256. Its edit snapshot has one app icon, one feature graphic, four phone screenshots and four 10-inch tablet screenshots for each locale. Arabic and English listing titles and description lengths are present. The tester configuration remains zero Google Groups and allUsers=false. These values are staged in the uncommitted edit and are not live or accessible to testers.
 
 The currently committed Closed Testing track remains 3127701 until the edit is held or intentionally submitted from Publishing overview. API commit without changesNotSentForReview would submit app changes to Google review. Do not treat this read-only inspection as a release upload or tester invitation.
 ## Latest Android build — 27 November 2026
 
-Build [45949440829](https://github.com/baraagpt6-droid/dalilna/actions/runs/45949440829) completed successfully. The latest signed GitHub Release AAB is versionCode `4128601`, SHA-256 `5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a`; the matching APK SHA-256 is `88ab10f58bfb4296951fa97144b501da9c5b7e5296b8c79fcc5fc3589249ad11`. It includes the Dalilna-only WebView origin restriction. This artifact has not yet been staged into the current Play edit.
+Build [45949440829](https://github.com/baraagpt6-droid/dalilna/actions/runs/45949440829) completed successfully. The latest signed GitHub Release AAB is versionCode `4128601`, SHA-256 `5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a`; the matching APK SHA-256 is `88ab10f58bfb4296951fa97144b501da9c5b7e5296b8c79fcc5fc3589249ad11`. It includes the Dalilna-only WebView origin restriction. The artifact was staged into the existing uncommitted Play edit `13370413812168476918` by run `45952854092`; the post-stage API read confirmed versionCode `4128601` and the pinned SHA-256. The edit was not committed or submitted for review.
+
+## STAGE_ONLY verification — 27 November 2026
+
+- Workflow run: [45952854092](https://github.com/baraagpt6-droid/dalilna/actions/runs/45952854092) — success.
+- Main commit: `d3ea0f9a26ba6c86d1c806c05ab010c62dc057cd`.
+- Mode selected by the explicit `[stage-dalilna-play-edit]` marker: `STAGE_ONLY`.
+- GitHub OIDC/WIF authentication: successful using the Dalilna service account.
+- AAB download and SHA-256 check: successful; checksum `5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a`.
+- Existing Edit reused: `13370413812168476918`; no new Edit was created.
+- Google Play API post-stage read: the Closed Testing draft contains `4128601`; the bundle list contains the same versionCode and SHA-256.
+- Existing artwork groups were preserved: per locale, one icon, one feature graphic, four phone screenshots and four 10-inch tablet screenshots.
+- Tester configuration was not changed: zero Google Groups, `allUsers=false`; individual email lists are not readable using this API.
+- `changesCommitted=false`, `changesSentForReview=false`, and the review-submission workflow step was skipped.
+- No Production track, rollout, payment settings or account ownership data was changed.
+- This edit remains uncommitted. Its staged changes are not a live release or an active tester invitation.
