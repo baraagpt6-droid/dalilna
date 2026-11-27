@@ -163,3 +163,6 @@ A push to `main` only starts inspection when the commit message contains `[inspe
 ## Why API save-as-draft is not available here
 
 The `changesNotSentForReview` parameter is documented for changes after a rejection. The actual commit response for this app was HTTP 400 `INVALID_ARGUMENT`: it said changes are sent for review automatically and the parameter must not be set. Google also documents that, without a rejected state, a successful API commit sends all pending app changes for review. To hold changes without submitting them, use Play Console Publishing overview → Changes not yet sent for review → Save for later. This browser-console action has not been performed from the connected tools.
+## Read-only inspection results — 27 November 2026
+
+Run 45947016030 reused active edit 13370413812168476918 and performed GET requests only. It confirmed AAB 4128401 and SHA-256 3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026, track draft 4128401 in that edit, both locale listings, icon/feature graphic and four phone/four tablet screenshots per locale. It also confirmed zero Google Groups and allUsers=false. This edit remains uncommitted; read-only confirmation is not publication or review.
