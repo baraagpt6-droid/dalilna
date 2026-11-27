@@ -19,6 +19,7 @@ on:
           - INSPECT_ONLY
           - STAGE_ONLY
           - SUBMIT_FOR_REVIEW
+          - PUBLISH_CLOSED_TESTING
         default: INSPECT_ONLY
       existing_edit_id:
         description: "Read-only inspection only. Stage Only always creates a fresh isolated edit and rejects a supplied ID."
@@ -52,7 +53,8 @@ jobs:
       (github.event_name == 'push' &&
        (contains(github.event.head_commit.message || '', '[inspect-dalilna-play-state]') ||
         contains(github.event.head_commit.message || '', '[stage-dalilna-play-edit]') ||
-        contains(github.event.head_commit.message || '', '[submit-dalilna-closed-testing]')))
+        contains(github.event.head_commit.message || '', '[submit-dalilna-closed-testing]') ||
+        contains(github.event.head_commit.message || '', '[publish-dalilna-closed-testing]')))
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -60,7 +62,7 @@ jobs:
       EXPECTED_VERSION_CODE: "4128701"
       PLAY_TRACK_NAME: Dalilna Closed Testing
       TESTERS_GOOGLE_GROUP: ${{ inputs.testers_google_group }}
-      PLAY_MODE: ${{ inputs.mode || (contains(github.event.head_commit.message || '', '[submit-dalilna-closed-testing]') && 'SUBMIT_FOR_REVIEW') || (contains(github.event.head_commit.message || '', '[stage-dalilna-play-edit]') && 'STAGE_ONLY') || 'INSPECT_ONLY' }}
+      PLAY_MODE: ${{ inputs.mode || (contains(github.event.head_commit.message || '', '[publish-dalilna-closed-testing]') && 'PUBLISH_CLOSED_TESTING') || (contains(github.event.head_commit.message || '', '[submit-dalilna-closed-testing]') && 'SUBMIT_FOR_REVIEW') || (contains(github.event.head_commit.message || '', '[stage-dalilna-play-edit]') && 'STAGE_ONLY') || 'INSPECT_ONLY' }}
       GITHUB_EVENT_NAME: ${{ github.event_name }}
       GITHUB_EVENT_HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
       EXISTING_EDIT_ID: ${{ inputs.existing_edit_id || '' }}
@@ -84,11 +86,16 @@ jobs:
           [[ "$PLAY_TRACK_NAME" == "Dalilna Closed Testing" ]]
           [[ -n "$WIF_PROVIDER" && -n "$WIF_SERVICE_ACCOUNT" ]]
           if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
-            if [[ "$GITHUB_EVENT_HEAD_COMMIT_MESSAGE" == *"[submit-dalilna-closed-testing]"* ]]; then
+            if [[ "$GITHUB_EVENT_HEAD_COMMIT_MESSAGE" == *"[publish-dalilna-closed-testing]"* ]]; then
+              [[ "$PLAY_MODE" == "PUBLISH_CLOSED_TESTING" ]]
+              [[ "$PACKAGE_NAME" == "ye.dalilna.app" ]]
+              [[ "$PLAY_TRACK_NAME" == "Dalilna Closed Testing" ]]
+              echo "Explicit marker enables closed-track promotion only for Dalilna."
+            elif [[ "$GITHUB_EVENT_HEAD_COMMIT_MESSAGE" == *"[submit-dalilna-closed-testing]"* ]]; then
               [[ "$PLAY_MODE" == "SUBMIT_FOR_REVIEW" ]]
               [[ "$PACKAGE_NAME" == "ye.dalilna.app" ]]
               [[ "$PLAY_TRACK_NAME" == "Dalilna Closed Testing" ]]
-              echo "Explicit marker enables review submission for Dalilna Closed Testing only."
+              echo "Explicit marker enables draft Closed Testing review submission only."
             elif [[ "$GITHUB_EVENT_HEAD_COMMIT_MESSAGE" == *"[stage-dalilna-play-edit]"* ]]; then
               [[ "$PLAY_MODE" == "STAGE_ONLY" ]]
               echo "Explicit push marker enables STAGE_ONLY for ye.dalilna.app."
@@ -98,7 +105,7 @@ jobs:
               echo "Push mode is strictly read-only inspection."
             fi
           else
-            [[ "$PLAY_MODE" == "INSPECT_ONLY" || "$PLAY_MODE" == "STAGE_ONLY" || "$PLAY_MODE" == "SUBMIT_FOR_REVIEW" ]]
+            [[ "$PLAY_MODE" == "INSPECT_ONLY" || "$PLAY_MODE" == "STAGE_ONLY" || "$PLAY_MODE" == "SUBMIT_FOR_REVIEW" || "$PLAY_MODE" == "PUBLISH_CLOSED_TESTING" ]]
           fi
 
       - name: Set up Python
@@ -139,6 +146,15 @@ jobs:
         run: |
           set -euo pipefail
           python scripts/google_play_closed_testing_draft.py --inspect-only
+
+      - name: Promote the reviewed Dalilna Closed Testing draft only
+        if: env.PLAY_MODE == 'PUBLISH_CLOSED_TESTING'
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$PACKAGE_NAME" == "ye.dalilna.app" ]]
+          [[ "$PLAY_TRACK_NAME" == "Dalilna Closed Testing" ]]
+          python scripts/google_play_closed_testing_draft.py --publish-closed-testing
 
       - name: Read committed Play state before Closed Testing submission
         if: env.PLAY_MODE == 'SUBMIT_FOR_REVIEW'
@@ -238,12 +254,17 @@ jobs:
               echo "- Store artwork changed: **No**"
               echo "- Tester configuration changed: **No**"
               echo "- Production track touched: **No**"
-            else
-              echo "- Mode: submit for Google Play review"
+            elif [[ "$PLAY_MODE" == "SUBMIT_FOR_REVIEW" ]]; then
+              echo "- Mode: submit the initial Closed Testing draft and store listing for review"
               echo "- Package: `ye.dalilna.app`"
               echo "- Closed Testing versionCode: `4128701`"
-              echo "- Closed Testing release status: **completed**"
+              echo "- Closed Testing release status: **draft**"
               echo "- Google Play commit sends this edit for review."
+              echo "- Production track touched: **No**"
+            else
+              echo "- Mode: promote the reviewed Closed Testing draft to available testers"
+              echo "- Package: `ye.dalilna.app`"
+              echo "- Closed Testing versionCode: `4128701`"
               echo "- Production track touched: **No**"
             fi
           } >> "$GITHUB_STEP_SUMMARY"

@@ -58,10 +58,16 @@ def validate_stage_only_inputs(existing_edit_id: str, testers_google_group: str)
         raise ValueError("--stage-only must preserve the existing tester configuration")
 
 
-def validate_play_mode(inspect_only: bool, stage_only: bool, submit_for_review: bool) -> None:
-    if sum((inspect_only, stage_only, submit_for_review)) != 1:
+def validate_play_mode(
+    inspect_only: bool,
+    stage_only: bool,
+    submit_for_review: bool,
+    publish_closed_testing: bool = False,
+) -> None:
+    if sum((inspect_only, stage_only, submit_for_review, publish_closed_testing)) != 1:
         raise ValueError(
-            "Select exactly one mode: --inspect-only, --stage-only or --submit-for-review."
+            "Select exactly one mode: --inspect-only, --stage-only, "
+            "--submit-for-review or --publish-closed-testing."
         )
 
 
@@ -431,8 +437,10 @@ def inspect_play_state(api: PlayApi, existing_edit_id: str | None = None) -> dic
                 )
 
 
-def verify_closed_testing_state(state: dict) -> dict:
-    """Require the exact signed bundle to be committed on the Closed Testing track."""
+def verify_closed_testing_state(state: dict, expected_status: str = "draft") -> dict:
+    """Require the exact signed bundle and expected release state on the Closed Testing track."""
+    if expected_status not in {"draft", "completed"}:
+        raise ValueError("Expected Closed Testing release status must be draft or completed")
     target = next(
         (item for item in state.get("tracks", []) if item.get("track") == TRACK_NAME),
         None,
@@ -448,9 +456,10 @@ def verify_closed_testing_state(state: dict) -> dict:
     )
     if release is None:
         raise RuntimeError(f"Closed Testing does not contain versionCode {VERSION_CODE}")
-    if release.get("status") != "completed":
+    if release.get("status") != expected_status:
         raise RuntimeError(
-            f"Closed Testing release {VERSION_CODE} status is {release.get('status')!r}, not 'completed'"
+            f"Closed Testing release {VERSION_CODE} status is {release.get('status')!r}, "
+            f"not {expected_status!r}"
         )
     bundle = next(
         (
@@ -487,6 +496,7 @@ def verify_closed_testing_state(state: dict) -> dict:
         "versionName": VERSION_NAME,
         "versionCode": VERSION_CODE,
         "releaseStatus": release.get("status"),
+        "expectedReleaseStatus": expected_status,
         "bundleSha256": bundle.get("sha256"),
         "appDetailsMatch": True,
         "arabicListingMatch": True,
@@ -498,6 +508,78 @@ def verify_closed_testing_state(state: dict) -> dict:
     return summary
 
 
+def promote_closed_testing_release(existing_releases: list[dict]) -> list[dict]:
+    """Promote only the exact submitted Dalilna draft to completed."""
+    releases = [dict(item) for item in existing_releases]
+    matches = [
+        index for index, release in enumerate(releases)
+        if str(VERSION_CODE) in [str(code) for code in release.get("versionCodes", [])]
+    ]
+    if len(matches) != 1:
+        raise RuntimeError(
+            f"Expected exactly one Closed Testing release for versionCode {VERSION_CODE}; "
+            f"found {len(matches)}"
+        )
+    index = matches[0]
+    release = dict(releases[index])
+    if release.get("status") != "draft":
+        raise RuntimeError(
+            f"Expected versionCode {VERSION_CODE} to be draft before promotion; "
+            f"found {release.get('status')!r}"
+        )
+    release["status"] = "completed"
+    releases[index] = release
+    return releases
+
+
+def publish_closed_testing_release(api: PlayApi) -> dict:
+    """Promote a reviewed Draft app's closed-test release without touching other tracks."""
+    package_path = f"/applications/{quote(PACKAGE_NAME, safe='')}"
+    edit = api.api("POST", f"{package_path}/edits", json_body={})
+    edit_id = edit["id"]
+    edit_path = f"{package_path}/edits/{quote(edit_id, safe='')}"
+    tracks_path = f"{edit_path}/tracks"
+    committed = False
+    try:
+        tracks = api.api("GET", tracks_path).get("tracks", [])
+        target = next((item for item in tracks if item.get("track") == TRACK_NAME), None)
+        if target is None:
+            raise RuntimeError(f"Closed Testing track {TRACK_NAME!r} does not exist")
+        bundles = api.api("GET", f"{edit_path}/bundles").get("bundles", [])
+        bundle = next(
+            (item for item in bundles if int(item.get("versionCode", 0)) == VERSION_CODE),
+            None,
+        )
+        if bundle is None or str(bundle.get("sha256", "")).lower() != AAB_SHA256:
+            raise RuntimeError("The committed Closed Testing draft does not contain the pinned AAB")
+        releases = promote_closed_testing_release(list(target.get("releases", [])))
+        api.api(
+            "PUT",
+            f"{tracks_path}/{quote(TRACK_NAME, safe='')}",
+            json_body={"track": TRACK_NAME, "releases": releases},
+        )
+        # Google rejects completed releases while the app itself remains Draft.
+        # On that response, this edit is left uncommitted and no release is promoted.
+        api.api("POST", f"{edit_path}:validate")
+        api.api(
+            "POST",
+            f"{edit_path}:commit",
+            params={"changesInReviewBehavior": "ERROR_IF_IN_REVIEW"},
+        )
+        committed = True
+        state = inspect_play_state(api)
+        result = verify_closed_testing_state(state, expected_status="completed")
+        print("PLAY_CLOSED_TESTING_PROMOTION=" + json.dumps(result, ensure_ascii=False))
+        return result
+    finally:
+        if not committed:
+            print(
+                f"Play promotion edit {edit_id} was not committed. "
+                "The submitted Closed Testing draft remains unchanged.",
+                file=sys.stderr,
+            )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--inspect-only", action="store_true")
@@ -505,6 +587,7 @@ def main() -> None:
     parser.add_argument("--stage-only", action="store_true")
     parser.add_argument("--existing-edit-id", default="")
     parser.add_argument("--submit-for-review", action="store_true")
+    parser.add_argument("--publish-closed-testing", action="store_true")
     parser.add_argument("--aab", type=Path)
     parser.add_argument("--assets-dir", type=Path)
     parser.add_argument("--testers-google-group", default="")
@@ -512,7 +595,12 @@ def main() -> None:
     args = parser.parse_args()
 
     try:
-        validate_play_mode(args.inspect_only, args.stage_only, args.submit_for_review)
+        validate_play_mode(
+            args.inspect_only,
+            args.stage_only,
+            args.submit_for_review,
+            args.publish_closed_testing,
+        )
     except ValueError as exc:
         parser.error(str(exc))
 
@@ -531,6 +619,11 @@ def main() -> None:
         return
     if args.verify_closed_testing:
         parser.error("--verify-closed-testing can only be used with --inspect-only")
+    if args.publish_closed_testing:
+        if args.existing_edit_id.strip() or args.testers_google_group.strip():
+            parser.error("--publish-closed-testing does not accept an edit ID or tester group")
+        publish_closed_testing_release(PlayApi())
+        return
 
     if args.aab is None:
         parser.error("--stage-only and --submit-for-review require --aab")
@@ -721,7 +814,10 @@ def main() -> None:
         # Preserve every existing non-draft release on this track.
         track_path = f"{tracks_path}/{quote(TRACK_NAME, safe='')}"
         track_after_upload = api.api("GET", track_path)
-        target_release_status = "draft" if args.stage_only else "completed"
+        # A Draft app only accepts draft releases. The first review submission
+        # commits the Closed Testing draft and store metadata; a separate
+        # publish-closed-testing operation promotes it after the app leaves Draft.
+        target_release_status = "draft"
         releases = prepare_closed_track_releases(
             list(track_after_upload.get("releases", [])),
             release_status=target_release_status,
@@ -785,14 +881,14 @@ def main() -> None:
             "versionName": VERSION_NAME,
             "versionCode": VERSION_CODE,
             "track": TRACK_NAME,
-            "releaseStatus": "completed",
+            "releaseStatus": "draft",
             "googleGroupConfigured": bool(google_group),
             "productionTouched": False,
             "changesSentForReview": True,
             "existingImagesDeleted": False,
         }, ensure_ascii=False, indent=2))
         committed_state = inspect_play_state(api)
-        verify_closed_testing_state(committed_state)
+        verify_closed_testing_state(committed_state, expected_status="draft")
     finally:
         if not committed:
             print(

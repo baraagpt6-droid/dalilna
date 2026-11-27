@@ -75,6 +75,49 @@ class DraftSafetyTests(unittest.TestCase):
         self.assertEqual(updated[1], original[1])
         self.assertEqual(original[0]["versionCodes"], ["3127701"])
 
+    def test_submit_for_review_verifies_a_committed_draft_release(self):
+        state = {
+            "tracks": [{
+                "track": TRACK_NAME,
+                "releases": [{"status": "draft", "versionCodes": [str(VERSION_CODE)]}],
+            }],
+            "bundles": [{"versionCode": VERSION_CODE, "sha256": play_module.AAB_SHA256}],
+            "appDetails": {"matchesRepository": True},
+            "listings": {
+                "ar": {"matchesRepository": True, "images": {
+                    "icon": [{}], "featureGraphic": [{}],
+                    "phoneScreenshots": [{}, {}, {}, {}],
+                    "tenInchScreenshots": [{}, {}, {}, {}],
+                }},
+                "en-US": {"matchesRepository": True, "images": {
+                    "icon": [{}], "featureGraphic": [{}],
+                    "phoneScreenshots": [{}, {}, {}, {}],
+                    "tenInchScreenshots": [{}, {}, {}, {}],
+                }},
+            },
+        }
+        verified = play_module.verify_closed_testing_state(state, expected_status="draft")
+        self.assertEqual(verified["releaseStatus"], "draft")
+        with self.assertRaises(RuntimeError):
+            play_module.verify_closed_testing_state(state, expected_status="completed")
+
+    def test_promote_only_exact_closed_testing_draft(self):
+        original = [
+            {"name": "Dalilna 3.1.0", "versionCodes": ["4128701"], "status": "draft",
+             "releaseNotes": [{"language": "ar", "text": "ملاحظات"}]},
+            {"name": "Old release", "versionCodes": ["4100101"], "status": "completed"},
+        ]
+        updated = play_module.promote_closed_testing_release(original)
+        self.assertEqual(updated[0]["status"], "completed")
+        self.assertEqual(updated[0]["versionCodes"], ["4128701"])
+        self.assertEqual(updated[0]["releaseNotes"], original[0]["releaseNotes"])
+        self.assertEqual(updated[1], original[1])
+        self.assertEqual(original[0]["status"], "draft")
+        with self.assertRaises(RuntimeError):
+            play_module.promote_closed_testing_release([
+                {"versionCodes": ["4100101"], "status": "completed"}
+            ])
+
     def test_multiple_existing_drafts_are_refused(self):
         releases = [
             {"versionCodes": ["3127701"], "status": "draft"},
@@ -113,6 +156,7 @@ class DraftSafetyTests(unittest.TestCase):
         validate_play_mode(True, False, False)
         validate_play_mode(False, True, False)
         validate_play_mode(False, False, True)
+        validate_play_mode(False, False, False, True)
         with self.assertRaises(ValueError):
             validate_play_mode(False, False, False)
         with self.assertRaises(ValueError):
@@ -121,6 +165,8 @@ class DraftSafetyTests(unittest.TestCase):
             validate_play_mode(True, False, True)
         with self.assertRaises(ValueError):
             validate_play_mode(False, True, True)
+        with self.assertRaises(ValueError):
+            validate_play_mode(False, False, True, True)
 
     def test_stage_only_requires_isolated_edit_and_preserves_testers(self):
         validate_stage_only_inputs("", "")
@@ -250,7 +296,7 @@ class DraftSafetyTests(unittest.TestCase):
                 }},
             },
         }
-        verified = play_module.verify_closed_testing_state(state)
+        verified = play_module.verify_closed_testing_state(state, expected_status="completed")
         self.assertEqual(verified["track"], TRACK_NAME)
         self.assertEqual(verified["versionCode"], VERSION_CODE)
         bad_track = dict(state)
