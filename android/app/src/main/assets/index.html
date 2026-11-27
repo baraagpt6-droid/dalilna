@@ -23,7 +23,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./features-2.1.css?v=3.1.0">
 <link rel="stylesheet" href="./market-price-guide.css?v=3.1.0">
-<link rel="stylesheet" href="./v3.0.0.css?v=3.1.0-profile-identity1">
+<link rel="stylesheet" href="./v3.0.0.css?v=3.1.0-profile-polish1">
 <style>
 :root{
   color-scheme:dark;
@@ -3462,7 +3462,7 @@ function renderProfilePanel(){
       ?'<button type="button" class="profile-activity-item" data-profile-item-id="'+esc(item.id)+'">'+esc(item.name||item.title||"")+'</button>'
       :'<div class="profile-activity-item">'+esc(item.title||item.name||"")+'</div>').join("")
     :'<p class="where">'+esc(empty)+'</p>')+'</section>';
-  list.innerHTML=section(english?"My marketplace adverts":"إعلاناتي في السوق",marketplaceAds,english?"No marketplace adverts are linked to this phone.":"لا توجد إعلانات سوق مرتبطة برقم هذا التاجر.",true)
+  list.innerHTML=section(english?"My marketplace adverts":"إعلاناتي في السوق",marketplaceAds,english?"No marketplace adverts are linked to this phone.":"لا توجد إعلانات سوق مرتبطة برقم هذا الحساب.",true)
    +section(english?"My other adverts":"إعلاناتي الأخرى",ads,english?"No other adverts are linked to this phone.":"لا توجد إعلانات أخرى مرتبطة بهذا الرقم.",false)
    +section(english?"Shops I added":"محلات أضفتها",owned,english?"No shops are linked to this merchant phone on this device.":"لا توجد محلات مرتبطة برقم التاجر في هذا الجهاز.",true)
    +section(english?"Saved directory places":"المحلات المحفوظة",favoriteItems,english?"No saved directory places on this device.":"لا توجد محلات محفوظة في مفضلة هذا الجهاز.",true);
@@ -3549,8 +3549,13 @@ $("#accountDlg").addEventListener("close",()=>{
 document.querySelectorAll("#v3RoleSwitcher [data-profile-role]").forEach(button=>{
   button.addEventListener("click",()=>{
     const role=button.dataset.profileRole==="merchant"?"merchant":"customer";
+    if(!$("#profileEditForm").hidden){
+      $("#profileEditForm").hidden=true;
+      $("#profileEditToggle").hidden=false;
+      $("#profileEditError").textContent="";
+      profileAfterSave=null;
+    }
     setProfileRole(role);
-    if(role==="customer"&&(!S.profile.customerName||!S.profile.phone))openProfileEditor({initial:true});
   });
 });
 $("#profileEditToggle").addEventListener("click",()=>openProfileEditor({full:true}));
