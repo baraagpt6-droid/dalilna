@@ -58,6 +58,7 @@ def get_target_release(track: dict[str, Any]) -> dict[str, Any]:
 
 def publish_existing_release(session: AuthorizedSession) -> None:
     edit_id = create_edit(session)
+    committed = False
     try:
         track = get_track(session, edit_id)
         release = get_target_release(track)
@@ -80,17 +81,20 @@ def publish_existing_release(session: AuthorizedSession) -> None:
             call(session, "POST",
                  f"/applications/{PACKAGE_NAME}/edits/{edit_id}:commit",
                  params={"changesInReviewBehavior": "ERROR_IF_IN_REVIEW"})
+            committed = True
             print("PLAY_TRACK_COMMIT=success")
         else:
             print("PLAY_TRACK_COMMIT=already_completed")
     except Exception:
-        try:
-            delete_edit(session, edit_id)
-        except Exception as cleanup_error:
-            print(f"::warning::Could not discard temporary Play edit: {cleanup_error}")
+        if not committed:
+            try:
+                delete_edit(session, edit_id)
+            except Exception as cleanup_error:
+                print(f"::warning::Could not discard temporary Play edit: {cleanup_error}")
         raise
     else:
-        delete_edit(session, edit_id)
+        if not committed:
+            delete_edit(session, edit_id)
 
     verify_id = create_edit(session)
     try:
@@ -156,6 +160,7 @@ LISTINGS = {
 
 def save_store_listings(session: AuthorizedSession) -> None:
     edit_id = create_edit(session)
+    committed = False
     try:
         for language, listing in LISTINGS.items():
             call(session, "PUT",
@@ -168,16 +173,16 @@ def save_store_listings(session: AuthorizedSession) -> None:
                  "changesNotSentForReview": "true",
                  "changesInReviewBehavior": "ERROR_IF_IN_REVIEW"
              })
+        committed = True
         print("STORE_LISTINGS_COMMIT=saved_not_sent_for_review")
     except Exception as error:
-        try:
-            delete_edit(session, edit_id)
-        except Exception as cleanup_error:
-            print(f"::warning::Could not discard listing edit: {cleanup_error}")
+        if not committed:
+            try:
+                delete_edit(session, edit_id)
+            except Exception as cleanup_error:
+                print(f"::warning::Could not discard listing edit: {cleanup_error}")
         print(f"::warning::Store listing update not completed: {error}")
         print("STORE_LISTINGS_COMMIT=not_completed")
-    else:
-        delete_edit(session, edit_id)
 
 def main() -> int:
     credentials, _ = google.auth.default(scopes=SCOPES)
