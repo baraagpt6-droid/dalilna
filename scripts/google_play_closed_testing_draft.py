@@ -692,7 +692,7 @@ def main() -> None:
             }, ensure_ascii=False, indent=2))
             if args.github_output:
                 with Path(args.github_output).open("a", encoding="utf-8") as output_file:
-                    output_file.write(f"edit_id={edit_id}\\n")
+                    output_file.write(f"edit_id={edit_id}\n")
             return
 
         # This commit intentionally sends all staged edits for Google review.
