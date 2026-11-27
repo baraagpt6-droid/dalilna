@@ -285,27 +285,64 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Publish APK and signed AAB to GitHub Releases
+      - name: Publish APK and signed AAB to the pinned GitHub Release tag
         if: steps.release-ads.outputs.ready == 'true'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v3.1.0
-          name: Dalilna 3.1.0 Android APK + signed AAB
-          prerelease: false
-          make_latest: true
-          overwrite_files: true
-          files: |
-            android/app/build/outputs/apk/release/app-release.apk
-            android/app/build/outputs/bundle/release/app-release.aab
-          body: |
-            Dalilna 3.1.0 Android release artifacts.
-            Signing mode: ${{ steps.signing.outputs.mode }}
-            versionCode: ${{ steps.app-version.outputs.version_code }}
-            Official web app: https://baraagpt6-droid.github.io/dalilna/
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: v3.1.0
+          RELEASE_TITLE: Dalilna 3.1.0 Android APK + signed AAB
+          RELEASE_VERSION_CODE: ${{ steps.app-version.outputs.version_code }}
+          RELEASE_SIGNING_MODE: ${{ steps.signing.outputs.mode }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          notes_file="$RUNNER_TEMP/dalilna-release-notes.md"
+          cat > "$notes_file" <<EOF
+          Dalilna 3.1.0 Android release artifacts.
+          Signing mode: ${RELEASE_SIGNING_MODE}
+          versionCode: ${RELEASE_VERSION_CODE}
+          Official web app: https://baraagpt6-droid.github.io/dalilna/
 
-            With all four persistent signing secrets configured, this APK uses the persistent Dalilna keystore for in-place updates.
-            Persistent signing is mandatory for this release.
-            The signed AAB is intended for Google Play Console review. Check the Data safety worksheet before submission.
+          With all four persistent signing secrets configured, this APK uses the persistent Dalilna keystore for in-place updates.
+          Persistent signing is mandatory for this release.
+          The signed AAB is intended for Google Play Console review. Review GOOGLE_PLAY_DATA_SAFETY.md and data-safety.csv before public-track submission.
+          EOF
+
+          # Target the existing version tag directly. This avoids inferring a tag
+          # from the checked-out branch ref (refs/heads/main).
+          if ! gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::Pinned release v3.1.0 is missing. Refusing to create or move a tag implicitly."
+            exit 1
+          fi
+
+          gh release edit "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
+            --title "$RELEASE_TITLE" --notes-file "$notes_file" \
+            --draft=false --prerelease=false --latest
+
+          gh release upload "$RELEASE_TAG" \
+            android/app/build/outputs/apk/release/app-release.apk \
+            android/app/build/outputs/bundle/release/app-release.aab \
+            --repo "$GITHUB_REPOSITORY" --clobber
+
+          release_json="$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json tagName,name,isDraft,isPrerelease,url,assets)"
+          printf '%s\n' "$release_json" | node -e '
+          let raw = "";
+          process.stdin.on("data", chunk => raw += chunk);
+          process.stdin.on("end", () => {
+            const release = JSON.parse(raw);
+            const assets = new Map((release.assets || []).map(asset => [asset.name, Number(asset.size)]));
+            for (const name of ["app-release.apk", "app-release.aab"]) {
+              if (!(assets.get(name) > 0)) throw new Error("Missing or empty release asset: " + name);
+            }
+            if (release.tagName !== "v3.1.0" || release.isDraft || release.isPrerelease) {
+              throw new Error("GitHub Release metadata does not match the pinned production artifact release.");
+            }
+            console.log(JSON.stringify({
+              tag: release.tagName,
+              url: release.url,
+              assets: ["app-release.apk", "app-release.aab"].map(name => ({name, size: assets.get(name)}))
+            }));
+          });'
 
       - name: Publish exact Android versionCode for OTA clients
         if: steps.release-ads.outputs.ready == 'true'
