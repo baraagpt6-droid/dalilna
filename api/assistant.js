@@ -1,4 +1,5 @@
 // Dalilna cloud assistant for Vercel Node serverless functions.
+const { getClientIp } = require("../client-ip");
 // Store GEMINI_API_KEY only in server environment variables. Never expose it in browser code or Git.
 const WINDOW_MS = 60_000;
 const RATE_LIMIT = 12;
@@ -90,8 +91,7 @@ async function handler(req, res) {
   const key = process.env.GEMINI_API_KEY;
   if (!key) return send(res, 503, { error: "cloud_ai_not_configured" });
 
-  const ip = String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "unknown")
-    .split(",")[0].trim();
+  const ip = getClientIp(req);
   const now = Date.now();
   const bucket = buckets.get(ip) || { start: now, count: 0 };
   if (now - bucket.start >= WINDOW_MS) {
