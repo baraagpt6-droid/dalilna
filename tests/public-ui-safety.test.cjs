@@ -34,8 +34,11 @@ test("jobs service uses a 12 second timeout and retries only safe reads", () => 
   assert.ok(features.includes("requestJobsApi("));
 });
 
-test("public policy does not disclose internal API, hosting or database names", () => {
-  assert.doesNotMatch(privacy, /\bAPI\b|WebView|PostgreSQL|DATABASE_URL|GEOAPIFY_API_KEY|Render|onrender\.com/i);
+test("public policy preserves privacy disclosures without exposing connection settings or hostnames", () => {
+  for (const term of ["Web Speech API", "Nominatim", "Photon", "Overpass", "سجلات الخادم", "لا يحذف صف قاعدة البيانات تلقائياً"]) {
+    assert.ok(privacy.includes(term), "privacy.html must disclose: " + term);
+  }
+  assert.doesNotMatch(privacy, /DATABASE_URL|GEOAPIFY_API_KEY|onrender\.com|Render/i);
   assert.doesNotMatch(index, /Requires PostgreSQL|server admin token|يتطلب ربط PostgreSQL/);
 });
 
