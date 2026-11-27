@@ -1,6 +1,6 @@
 # دليل إطلاق دليلنا على Google Play
 
-آخر مراجعة تقنية: 26 نوفمبر 2026  
+آخر مراجعة تقنية: 27 نوفمبر 2026  
 إصدار التطبيق الموجود في المشروع: 3.1.0  
 معرّف حزمة Android: `ye.dalilna.app`
 
@@ -11,6 +11,8 @@
 - التطبيق وPWA: https://baraagpt6-droid.github.io/dalilna/
 - صفحة التعريف العامة: https://baraagpt6-droid.github.io/dalilna/store/
 - سياسة الخصوصية: https://baraagpt6-droid.github.io/dalilna/privacy.html
+- طلب حذف البيانات: https://baraagpt6-droid.github.io/dalilna/data-deletion.html
+- ملف Data Safety: [data-safety.csv](./data-safety.csv) — راجع الأسئلة والتصنيفات قبل استيراده؛ الاستيراد يستبدل إجابات النموذج الحالية.
 - شروط الاستخدام: https://baraagpt6-droid.github.io/dalilna/terms.html
 - المستودع: https://github.com/baraagpt6-droid/dalilna
 - لوحة Google Play Console: https://play.google.com/console
@@ -314,3 +316,15 @@ All public app features are available without signing in. Open Dalilna and brows
 - [ ] تصدير أيقونة Play PNG بمقاس 512×512 وصورة مميزة بمقاس 1024×500.
 - [x] إنشاء AAB وAPK موقعين والتحقق من التوقيع والنسخة ورمز الإصدار. AAB الحالي versionCode 3127201.
 - [ ] إكمال الاختبار المغلق إذا كان مطلوباً للحساب.
+
+
+## 6. حالة الإصدار الداخلي — 27 نوفمبر 2026
+
+- رقم الإصدار على Play: `4100101`، والمسار `internal`، والحالة `completed` مؤكدة بقراءة API بعد التحديث.
+- رابط Internal App Sharing المباشر: https://play.google.com/apps/test/ye.dalilna.app/4100101
+- هذا الرابط ليس رابط قبول الدعوة لاختبار المسار الداخلي. رابط الانضمام الرسمي يظهر بعد إضافة المختبرين من Play Console.
+- صفحة حذف البيانات المنشورة: https://baraagpt6-droid.github.io/dalilna/data-deletion.html
+- ملف الاستيراد: `data-safety.csv`. لا يحتاجه المسار الداخلي وحده ما دام التوزيع حصرياً للاختبار الداخلي؛ جهّزه للمسارات المفتوحة أو الإنتاجية.
+- بطاقة المتجر العربية والإنجليزية جرى تجهيزها وإرسالها إلى API، لكن اعتماد التعديلات رُفض بـ `403 PERMISSION_DENIED`. المطلوب صلاحية `Manage store presence` لحساب الخدمة على تطبيق Dalilna.
+- لا يوجد إطلاق Production. لا تنفّذ رفع AAB جديداً لمجرد إعادة اختبار صلاحية المتجر.
+- ما زال ملف أيقونة Play بصيغة PNG ‏512×512 ورسمة Feature Graphic ‏1024×500 غير موجودين كملفين مُثبتين في المستودع.
