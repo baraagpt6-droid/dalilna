@@ -75,8 +75,6 @@ jobs:
           export_environment_variables: true
 
       - name: Complete existing internal release and save store listings
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: \${{ steps.auth.outputs.credentials_file_path }}
         run: python scripts/publish_google_play_internal.py
 
       - name: Summarize Play Console update
