@@ -17,7 +17,7 @@ The release is always written with `status: draft`. The edit is committed using 
 
 ## 1. Create the app card once in Play Console
 
-The Android Publisher API does not provide an initial app-card creation method. Create the app in the account `SNTECHNOLOGYAI` first:
+The Android Publisher API does not provide an initial app-card creation method. Use the developer account that already owns the app `ye.dalilna.app`. The account display name and account type have not been independently verified in this handoff:
 
 - App name: `دليلنا — دليل اليمن`
 - Package name: `ye.dalilna.app`
@@ -111,14 +111,9 @@ Keep this service account dedicated to the Dalilna repository. Do not create a J
 
 In Play Console → Users and permissions → Invite new users, enter the service-account email.
 
-Grant access to **this app only**, with these permissions:
+Grant **Admin (all permissions)** at the app scope for `ye.dalilna.app` only, matching the owner's explicit requirement. In the app selector, leave all other apps unchecked. Keep the developer-account-level **Account admin** permission unchecked and leave the developerAccountPermissions list empty. Do not grant account-wide Admin. The app-level grant must appear against the exact package `ye.dalilna.app`.
 
-- View app information (read-only)
-- Release apps to testing tracks
-- Manage testing tracks and edit tester lists
-- Manage store presence (required for store text and image uploads)
-
-Grant these at **app level for ye.dalilna.app only**, not account-wide. Do not grant Admin, financial permissions, policy-declaration permissions, or **Release to production, exclude devices, and use Play App Signing**. Google confirms the testing-track permissions do not permit Production publishing. Note that Google's broad **Manage store presence** permission also includes access to edit pricing and distribution in the Console; the workflow does not call any pricing, billing, payment, or country-targeting endpoint. If you do not want to grant that broader app-level capability, leave store listing text and images for manual upload and use the API automation only for the testing track.
+If the owner later chooses a least-privilege alternative, the API roles required for this workflow are app-level `CAN_VIEW_NON_FINANCIAL_DATA`, `CAN_MANAGE_TRACK_APKS`, `CAN_MANAGE_TRACK_USERS`, and `CAN_MANAGE_PUBLIC_LISTING`. The explicit target for the current setup remains app-level Admin only on Dalilna, without any account-level permissions. Do not alter the separate `com.hubaish.guide` app or its tester lists.
 
 ## 4. Add GitHub repository variables
 
@@ -161,3 +156,8 @@ The first run stops if the app is not accessible, if the AAB checksum or version
 - Keep all review submission and release decisions with the account owner.
 
 The workflow only prepares an unsubmitted Closed Testing draft. It never changes the Production track and never sends changes for review.
+
+
+## Explicit execution trigger
+
+The workflow can also start from a merge to `main` only when the merge commit message contains `[run-dalilna-closed-draft]`. An ordinary merge or push does not start the Play edit. This marker is used only after the pull-request quality checks pass. A `workflow_dispatch` run still requires selecting the affirmative Dalilna-only confirmation option.
