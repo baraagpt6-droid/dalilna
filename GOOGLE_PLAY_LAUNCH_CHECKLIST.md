@@ -351,3 +351,8 @@ Android Publisher read-back found a single Draft release on `Dalilna Closed Test
 ## Review submission safety — 27 November 2026
 
 The Android Publisher `edits.commit` endpoint currently sends changes for review automatically for this app. Google's `changesNotSentForReview` query parameter is documented for rejected-change scenarios and was rejected with HTTP 400 in run [45945373618](https://github.com/baraagpt6-droid/dalilna/actions/runs/45945373618). Do not remove that parameter and retry unless the project is intentionally ready for review, because omitting it would submit the changes. To hold changes, use Publishing overview → Changes not yet sent for review → Save for later. The workflow now defaults to read-only inspection; review submission is a separate explicit mode.
+## Confirmed contents of the uncommitted Play edit — 27 November 2026
+
+Read-only API inspection run 45947016030 confirms that edit 13370413812168476918 contains the exact bundle versionCode 4128401 and matching SHA-256. Its edit snapshot has one app icon, one feature graphic, four phone screenshots and four 10-inch tablet screenshots for each locale. Arabic and English listing titles and description lengths are present. The tester configuration remains zero Google Groups and allUsers=false. These values are staged in the uncommitted edit and are not live or accessible to testers.
+
+The currently committed Closed Testing track remains 3127701 until the edit is held or intentionally submitted from Publishing overview. API commit without changesNotSentForReview would submit app changes to Google review. Do not treat this read-only inspection as a release upload or tester invitation.

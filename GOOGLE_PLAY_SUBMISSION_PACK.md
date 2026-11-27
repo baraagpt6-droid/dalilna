@@ -89,3 +89,8 @@ The GitHub Release is separate from the Play internal-track artifact. The curren
 ## Latest Google Play API state — 27 November 2026
 
 Run [45945373618](https://github.com/baraagpt6-droid/dalilna/actions/runs/45945373618) successfully authenticated with WIF, uploaded the current AAB and staged the Arabic/English listings and generated artwork in Edit `13370413812168476918`. It read the committed closed-testing release `3127701` and tester configuration (`0` Google Groups, `allUsers=false`). Commit returned HTTP 400 `INVALID_ARGUMENT` because `changesNotSentForReview` is not allowed in the current app state. The edit was not committed; no new testing release or live store listing is confirmed. Do not retry without the parameter because Google says the API would submit the app changes for review.
+## Read-only API confirmation — 27 November 2026
+
+Run 45947016030 inspected existing edit 13370413812168476918 without creating a new edit or changing data. The edit contains bundle 4128401 with SHA-256 3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026, Arabic and English listings, icon, feature graphic, four phone screenshots and four tablet screenshots per locale. The custom closed-testing track within this edit has a draft for 4128401. The tester configuration in the edit is zero Google Groups and allUsers=false.
+
+This is still an uncommitted edit. The committed track has not been changed; the listing is not confirmed live and no opt-in link or tester membership is active. The Publishing API would submit the edit for review if committed in the current app state. Keep the INSPECT_ONLY mode until all account-specific declarations and tester setup are complete.

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import contextlib
+import io
 import sys
 import unittest
 from pathlib import Path
@@ -121,7 +123,8 @@ class DraftSafetyTests(unittest.TestCase):
                 return {}
 
         fake = FakeApi()
-        state = inspect_play_state(fake, "active-edit")
+        with contextlib.redirect_stdout(io.StringIO()):
+            state = inspect_play_state(fake, "active-edit")
         self.assertTrue(state["inspectionOnly"])
         self.assertTrue(state["existingEditReused"])
         self.assertEqual(state["highestVersionCodeAcrossTracks"], 4128401)

@@ -109,3 +109,6 @@ This Data Safety worksheet is derived from the project implementation and is not
 ## Play review state — 27 November 2026
 
 The Play Data Safety worksheet has not been imported or submitted. The latest Play API attempt `45945373618` staged listing assets and AAB `4128401` in an uncommitted edit, but Google rejected `edits.commit` because `changesNotSentForReview` is not valid for the current app state. The edit was not committed and no Play review submission occurred. App content, target audience, Ads, App access and IARC declarations still require verification in Play Console before any review submission.
+## Publishing state confirmation — 27 November 2026
+
+Read-only inspection of the current Play edit succeeded in run 45947016030. It confirmed the bundle and bilingual listing/artwork data in the uncommitted edit. It did not import or submit the Data Safety CSV and did not read or change Play policy declarations. The edit has not been committed or sent for review. The app's Ads, App access, target audience, IARC and Data Safety responses still require direct Play Console verification before any review submission.
