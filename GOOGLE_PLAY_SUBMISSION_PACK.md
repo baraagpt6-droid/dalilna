@@ -2,7 +2,7 @@
 
 Application ID: `ye.dalilna.app`  
 App version: `3.1.0`  
-Google Play internal-track AAB: versionCode `4100101` — status `completed`, read back through Android Publisher API on 27 November 2026.  
+Google Play internal-track AAB: versionCode `4100101` — status `completed`. Latest GitHub signed AAB: versionCode `4128301`, not yet uploaded to Play.  
 Target SDK: 36  
 Developer display name proposed in the listing: `Dalilna Team` — confirm it matches the Play Console publisher profile.  
 Support/privacy contact: `dalilnasupport@gmail.com`
@@ -64,3 +64,15 @@ The GitHub Release is separate from the Play internal-track artifact. The curren
 - GitHub Release publish step: changed to use GitHub CLI with explicit tag `v3.1.0`; separate no-build asset audit passes. The release upload step itself has not been re-executed because the task constraint forbids an unnecessary AAB build.
 - WIF/OIDC and signing secrets: unchanged.
 - Production rollout: not performed.
+
+
+## Latest signed GitHub artifact — 27 November 2026
+
+- Current app package: `ye.dalilna.app`
+- Version name: `3.1.0`
+- Signed AAB versionCode: `4128301`
+- AAB SHA-256: `000bad420c5b6844c3ee6552dc2eb8364a51ddcef263bfc756b36e82d88ff86e`
+- AAB size: 8,838,161 bytes
+- APK SHA-256: `dae102c1370a8e69f58ce0b31321c81e01c1a64044a1705999495bc46bef7813`
+- Build: [GitHub Actions 45939045693](https://github.com/baraagpt6-droid/dalilna/actions/runs/45939045693)
+- The completed Play internal track is still versionCode `4100101`. The newer AAB is only published as a GitHub Release asset at this checkpoint.

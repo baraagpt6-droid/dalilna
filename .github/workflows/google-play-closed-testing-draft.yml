@@ -1,0 +1,146 @@
+name: Prepare Dalilna Google Play Closed Testing Draft
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_target:
+        description: "Explicitly confirm the fixed Dalilna test-only target"
+        required: true
+        type: choice
+        options:
+          - "NO — validation only"
+          - "YES — ye.dalilna.app draft only"
+        default: "NO — validation only"
+      testers_google_group:
+        description: "Optional Google Groups email; individual Play Console email lists are managed in Console"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
+concurrency:
+  group: dalilna-google-play-closed-draft
+  cancel-in-progress: false
+
+jobs:
+  prepare-draft:
+    if: inputs.confirm_target == 'YES — ye.dalilna.app draft only'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PACKAGE_NAME: ye.dalilna.app
+      EXPECTED_VERSION_CODE: "4128301"
+      PLAY_TRACK_NAME: Dalilna Closed Testing
+      TESTERS_GOOGLE_GROUP: ${{ inputs.testers_google_group }}
+    steps:
+      - name: Checkout Dalilna main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Validate the fixed repository and target
+        shell: bash
+        env:
+          WIF_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          WIF_SERVICE_ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT }}
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REPOSITORY" == "baraagpt6-droid/dalilna" ]]
+          [[ "$GITHUB_REF" == "refs/heads/main" ]]
+          [[ "$PACKAGE_NAME" == "ye.dalilna.app" ]]
+          [[ "$EXPECTED_VERSION_CODE" == "4128301" ]]
+          [[ "$PLAY_TRACK_NAME" == "Dalilna Closed Testing" ]]
+          [[ -n "$WIF_PROVIDER" ]] || { echo "::error::Missing repository variable GCP_WORKLOAD_IDENTITY_PROVIDER"; exit 1; }
+          [[ -n "$WIF_SERVICE_ACCOUNT" ]] || { echo "::error::Missing repository variable GCP_SERVICE_ACCOUNT"; exit 1; }
+          echo "Repository and Dalilna-only scope validated."
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Google API and image dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "google-auth>=2.40,<3" "requests>=2.32,<3" "Pillow>=11,<13" "CairoSVG>=2.8,<3"
+
+      - name: Authenticate to Google Cloud using GitHub OIDC
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: Download the pinned signed Dalilna AAB
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/aab dist/screenshots-artifact dist/play-assets
+          curl --fail --location --retry 3 --retry-delay 2 \
+            "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.1.0/app-release.aab" \
+            --output dist/aab/app-release.aab
+          echo "000bad420c5b6844c3ee6552dc2eb8364a51ddcef263bfc756b36e82d88ff86e  dist/aab/app-release.aab" | sha256sum --check
+
+      - name: Set up Node.js for fresh Play screenshots
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.65.1
+          npx playwright install --with-deps chromium
+
+      - name: Capture fresh phone and tablet screenshots from live Dalilna
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/google-play-screenshots
+          cat scripts/gp-capture-a.part scripts/gp-capture-b2.part scripts/gp-capture-c.part scripts/gp-capture-d.part scripts/gp-capture-d2.part > scripts/capture.cjs
+          node scripts/capture.cjs
+          (cd dist && zip -r dalilna-play-screenshots.zip google-play-screenshots)
+
+      - name: Prepare and validate all Play listing images
+        shell: bash
+        run: |
+          set -euo pipefail
+          SCREENSHOT_ZIP="dist/dalilna-play-screenshots.zip"
+          test -s "$SCREENSHOT_ZIP"
+          python scripts/prepare_google_play_assets.py \
+            --screenshots-zip "$SCREENSHOT_ZIP" \
+            --output-dir dist/play-assets
+          python scripts/test_google_play_closed_testing_draft.py
+
+      - name: Upload the listing and create an unsubmitted Closed Testing draft
+        shell: bash
+        run: |
+          set -euo pipefail
+          ARGS=(
+            --aab dist/aab/app-release.aab
+            --assets-dir dist/play-assets
+          )
+          python scripts/google_play_closed_testing_draft.py "${ARGS[@]}" \
+            --testers-google-group "$TESTERS_GOOGLE_GROUP"
+
+      - name: Summarize the unsubmitted draft
+        if: success()
+        shell: bash
+        run: |
+          {
+            echo "## Dalilna Google Play draft prepared"
+            echo
+            echo "- Package: `ye.dalilna.app`"
+            echo "- Version: `3.1.0`"
+            echo "- versionCode: `4128301`"
+            echo "- Track: `Dalilna Closed Testing`"
+            echo "- Release status: `draft`"
+            echo "- Production track touched: **No**"
+            echo "- Changes sent for review: **No**"
+            echo "- Existing images deleted or replaced: **No**"
+            echo
+            echo "This is an unsubmitted draft. It is not available to testers until a separate owner-approved testing-track release action."
+          } >> "$GITHUB_STEP_SUMMARY"
