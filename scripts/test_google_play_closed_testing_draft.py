@@ -39,12 +39,17 @@ class DraftSafetyTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_target(PACKAGE_NAME, VERSION_CODE, "production")
 
-    def test_release_is_always_draft(self):
-        release = draft_release()
-        self.assertEqual(release["status"], "draft")
-        self.assertEqual(release["versionCodes"], ["4128701"])
-        self.assertNotIn("userFraction", release)
-        self.assertNotIn("countryTargeting", release)
+    def test_draft_and_submitted_release_statuses_are_explicit(self):
+        draft = draft_release()
+        submitted = draft_release("completed")
+        self.assertEqual(draft["status"], "draft")
+        self.assertEqual(submitted["status"], "completed")
+        self.assertEqual(draft["versionCodes"], ["4128701"])
+        self.assertEqual(submitted["versionCodes"], ["4128701"])
+        self.assertNotIn("userFraction", draft)
+        self.assertNotIn("countryTargeting", draft)
+        with self.assertRaises(ValueError):
+            draft_release("inProgress")
 
  
     def test_replaces_single_older_draft_and_preserves_other_track_releases(self):
@@ -89,6 +94,19 @@ class DraftSafetyTests(unittest.TestCase):
         self.assertEqual(len(updated), 2)
         self.assertEqual(updated[-1]["status"], "draft")
         self.assertEqual(updated[-1]["versionCodes"], ["4128701"])
+
+    def test_submission_promotes_only_target_draft_to_completed(self):
+        original = [
+            {"name": "Old draft", "versionCodes": ["3127701"], "status": "draft",
+             "countryTargeting": {"countries": ["MY"], "includeRestOfWorld": False}},
+            {"name": "Earlier release", "versionCodes": ["3000101"], "status": "completed"},
+        ]
+        updated = prepare_closed_track_releases(original, release_status="completed")
+        self.assertEqual(updated[0]["status"], "completed")
+        self.assertEqual(updated[0]["versionCodes"], ["4128701"])
+        self.assertEqual(updated[0]["countryTargeting"], original[0]["countryTargeting"])
+        self.assertEqual(updated[1], original[1])
+        self.assertEqual(original[0]["status"], "draft")
 
 
     def test_play_mode_requires_exactly_one_action(self):
@@ -210,6 +228,39 @@ class DraftSafetyTests(unittest.TestCase):
     def test_stage_only_refuses_to_reuse_an_active_edit(self):
         with self.assertRaises(ValueError):
             validate_stage_only_inputs("active-edit", "")
+
+    def test_committed_closed_testing_verifier_requires_exact_release_and_bundle(self):
+        state = {
+            "tracks": [{
+                "track": TRACK_NAME,
+                "releases": [{"status": "completed", "versionCodes": [str(VERSION_CODE)]}],
+            }],
+            "bundles": [{"versionCode": VERSION_CODE, "sha256": play_module.AAB_SHA256}],
+            "appDetails": {"matchesRepository": True},
+            "listings": {
+                "ar": {"matchesRepository": True, "images": {
+                    "icon": [{}], "featureGraphic": [{}],
+                    "phoneScreenshots": [{}, {}, {}, {}],
+                    "tenInchScreenshots": [{}, {}, {}, {}],
+                }},
+                "en-US": {"matchesRepository": True, "images": {
+                    "icon": [{}], "featureGraphic": [{}],
+                    "phoneScreenshots": [{}, {}, {}, {}],
+                    "tenInchScreenshots": [{}, {}, {}, {}],
+                }},
+            },
+        }
+        verified = play_module.verify_closed_testing_state(state)
+        self.assertEqual(verified["track"], TRACK_NAME)
+        self.assertEqual(verified["versionCode"], VERSION_CODE)
+        bad_track = dict(state)
+        bad_track["tracks"] = [{"track": "production", "releases": state["tracks"][0]["releases"]}]
+        with self.assertRaises(RuntimeError):
+            play_module.verify_closed_testing_state(bad_track)
+        bad_hash = dict(state)
+        bad_hash["bundles"] = [{"versionCode": VERSION_CODE, "sha256": "wrong"}]
+        with self.assertRaises(RuntimeError):
+            play_module.verify_closed_testing_state(bad_hash)
 
     def test_stage_only_creates_fresh_edit_without_assets_and_exports_edit_id(self):
         class FakeApi:
