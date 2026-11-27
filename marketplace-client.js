@@ -51,19 +51,98 @@
       window.alert(message);
     }
   }
-  async function api(path, options) {
-    const response = await fetch(API + path, {
-      cache: "no-store",
-      ...options,
-      headers: { Accept: "application/json", ...(options && options.headers || {}) }
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      const error = new Error(data.error || ("HTTP " + response.status));
-      error.status = response.status;
-      throw error;
+  const API_TIMEOUT_MS = 12000;
+  const API_RETRY_METHODS = new Set(["GET", "HEAD", "OPTIONS", "PUT", "DELETE"]);
+  const API_RETRY_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
+
+  function apiRetryDelay(response, attempt) {
+    const raw = response && response.headers && response.headers.get
+      ? response.headers.get("Retry-After")
+      : null;
+    const seconds = raw == null ? NaN : Number(raw);
+    if (Number.isFinite(seconds) && seconds > 0) {
+      return Math.min(1500, Math.max(250, seconds * 1000));
     }
-    return data;
+    return Math.min(900, 300 * (attempt + 1));
+  }
+
+  function waitForApiRetry(delayMs) {
+    return new Promise(resolve => window.setTimeout(resolve, delayMs));
+  }
+
+  async function api(path, options) {
+    const requestOptions = { ...(options || {}) };
+    const method = String(requestOptions.method || "GET").toUpperCase();
+    const timeoutMs = Number.isFinite(Number(requestOptions.timeoutMs))
+      ? Math.min(30000, Math.max(1000, Number(requestOptions.timeoutMs)))
+      : API_TIMEOUT_MS;
+    delete requestOptions.timeoutMs;
+    const maxRetries = API_RETRY_METHODS.has(method) ? 1 : 0;
+    const externalSignal = requestOptions.signal;
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      const controller = new AbortController();
+      let timedOut = false;
+      let onExternalAbort = null;
+      if (externalSignal) {
+        if (externalSignal.aborted) {
+          controller.abort(externalSignal.reason);
+        } else {
+          onExternalAbort = () => controller.abort(externalSignal.reason);
+          externalSignal.addEventListener("abort", onExternalAbort, { once: true });
+        }
+      }
+
+      const timeoutId = window.setTimeout(() => {
+        timedOut = true;
+        controller.abort();
+      }, timeoutMs);
+
+      try {
+        const response = await fetch(API + path, {
+          cache: "no-store",
+          ...requestOptions,
+          signal: controller.signal,
+          headers: {
+            Accept: "application/json",
+            ...(requestOptions.headers || {})
+          }
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          const error = new Error(data.error || ("HTTP " + response.status));
+          error.status = response.status;
+          if (attempt < maxRetries && API_RETRY_STATUSES.has(response.status)) {
+            await waitForApiRetry(apiRetryDelay(response, attempt));
+            continue;
+          }
+          throw error;
+        }
+        return data;
+      } catch (error) {
+        if (externalSignal && externalSignal.aborted) throw error;
+        const isNetworkFailure = timedOut
+          || error.name === "AbortError"
+          || error instanceof TypeError;
+        if (attempt < maxRetries && isNetworkFailure) {
+          await waitForApiRetry(apiRetryDelay(null, attempt));
+          continue;
+        }
+        if (timedOut) {
+          const timeoutError = new Error("API request timed out after " + timeoutMs + " ms");
+          timeoutError.code = "DALILNA_API_TIMEOUT";
+          timeoutError.cause = error;
+          throw timeoutError;
+        }
+        throw error;
+      } finally {
+        window.clearTimeout(timeoutId);
+        if (externalSignal && onExternalAbort) {
+          externalSignal.removeEventListener("abort", onExternalAbort);
+        }
+      }
+    }
+    throw new Error("API request failed after retry");
   }
   function fillSelect(select, entries, allText) {
     if (!select) return;
