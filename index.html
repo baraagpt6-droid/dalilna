@@ -3132,6 +3132,14 @@ function normalizeState(raw){
 }
 const storedInitialState=loadState();
 const adminCredentialMigrationRequired=!storedInitialState||storedInitialState.adminCredentialVersion!==ADMIN_CREDENTIAL_VERSION;
+const legacyProfileMigrationRequired=!!storedInitialState&&(
+  !storedInitialState.profile||
+  typeof storedInitialState.profile.customerName!=="string"||
+  typeof storedInitialState.profile.storeName!=="string"||
+  typeof storedInitialState.profile.phone!=="string"||
+  !["customer","merchant"].includes(storedInitialState.profile.activeRole)||
+  localStorage.getItem("dalilna-v3-customer-profile")!==null
+);
 let S=normalizeState(storedInitialState);
 let storageWarned=false;
 // Merge the public starter catalogue once per device. User-created records remain separate.
@@ -3148,6 +3156,7 @@ function saveState(){
   try{
     const serialized=JSON.stringify(portableState());
     localStorage.setItem(STORE_KEY,serialized);
+    localStorage.removeItem("dalilna-v3-customer-profile");
     if(serialized.length>3500000&&!storageWarned){storageWarned=true;toast("اقتربت مساحة التخزين من الحد. نزّل نسخة احتياطية واحذف الصور الكبيرة.");}
     if(navigator.storage&&typeof navigator.storage.estimate==="function")navigator.storage.estimate().then(info=>{
       if(info.quota&&info.usage/info.quota>.85&&!storageWarned){storageWarned=true;toast("مساحة التخزين المتاحة منخفضة. نزّل نسخة احتياطية.");}
@@ -3156,7 +3165,7 @@ function saveState(){
     toast("تعذّر حفظ البيانات. صدّر نسخة احتياطية واحذف بعض الصور.");
   }
 }
-if(adminCredentialMigrationRequired)saveState();
+if(adminCredentialMigrationRequired||legacyProfileMigrationRequired)saveState();
 window.addEventListener("beforeunload",saveState);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)saveState();});
 
@@ -3604,6 +3613,8 @@ function go(v,c){
   });
   $("#navAdd").toggleAttribute("aria-current",v==="add");
   if(v==="cat"){$("#catT").textContent=catLabel(c);$("#area").value="";$("#areaLbl").textContent=curLang==="en"?"All Areas":"كل المناطق";}
+  renderMerchantTools();
+  renderAddHub();
   window.scrollTo(0,0);
   render();
 }
@@ -6654,16 +6665,39 @@ $("#ticketForm").addEventListener("submit",e=>{
   $("#ticketForm").reset();$("#ticketErr").textContent="";closeDlg("#supportDlg");toast("تم إرسال الرسالة إلى صندوق المشرف.");
 });
 
-// The first-run screen is a role chooser, not a login wall.
+// First run opens the unified profile card and only its inline editor.
 if(!S.onboarded){
-  window.setTimeout(()=>showDlg("#accountDlg"),350);
+  window.setTimeout(()=>{
+    showDlg("#accountDlg");
+    renderProfilePanel();
+    if(!S.profile.customerName||!S.profile.phone)openProfileEditor({initial:true});
+  },350);
 }
 refreshPromoCountdown();
 window.setInterval(refreshPromoCountdown,60000);
 renderMerchantTools();
 
 window.DALILNA_V3_BRIDGE={
-  snapshot:()=>({role:S.session?.role||"client",merchant:S.session?.merchant||S.merchantProfile||null,onboarded:S.onboarded===true,directoryFavorites:(Array.isArray(S.favs)?S.favs:[]).map(id=>[...SEED_ITEMS,...S.items].find(item=>String(item.id)===String(id))).filter(Boolean).map(item=>({id:String(item.id),name:item.name||item.title||"",category:CN[item.cat]||item.cat||"خدمة",cat:item.cat||"other",governorate:item.gov||"",district:item.dist||"",area:item.area||item.village||"",phone:item.phone||"",lat:item.lat??item.latitude??null,lon:item.lng??item.lon??item.longitude??null,mapsUrl:item.mapsUrl||item.mapUrl||"",website:item.website||"",sourceUrl:item.sourceUrl||"",description:item.desc||""}))}),
+  profile:()=>({...S.profile}),
+  profileReady:()=>!!(S.profile?.phone&&(S.profile.activeRole==="merchant"?S.profile.storeName:S.profile.customerName)),
+  saveProfile:(patch={})=>{
+    const current=S.profile||{customerName:"",storeName:"",phone:"",activeRole:"customer"};
+    S.profile={
+      customerName:typeof patch.customerName==="string"?cleanText(patch.customerName,80):current.customerName,
+      storeName:typeof patch.storeName==="string"?cleanText(patch.storeName,80):current.storeName,
+      phone:typeof patch.phone==="string"?cleanText(patch.phone,40):current.phone,
+      activeRole:patch.activeRole==="merchant"?"merchant":patch.activeRole==="customer"?"customer":current.activeRole
+    };
+    S.merchantProfile={name:S.profile.storeName,phone:S.profile.phone,area:S.merchantProfile?.area||""};
+    syncProfileSession();S.onboarded=true;saveState();syncRoleUI();renderProfilePanel();renderAddHub();
+    return {...S.profile};
+  },
+  setActiveRole:(role)=>{setProfileRole(role,{toast:false});return {...S.profile};},
+  openProfileEditor:(options={})=>{
+    if(options.initial&&(!S.profile.customerName||!S.profile.phone))S.profile.activeRole="customer";
+    showDlg("#accountDlg");renderProfilePanel();openProfileEditor(options);
+  },
+  snapshot:()=>({role:S.session?.role||"client",activeRole:S.profile?.activeRole||"customer",profile:{...S.profile},merchant:S.session?.merchant||S.merchantProfile||null,onboarded:S.onboarded===true,directoryFavorites:(Array.isArray(S.favs)?S.favs:[]).map(id=>[...SEED_ITEMS,...S.items].find(item=>String(item.id)===String(id))).filter(Boolean).map(item=>({id:String(item.id),name:item.name||item.title||"",category:CN[item.cat]||item.cat||"خدمة",cat:item.cat||"other",governorate:item.gov||"",district:item.dist||"",area:item.area||item.village||"",phone:item.phone||"",lat:item.lat??item.latitude??null,lon:item.lng??item.lon??item.longitude??null,mapsUrl:item.mapsUrl||item.mapUrl||"",website:item.website||"",sourceUrl:item.sourceUrl||"",description:item.desc||""}))}),
   setDirectoryFavorite:(id,shouldSave)=>{const key=String(id),items=Array.isArray(S.favs)?S.favs:(S.favs=[]),index=items.indexOf(key);if(shouldSave&&index<0)items.push(key);else if(!shouldSave&&index>=0)items.splice(index,1);saveState();if(typeof renderProfilePanel==="function")renderProfilePanel();render();return items.includes(key);}
 };
 window.DalilnaMarketplaceBridge={
