@@ -39,7 +39,7 @@ The CSV has 782 answer rows and uses the published Google Play Data safety impor
 - Release status: `completed` (verified after API read-back)
 - Internal App Sharing direct link emitted by the successful upload action: https://play.google.com/apps/test/ye.dalilna.app/4100101
 
-The link above is an Internal App Sharing download link, **not** the Play internal-testing opt-in link. The official opt-in link depends on the tester list and needs to be obtained from Play Console after testers have been configured.
+The link above is an Internal App Sharing download link, **not** the Play internal-testing opt-in link. The latest API read reports zero tester Google Groups and zero tester email lists. Add the intended testers in Play Console, save the list, and copy the official opt-in link. Do not use this Internal App Sharing URL as the opt-in link.
 
 ## GitHub release artifacts
 
@@ -52,7 +52,7 @@ The GitHub Release is separate from the Play internal-track artifact. The curren
 ## Remaining Play Console work
 
 1. Grant the automation service account app-scoped `Manage store presence` permission for Dalilna. Do not grant Admin or production-release permissions.
-2. Add the internal tester Google accounts, save the tester list and retrieve the track's opt-in link.
+2. Add the internal tester Google accounts or a Google Group, save the tester list and retrieve the track's opt-in link. The current track has zero configured tester groups and zero email lists.
 3. Complete Ads, target audience, App access, IARC content rating and any required declarations in Play Console.
 4. Upload the final 512 × 512 PNG app icon, 1024 × 500 feature graphic and captured screenshots. The repository audit found the SVG icon and screenshot workflow artifact, but no verified 512 × 512 Play icon PNG or 1024 × 500 feature graphic.
 5. For a future closed/open/production track, review and submit the Data safety CSV and all required Play Console declarations. Do not assume the internal-only exemption applies to other tracks.
