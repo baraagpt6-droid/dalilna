@@ -3,7 +3,7 @@
 آخر مراجعة تقنية: 27 نوفمبر 2026  
 إصدار التطبيق الموجود في المشروع: 3.1.0  
 معرّف حزمة Android: `ye.dalilna.app`  
-أحدث AAB موقّع في GitHub: `3.1.0` / versionCode `4128401`، بينما إصدار Play الداخلي المكتمل ما زال `4100101`.
+أحدث AAB موقّع في GitHub: `3.1.0` / versionCode `4128601`، بينما إصدار Play الداخلي المكتمل ما زال `4100101`.
 
 > هذه الوثيقة تجهيز للنشر. اسم العرض وبريد الدعم والخصوصية حُدّثا في صفحات المشروع. لم يتم الدخول إلى Play Console للتحقق من تطابق اسم الناشر أو إدخال البيانات هناك.
 
@@ -339,8 +339,8 @@ All public app features are available without signing in. Open Dalilna and brows
 
 - بناء الإصدار الموقّع واختباره: [run 45943431867](https://github.com/baraagpt6-droid/dalilna/actions/runs/45943431867) — نجاح.
 - التحقق من خدمات الدليل والسوق وRender وNeon: [run 45939045681](https://github.com/baraagpt6-droid/dalilna/actions/runs/45939045681) — نجاح.
-- الإصدار الحالي في GitHub Release: `4128401`. لا تخلطه مع إصدار Play الداخلي المكتمل `4100101`.
-- رفع `4128401` إلى Closed Testing، وإعداد قائمة المختبرين، ونشر رابط Opt-in لم تكتمل بعد.
+- الإصدار الحالي في GitHub Release: `4128601`. لا تخلطه مع إصدار Play الداخلي المكتمل `4100101`.
+- رفع/اعتماد `4128601` إلى Closed Testing، وإعداد قائمة المختبرين، ونشر رابط Opt-in لم تكتمل بعد. يوجد وضع `STAGE_ONLY` مخصص لتجهيز Edit غير معتمد دون إرسال للمراجعة.
 - لا يظهر رابط Opt-in لمسار مغلق عندما تكون حالة التطبيق Draft أو Pending publication؛ يلزم ظهور حالة Published أولاً.
 
 
@@ -356,3 +356,6 @@ The Android Publisher `edits.commit` endpoint currently sends changes for review
 Read-only API inspection run 45947016030 confirms that edit 13370413812168476918 contains the exact bundle versionCode 4128401 and matching SHA-256. Its edit snapshot has one app icon, one feature graphic, four phone screenshots and four 10-inch tablet screenshots for each locale. Arabic and English listing titles and description lengths are present. The tester configuration remains zero Google Groups and allUsers=false. These values are staged in the uncommitted edit and are not live or accessible to testers.
 
 The currently committed Closed Testing track remains 3127701 until the edit is held or intentionally submitted from Publishing overview. API commit without changesNotSentForReview would submit app changes to Google review. Do not treat this read-only inspection as a release upload or tester invitation.
+## Latest Android build — 27 November 2026
+
+Build [45949440829](https://github.com/baraagpt6-droid/dalilna/actions/runs/45949440829) completed successfully. The latest signed GitHub Release AAB is versionCode `4128601`, SHA-256 `5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a`; the matching APK SHA-256 is `88ab10f58bfb4296951fa97144b501da9c5b7e5296b8c79fcc5fc3589249ad11`. It includes the Dalilna-only WebView origin restriction. This artifact has not yet been staged into the current Play edit.

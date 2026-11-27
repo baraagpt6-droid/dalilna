@@ -2,7 +2,7 @@
 
 Application ID: `ye.dalilna.app`  
 App version: `3.1.0`  
-Google Play internal-track AAB: versionCode `4100101` — status `completed`. Latest GitHub signed AAB: versionCode `4128401`; the bundle upload call succeeded inside an uncommitted edit, but the edit commit failed, so no new track release is confirmed.  
+Google Play internal-track AAB: versionCode `4100101` — status `completed`. Latest GitHub signed AAB: versionCode `4128601`; the preceding `4128401` bundle is staged inside the current uncommitted edit, and the latest AAB still needs to be staged there.  
 Target SDK: 36  
 Developer display name proposed in the listing: `Dalilna Team` — confirm it matches the Play Console publisher profile.  
 Support/privacy contact: `dalilnasupport@gmail.com`
@@ -70,10 +70,10 @@ The GitHub Release is separate from the Play internal-track artifact. The curren
 
 - Current app package: `ye.dalilna.app`
 - Version name: `3.1.0`
-- Signed AAB versionCode: `4128401`
-- AAB SHA-256: `3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026`
-- AAB size: 8,838,161 bytes
-- APK SHA-256: `2664437d32bea2a0c9c09eef60700aa71a65cd3c995a19a8d855dcf79851e1e7`
+- Signed AAB versionCode: `4128601`
+- AAB SHA-256: `5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a`
+- AAB size: 8,838,656 bytes
+- APK SHA-256: `88ab10f58bfb4296951fa97144b501da9c5b7e5296b8c79fcc5fc3589249ad11`
 - Build: [GitHub Actions 45943431867](https://github.com/baraagpt6-droid/dalilna/actions/runs/45943431867)
 - The completed Play internal track is still versionCode `4100101`. The newer AAB is only published as a GitHub Release asset at this checkpoint.
 
@@ -82,7 +82,7 @@ The GitHub Release is separate from the Play internal-track artifact. The curren
 
 - Existing `Dalilna Closed Testing` release: Draft versionCode `3127701`.
 - Highest versionCode on other app tracks: `4100101` (internal, completed).
-- Current verified signed AAB: `4128401`.
+- Current verified signed AAB: `4128601`.
 - The older draft has not yet been updated in the committed track. A later API Edit staged the replacement but could not be committed without sending changes for review.
 - No tester email lists or other app tracks are modified.
 
@@ -94,3 +94,10 @@ Run [45945373618](https://github.com/baraagpt6-droid/dalilna/actions/runs/459453
 Run 45947016030 inspected existing edit 13370413812168476918 without creating a new edit or changing data. The edit contains bundle 4128401 with SHA-256 3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026, Arabic and English listings, icon, feature graphic, four phone screenshots and four tablet screenshots per locale. The custom closed-testing track within this edit has a draft for 4128401. The tester configuration in the edit is zero Google Groups and allUsers=false.
 
 This is still an uncommitted edit. The committed track has not been changed; the listing is not confirmed live and no opt-in link or tester membership is active. The Publishing API would submit the edit for review if committed in the current app state. Keep the INSPECT_ONLY mode until all account-specific declarations and tester setup are complete.
+## Latest signed artifact — Build #286
+
+- Workflow: [45949440829](https://github.com/baraagpt6-droid/dalilna/actions/runs/45949440829).
+- versionCode: `4128601`.
+- AAB SHA-256: `5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a`.
+- APK SHA-256: `88ab10f58bfb4296951fa97144b501da9c5b7e5296b8c79fcc5fc3589249ad11`.
+- Build signing and signature verification passed. The artifact has not yet been staged to Play.

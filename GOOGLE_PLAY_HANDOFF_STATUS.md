@@ -1,7 +1,7 @@
 # Dalilna Google Play handoff
 
 Application ID: `ye.dalilna.app`  
-Release: `3.1.0` / Google Play internal-track versionCode `4100101` completed; latest signed GitHub AAB versionCode `4128401` uploaded inside an uncommitted Play edit, not committed to a track  
+Release: `3.1.0` / Google Play internal-track versionCode `4100101` completed; latest signed GitHub AAB versionCode `4128601` (Build #286), not yet staged into the current Play edit  
 Developer display name: **Dalilna Team**  
 Support and privacy email: **dalilnasupport@gmail.com**
 
@@ -113,10 +113,10 @@ The technical release artifacts are built and signed. Store listing assets and P
 ## Latest signed GitHub artifact — 27 November 2026
 
 - Main commit: `84ca8b10b7ae81794285fb8e2fb321d5b5317d6f` before this Closed Testing automation PR.
-- Current Android package: `ye.dalilna.app`, versionName `3.1.0`, versionCode `4128401`.
+- Current Android package: `ye.dalilna.app`, versionName `3.1.0`, versionCode `4128601` (Build #286).
 - Android build run [45943431867](https://github.com/baraagpt6-droid/dalilna/actions/runs/45943431867) completed successfully. Release AAB and APK signatures and version metadata passed verification; the GitHub Release was updated.
-- AAB: 8,838,161 bytes, SHA-256 `3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026`.
-- APK: 6,715,031 bytes, SHA-256 `2664437d32bea2a0c9c09eef60700aa71a65cd3c995a19a8d855dcf79851e1e7`.
+- AAB: 8,838,656 bytes, SHA-256 `5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a`.
+- APK: 6,715,315 bytes, SHA-256 `88ab10f58bfb4296951fa97144b501da9c5b7e5296b8c79fcc5fc3589249ad11`.
 - Public directory / marketplace verification run [45939045681](https://github.com/baraagpt6-droid/dalilna/actions/runs/45939045681) succeeded, including live Render and DB probes.
 - Play still shows the completed internal release `4100101` and the pre-existing Closed Testing draft `3127701`. AAB `4128401`, listing updates and images were uploaded/staged within edit `13370413812168476918`; the edit was not committed, so no new track release or live store listing change is confirmed.
 - The service-account workflow authenticated via WIF, but store-listing commit returned HTTP 403. No closed-test opt-in link or new tester list has been confirmed.
@@ -150,3 +150,11 @@ The Android Publisher Testers API exposes Google Groups but not saved individual
 - Tester read-back remains zero Google Groups and allUsers=false. Saved email lists remain unavailable through Android Publisher API and were not accessed.
 - This data belongs to an uncommitted API edit. It is not evidence that the current Play track has been updated, that store listing changes are live, that testers can opt in, or that Google has reviewed the release.
 - The edit must be held or committed through the Console publishing workflow. API commit without a rejection-only hold parameter would send the edit to Google review. The current workflow defaults to read-only inspection and has a separate manual review-submission mode.
+## Latest Android release after API/WebView hardening — 27 November 2026
+
+- Build run [45949440829](https://github.com/baraagpt6-droid/dalilna/actions/runs/45949440829) completed successfully on main.
+- Application: `ye.dalilna.app`, versionName `3.1.0`, versionCode `4128601`.
+- Signed AAB: 8,838,656 bytes; SHA-256 `5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a`.
+- Signed APK: 6,715,315 bytes; SHA-256 `88ab10f58bfb4296951fa97144b501da9c5b7e5296b8c79fcc5fc3589249ad11`.
+- Persistent signing verification succeeded for both outputs. The GitHub Release `v3.1.0` now points at these assets and OTA metadata reports `4128601`.
+- This is a GitHub Release artifact only. It has not been uploaded or committed to Google Play. The committed internal Play release remains `4100101`; the current open Play edit has the earlier `4128401` bundle until the separate `STAGE_ONLY` workflow is run.

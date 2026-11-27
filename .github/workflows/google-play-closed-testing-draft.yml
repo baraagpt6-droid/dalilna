@@ -12,15 +12,16 @@ on:
           - "YES — ye.dalilna.app only"
         default: "NO — validation only"
       mode:
-        description: "Inspection is read-only. Submission sends the complete Play edit to Google review."
+        description: "Inspection reads only. Staging writes into the existing edit without committing. Submission sends all changes to Google review."
         required: true
         type: choice
         options:
           - INSPECT_ONLY
+          - STAGE_ONLY
           - SUBMIT_FOR_REVIEW
         default: INSPECT_ONLY
       existing_edit_id:
-        description: "Optional active edit ID for read-only inspection"
+        description: "Active Play edit ID for read-only inspection or stage-only mode; required for STAGE_ONLY"
         required: false
         type: string
         default: "13370413812168476918"
@@ -54,7 +55,7 @@ jobs:
     timeout-minutes: 30
     env:
       PACKAGE_NAME: ye.dalilna.app
-      EXPECTED_VERSION_CODE: "4128401"
+      EXPECTED_VERSION_CODE: "4128601"
       PLAY_TRACK_NAME: Dalilna Closed Testing
       TESTERS_GOOGLE_GROUP: ${{ inputs.testers_google_group }}
       PLAY_MODE: ${{ inputs.mode }}
@@ -77,14 +78,14 @@ jobs:
           [[ "$GITHUB_REPOSITORY" == "baraagpt6-droid/dalilna" ]]
           [[ "$GITHUB_REF" == "refs/heads/main" ]]
           [[ "$PACKAGE_NAME" == "ye.dalilna.app" ]]
-          [[ "$EXPECTED_VERSION_CODE" == "4128401" ]]
+          [[ "$EXPECTED_VERSION_CODE" == "4128601" ]]
           [[ "$PLAY_TRACK_NAME" == "Dalilna Closed Testing" ]]
           [[ -n "$WIF_PROVIDER" && -n "$WIF_SERVICE_ACCOUNT" ]]
           if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
             [[ "$GITHUB_EVENT_HEAD_COMMIT_MESSAGE" == *"[inspect-dalilna-play-state]"* ]]
             echo "Push mode is strictly read-only inspection."
           else
-            [[ "$PLAY_MODE" == "INSPECT_ONLY" || "$PLAY_MODE" == "SUBMIT_FOR_REVIEW" ]]
+            [[ "$PLAY_MODE" == "INSPECT_ONLY" || "$PLAY_MODE" == "STAGE_ONLY" || "$PLAY_MODE" == "SUBMIT_FOR_REVIEW" ]]
           fi
 
       - name: Set up Python
@@ -120,7 +121,7 @@ jobs:
           python scripts/google_play_closed_testing_draft.py "${ARGS[@]}"
 
       - name: Download pinned signed Dalilna AAB
-        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'SUBMIT_FOR_REVIEW'
+        if: github.event_name == 'workflow_dispatch' && (inputs.mode == 'STAGE_ONLY' || inputs.mode == 'SUBMIT_FOR_REVIEW')
         shell: bash
         run: |
           set -euo pipefail
@@ -128,16 +129,16 @@ jobs:
           curl --fail --location --retry 3 --retry-delay 2 \
             "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.1.0/app-release.aab" \
             --output dist/aab/app-release.aab
-          echo "3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026  dist/aab/app-release.aab" | sha256sum --check
+          echo "5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a  dist/aab/app-release.aab" | sha256sum --check
 
       - name: Set up Node.js for fresh Play screenshots
-        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'SUBMIT_FOR_REVIEW'
+        if: github.event_name == 'workflow_dispatch' && (inputs.mode == 'STAGE_ONLY' || inputs.mode == 'SUBMIT_FOR_REVIEW')
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
       - name: Capture and prepare Play listing images
-        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'SUBMIT_FOR_REVIEW'
+        if: github.event_name == 'workflow_dispatch' && (inputs.mode == 'STAGE_ONLY' || inputs.mode == 'SUBMIT_FOR_REVIEW')
         shell: bash
         run: |
           set -euo pipefail
@@ -150,6 +151,18 @@ jobs:
           python scripts/prepare_google_play_assets.py \
             --screenshots-zip dist/dalilna-play-screenshots.zip \
             --output-dir dist/play-assets
+
+      - name: Stage Dalilna release inside the existing Play edit only
+        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'STAGE_ONLY'
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ -n "$EXISTING_EDIT_ID" ]]
+          python scripts/google_play_closed_testing_draft.py \
+            --stage-only \
+            --existing-edit-id "$EXISTING_EDIT_ID" \
+            --aab dist/aab/app-release.aab \
+            --assets-dir dist/play-assets
 
       - name: Submit Dalilna changes for Google Play review
         if: github.event_name == 'workflow_dispatch' && inputs.mode == 'SUBMIT_FOR_REVIEW'
@@ -173,10 +186,17 @@ jobs:
               echo "- Mode: read-only inspection"
               echo "- App changes committed: **No**"
               echo "- Changes submitted for review: **No**"
+            elif [[ "$PLAY_MODE" == "STAGE_ONLY" ]]; then
+              echo "- Mode: stage inside existing uncommitted edit"
+              echo "- Package: `ye.dalilna.app`"
+              echo "- Closed Testing versionCode: `4128601`"
+              echo "- App changes committed: **No**"
+              echo "- Changes submitted for review: **No**"
+              echo "- Production track touched: **No**"
             else
               echo "- Mode: submit for Google Play review"
               echo "- Package: `ye.dalilna.app`"
-              echo "- Closed Testing versionCode: `4128401`"
+              echo "- Closed Testing versionCode: `4128601`"
               echo "- Changes submitted for review: **Yes**"
               echo "- Production track touched: **No**"
             fi

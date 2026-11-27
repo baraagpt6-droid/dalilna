@@ -4,7 +4,7 @@ Scope is fixed to:
 
 - Application ID: `ye.dalilna.app`
 - Version: `3.1.0`
-- versionCode: `4128401` (Build #284)
+- versionCode: `4128601` (Build #286)
 - Closed testing track: `Dalilna Closed Testing`
 
 The manual-dispatch workflow is:
@@ -30,7 +30,7 @@ Do not create or select `dalilna.com` or `com.hubaish.guide`.
 
 ## 1.1 Existing Play artifact and API bootstrap
 
-The app already has a completed internal-test release at versionCode `4100101`, so its first Play artifact bootstrap is complete. The current GitHub Release AAB is versionCode `4128401` and SHA-256 `3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026`.
+The app already has a completed internal-test release at versionCode `4100101`, so its first Play artifact bootstrap is complete. The current GitHub Release AAB is versionCode `4128601` and SHA-256 `5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a`.
 
 The submit mode verifies this exact file before opening a Play edit. It refuses any versionCode below the highest value on any app track, checks existing bundles, and uploads only when a matching bundle is absent. Its commit submits changes for review. The inspect-only mode does not upload anything and can reuse the current uncommitted edit ID for read-back.
 
@@ -142,7 +142,7 @@ After merging the workflow changes, WIF and app access are configured for Daliln
 3. Keep mode as `INSPECT_ONLY` for read-back. `SUBMIT_FOR_REVIEW` sends all staged changes to Google review and must be used only after every policy and testing prerequisite is verified.
 4. The current uncommitted edit ID from run `45945373618` is `13370413812168476918`.
 
-The currently committed target-track draft is versionCode `3127701`, and the latest verified AAB is `4128401`. The API attempt staged the replacement inside an edit but could not commit it without submitting changes for review. The API read returned zero Google Groups and `allUsers=false`. The Android Publisher API does not expose saved individual-email lists; the `Hubaish Testers` Console list is not read, copied, renamed or changed.
+The currently committed target-track draft is versionCode `3127701`. The active uncommitted Play edit was previously staged with bundle `4128401`; the latest signed AAB is now `4128601` and will be staged into the same edit by `STAGE_ONLY`. The API read returned zero Google Groups and `allUsers=false`. The Android Publisher API does not expose saved individual-email lists; the `Hubaish Testers` Console list is not read, copied, renamed or changed.
 
 ## 7. Remaining owner actions in Play Console
 
@@ -166,3 +166,10 @@ The `changesNotSentForReview` parameter is documented for changes after a reject
 ## Read-only inspection results — 27 November 2026
 
 Run 45947016030 reused active edit 13370413812168476918 and performed GET requests only. It confirmed AAB 4128401 and SHA-256 3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026, track draft 4128401 in that edit, both locale listings, icon/feature graphic and four phone/four tablet screenshots per locale. It also confirmed zero Google Groups and allUsers=false. This edit remains uncommitted; read-only confirmation is not publication or review.
+## Stage the latest signed AAB without submitting for review
+
+The workflow offers three explicit modes: `INSPECT_ONLY` (GET-only read-back), `STAGE_ONLY` (updates the existing active edit and leaves it uncommitted), and `SUBMIT_FOR_REVIEW` (commits the complete edit and sends it to Google review).
+
+To stage the latest Build #286 artifact, use `Actions → Inspect or submit Dalilna Google Play changes`, branch `main`, confirmation `YES — ye.dalilna.app only`, mode `STAGE_ONLY`, existing Edit ID `13370413812168476918`, and leave the tester Google Group field empty. Stage-only reuses that existing edit, pins AAB versionCode `4128601` by SHA-256, updates the draft release payload and bilingual metadata, and preserves existing image groups and tester configuration. It rejects a tester group input in this mode. It does not call `edits:validate`, `edits:commit`, Production, rollout, or review submission.
+
+After staging, run `INSPECT_ONLY` against the same Edit ID to read back the bundle version/hash, draft release, images and tester settings. The committed Play tracks will remain unchanged until a separate review submission action is explicitly chosen.
