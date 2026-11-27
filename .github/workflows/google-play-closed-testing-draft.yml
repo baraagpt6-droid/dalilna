@@ -21,7 +21,7 @@ on:
           - SUBMIT_FOR_REVIEW
         default: INSPECT_ONLY
       existing_edit_id:
-        description: "Optional existing Play edit ID. Leave blank to inspect via a disposable edit or create a fresh isolated Stage Only edit."
+        description: "Read-only inspection only. Stage Only always creates a fresh isolated edit and rejects a supplied ID."
         required: false
         type: string
         default: ""
@@ -172,11 +172,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ARGS=(--stage-only --aab dist/aab/app-release.aab --github-output "$GITHUB_OUTPUT")
           if [[ -n "$EXISTING_EDIT_ID" ]]; then
-            ARGS+=(--existing-edit-id "$EXISTING_EDIT_ID")
+            echo "::error::STAGE_ONLY does not reuse an existing Edit ID. Leave the field blank."
+            exit 1
           fi
-          python scripts/google_play_closed_testing_draft.py "${ARGS[@]}"
+          python scripts/google_play_closed_testing_draft.py \
+            --stage-only \
+            --aab dist/aab/app-release.aab \
+            --github-output "$GITHUB_OUTPUT"
 
       - name: Verify staged Play edit with read-only API inspection
         if: env.PLAY_MODE == 'STAGE_ONLY'
