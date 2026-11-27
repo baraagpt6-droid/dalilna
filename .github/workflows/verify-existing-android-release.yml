@@ -1,0 +1,48 @@
+name: Verify existing Dalilna Android GitHub Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/android-apk.yml"
+      - ".github/workflows/verify-existing-android-release.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dalilna-existing-android-release-audit
+  cancel-in-progress: true
+
+jobs:
+  verify-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify the pinned v3.1.0 release and existing assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: v3.1.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
+            --json tagName,name,isDraft,isPrerelease,url,assets > "$RUNNER_TEMP/release.json"
+          node - "$RUNNER_TEMP/release.json" <<'NODE'
+          const fs = require("node:fs");
+          const release = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+          const required = ["app-release.apk", "app-release.aab"];
+          const assets = new Map((release.assets || []).map(asset => [asset.name, Number(asset.size)]));
+          if (release.tagName !== "v3.1.0" || release.isDraft || release.isPrerelease) {
+            throw new Error("Expected published, non-prerelease v3.1.0 release.");
+          }
+          for (const name of required) {
+            if (!(assets.get(name) > 0)) throw new Error("Missing or empty release asset: " + name);
+          }
+          console.log(JSON.stringify({
+            tag: release.tagName,
+            title: release.name,
+            url: release.url,
+            assets: required.map(name => ({name, size: assets.get(name)}))
+          }, null, 2));
+          NODE
