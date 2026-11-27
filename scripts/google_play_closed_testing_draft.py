@@ -288,11 +288,19 @@ def inspect_play_state(api: PlayApi, existing_edit_id: str | None = None) -> dic
         result["tracks"] = [
             {
                 "track": item.get("track"),
+                "formFactor": item.get("formFactor"),
                 "releases": [
                     {
                         "name": release.get("name"),
                         "status": release.get("status"),
                         "versionCodes": [str(code) for code in release.get("versionCodes", [])],
+                        "countryTargeting": release.get("countryTargeting"),
+                        "userFraction": release.get("userFraction"),
+                        "inAppUpdatePriority": release.get("inAppUpdatePriority"),
+                        "releaseNoteLanguages": [
+                            note.get("language")
+                            for note in release.get("releaseNotes", [])
+                        ],
                     }
                     for release in item.get("releases", [])
                 ],
