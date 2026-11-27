@@ -153,9 +153,14 @@ jobs:
           disable-animations: true
           script: |
             set -euo pipefail
-            APK="$GITHUB_WORKSPACE/android/app/build/outputs/apk/debug/app-debug.apk"
-            test -s "$APK"
-            mkdir -p "$GITHUB_WORKSPACE/artifacts/android-emulator"
+            APK="android/app/build/outputs/apk/debug/app-debug.apk"
+            if [[ ! -s "$APK" ]]; then
+              echo "Debug APK not found from emulator working directory: $PWD"
+              echo "Available workspace APK files:"
+              find . -path "*/outputs/apk/*/*.apk" -type f -print | head -50
+              exit 1
+            fi
+            mkdir -p artifacts/android-emulator
             adb wait-for-device
             adb logcat -c
             adb install -r "$APK"
@@ -170,13 +175,13 @@ jobs:
             done
             [[ "$launched" == "true" ]]
             adb shell screencap -p /sdcard/dalilna-home.png
-            adb pull /sdcard/dalilna-home.png "$GITHUB_WORKSPACE/artifacts/android-emulator/dalilna-home.png"
-            adb logcat -d -t 4000 > "$GITHUB_WORKSPACE/artifacts/android-emulator/logcat.txt"
-            if grep -E "FATAL EXCEPTION|Fatal signal" "$GITHUB_WORKSPACE/artifacts/android-emulator/logcat.txt"; then
+            adb pull /sdcard/dalilna-home.png artifacts/android-emulator/dalilna-home.png
+            adb logcat -d -t 4000 > artifacts/android-emulator/logcat.txt
+            if grep -E "FATAL EXCEPTION|Fatal signal" artifacts/android-emulator/logcat.txt; then
               echo "Android emulator logged a fatal application/runtime error."
               exit 1
             fi
-            test -s "$GITHUB_WORKSPACE/artifacts/android-emulator/dalilna-home.png"
+            test -s artifacts/android-emulator/dalilna-home.png
 
       - name: Upload Android Emulator smoke evidence
         if: always()
