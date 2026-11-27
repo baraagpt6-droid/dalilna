@@ -1,18 +1,31 @@
-name: Prepare Dalilna Google Play Closed Testing Draft
+name: Inspect or submit Dalilna Google Play changes
 
 on:
   workflow_dispatch:
     inputs:
       confirm_target:
-        description: "Explicitly confirm the fixed Dalilna test-only target"
+        description: "Confirm the fixed Dalilna package only"
         required: true
         type: choice
         options:
           - "NO — validation only"
-          - "YES — ye.dalilna.app draft only"
+          - "YES — ye.dalilna.app only"
         default: "NO — validation only"
+      mode:
+        description: "Inspection is read-only. Submission sends the complete Play edit to Google review."
+        required: true
+        type: choice
+        options:
+          - INSPECT_ONLY
+          - SUBMIT_FOR_REVIEW
+        default: INSPECT_ONLY
+      existing_edit_id:
+        description: "Optional active edit ID for read-only inspection"
+        required: false
+        type: string
+        default: "13370413812168476918"
       testers_google_group:
-        description: "Optional Google Groups email; individual Play Console email lists are managed in Console"
+        description: "Optional Google Groups email to add on review submission; saved individual email lists are not exposed by the API"
         required: false
         type: string
 
@@ -24,32 +37,35 @@ on:
 
 permissions:
   contents: read
-  actions: read
   id-token: write
 
 concurrency:
-  group: dalilna-google-play-closed-draft
+  group: dalilna-google-play-state
   cancel-in-progress: false
 
 jobs:
-  prepare-draft:
+  play:
     if: >-
-      inputs.confirm_target == 'YES — ye.dalilna.app draft only' ||
-      (github.event_name == 'push' && contains(github.event.head_commit.message || '', '[run-dalilna-closed-draft]'))
+      (github.event_name == 'workflow_dispatch' &&
+       inputs.confirm_target == 'YES — ye.dalilna.app only') ||
+      (github.event_name == 'push' &&
+       contains(github.event.head_commit.message || '', '[inspect-dalilna-play-state]'))
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
       PACKAGE_NAME: ye.dalilna.app
       EXPECTED_VERSION_CODE: "4128401"
       PLAY_TRACK_NAME: Dalilna Closed Testing
+      EXISTING_EDIT_ID: ${{ inputs.existing_edit_id }}
       TESTERS_GOOGLE_GROUP: ${{ inputs.testers_google_group }}
+      PLAY_MODE: ${{ inputs.mode }}
     steps:
       - name: Checkout Dalilna main
         uses: actions/checkout@v4
         with:
           ref: main
 
-      - name: Validate the fixed repository and target
+      - name: Validate repository and target scope
         shell: bash
         env:
           WIF_PROVIDER: projects/28058491662/locations/global/workloadIdentityPools/github-pool/providers/github-provider
@@ -61,9 +77,13 @@ jobs:
           [[ "$PACKAGE_NAME" == "ye.dalilna.app" ]]
           [[ "$EXPECTED_VERSION_CODE" == "4128401" ]]
           [[ "$PLAY_TRACK_NAME" == "Dalilna Closed Testing" ]]
-          [[ -n "$WIF_PROVIDER" ]] || { echo "::error::Missing repository variable GCP_WORKLOAD_IDENTITY_PROVIDER"; exit 1; }
-          [[ -n "$WIF_SERVICE_ACCOUNT" ]] || { echo "::error::Missing repository variable GCP_SERVICE_ACCOUNT"; exit 1; }
-          echo "Repository and Dalilna-only scope validated."
+          [[ -n "$WIF_PROVIDER" && -n "$WIF_SERVICE_ACCOUNT" ]]
+          if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            [[ "$GITHUB_EVENT_HEAD_COMMIT_MESSAGE" == *"[inspect-dalilna-play-state]"* ]]
+            echo "Push mode is strictly read-only inspection."
+          else
+            [[ "$PLAY_MODE" == "INSPECT_ONLY" || "$PLAY_MODE" == "SUBMIT_FOR_REVIEW" ]]
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -75,6 +95,9 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install "google-auth>=2.40,<3" "requests>=2.32,<3" "Pillow>=11,<13" "CairoSVG>=2.8,<3"
 
+      - name: Run offline Play automation safety tests
+        run: python scripts/test_google_play_closed_testing_draft.py
+
       - name: Authenticate to Google Cloud using GitHub OIDC
         uses: google-github-actions/auth@v3
         with:
@@ -83,72 +106,76 @@ jobs:
           create_credentials_file: true
           export_environment_variables: true
 
-      - name: Download the pinned signed Dalilna AAB
+      - name: Read current Play state without changing it
+        if: github.event_name == 'push' || inputs.mode == 'INSPECT_ONLY'
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p dist/aab dist/screenshots-artifact dist/play-assets
+          ARGS=(--inspect-only)
+          if [[ -n "$EXISTING_EDIT_ID" ]]; then
+            ARGS+=(--existing-edit-id "$EXISTING_EDIT_ID")
+          fi
+          python scripts/google_play_closed_testing_draft.py "${ARGS[@]}"
+
+      - name: Download pinned signed Dalilna AAB
+        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'SUBMIT_FOR_REVIEW'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/aab dist/play-assets
           curl --fail --location --retry 3 --retry-delay 2 \
             "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.1.0/app-release.aab" \
             --output dist/aab/app-release.aab
           echo "3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026  dist/aab/app-release.aab" | sha256sum --check
 
       - name: Set up Node.js for fresh Play screenshots
+        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'SUBMIT_FOR_REVIEW'
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
-      - name: Install Playwright Chromium
-        run: |
-          npm install --no-save --package-lock=false playwright@1.65.1
-          npx playwright install --with-deps chromium
-
-      - name: Capture fresh phone and tablet screenshots from live Dalilna
+      - name: Capture and prepare Play listing images
+        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'SUBMIT_FOR_REVIEW'
         shell: bash
         run: |
           set -euo pipefail
+          npm install --no-save --package-lock=false playwright@1.65.1
+          npx playwright install --with-deps chromium
           mkdir -p dist/google-play-screenshots
           cat scripts/gp-capture-a.part scripts/gp-capture-b2.part scripts/gp-capture-c.part scripts/gp-capture-d.part scripts/gp-capture-d2.part > scripts/capture.cjs
           node scripts/capture.cjs
           (cd dist && zip -r dalilna-play-screenshots.zip google-play-screenshots)
-
-      - name: Prepare and validate all Play listing images
-        shell: bash
-        run: |
-          set -euo pipefail
-          SCREENSHOT_ZIP="dist/dalilna-play-screenshots.zip"
-          test -s "$SCREENSHOT_ZIP"
           python scripts/prepare_google_play_assets.py \
-            --screenshots-zip "$SCREENSHOT_ZIP" \
+            --screenshots-zip dist/dalilna-play-screenshots.zip \
             --output-dir dist/play-assets
-          python scripts/test_google_play_closed_testing_draft.py
 
-      - name: Upload the listing and create an unsubmitted Closed Testing draft
+      - name: Submit Dalilna changes for Google Play review
+        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'SUBMIT_FOR_REVIEW'
         shell: bash
         run: |
           set -euo pipefail
-          ARGS=(
-            --aab dist/aab/app-release.aab
-            --assets-dir dist/play-assets
-          )
-          python scripts/google_play_closed_testing_draft.py "${ARGS[@]}" \
+          python scripts/google_play_closed_testing_draft.py \
+            --submit-for-review \
+            --aab dist/aab/app-release.aab \
+            --assets-dir dist/play-assets \
             --testers-google-group "$TESTERS_GOOGLE_GROUP"
 
-      - name: Summarize the unsubmitted draft
+      - name: Summarize the action
         if: success()
         shell: bash
         run: |
           {
-            echo "## Dalilna Google Play draft prepared"
+            echo "## Dalilna Play Console action"
             echo
-            echo "- Package: `ye.dalilna.app`"
-            echo "- Version: `3.1.0`"
-            echo "- versionCode: `4128401`"
-            echo "- Track: `Dalilna Closed Testing`"
-            echo "- Release status: `draft`"
-            echo "- Production track touched: **No**"
-            echo "- Changes sent for review: **No**"
-            echo "- Existing images deleted or replaced: **No**"
-            echo
-            echo "This is an unsubmitted draft. It is not available to testers until a separate owner-approved testing-track release action."
+            if [[ "$GITHUB_EVENT_NAME" == "push" || "$PLAY_MODE" == "INSPECT_ONLY" ]]; then
+              echo "- Mode: read-only inspection"
+              echo "- App changes committed: **No**"
+              echo "- Changes submitted for review: **No**"
+            else
+              echo "- Mode: submit for Google Play review"
+              echo "- Package: `ye.dalilna.app`"
+              echo "- Closed Testing versionCode: `4128401`"
+              echo "- Changes submitted for review: **Yes**"
+              echo "- Production track touched: **No**"
+            fi
           } >> "$GITHUB_STEP_SUMMARY"
