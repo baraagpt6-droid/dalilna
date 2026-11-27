@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Promote only the already-uploaded Dalilna 4100101 internal release."""
+# Trigger an API-only permission recheck without rebuilding or uploading Android artifacts.
 from __future__ import annotations
 import json
 import sys
