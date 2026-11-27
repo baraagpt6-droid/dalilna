@@ -147,7 +147,7 @@ def read_listing(root: Path, language: str) -> dict:
 
 
 def ensure_no_existing_images(api: PlayApi, package_path: str, edit_id: str,
-                              locale: str, image_type: str) -> None:
+                              locale: str, image_type: str) -> bool:
     path = (
         f"{package_path}/edits/{quote(edit_id, safe='')}"
         f"/listings/{quote(locale, safe='')}/{quote(image_type, safe='')}"
@@ -155,10 +155,18 @@ def ensure_no_existing_images(api: PlayApi, package_path: str, edit_id: str,
     response = api.api("GET", path)
     images = response.get("images", [])
     if images:
-        raise RuntimeError(
-            f"{locale}/{image_type} already has {len(images)} image(s). "
-            "Nothing was removed or replaced. Inspect the listing in Play Console first."
-        )
+        dimensions = [
+            {"width": item.get("width"), "height": item.get("height")}
+            for item in images
+        ]
+        print("PLAY_IMAGE_GROUP_PRESERVED=" + json.dumps({
+            "locale": locale,
+            "imageType": image_type,
+            "count": len(images),
+            "dimensions": dimensions,
+        }, ensure_ascii=False))
+        return False
+    return True
 
 
 def upload_image_group(api: PlayApi, package_path: str, edit_id: str,
@@ -167,12 +175,50 @@ def upload_image_group(api: PlayApi, package_path: str, edit_id: str,
         f"{package_path}/edits/{quote(edit_id, safe='')}"
         f"/listings/{quote(locale, safe='')}/{quote(image_type, safe='')}"
     )
-    ensure_no_existing_images(api, package_path, edit_id, locale, image_type)
+    if not ensure_no_existing_images(api, package_path, edit_id, locale, image_type):
+        return
     for image_path in image_paths:
         if not image_path.is_file():
             raise FileNotFoundError(image_path)
         api.upload(path, image_path, "image/png")
         print(f"Uploaded {locale}/{image_type}: {image_path.name}")
+
+
+def prepare_closed_track_releases(existing_releases: list[dict]) -> list[dict]:
+    """Update one existing closed-track draft in place; preserve live releases."""
+    releases = [dict(item) for item in existing_releases]
+    draft_indexes = [
+        index for index, release in enumerate(releases)
+        if release.get("status") == "draft"
+    ]
+    if len(draft_indexes) > 1:
+        raise RuntimeError(
+            "The target track contains multiple draft releases. No release was changed."
+        )
+
+    replacement = draft_release()
+    if not draft_indexes:
+        return releases + [replacement]
+
+    index = draft_indexes[0]
+    existing = dict(releases[index])
+    existing_codes = [int(code) for code in existing.get("versionCodes", [])]
+    if any(code > VERSION_CODE for code in existing_codes):
+        raise RuntimeError(
+            f"The existing closed-track draft has a versionCode higher than {VERSION_CODE}. "
+            "Refusing to replace it."
+        )
+
+    # Only replace the single unsubmitted draft with the newer verified AAB.
+    # Keep other fields on the draft and all non-draft releases unchanged.
+    existing.update({
+        "name": replacement["name"],
+        "versionCodes": replacement["versionCodes"],
+        "status": "draft",
+        "releaseNotes": replacement["releaseNotes"],
+    })
+    releases[index] = existing
+    return releases
 
 
 def main() -> None:
@@ -270,7 +316,10 @@ def main() -> None:
             ],
         }, ensure_ascii=False))
 
-        existing_version_draft = None
+        existing_version_code_draft = False
+        draft_releases = [release for release in current_releases if release.get("status") == "draft"]
+        if len(draft_releases) > 1:
+            raise RuntimeError("The target track has multiple draft releases. No release was changed.")
         for release in current_releases:
             versions = {str(code) for code in release.get("versionCodes", [])}
             if str(VERSION_CODE) in versions:
@@ -279,12 +328,14 @@ def main() -> None:
                         f"versionCode {VERSION_CODE} already exists on the target track "
                         f"with non-draft status {release.get('status')!r}. No release was changed."
                     )
-                existing_version_draft = release
-            elif release.get("status") == "draft":
-                raise RuntimeError(
-                    "The target track already has a different draft release with versionCodes="
-                    f"{sorted(versions)}. No existing draft, bundle, listing image or tester setting was changed."
-                )
+                existing_version_code_draft = True
+            if release.get("status") == "draft":
+                draft_codes = [int(code) for code in release.get("versionCodes", [])]
+                if any(code > VERSION_CODE for code in draft_codes):
+                    raise RuntimeError(
+                        f"The existing draft has versionCodes {draft_codes} above {VERSION_CODE}. "
+                        "No release was changed."
+                    )
 
         # App metadata and localized store listings.
         api.api(
@@ -331,9 +382,9 @@ def main() -> None:
                     "No bundle was replaced."
                 )
             print("Reusing the existing app bundle with the pinned versionCode.")
-        elif existing_version_draft:
+        elif existing_version_code_draft:
             raise RuntimeError(
-                "The target track has a draft with this versionCode, but the API bundle list "
+                "The target track has this versionCode in draft status, but the API bundle list "
                 "does not expose its SHA-256. Refusing to reuse an unverified bundle."
             )
         else:
@@ -356,28 +407,27 @@ def main() -> None:
         # when it already carries this exact versionCode.
         track_path = f"{tracks_path}/{quote(TRACK_NAME, safe='')}"
         track_after_upload = api.api("GET", track_path)
-        releases = list(track_after_upload.get("releases", []))
-        for release in releases:
-            versions = {str(code) for code in release.get("versionCodes", [])}
-            if release.get("status") == "draft" and str(VERSION_CODE) not in versions:
-                raise RuntimeError("A different draft appeared during the edit. No release was changed.")
-            if str(VERSION_CODE) in versions and release.get("status") != "draft":
-                raise RuntimeError("The target versionCode is no longer a draft. Refusing to alter it.")
-        releases = [
-            release for release in releases
-            if str(VERSION_CODE) not in {str(code) for code in release.get("versionCodes", [])}
-        ]
-        releases.append(draft_release())
+        releases = prepare_closed_track_releases(
+            list(track_after_upload.get("releases", []))
+        )
         api.api("PUT", track_path, json_body={"track": TRACK_NAME, "releases": releases})
 
-        # Optional Google Groups. Individual email lists are intentionally not supported here.
+        # Read tester config. Android Publisher exposes Google Groups, not saved email lists.
+        # Do not change any tester configuration unless an explicit Google Group was supplied.
+        testers_path = (
+            f"{package_path}/edits/{quote(edit_id, safe='')}"
+            f"/testers/{quote(TRACK_NAME, safe='')}"
+        )
+        tester_config = api.api("GET", testers_path)
+        existing_groups = tester_config.get("googleGroups", [])
+        print("PLAY_CLOSED_TESTERS_PRECHECK=" + json.dumps({
+            "googleGroupCount": len(existing_groups),
+            "allUsers": bool(tester_config.get("allUsers", False)),
+            "individualEmailListsAvailableViaPublisherApi": False,
+            "individualEmailListsChanged": False,
+        }, ensure_ascii=False))
         if google_group:
-            testers_path = (
-                f"{package_path}/edits/{quote(edit_id, safe='')}"
-                f"/testers/{quote(TRACK_NAME, safe='')}"
-            )
-            existing = api.api("GET", testers_path).get("googleGroups", [])
-            groups = sorted(set(existing) | {google_group})
+            groups = sorted(set(existing_groups) | {google_group})
             api.api("PUT", testers_path, json_body={"googleGroups": groups})
 
         # Validate, then commit as an unsent draft. Do not submit for review.
