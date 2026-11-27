@@ -178,8 +178,9 @@ def save_store_listings(session: AuthorizedSession) -> None:
                 delete_edit(session, edit_id)
             except Exception as cleanup_error:
                 print(f"::warning::Could not discard listing edit: {cleanup_error}")
-        print(f"::warning::Store listing update not completed: {error}")
+        print(f"::error::Store listing update not completed: {error}")
         print("STORE_LISTINGS_COMMIT=not_completed")
+        raise RuntimeError("Google Play store listing commit was rejected; check the exact API error above.") from error
 
 def main() -> int:
     credentials, _ = google.auth.default(scopes=SCOPES)

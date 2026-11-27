@@ -1,6 +1,7 @@
 name: Complete Dalilna Internal Release 4100101
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -19,7 +20,7 @@ concurrency:
 
 jobs:
   publish-internal:
-    if: contains(github.event.head_commit.message, '[complete-play-internal-4100101]')
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[complete-play-internal-4100101]')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
