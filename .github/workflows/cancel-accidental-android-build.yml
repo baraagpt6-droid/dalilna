@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   cancel-duplicate:
-    if: github.repository == "baraagpt6-droid/dalilna" && github.ref == "refs/heads/main"
+    if: ${{ github.repository == 'baraagpt6-droid/dalilna' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     steps:
       - name: Cancel only the duplicate build triggered by monitor source changes
