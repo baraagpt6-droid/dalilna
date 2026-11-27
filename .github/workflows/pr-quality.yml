@@ -26,7 +26,7 @@ concurrency:
 jobs:
   quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -128,3 +128,60 @@ jobs:
 
       - name: Build Android debug APK
         run: gradle --no-daemon :android:app:assembleDebug
+
+      - name: Verify Android debug APK artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="$GITHUB_WORKSPACE/android/app/build/outputs/apk/debug/app-debug.apk"
+          test -s "$APK"
+          ls -lh "$APK"
+
+      - name: Launch Dalilna on Android Emulator
+        uses: reactivecircus/android-emulator-runner@v2.34.0
+        env:
+          # Hosted runners without KVM need the Android Emulator's explicit
+          # opt-in for TCG software CPU emulation.
+          ANDROID_I_WANT_MY_TCG: "yes"
+        with:
+          working-directory: ${{ github.workspace }}
+          api-level: 35
+          emulator-boot-timeout: 1200
+          target: google_apis
+          arch: x86_64
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            set -euo pipefail
+            APK="$GITHUB_WORKSPACE/android/app/build/outputs/apk/debug/app-debug.apk"
+            test -s "$APK"
+            mkdir -p "$GITHUB_WORKSPACE/artifacts/android-emulator"
+            adb wait-for-device
+            adb logcat -c
+            adb install -r "$APK"
+            adb shell monkey -p ye.dalilna.app.debug 1
+            launched=false
+            for attempt in $(seq 1 30); do
+              if adb shell pidof ye.dalilna.app.debug >/dev/null 2>&1; then
+                launched=true
+                break
+              fi
+              sleep 2
+            done
+            [[ "$launched" == "true" ]]
+            adb shell screencap -p /sdcard/dalilna-home.png
+            adb pull /sdcard/dalilna-home.png "$GITHUB_WORKSPACE/artifacts/android-emulator/dalilna-home.png"
+            adb logcat -d -t 4000 > "$GITHUB_WORKSPACE/artifacts/android-emulator/logcat.txt"
+            if grep -E "FATAL EXCEPTION|Fatal signal" "$GITHUB_WORKSPACE/artifacts/android-emulator/logcat.txt"; then
+              echo "Android emulator logged a fatal application/runtime error."
+              exit 1
+            fi
+            test -s "$GITHUB_WORKSPACE/artifacts/android-emulator/dalilna-home.png"
+
+      - name: Upload Android Emulator smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dalilna-android-emulator-smoke
+          path: artifacts/android-emulator/
+          if-no-files-found: ignore
