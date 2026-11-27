@@ -13,14 +13,14 @@
     "Foursquare Open Places (optional portal export)"
   ],
   "generatedAt": "2026-11-23T00:00:00Z",
-  "catalogGeneratedAt": "2026-11-27T07:07:20.097839+00:00",
+  "catalogGeneratedAt": "2026-11-27T13:04:28.348701+00:00",
   "sourceCounts": {
     "OpenStreetMap": 17044,
     "Overture Maps": 15386,
     "Foursquare Open Places (via Overture)": 4
   },
   "osmDatasetSource": "Geofabrik latest Yemen extract",
-  "updatedAt": "2026-11-27T07:09:54.131Z",
+  "updatedAt": "2026-11-27T13:04:30.184430+00:00",
   "marketPriceGuideVersion": 1,
   "marketPriceGuideUpdatedAt": "2026-11-23",
   "androidSigningMode": "persistent",
