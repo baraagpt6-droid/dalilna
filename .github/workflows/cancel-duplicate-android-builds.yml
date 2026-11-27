@@ -1,0 +1,51 @@
+name: Cancel duplicate Dalilna Android builds before Play smart publish
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/cancel-duplicate-android-builds.yml"
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  cancel-exact-runs:
+    if: ${{ github.repository == 'baraagpt6-droid/dalilna' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel only the two script-only Android builds
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          repo="$GITHUB_REPOSITORY"
+          cancelled=0
+          for run_id in 46042370623 46042374724; do
+            run_json="$(curl --fail-with-body --silent --show-error \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              "https://api.github.com/repos/$repo/actions/runs/$run_id")"
+            [[ "$(jq -r '.repository.full_name' <<< "$run_json")" == "baraagpt6-droid/dalilna" ]]
+            [[ "$(jq -r '.path' <<< "$run_json")" == ".github/workflows/android-apk.yml" ]]
+            status="$(jq -r '.status' <<< "$run_json")"
+            if [[ "$status" == "queued" || "$status" == "in_progress" || "$status" == "pending" ]]; then
+              curl --fail-with-body --silent --show-error -X POST \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                "https://api.github.com/repos/$repo/actions/runs/$run_id/cancel"
+              echo "Cancelled exact Android run $run_id."
+              cancelled=$((cancelled + 1))
+            else
+              echo "Android run $run_id already $status; no action."
+            fi
+          done
+          {
+            echo "## Dalilna duplicate Android build guard"
+            echo "- Exact duplicate runs cancelled: $cancelled"
+            echo "- Google Play uploads: none"
+            echo "- Production modified: no"
+          } >> "$GITHUB_STEP_SUMMARY"
