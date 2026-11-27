@@ -3053,7 +3053,7 @@ function normalizeState(raw){
   const sessionRaw=raw.session&&typeof raw.session==="object"?raw.session:{};
   const merchantRaw=sessionRaw.merchant&&typeof sessionRaw.merchant==="object"?sessionRaw.merchant:null;
   const profileRaw=raw.profile&&typeof raw.profile==="object"&&!Array.isArray(raw.profile)?raw.profile:{};
-  const legacyMerchant=raw.merchantProfile&&typeof raw.merchantProfile==="object"?raw.merchantProfile:merchantRaw||{};
+  const legacyMerchant={...(merchantRaw||{}),...(raw.merchantProfile&&typeof raw.merchantProfile==="object"?raw.merchantProfile:{})};
   let legacyCustomer={};
   try{
     const value=JSON.parse(localStorage.getItem("dalilna-v3-customer-profile")||"null");
@@ -3063,7 +3063,7 @@ function normalizeState(raw){
     customerName:cleanText(profileRaw.customerName||legacyCustomer.customerName||legacyCustomer.name||raw.customerName,80),
     storeName:cleanText(profileRaw.storeName||legacyMerchant.storeName||legacyMerchant.name||merchantRaw?.name,80),
     phone:cleanText(profileRaw.phone||legacyCustomer.phone||legacyMerchant.phone||merchantRaw?.phone,40),
-    activeRole:profileRaw.activeRole==="merchant"||raw.activeRole==="merchant"||sessionRaw.activeRole==="merchant"||sessionRaw.role==="merchant"?"merchant":"customer"
+    activeRole:profileRaw.activeRole==="merchant"||raw.activeRole==="merchant"||sessionRaw.activeRole==="merchant"||sessionRaw.role==="merchant"||(!profileRaw.activeRole&&!raw.activeRole&&!sessionRaw.activeRole&&!legacyCustomer.name&&!!legacyMerchant.name)?"merchant":"customer"
   };
   const ratesRaw=raw.rates&&typeof raw.rates==="object"?raw.rates:{};
   const rates={};
