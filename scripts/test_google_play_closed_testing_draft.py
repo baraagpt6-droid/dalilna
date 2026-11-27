@@ -10,6 +10,7 @@ from google_play_closed_testing_draft import (
     TRACK_NAME,
     VERSION_CODE,
     draft_release,
+    prepare_closed_track_releases,
     validate_listing,
     validate_target,
 )
@@ -33,6 +34,50 @@ class DraftSafetyTests(unittest.TestCase):
         self.assertEqual(release["versionCodes"], ["4128401"])
         self.assertNotIn("userFraction", release)
         self.assertNotIn("countryTargeting", release)
+
+ 
+    def test_replaces_single_older_draft_and_preserves_other_track_releases(self):
+        original = [
+            {
+                "name": "3127701 (3.1.0)",
+                "versionCodes": ["3127701"],
+                "status": "draft",
+                "countryTargeting": {"countries": ["YE"], "includeRestOfWorld": False},
+                "inAppUpdatePriority": 0,
+            },
+            {
+                "name": "4100101 (3.1.0)",
+                "versionCodes": ["4100101"],
+                "status": "completed",
+            },
+        ]
+        updated = prepare_closed_track_releases(original)
+        self.assertEqual(updated[0]["versionCodes"], ["4128401"])
+        self.assertEqual(updated[0]["status"], "draft")
+        self.assertEqual(updated[0]["countryTargeting"], original[0]["countryTargeting"])
+        self.assertEqual(updated[0]["inAppUpdatePriority"], 0)
+        self.assertEqual(updated[1], original[1])
+        self.assertEqual(original[0]["versionCodes"], ["3127701"])
+
+    def test_multiple_existing_drafts_are_refused(self):
+        releases = [
+            {"versionCodes": ["3127701"], "status": "draft"},
+            {"versionCodes": ["3127702"], "status": "draft"},
+        ]
+        with self.assertRaises(RuntimeError):
+            prepare_closed_track_releases(releases)
+
+    def test_existing_draft_above_target_is_refused(self):
+        releases = [{"versionCodes": ["4128402"], "status": "draft"}]
+        with self.assertRaises(RuntimeError):
+            prepare_closed_track_releases(releases)
+
+    def test_creates_new_draft_only_when_track_has_no_draft(self):
+        completed = [{"versionCodes": ["4100101"], "status": "completed"}]
+        updated = prepare_closed_track_releases(completed)
+        self.assertEqual(len(updated), 2)
+        self.assertEqual(updated[-1]["status"], "draft")
+        self.assertEqual(updated[-1]["versionCodes"], ["4128401"])
 
     def test_listing_limits(self):
         good = {
