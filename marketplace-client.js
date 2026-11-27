@@ -79,6 +79,11 @@
     delete requestOptions.timeoutMs;
     const maxRetries = API_RETRY_METHODS.has(method) ? 1 : 0;
     const externalSignal = requestOptions.signal;
+    if (externalSignal && externalSignal.aborted) {
+      const abortError = new Error("API request was cancelled");
+      abortError.name = "AbortError";
+      throw abortError;
+    }
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       const controller = new AbortController();
