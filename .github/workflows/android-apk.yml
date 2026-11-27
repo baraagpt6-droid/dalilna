@@ -57,6 +57,10 @@ on:
       - '!scripts/prepare_google_play_assets.py'
       - '!scripts/test_google_play_assets.py'
       - '!scripts/test_google_play_closed_testing_draft.py'
+      # Play status monitoring is read-only and must not trigger an Android release build.
+      - '!scripts/play_status_monitor.py'
+      - '!scripts/test_play_status_monitor.py'
+      - '!.github/workflows/play-status-monitor.yml'
       - '!google-play/**'
       - '!store-assets/**'
       - '!docs/GOOGLE_PLAY_API_AUTOMATION_SETUP.md'
