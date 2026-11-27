@@ -48,26 +48,56 @@ class PlayApiError(RuntimeError):
         )
 
 
-def change_release_status(releases: list[dict], version_code: int, status: str) -> list[dict]:
-    if status not in {"draft", "completed"}:
-        raise ValueError("Only draft and completed are allowed for Closed Testing")
+def promote_to_single_completed_release(releases: list[dict], version_code: int) -> list[dict]:
+    """Merge the new code into the track's one completed release object."""
     result = [dict(item) for item in releases]
-    indexes = [
+    targets = [
         index for index, item in enumerate(result)
         if str(version_code) in {str(code) for code in item.get("versionCodes", [])}
     ]
-    if len(indexes) != 1:
+    if len(targets) != 1:
         raise RuntimeError(
             f"Expected exactly one Closed Testing release with versionCode {version_code}; "
-            f"found {len(indexes)}"
+            f"found {len(targets)}"
         )
-    index = indexes[0]
-    release = dict(result[index])
-    current = release.get("status")
-    if current not in {"draft", "completed"}:
-        raise RuntimeError(f"Refusing unexpected release status {current!r}")
-    release["status"] = status
-    result[index] = release
+    target_index = targets[0]
+    target = dict(result[target_index])
+    if target.get("status") not in {"draft", "completed"}:
+        raise RuntimeError(f"Refusing unexpected release status {target.get('status')!r}")
+
+    other_completed = [
+        index for index, item in enumerate(result)
+        if index != target_index and item.get("status") == "completed"
+    ]
+    if len(other_completed) > 1:
+        raise RuntimeError("Closed Testing already contains more than one completed release")
+    if not other_completed:
+        target["status"] = "completed"
+        result[target_index] = target
+        return result
+
+    # Google Play accepts only one completed release object on a track.
+    # Merge the new code into the existing completed release, keeping its
+    # rollout object and historical version codes, and remove the draft object.
+    completed_index = other_completed[0]
+    completed = dict(result[completed_index])
+    codes = [str(code) for code in completed.get("versionCodes", [])]
+    if str(version_code) not in codes:
+        codes.append(str(version_code))
+    completed["versionCodes"] = codes
+    result[completed_index] = completed
+    return [item for index, item in enumerate(result) if index != target_index]
+
+
+def retain_release_as_draft(releases: list[dict], version_code: int) -> list[dict]:
+    result = [dict(item) for item in releases]
+    matches = [
+        index for index, item in enumerate(result)
+        if str(version_code) in {str(code) for code in item.get("versionCodes", [])}
+    ]
+    if len(matches) != 1:
+        raise RuntimeError(f"Cannot restore draft: expected one release for {version_code}")
+    result[matches[0]]["status"] = "draft"
     return result
 
 
@@ -79,8 +109,9 @@ def commit_release_with_review_fallback(
     existing_releases: list[dict],
     version_code: int,
 ) -> dict:
-    """Commit completed safely, or persist draft if Google reports an active review."""
-    completed_releases = change_release_status(existing_releases, version_code, "completed")
+    """Commit completed safely, or persist the exact release as draft on review conflict."""
+    original_releases = [dict(item) for item in existing_releases]
+    completed_releases = promote_to_single_completed_release(original_releases, version_code)
     track_path = tracks_path + f"/{quote(track_name, safe='')}"
     api.request(
         "PUT", track_path,
@@ -100,10 +131,11 @@ def commit_release_with_review_fallback(
     except PlayApiError as exc:
         if not exc.changes_already_in_review:
             raise
-        # ERROR_IF_IN_REVIEW does not invalidate the edit. A draft update does
-        # not create a new submission, so it can be committed without cancelling
-        # or replacing the existing review.
-        draft_releases = change_release_status(completed_releases, version_code, "draft")
+        # The failed commit does not invalidate the edit. Restore the original
+        # completed release and retain only this new version as a draft. Google
+        # documents that an edit which creates no new submission can be committed
+        # while another review is active.
+        draft_releases = retain_release_as_draft(original_releases, version_code)
         api.request(
             "PUT", track_path,
             body={"track": track_name, "releases": draft_releases},
