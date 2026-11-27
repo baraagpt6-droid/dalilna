@@ -1,14 +1,14 @@
 {
   "version": "3.1.0",
   "catalog": {
-    "bytes": 1111366,
+    "bytes": 1111370,
     "recordCount": 24566,
     "governorates": 22,
     "schemaVersion": 2,
     "queries": {
       "الزوقري": {
         "matches": 2,
-        "searchMs": 1.809,
+        "searchMs": 1.179,
         "within50ms": true,
         "examples": [
           {
@@ -27,7 +27,7 @@
       },
       "الناهي": {
         "matches": 1,
-        "searchMs": 1.756,
+        "searchMs": 1.163,
         "within50ms": true,
         "examples": [
           {
@@ -40,7 +40,7 @@
       },
       "صيدلية": {
         "matches": 697,
-        "searchMs": 1.77,
+        "searchMs": 1.3,
         "within50ms": true,
         "examples": [
           {
@@ -91,11 +91,11 @@
     }
   },
   "live": {
-    "generatedAt": "2026-11-27T06:03:56.741Z",
+    "generatedAt": "2026-11-27T15:27:19.500Z",
     "health": {
       "ok": true,
       "version": "3.1.0",
-      "ms": 304,
+      "ms": 289,
       "status": 200
     },
     "marketplace": {
@@ -106,14 +106,14 @@
       "withImages": 0,
       "withPrice": 0,
       "withContact": 0,
-      "ms": 206,
+      "ms": 1232,
       "status": 200,
       "error": ""
     },
     "pharmacyLiveSearch": {
       "ok": true,
       "status": 200,
-      "ms": 185,
+      "ms": 237,
       "respondedWithin3Seconds": true,
       "successfulWithin3Seconds": true,
       "results": 7,
@@ -127,11 +127,11 @@
       "configured": true,
       "provider": "Gemini",
       "model": "gemini-3.8-flash",
-      "ok": false,
-      "status": 502,
-      "ms": 11500,
-      "answerChars": 0,
-      "mode": "",
+      "ok": true,
+      "status": 200,
+      "ms": 1666,
+      "answerChars": 641,
+      "mode": "gemini",
       "error": "",
       "providerStatus": 0,
       "providerCode": ""
@@ -140,16 +140,16 @@
       "ok": true,
       "version": "3.1.0",
       "signingMode": "persistent",
-      "androidVersionCode": 4128501,
+      "androidVersionCode": 4128801,
       "v3SavedHub": true,
       "v3FlyAnimation": true,
       "v3JobSearch": true,
-      "v3JobFeedCount": 209,
+      "v3JobFeedCount": 224,
       "assistantJobsLocal": true,
       "assistantLocalFallback": true,
-      "jobFeedWithSourceLinks": 209,
+      "jobFeedWithSourceLinks": 224,
       "v3Styles": true,
-      "bytes": 1111366,
+      "bytes": 1111370,
       "schemaVersion": 2,
       "records": 24566,
       "pharmacyRecords": 821,
@@ -159,12 +159,11 @@
       "craftCategory": true,
       "directoryWhatsApp": true,
       "productWhatsApp": true,
-      "androidRelease": {
+      "androidUpdate": {
         "ok": true,
-        "versionCode": 4128501,
-        "size": 6715319,
-        "digest": "sha256:14f949508f2be5e04ebbbac090a1e227946c45940cf11d21c8032b02a3e8b56c",
-        "downloadUrl": "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.1.0/app-release.apk"
+        "versionCode": 4128801,
+        "storeUrl": "https://play.google.com/store/apps/details?id=ye.dalilna.app",
+        "directApkMetadataBlocked": true
       },
       "netlifyLegacyAlias": {
         "ok": true,
