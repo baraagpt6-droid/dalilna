@@ -231,6 +231,12 @@ public class MainActivity extends Activity {
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+                // WebView permission callbacks may originate from an iframe. Only
+                // the Dalilna app origins may use the device's location permission.
+                if (!isTrustedOrigin(origin)) {
+                    callback.invoke(origin, false, false);
+                    return;
+                }
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
                     checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     callback.invoke(origin, true, false);
@@ -244,6 +250,10 @@ public class MainActivity extends Activity {
             @Override
             public void onPermissionRequest(PermissionRequest request) {
                 runOnUiThread(() -> {
+                    if (request.getOrigin() == null || !isTrustedOrigin(request.getOrigin().toString())) {
+                        request.deny();
+                        return;
+                    }
                     boolean onlyAudio = request.getResources().length > 0;
                     for (String resource : request.getResources()) {
                         if (!PermissionRequest.RESOURCE_AUDIO_CAPTURE.equals(resource)) onlyAudio = false;
@@ -458,15 +468,41 @@ public class MainActivity extends Activity {
     }
 
     private boolean isRemoteAppUrl(Uri uri) {
-        if (uri == null || !"https".equalsIgnoreCase(uri.getScheme())
+        if (!isTrustedHttpsOrigin(uri)
                 || !"baraagpt6-droid.github.io".equalsIgnoreCase(uri.getHost())) return false;
         String path = uri.getPath();
         return path != null && ("/dalilna".equals(path) || "/dalilna/".equals(path) || path.startsWith("/dalilna/"));
     }
 
+    private boolean isTrustedHttpsOrigin(Uri uri) {
+        if (uri == null || !"https".equalsIgnoreCase(uri.getScheme())) return false;
+        if (uri.getPort() != -1 && uri.getPort() != 443) return false;
+        String userInfo = uri.getUserInfo();
+        return userInfo == null || userInfo.isEmpty();
+    }
+
+    private boolean isTrustedOrigin(String origin) {
+        if (origin == null || origin.isEmpty()) return false;
+        try {
+            Uri uri = Uri.parse(origin);
+            if (!isTrustedHttpsOrigin(uri)) return false;
+            String host = uri.getHost();
+            return "baraagpt6-droid.github.io".equalsIgnoreCase(host)
+                    || "appassets.androidplatform.net".equalsIgnoreCase(host);
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
+
+    private boolean isLocalAssetUrl(Uri uri) {
+        return isTrustedHttpsOrigin(uri)
+                && "appassets.androidplatform.net".equalsIgnoreCase(uri.getHost())
+                && uri.getPath() != null
+                && uri.getPath().startsWith("/assets/");
+    }
+
     private boolean isTrustedAppUrl(Uri uri) {
-        return uri != null && ("appassets.androidplatform.net".equalsIgnoreCase(uri.getHost())
-                || isRemoteAppUrl(uri));
+        return isLocalAssetUrl(uri) || isRemoteAppUrl(uri);
     }
 
     private void loadLocalFallback() {
