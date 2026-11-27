@@ -31,11 +31,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      KEYSTORE_PASSWORD: ${ secrets.KEYSTORE_PASSWORD }
-      KEY_ALIAS: ${ secrets.KEY_ALIAS }
-      KEY_PASSWORD: ${ secrets.KEY_PASSWORD }
-      ADMOB_APP_ID: ${ secrets.ADMOB_APP_ID || vars.ADMOB_APP_ID }
-      ADMOB_BANNER_AD_UNIT_ID: ${ secrets.ADMOB_BANNER_AD_UNIT_ID || vars.ADMOB_BANNER_AD_UNIT_ID }
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      ADMOB_APP_ID: ${{ secrets.ADMOB_APP_ID || vars.ADMOB_APP_ID }}
+      ADMOB_BANNER_AD_UNIT_ID: ${{ secrets.ADMOB_BANNER_AD_UNIT_ID || vars.ADMOB_BANNER_AD_UNIT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -43,10 +43,10 @@ jobs:
       - name: Validate repository, package ID, and required credentials
         shell: bash
         env:
-          KEYSTORE_BASE64: ${ secrets.KEYSTORE_BASE64 }
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
           set -euo pipefail
-          [[ "$GITHUB_REPOSITORY" == "baraagpt6-droid/dalilna" ]] || {
+          [[ "$GITHUB_REPOSITORY" == "baraag6-droid/dalilna" ]] || {
             echo "::error::This workflow is restricted to baraagpt6-droid/dalilna."
             exit 1
           }
@@ -58,12 +58,12 @@ jobs:
 
           missing=()
           for name in KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD ADMOB_APP_ID ADMOB_BANNER_AD_UNIT_ID; do
-            if [[ -z "${!name:-}" ]]; then
+            if [[ -z "\${!name:-}" ]]; then
               missing+=("$name")
             fi
           done
-          if (( ${#missing[@]} > 0 )); then
-            printf '::error::Missing required GitHub Actions secrets/variables: %s\n' "$(IFS=', '; echo "${missing[*]}")"
+          if (( \${#missing[@]} > 0 )); then
+            printf '::error::Missing required GitHub Actions secrets/variables: %s\n' "$(IFS=', '; echo "\${missing[*]}")"
             exit 1
           fi
 
@@ -79,9 +79,9 @@ jobs:
       - name: Decode and validate Android release keystore
         shell: bash
         env:
-          KEYSTORE_BASE64: ${ secrets.KEYSTORE_BASE64 }
-          KEYSTORE_PASSWORD: ${ secrets.KEYSTORE_PASSWORD }
-          KEY_ALIAS: ${ secrets.KEY_ALIAS }
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
           set -euo pipefail
           KEYSTORE_FILE="$RUNNER_TEMP/dalilna-upload-keystore.jks"
@@ -125,10 +125,10 @@ jobs:
       - name: Upload draft release to Google Play
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJson: ${ steps.auth.outputs.credentials_file_path }
-          packageName: ${ env.PACKAGE_NAME }
+          serviceAccountJson: ${{ steps.auth.outputs.credentials_file_path }}
+          packageName: ${{ env.PACKAGE_NAME }}
           releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
-          track: ${ github.event.inputs.track || 'internal' }
+          track: ${{ github.event.inputs.track || 'internal' }}
           status: draft
 
       - name: Summarize deployment
@@ -139,7 +139,7 @@ jobs:
             echo "## Google Play draft uploaded"
             echo
             echo "- Package: $PACKAGE_NAME"
-            echo "- Track: ${ github.event.inputs.track || 'internal' }"
+            echo "- Track: ${{ github.event.inputs.track || 'internal' }}"
             echo "- Release status: draft"
             echo "- Version code: $((DALILNA_VERSION_CODE_BASE + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))"
             echo "- Production rollout: not performed"
