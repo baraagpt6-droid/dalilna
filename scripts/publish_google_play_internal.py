@@ -63,6 +63,11 @@ def publish_existing_release(session: AuthorizedSession) -> None:
     try:
         track = get_track(session, edit_id)
         release = get_target_release(track)
+        testers = track.get("testers") or {}
+        email_lists = testers.get("googleGroups", []) if isinstance(testers, dict) else []
+        explicit_emails = testers.get("emailLists", []) if isinstance(testers, dict) else []
+        print(f"PLAY_INTERNAL_TESTER_GROUPS={len(email_lists)}")
+        print(f"PLAY_INTERNAL_TESTER_EMAIL_LISTS={len(explicit_emails)}")
         old_status = release.get("status")
         print(f"PLAY_TRACK_BEFORE={old_status}")
         if old_status != "completed":
