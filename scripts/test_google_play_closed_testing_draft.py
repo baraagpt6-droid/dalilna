@@ -123,7 +123,16 @@ class DraftSafetyTests(unittest.TestCase):
                             {"name": "Internal", "status": "completed", "versionCodes": ["4100101"]}
                         ]},
                         {"track": TRACK_NAME, "releases": [
-                            {"name": "Dalilna", "status": "draft", "versionCodes": ["4128701"]}
+                            {
+                            "name": "Dalilna",
+                            "status": "draft",
+                            "versionCodes": ["4128701"],
+                            "countryTargeting": {"countries": ["MY"], "includeRestOfWorld": False},
+                            "releaseNotes": [
+                                {"language": "ar", "text": "ملاحظات"},
+                                {"language": "en-US", "text": "Notes"},
+                            ],
+                        }
                         ]},
                     ]}
                 if path.endswith("/bundles"):
@@ -147,6 +156,10 @@ class DraftSafetyTests(unittest.TestCase):
         self.assertTrue(state["existingEditReused"])
         self.assertEqual(state["highestVersionCodeAcrossTracks"], 4128701)
         self.assertEqual(state["bundles"][0]["versionCode"], 4128701)
+        closed_track = next(x for x in state["tracks"] if x["track"] == TRACK_NAME)
+        closed_release = closed_track["releases"][0]
+        self.assertEqual(closed_release["countryTargeting"]["countries"], ["MY"])
+        self.assertEqual(closed_release["releaseNoteLanguages"], ["ar", "en-US"])
         self.assertFalse(state["appDetails"]["matchesRepository"])
         self.assertFalse(state["listings"]["ar"]["matchesRepository"])
         self.assertEqual(len(state["listings"]["ar"]["metadataSha256"]), 64)
