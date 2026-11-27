@@ -9,6 +9,7 @@ on:
       - main
     paths:
       - ".github/workflows/play-status-monitor.yml"
+      - "version.json"
       - "scripts/play_status_monitor.py"
       - "scripts/test_play_status_monitor.py"
       - "scripts/stage_google_play_draft.py"
