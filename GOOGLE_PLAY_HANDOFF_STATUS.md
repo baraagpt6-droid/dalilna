@@ -140,3 +140,13 @@ The Android Publisher Testers API exposes Google Groups but not saved individual
 - The UI alternative is Play Console → Publishing overview → Changes not yet sent for review → Save for later. This requires the signed-in Console UI; no app connector currently exposes this action. The available browser runner has a negative wallet balance, and no paid top-up was made.
 - The Play workflow now separates read-only inspection from explicit review submission. Routine pushes can run only the read-only inspection marker. A review submission requires a manual `SUBMIT_FOR_REVIEW` mode and affirmative Dalilna-only scope.
 - Account-level `Account admin`, billing, financial details, and the separate `com.hubaish.guide` app were not changed.
+## Read-only Play edit inspection — 27 November 2026
+
+- Read-only inspection run: [45947016030](https://github.com/baraagpt6-droid/dalilna/actions/runs/45947016030) — success. It reused the existing edit 13370413812168476918; no new edit was created and no write operation was performed.
+- The current edit's track snapshot contains internal 4100101 completed and Dalilna Closed Testing 4128401 draft. Production, beta and alpha contain no releases in the snapshot.
+- The bundle list contains 3127701, 4100101 and 4128401. The AAB 4128401 SHA-256 reported by Play is 3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026, matching the GitHub Release artifact.
+- The Arabic listing in the edit has title دليلنا — دليل اليمن, short description length 71 and full description length 1,400. The English listing has title Dalilna — Yemen Directory, short description length 70 and full description length 1,669.
+- Both locales show one icon, one feature graphic, four phone screenshots and four 10-inch tablet screenshots in the edit. The image metadata endpoint returned no dimensions; the asset preparation workflow had previously validated 512×512 icon and 1024×500 feature graphic before upload.
+- Tester read-back remains zero Google Groups and allUsers=false. Saved email lists remain unavailable through Android Publisher API and were not accessed.
+- This data belongs to an uncommitted API edit. It is not evidence that the current Play track has been updated, that store listing changes are live, that testers can opt in, or that Google has reviewed the release.
+- The edit must be held or committed through the Console publishing workflow. API commit without a rejection-only hold parameter would send the edit to Google review. The current workflow defaults to read-only inspection and has a separate manual review-submission mode.
