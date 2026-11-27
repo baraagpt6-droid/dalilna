@@ -1,7 +1,7 @@
 # Dalilna Google Play handoff
 
 Application ID: `ye.dalilna.app`  
-Release: `3.1.0` / Google Play internal-track versionCode `4100101` completed; historical GitHub Release assets were recorded at versionCode `3127401`  
+Release: `3.1.0` / Google Play internal-track versionCode `4100101` completed; latest signed GitHub AAB versionCode `4128301` (not yet uploaded to Play)  
 Developer display name: **Dalilna Team**  
 Support and privacy email: **dalilnasupport@gmail.com**
 
@@ -108,3 +108,15 @@ Before submission:
 7. Review the pre-launch report, then create and submit the Production release.
 
 The technical release artifacts are built and signed. Store listing assets and Play Console declarations/review remain owner-side gates. No Play Console submission or publication was performed.
+
+
+## Latest signed GitHub artifact — 27 November 2026
+
+- Main commit: `84ca8b10b7ae81794285fb8e2fb321d5b5317d6f` before this Closed Testing automation PR.
+- Current Android package: `ye.dalilna.app`, versionName `3.1.0`, versionCode `4128301`.
+- Android build run [45939045693](https://github.com/baraagpt6-droid/dalilna/actions/runs/45939045693) completed successfully. Release AAB and APK signatures and version metadata passed verification; the GitHub Release was updated.
+- AAB: 8,838,161 bytes, SHA-256 `000bad420c5b6844c3ee6552dc2eb8364a51ddcef263bfc756b36e82d88ff86e`.
+- APK: 6,715,031 bytes, SHA-256 `dae102c1370a8e69f58ce0b31321c81e01c1a64044a1705999495bc46bef7813`.
+- Public directory / marketplace verification run [45939045681](https://github.com/baraagpt6-droid/dalilna/actions/runs/45939045681) succeeded, including live Render and DB probes.
+- Play still shows the previously completed internal release `4100101`; the new `4128301` AAB has not been uploaded to Google Play.
+- The service-account workflow authenticated via WIF, but store-listing commit returned HTTP 403. No closed-test opt-in link or new tester list has been confirmed.
