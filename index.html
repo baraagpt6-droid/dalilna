@@ -3365,7 +3365,7 @@ function saveProfileEditor(event){
 function renderAddHub(){
   const profile=S.profile||{},merchant=profile.activeRole==="merchant";
   const title=$("#addMerchantCardTitle"),hint=$("#addMerchantCardHint"),summary=$("#addHubSummary");
-  if(title)title.textContent=curLang==="en"?"Add a shop or service":"إضافة محل أو خدمة";
+  if(title)title.textContent=merchant?(curLang==="en"?"Add shop or service":"إضافة محل أو خدمة"):(curLang==="en"?"Become a seller and add a shop":"تفعيل صفة بائع وإضافة محل");
   if(hint)hint.textContent=merchant
     ?(profile.storeName?(curLang==="en"?"New listing will use "+profile.storeName+".":"سيظهر الإدراج باسم "+profile.storeName+"."):(curLang==="en"?"Add your store name to finish seller setup.":"أدخل اسم المحل لإكمال صفة البائع."))
     :(curLang==="en"?"Switch to seller and add your shop without replacing your personal name.":"عند الاختيار تتحول الصفة إلى بائع مع الاحتفاظ باسمك ورقمك.");
@@ -4075,7 +4075,7 @@ function renderMerchantTools(){
   const box=$("#merchantToolsPanel");
   if(!box)return;
   const profile=S.profile||{};
-  const active=view==="add"&&S.session.role==="merchant"&&profile.activeRole==="merchant"&&!!profile.storeName&&!!profile.phone;
+  const active=S.session.role==="merchant"&&profile.activeRole==="merchant"&&!!profile.storeName&&!!profile.phone;
   box.hidden=!active;
   if(!active)return;
   const owned=S.items.filter(isMerchantOwner);
