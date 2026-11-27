@@ -2,7 +2,7 @@
 
 Source review: 27 November 2026  
 Android application ID: `ye.dalilna.app`  
-Android version: `3.1.0` · latest signed GitHub AAB versionCode `4128401` (not yet uploaded to Play) · Google Play internal-track versionCode `4100101` completed · target SDK 36  
+Android version: `3.1.0` · latest signed GitHub AAB versionCode `4128401` (uploaded inside an uncommitted Play edit; not committed to a track) · Google Play internal-track versionCode `4100101` completed · target SDK 36  
 Developer display name: `Dalilna Team` — the app owner's team/brand name  
 Support and privacy contact: `dalilnasupport@gmail.com`
 
@@ -99,9 +99,13 @@ For each provider, classify the provider as a service provider or third party ac
 
 ## Release artifact status — 27 November 2026
 
-The current signed AAB in GitHub Release `v3.1.0` is versionCode `4128401`, SHA-256 `3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026`. The completed Google Play internal track remains `4100101`. This worksheet describes app data behavior; it is not evidence that the Play Data Safety form has been submitted or approved. The newest signed AAB has not been uploaded to Play as of this note.
+The current signed AAB in GitHub Release `v3.1.0` is versionCode `4128401`, SHA-256 `3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026`. The completed Google Play internal track remains `4100101`. This worksheet describes app data behavior; it is not evidence that the Play Data Safety form has been submitted or approved. The newest signed AAB upload request succeeded inside an uncommitted Play edit; it has not been confirmed as a committed track release.
 
 
 ## Play Console submission status
 
-This Data Safety worksheet is derived from the project implementation and is not evidence of the Play Console questionnaire being submitted or approved. The latest signed AAB is versionCode `4128401`; the closed-testing track has a previous unsubmitted draft `3127701`. The latest AAB has not yet been committed to that draft. App content declarations and account-specific review requirements still require a Play Console read-back.
+This Data Safety worksheet is derived from the project implementation and is not evidence of the Play Console questionnaire being submitted or approved. The latest signed AAB is versionCode `4128401`; the closed-testing track has a previous unsubmitted draft `3127701`. The latest AAB was staged inside an uncommitted edit, but the API rejected commit with HTTP 400; it is not confirmed as the committed track artifact. App content declarations and account-specific review requirements still require a Play Console read-back.
+
+## Play review state — 27 November 2026
+
+The Play Data Safety worksheet has not been imported or submitted. The latest Play API attempt `45945373618` staged listing assets and AAB `4128401` in an uncommitted edit, but Google rejected `edits.commit` because `changesNotSentForReview` is not valid for the current app state. The edit was not committed and no Play review submission occurred. App content, target audience, Ads, App access and IARC declarations still require verification in Play Console before any review submission.

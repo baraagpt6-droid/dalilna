@@ -2,7 +2,7 @@
 
 Application ID: `ye.dalilna.app`  
 App version: `3.1.0`  
-Google Play internal-track AAB: versionCode `4100101` — status `completed`. Latest GitHub signed AAB: versionCode `4128401`, not yet uploaded to Play.  
+Google Play internal-track AAB: versionCode `4100101` — status `completed`. Latest GitHub signed AAB: versionCode `4128401`; the bundle upload call succeeded inside an uncommitted edit, but the edit commit failed, so no new track release is confirmed.  
 Target SDK: 36  
 Developer display name proposed in the listing: `Dalilna Team` — confirm it matches the Play Console publisher profile.  
 Support/privacy contact: `dalilnasupport@gmail.com`
@@ -13,7 +13,7 @@ The active Arabic and English Google Play listing payload is defined in:
 - [Internal release/listing API payload](./scripts/publish_google_play_internal.py) — authoritative title, short description and full description for `ar` and `en-US`.
 - [Launch checklist and copy](./GOOGLE_PLAY_LAUNCH_CHECKLIST.md) — reviewer access instructions, bilingual release notes, category and store copy.
 
-The current listing content has been written into a Play edit for both languages, but Google rejected the commit with HTTP 403 `PERMISSION_DENIED`. Do not treat these strings as saved to the Play listing until the API workflow reports `STORE_LISTINGS_COMMIT=saved_not_sent_for_review`.
+The current listing content for both languages and the associated image groups were uploaded within Play edit `13370413812168476918`. Google rejected the edit commit with HTTP 400 `INVALID_ARGUMENT` because `changesNotSentForReview` is not accepted for the app's current state. Do not treat those assets as saved to the Play listing until the Console Publishing overview confirms the pending changes or the API confirms an approved submission.
 
 ## Public URLs
 
@@ -51,7 +51,7 @@ The GitHub Release is separate from the Play internal-track artifact. The curren
 
 ## Remaining Play Console work
 
-1. Grant the automation service account app-scoped `Manage store presence` permission for Dalilna. Do not grant Admin or production-release permissions.
+1. Verify app-scoped permissions from Play Console. The newest 400 error is not evidence of a missing permission; do not grant Account admin or account-wide permissions.
 2. Add the internal tester Google accounts or a Google Group, save the tester list and retrieve the track's opt-in link. The current track has zero configured tester groups and zero email lists.
 3. Complete Ads, target audience, App access, IARC content rating and any required declarations in Play Console.
 4. Upload the final 512 × 512 PNG app icon, 1024 × 500 feature graphic and captured screenshots. The repository audit found the SVG icon and screenshot workflow artifact, but no verified 512 × 512 Play icon PNG or 1024 × 500 feature graphic.
@@ -60,7 +60,7 @@ The GitHub Release is separate from the Play internal-track artifact. The curren
 ## Automation status
 
 - Internal track `4100101`: completed and verified.
-- Arabic and English store listings: staged in API edit; commit blocked by HTTP 403 until app-scoped permission is granted.
+- Arabic and English store listings and artwork: staged in API edit; commit rejected with HTTP 400 because the current API commit mode sends changes for review automatically.
 - GitHub Release publish step: changed to use GitHub CLI with explicit tag `v3.1.0`; separate no-build asset audit passes. The release upload step itself has not been re-executed because the task constraint forbids an unnecessary AAB build.
 - WIF/OIDC and signing secrets: unchanged.
 - Production rollout: not performed.
@@ -83,5 +83,9 @@ The GitHub Release is separate from the Play internal-track artifact. The curren
 - Existing `Dalilna Closed Testing` release: Draft versionCode `3127701`.
 - Highest versionCode on other app tracks: `4100101` (internal, completed).
 - Current verified signed AAB: `4128401`.
-- The older draft has not yet been updated. The next automation run is configured to refresh that single draft in place.
+- The older draft has not yet been updated in the committed track. A later API Edit staged the replacement but could not be committed without sending changes for review.
 - No tester email lists or other app tracks are modified.
+
+## Latest Google Play API state — 27 November 2026
+
+Run [45945373618](https://github.com/baraagpt6-droid/dalilna/actions/runs/45945373618) successfully authenticated with WIF, uploaded the current AAB and staged the Arabic/English listings and generated artwork in Edit `13370413812168476918`. It read the committed closed-testing release `3127701` and tester configuration (`0` Google Groups, `allUsers=false`). Commit returned HTTP 400 `INVALID_ARGUMENT` because `changesNotSentForReview` is not allowed in the current app state. The edit was not committed; no new testing release or live store listing is confirmed. Do not retry without the parameter because Google says the API would submit the app changes for review.

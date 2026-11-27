@@ -6,8 +6,9 @@ Hard safety scope:
 - version: 3.1.0 / versionCode 4128401
 - custom Closed Testing track: Dalilna Closed Testing
 - release status: draft
-- commit with changesNotSentForReview=true
-- never call Production, rollout, send-for-review or deletion methods
+- inspection-only is supported and does not modify the app state
+- any commit requires an explicit --submit-for-review flag and sends all changes for review
+- never call Production, rollout, pricing or account-level access methods
 """
 
 from __future__ import annotations
@@ -46,6 +47,13 @@ RELEASE_NOTES = {
              "• Refreshed indicative price and privacy information.\n"
              "• Improved performance, stability and usability."
 }
+
+
+def validate_play_mode(inspect_only: bool, submit_for_review: bool) -> None:
+    if inspect_only == submit_for_review:
+        raise ValueError(
+            "Select exactly one mode: --inspect-only or --submit-for-review."
+        )
 
 
 def validate_target(package_name: str, version_code: int, track_name: str) -> None:
@@ -108,7 +116,7 @@ class PlayApi:
             params=params, timeout=timeout
         )
         if response.status_code == 401:
-            self.credentials.refresh(Request())
+            self.credentials.refresh(self.Request())
             headers["Authorization"] = f"Bearer {self.credentials.token}"
             response = self.session.request(
                 method, url, json=json_body, data=data, headers=headers,
@@ -221,12 +229,136 @@ def prepare_closed_track_releases(existing_releases: list[dict]) -> list[dict]:
     return releases
 
 
+def inspect_play_state(api: PlayApi, existing_edit_id: str | None = None) -> dict:
+    """Read Play state through an edit, without uploading or committing anything."""
+    package_path = f"/applications/{quote(PACKAGE_NAME, safe='')}"
+    created_edit = not bool(existing_edit_id)
+    if existing_edit_id:
+        edit_id = existing_edit_id
+        api.api("GET", f"{package_path}/edits/{quote(edit_id, safe='')}")
+    else:
+        response = api.api("POST", f"{package_path}/edits", json_body={})
+        edit_id = response["id"]
+
+    edit_path = f"{package_path}/edits/{quote(edit_id, safe='')}"
+    result: dict = {"packageName": PACKAGE_NAME, "editId": edit_id}
+    try:
+        tracks = api.api("GET", f"{edit_path}/tracks").get("tracks", [])
+        all_codes = [
+            int(code)
+            for track in tracks
+            for release in track.get("releases", [])
+            for code in release.get("versionCodes", [])
+        ]
+        result["highestVersionCodeAcrossTracks"] = max(all_codes, default=0)
+        result["tracks"] = [
+            {
+                "track": item.get("track"),
+                "releases": [
+                    {
+                        "name": release.get("name"),
+                        "status": release.get("status"),
+                        "versionCodes": [str(code) for code in release.get("versionCodes", [])],
+                    }
+                    for release in item.get("releases", [])
+                ],
+            }
+            for item in tracks
+        ]
+
+        bundles = api.api("GET", f"{edit_path}/bundles").get("bundles", [])
+        result["bundles"] = [
+            {
+                "versionCode": int(item.get("versionCode", 0)),
+                "sha256": item.get("sha256"),
+                "size": item.get("size"),
+            }
+            for item in bundles
+        ]
+
+        tester_path = (
+            f"{edit_path}/testers/{quote(TRACK_NAME, safe='')}"
+        )
+        try:
+            tester = api.api("GET", tester_path)
+            result["testers"] = {
+                "googleGroupCount": len(tester.get("googleGroups", [])),
+                "allUsers": bool(tester.get("allUsers", False)),
+                "individualEmailListsReadable": False,
+            }
+        except Exception as exc:
+            result["testers"] = {"readError": str(exc)[:500]}
+
+        details = api.api("GET", f"{edit_path}/details")
+        result["appDetails"] = {
+            "defaultLanguage": details.get("defaultLanguage"),
+            "contactWebsite": details.get("contactWebsite"),
+            "contactEmailConfigured": bool(details.get("contactEmail")),
+        }
+
+        image_types = ("icon", "featureGraphic", "phoneScreenshots", "tenInchScreenshots")
+        listing_state = {}
+        for locale in ("ar", "en-US"):
+            try:
+                listing = api.api(
+                    "GET",
+                    f"{edit_path}/listings/{quote(locale, safe='')}"
+                )
+                listing_state[locale] = {
+                    "title": listing.get("title"),
+                    "shortDescriptionLength": len(listing.get("shortDescription", "")),
+                    "fullDescriptionLength": len(listing.get("fullDescription", "")),
+                }
+            except Exception as exc:
+                listing_state[locale] = {"readError": str(exc)[:500]}
+
+            listing_state[locale]["images"] = {}
+            for image_type in image_types:
+                try:
+                    image_group = api.api(
+                        "GET",
+                        f"{edit_path}/listings/{quote(locale, safe='')}/{quote(image_type, safe='')}"
+                    ).get("images", [])
+                    listing_state[locale]["images"][image_type] = [
+                        {"width": image.get("width"), "height": image.get("height")}
+                        for image in image_group
+                    ]
+                except Exception as exc:
+                    listing_state[locale]["images"][image_type] = {
+                        "readError": str(exc)[:500]
+                    }
+        result["listings"] = listing_state
+
+        result["inspectionOnly"] = True
+        result["existingEditReused"] = not created_edit
+        print("PLAY_READ_ONLY_INSPECTION=" + json.dumps(result, ensure_ascii=False))
+        return result
+    finally:
+        if created_edit:
+            try:
+                api.api("DELETE", edit_path)
+                print("PLAY_INSPECTION_TEMP_EDIT_DELETED=true")
+            except Exception as exc:
+                print(
+                    "PLAY_INSPECTION_TEMP_EDIT_DELETE_ERROR=" + str(exc)[:500],
+                    file=sys.stderr,
+                )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--aab", required=True, type=Path)
-    parser.add_argument("--assets-dir", required=True, type=Path)
+    parser.add_argument("--inspect-only", action="store_true")
+    parser.add_argument("--existing-edit-id", default="")
+    parser.add_argument("--submit-for-review", action="store_true")
+    parser.add_argument("--aab", type=Path)
+    parser.add_argument("--assets-dir", type=Path)
     parser.add_argument("--testers-google-group", default="")
     args = parser.parse_args()
+
+    try:
+        validate_play_mode(args.inspect_only, args.submit_for_review)
+    except ValueError as exc:
+        parser.error(str(exc))
 
     root = Path(__file__).resolve().parents[1]
     validate_target(
@@ -235,6 +367,13 @@ def main() -> None:
         os.environ.get("PLAY_TRACK_NAME", TRACK_NAME),
     )
 
+    api = PlayApi()
+    if args.inspect_only:
+        inspect_play_state(api, args.existing_edit_id.strip() or None)
+        return
+
+    if args.aab is None or args.assets_dir is None:
+        parser.error("--submit-for-review requires --aab and --assets-dir")
     if not args.aab.is_file():
         raise FileNotFoundError(args.aab)
     if not args.assets_dir.is_dir():
@@ -430,19 +569,17 @@ def main() -> None:
             groups = sorted(set(existing_groups) | {google_group})
             api.api("PUT", testers_path, json_body={"googleGroups": groups})
 
-        # Validate, then commit as an unsent draft. Do not submit for review.
+        # This commit intentionally sends all staged edits for Google review.
+        # The CLI refuses to reach this point without --submit-for-review.
         api.api("POST", f"{package_path}/edits/{quote(edit_id, safe='')}:validate")
         api.api(
             "POST",
             f"{package_path}/edits/{quote(edit_id, safe='')}:commit",
-            params={
-                "changesNotSentForReview": "true",
-                "changesInReviewBehavior": "ERROR_IF_IN_REVIEW",
-            },
+            params={"changesInReviewBehavior": "ERROR_IF_IN_REVIEW"},
         )
         committed = True
         print(json.dumps({
-            "result": "committed_unsubmitted_draft",
+            "result": "submitted_for_review",
             "packageName": PACKAGE_NAME,
             "versionName": VERSION_NAME,
             "versionCode": VERSION_CODE,
@@ -450,7 +587,7 @@ def main() -> None:
             "releaseStatus": "draft",
             "googleGroupConfigured": bool(google_group),
             "productionTouched": False,
-            "changesSentForReview": False,
+            "changesSentForReview": True,
             "existingImagesDeleted": False,
         }, ensure_ascii=False, indent=2))
     finally:

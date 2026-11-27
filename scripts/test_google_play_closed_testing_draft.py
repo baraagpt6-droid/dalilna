@@ -11,6 +11,8 @@ from google_play_closed_testing_draft import (
     VERSION_CODE,
     draft_release,
     prepare_closed_track_releases,
+    inspect_play_state,
+    validate_play_mode,
     validate_listing,
     validate_target,
 )
@@ -78,6 +80,54 @@ class DraftSafetyTests(unittest.TestCase):
         self.assertEqual(len(updated), 2)
         self.assertEqual(updated[-1]["status"], "draft")
         self.assertEqual(updated[-1]["versionCodes"], ["4128401"])
+
+
+    def test_play_mode_requires_exactly_one_action(self):
+        validate_play_mode(True, False)
+        validate_play_mode(False, True)
+        with self.assertRaises(ValueError):
+            validate_play_mode(False, False)
+        with self.assertRaises(ValueError):
+            validate_play_mode(True, True)
+
+    def test_read_only_inspection_reuses_existing_edit_without_mutation(self):
+        class FakeApi:
+            def __init__(self):
+                self.calls = []
+
+            def api(self, method, path, **kwargs):
+                self.calls.append((method, path))
+                if path.endswith("/tracks"):
+                    return {"tracks": [
+                        {"track": "internal", "releases": [
+                            {"name": "Internal", "status": "completed", "versionCodes": ["4100101"]}
+                        ]},
+                        {"track": TRACK_NAME, "releases": [
+                            {"name": "Dalilna", "status": "draft", "versionCodes": ["4128401"]}
+                        ]},
+                    ]}
+                if path.endswith("/bundles"):
+                    return {"bundles": [{"versionCode": 4128401, "sha256": "abc", "size": 100}]}
+                if "/testers/" in path:
+                    return {"googleGroups": [], "allUsers": False}
+                if path.endswith("/details"):
+                    return {"defaultLanguage": "ar", "contactWebsite": "https://example.com", "contactEmail": "support@example.com"}
+                if "/listings/" in path and path.rsplit("/", 1)[-1] in {"ar", "en-US"}:
+                    return {"title": "Dalilna", "shortDescription": "short", "fullDescription": "full"}
+                if any(path.endswith("/" + image_type) for image_type in ("icon", "featureGraphic", "phoneScreenshots", "tenInchScreenshots")):
+                    return {"images": [{"width": 512, "height": 512}]}
+                if path.endswith("/edits/active-edit"):
+                    return {"id": "active-edit"}
+                return {}
+
+        fake = FakeApi()
+        state = inspect_play_state(fake, "active-edit")
+        self.assertTrue(state["inspectionOnly"])
+        self.assertTrue(state["existingEditReused"])
+        self.assertEqual(state["highestVersionCodeAcrossTracks"], 4128401)
+        self.assertEqual(state["bundles"][0]["versionCode"], 4128401)
+        self.assertEqual(state["testers"]["googleGroupCount"], 0)
+        self.assertFalse(any(method in {"POST", "PUT", "PATCH", "DELETE"} for method, _ in fake.calls))
 
     def test_listing_limits(self):
         good = {
