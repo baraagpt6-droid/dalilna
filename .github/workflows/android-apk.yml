@@ -48,6 +48,7 @@ on:
       - '!GOOGLE_PLAY_DATA_SAFETY.md'
       - '!tests/**'
       - '!scripts/places-proxy-integration.cjs'
+      - '!scripts/publish_google_play_internal.py'
       - '!server.js'
       - '!marketplace-api.js'
       - '!.github/workflows/android-apk.yml'
@@ -62,6 +63,7 @@ concurrency:
 
 jobs:
   build-android:
+    if: ${{ !contains(github.event.head_commit.message || '', '[complete-play-internal-4100101]') }}
     runs-on: ubuntu-latest
     env:
       ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}

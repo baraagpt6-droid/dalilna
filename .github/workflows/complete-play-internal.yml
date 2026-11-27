@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: read
+  actions: write
   id-token: write
 
 concurrency:
@@ -27,13 +28,42 @@ jobs:
         with:
           ref: main
 
+      - name: Cancel any Android rebuild created by the previous API-only commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANCEL_SHA: ${{ github.event.before }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ -n "$CANCEL_SHA" ]] || exit 0
+          response="$(curl --fail-with-body --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs?per_page=100")"
+          mapfile -t run_ids < <(jq -r --arg sha "$CANCEL_SHA" '
+            .workflow_runs[]
+            | select(.head_sha == $sha)
+            | select(.path == ".github/workflows/android-apk.yml")
+            | select(.status == "queued" or .status == "in_progress")
+            | .id
+          ' <<< "$response")
+          for run_id in "${run_ids[@]}"; do
+            echo "Cancelling Android rebuild $run_id created by API-only metadata commit."
+            curl --fail-with-body --silent --show-error -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$run_id/cancel"
+          done
+          if [[ "${#run_ids[@]}" -eq 0 ]]; then
+            echo "No active Android rebuild found for the previous commit."
+          fi
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Install Google authentication library
-        run: python -m pip install --disable-pip-version-check "google-auth>=2.35,<3"
+        run: python -m pip install --disable-pip-version-check "google-auth[requests]>=2.35,<3"
 
       - name: Authenticate to Google Cloud using Workload Identity Federation
         id: auth
