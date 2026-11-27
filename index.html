@@ -23,7 +23,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./features-2.1.css?v=3.1.0">
 <link rel="stylesheet" href="./market-price-guide.css?v=3.1.0">
-<link rel="stylesheet" href="./v3.0.0.css?v=3.1.0">
+<link rel="stylesheet" href="./v3.0.0.css?v=3.1.0-profile-identity1">
 <style>
 :root{
   color-scheme:dark;
@@ -758,13 +758,41 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
     <div id="admBody"></div>
   </section>
 
-  <section class="panel merchant-tools" id="merchantToolsPanel" hidden>
-    <div class="adm-head" style="margin-bottom:8px">
-      <div><h2 style="font-size:17px;color:var(--acc)">إدارة التاجر</h2><span class="where" id="merchantToolsSummary"></span></div>
-      <div class="fbtn"><button type="button" class="add" id="merchantAddBtn" style="min-height:36px">إضافة خدمة</button><button type="button" class="ghost" id="merchantPromoBtn" style="min-height:36px">إعلان مجاني</button></div>
+    <!-- Add hub: actions are separated from the merchant management panel. -->
+  <section id="vAdd" hidden>
+    <div class="add-hub-heading">
+      <button type="button" class="ghost" data-go="home">رجوع</button>
+      <div><h2>أضف إلى دليلنا</h2><p id="addHubSummary" class="where">اختر ما تريد إضافته إلى دليل اليمن.</p></div>
     </div>
-    <div id="merchantOwnedItems"></div>
-    <p class="dialog-hint">حساب التاجر في هذه النسخة محفوظ محلياً على الجهاز. توثيق رقم الهاتف يحتاج خدمة تحقق على الخادم.</p>
+    <div class="add-hub-grid">
+      <button type="button" class="add-hub-card" id="addFreeAdCard">
+        <span class="add-hub-icon add-hub-icon-gold" aria-hidden="true">＋</span>
+        <span class="add-hub-card-copy"><b>إضافة إعلان مجاني</b><small>قدّم إعلانك للمراجعة ضمن عرض البداية.</small></span>
+        <span class="add-hub-arrow" aria-hidden="true">←</span>
+      </button>
+      <button type="button" class="add-hub-card" id="addMerchantListingCard">
+        <span class="add-hub-icon add-hub-icon-teal" aria-hidden="true">⌂</span>
+        <span class="add-hub-card-copy"><b id="addMerchantCardTitle">إضافة محل أو خدمة</b><small id="addMerchantCardHint">لأصحاب المحلات. يمكنك تفعيل صفة البائع عند الاختيار.</small></span>
+        <span class="add-hub-arrow" aria-hidden="true">←</span>
+      </button>
+      <button type="button" class="add-hub-card" id="addJobPortalCard">
+        <span class="add-hub-icon add-hub-icon-blue" aria-hidden="true">▣</span>
+        <span class="add-hub-card-copy"><b>بوابة الوظائف</b><small>افتح قسم الوظائف مستقلاً لاستعراض الفرص أو إضافة وظيفة.</small></span>
+        <span class="add-hub-arrow" aria-hidden="true">←</span>
+      </button>
+    </div>
+    <div class="add-merchant-setup" id="addMerchantSetupHint" hidden>
+      <div><b>أكمل بيانات متجرك</b><p class="where">صفة البائع مفعّلة. أضف اسم المحل للمتابعة، وسيبقى رقم جوالك كما هو.</p></div>
+      <button type="button" class="ghost" id="addMerchantSetupButton">إكمال بيانات المحل</button>
+    </div>
+    <section class="panel merchant-tools" id="merchantToolsPanel" hidden>
+      <div class="adm-head" style="margin-bottom:8px">
+        <div><h2 style="font-size:17px;color:var(--acc)">إدارة التاجر</h2><span class="where" id="merchantToolsSummary"></span></div>
+        <div class="fbtn"><button type="button" class="add" id="merchantAddBtn" style="min-height:36px">إضافة خدمة</button><button type="button" class="ghost" id="merchantPromoBtn" style="min-height:36px">إعلان مجاني</button></div>
+      </div>
+      <div id="merchantOwnedItems"></div>
+      <p class="dialog-hint">حساب التاجر في هذه النسخة محفوظ محلياً على الجهاز. توثيق رقم الهاتف يحتاج خدمة تحقق على الخادم.</p>
+    </section>
   </section>
 
   <!-- Home View -->
@@ -1034,24 +1062,49 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
   </div>
 </dialog>
 
-<!-- Smart Account Switcher Modal -->
+<!-- Unified local profile and role switcher -->
 <dialog id="accountDlg">
   <div class="dlg-body">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h2 style="font-size:20px">اختيار صفة الحساب</h2>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <h2 style="font-size:20px">ملفي الشخصي</h2>
       <button type="button" class="x" id="accClose">✕</button>
     </div>
     <section class="panel" id="profilePanel" style="margin:10px 0">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
         <h3 id="profileHeading" style="margin:0">ملفي الشخصي</h3>
-        <span id="profileBadge" class="tag">غير موثّق</span>
+        <span id="profileBadge" class="tag">مستفيد</span>
       </div>
       <div style="display:grid;gap:4px;margin:10px 0">
         <b id="profileName">مستفيد</b>
-        <span id="profileContact" class="where">لا توجد بيانات تواصل للحساب الحالي.</span>
+        <span id="profileContact" class="where">لا يوجد رقم جوال محفوظ.</span>
+        <span id="profileRoleSummary" class="where">الصفة النشطة: عميل</span>
         <span id="profileDaysLeft" class="where">متبقي 60 يوماً من عرض الإعلانات المجاني</span>
       </div>
-      <div id="v3RoleSwitcher" class="v3-role-switcher" aria-label="تبديل صفة الحساب"><span>صفة الاستخدام</span><div><button type="button" data-v3-role="client">عميل</button><button type="button" data-v3-role="merchant">بائع</button></div></div>
+      <div id="v3RoleSwitcher" class="v3-role-switcher" aria-label="تبديل صفة الحساب">
+        <span>صفة الاستخدام</span>
+        <div>
+          <button type="button" data-profile-role="customer" aria-pressed="true">عميل</button>
+          <button type="button" data-profile-role="merchant" aria-pressed="false">بائع</button>
+        </div>
+      </div>
+      <button type="button" class="ghost profile-edit-toggle" id="profileEditToggle">تعديل الاسم أو الرقم</button>
+      <form id="profileEditForm" class="profile-edit-form" hidden>
+        <div id="profileCustomerNameRow">
+          <label>اسم المستفيد<input id="profileCustomerNameInput" maxlength="80" autocomplete="name" placeholder="اسمك الشخصي"></label>
+        </div>
+        <div id="profileStoreNameRow" hidden>
+          <label>اسم المحل أو النشاط<input id="profileStoreNameInput" maxlength="80" autocomplete="organization" placeholder="مثلاً: محلات الناهي"></label>
+        </div>
+        <div id="profilePhoneRow">
+          <label>رقم الجوال الموحد<input id="profilePhoneInput" type="tel" inputmode="tel" dir="ltr" maxlength="24" autocomplete="tel" placeholder="77xxxxxxx"></label>
+        </div>
+        <p class="dialog-hint" id="profileEditHint">تُحفظ البيانات محلياً على هذا الجهاز دون تأكيد عبر البريد الإلكتروني.</p>
+        <p class="err" id="profileEditError"></p>
+        <div class="fbtn">
+          <button type="submit" class="add" id="profileEditSave">حفظ التعديلات</button>
+          <button type="button" class="ghost" id="profileEditCancel">إلغاء</button>
+        </div>
+      </form>
       <button type="button" class="v3-profile-saved" id="profileSavedHub">♥ المفضلة والمحفوظات <span id="profileSavedHubCount">0</span></button>
       <button type="button" class="ghost" id="profileBlockedSellersBtn">إدارة البائعين المحظورين على هذا الجهاز</button>
       <div class="profile-metrics">
@@ -1071,41 +1124,16 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
         <a class="ghost" id="profileStoreUpdateLink" href="https://play.google.com/store/apps/details?id=ye.dalilna.app" target="_blank" rel="noopener noreferrer">تحديث التطبيق من Google Play</a>
         <a class="ghost" id="profilePrivacyLink" href="./privacy.html">سياسة الخصوصية</a>
       </div>
-      <p id="profileLocalNote" class="where" style="margin:8px 0 0">الملف المحلي محفوظ على هذا الجهاز، ولا يمثل حساباً مركزياً موثقاً.</p>
+      <p id="profileLocalNote" class="where" style="margin:8px 0 0">بيانات الملف محفوظة محلياً على هذا الجهاز.</p>
     </section>
     <section class="panel" style="margin:10px 0">
       <h3 style="margin:0 0 6px">إضافاتي</h3>
       <p class="where" style="margin:0 0 8px">انقل الإضافات القديمة المحفوظة على هذا الجهاز إلى قائمة مراجعة الإدارة.</p>
       <button type="button" class="ghost" id="sharedMigrateLocalButton">نقل إضافاتي القديمة للمراجعة</button>
     </section>
-    <p class="where" style="margin:0">اختر كيف ترغب في استخدام التطبيق الآن:</p>
-
-    <button type="button" class="role-opt" id="roleClientBtn">
-      <div class="role-ic"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-      <div>
-        <b style="display:block;font-size:15px">مستفيد / عميل</b>
-        <span class="where">تصفح المحلات، البحث الصوتي، التقييم، وحفظ المفضلة.</span>
-      </div>
-    </button>
-
-    <button type="button" class="role-opt" id="roleMerchantBtn">
-      <div class="role-ic"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-      <div>
-        <b style="display:block;font-size:15px">صاحب محل / بائع</b>
-        <span class="where">إدارة محلاتك وإضافة عروضك وإعلاناتك برقم جوالك.</span>
-      </div>
-    </button>
-
-    <div id="merchantBox" hidden style="background:var(--bg);padding:12px;border-radius:12px;border:1px solid var(--line);display:grid;gap:8px">
-      <label>اسم التاجر أو المحل<input id="merchName" placeholder="مثلاً: محلات الأمل"></label>
-      <label>رقم الجوال / واتساب<input id="merchPhone" dir="ltr" inputmode="tel" placeholder="77xxxxxxx"></label>
-      <button type="button" class="add" id="merchSave">تفعيل حساب التاجر</button>
-    </div>
-
     <div class="admin-entry-footer">
       <button type="button" class="admin-entry-link" id="roleAdminBtn" aria-controls="adminLoginForm" aria-expanded="false">دخول المشرف</button>
     </div>
-
     <p class="dialog-hint" id="adminAccessHint" hidden>ملاحظة: حسابات الإدارة في هذه النسخة محفوظة محلياً على الجهاز، وليست مصادقة مركزية لخدمة عامة.</p>
     <form id="adminLoginForm" hidden style="padding:12px;background:var(--bg);border-radius:12px;border:1px solid var(--gold)">
       <label>البريد الإلكتروني<input id="admEmail" type="email" dir="ltr" required placeholder="admin@dalilna.ye"></label>
@@ -2954,6 +2982,7 @@ const DEFAULT_STATE={
   admins:[
     {email:"admin@dalilna.ye",name:"المشرف العام",hash:ADMIN_DEFAULT_HASH,perms:["add","edit","delete","verify","review","ads","fx","perms","logs","backup","block"]}
   ],
+  profile:{customerName:"",storeName:"",phone:"",activeRole:"customer"},
   session:{role:"client",adminEmail:"",merchant:null},
   merchantProfile:{name:"",phone:"",area:""},
   tickets:[],
@@ -3022,8 +3051,20 @@ function normalizeState(raw){
     root.perms=[...new Set([...(root.perms||[]),"add","edit","delete","verify","review","ads","fx","perms","logs","backup","block"])];
   }
   const sessionRaw=raw.session&&typeof raw.session==="object"?raw.session:{};
-  const role=["client","merchant","admin"].includes(sessionRaw.role)?sessionRaw.role:"client";
   const merchantRaw=sessionRaw.merchant&&typeof sessionRaw.merchant==="object"?sessionRaw.merchant:null;
+  const profileRaw=raw.profile&&typeof raw.profile==="object"&&!Array.isArray(raw.profile)?raw.profile:{};
+  const legacyMerchant={...(merchantRaw||{}),...(raw.merchantProfile&&typeof raw.merchantProfile==="object"?raw.merchantProfile:{})};
+  let legacyCustomer={};
+  try{
+    const value=JSON.parse(localStorage.getItem("dalilna-v3-customer-profile")||"null");
+    if(value&&typeof value==="object"&&!Array.isArray(value))legacyCustomer=value;
+  }catch(_){}
+  const profile={
+    customerName:cleanText(profileRaw.customerName||legacyCustomer.customerName||legacyCustomer.name||raw.customerName,80),
+    storeName:cleanText(profileRaw.storeName||legacyMerchant.storeName||legacyMerchant.name||merchantRaw?.name,80),
+    phone:cleanText(profileRaw.phone||legacyCustomer.phone||legacyMerchant.phone||merchantRaw?.phone,40),
+    activeRole:profileRaw.activeRole==="merchant"||raw.activeRole==="merchant"||sessionRaw.activeRole==="merchant"||sessionRaw.role==="merchant"||(!profileRaw.activeRole&&!raw.activeRole&&!sessionRaw.activeRole&&!legacyCustomer.name&&!!legacyMerchant.name)?"merchant":"customer"
+  };
   const ratesRaw=raw.rates&&typeof raw.rates==="object"?raw.rates:{};
   const rates={};
   for(const [id,r] of Object.entries(ratesRaw))if(r&&typeof r==="object")rates[cleanText(id,80)]={n:cleanNumber(r.n,0,0,1e9),sum:cleanNumber(r.sum,0,0,5e9)};
@@ -3074,9 +3115,10 @@ function normalizeState(raw){
     perms:{visitorCanPost:raw.perms?.visitorCanPost!==false,souqEnabled:raw.perms?.souqEnabled!==false,ratingsEnabled:raw.perms?.ratingsEnabled!==false},
     admins,
     adminCredentialVersion:ADMIN_CREDENTIAL_VERSION,
-    // Local-only profile is stored separately; privileged sessions never survive reloads.
-    merchantProfile:(()=>{const m=raw.merchantProfile&&typeof raw.merchantProfile==="object"?raw.merchantProfile:merchantRaw||{};return {name:cleanText(m.name,80),phone:cleanText(m.phone,40),area:cleanText(m.area,100)};})(),
-    session:{role:"client",adminEmail:"",merchant:null},
+    profile,
+    merchantProfile:{name:profile.storeName,phone:profile.phone,area:cleanText(legacyMerchant.area,100)},
+    // Privileged sessions never survive reloads. The selected customer/merchant role does.
+    session:{role:profile.activeRole==="merchant"?"merchant":"client",adminEmail:"",merchant:profile.activeRole==="merchant"?{name:profile.storeName,phone:profile.phone}:null},
     tickets:arrayOfObjects(raw.tickets).slice(0,500).map((t,i)=>({id:cleanText(t.id,80)||"ticket_"+i,type:cleanText(t.type,60),name:cleanText(t.name,80),phone:cleanText(t.phone,40),text:cleanText(t.text,1200),at:cleanNumber(t.at,Date.now(),0,Number.MAX_SAFE_INTEGER),status:t.status==="closed"?"closed":"open"})),
     blocks:arrayOfObjects(raw.blocks).slice(0,1000).map((b,i)=>({id:cleanText(b.id,80)||"block_"+i,phone:phoneKey(cleanText(b.phone,24)),reason:cleanText(b.reason,240)||"مخالفة شروط الدليل",at:cleanNumber(b.at,Date.now(),0,Number.MAX_SAFE_INTEGER),by:cleanText(b.by,160)||"المشرف",active:b.active!==false})).filter(b=>b.phone.length>=9),
     installDate:cleanNumber(raw.installDate,base.installDate,1,Number.MAX_SAFE_INTEGER),
@@ -3090,6 +3132,14 @@ function normalizeState(raw){
 }
 const storedInitialState=loadState();
 const adminCredentialMigrationRequired=!storedInitialState||storedInitialState.adminCredentialVersion!==ADMIN_CREDENTIAL_VERSION;
+const legacyProfileMigrationRequired=!!storedInitialState&&(
+  !storedInitialState.profile||
+  typeof storedInitialState.profile.customerName!=="string"||
+  typeof storedInitialState.profile.storeName!=="string"||
+  typeof storedInitialState.profile.phone!=="string"||
+  !["customer","merchant"].includes(storedInitialState.profile.activeRole)||
+  localStorage.getItem("dalilna-v3-customer-profile")!==null
+);
 let S=normalizeState(storedInitialState);
 let storageWarned=false;
 // Merge the public starter catalogue once per device. User-created records remain separate.
@@ -3106,6 +3156,7 @@ function saveState(){
   try{
     const serialized=JSON.stringify(portableState());
     localStorage.setItem(STORE_KEY,serialized);
+    localStorage.removeItem("dalilna-v3-customer-profile");
     if(serialized.length>3500000&&!storageWarned){storageWarned=true;toast("اقتربت مساحة التخزين من الحد. نزّل نسخة احتياطية واحذف الصور الكبيرة.");}
     if(navigator.storage&&typeof navigator.storage.estimate==="function")navigator.storage.estimate().then(info=>{
       if(info.quota&&info.usage/info.quota>.85&&!storageWarned){storageWarned=true;toast("مساحة التخزين المتاحة منخفضة. نزّل نسخة احتياطية.");}
@@ -3114,7 +3165,7 @@ function saveState(){
     toast("تعذّر حفظ البيانات. صدّر نسخة احتياطية واحذف بعض الصور.");
   }
 }
-if(adminCredentialMigrationRequired)saveState();
+if(adminCredentialMigrationRequired||legacyProfileMigrationRequired)saveState();
 window.addEventListener("beforeunload",saveState);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)saveState();});
 
@@ -3208,35 +3259,160 @@ $("#themeBtn").addEventListener("click",()=>{
 function curAdmin(){return S.session.role==="admin"?S.admins.find(a=>a.email===S.session.adminEmail)||S.admins[0]:null;}
 function hasPerm(p){const a=curAdmin();return !!(a&&Array.isArray(a.perms)&&a.perms.includes(p));}
 
+function syncProfileSession(){
+  const profile=S.profile||{customerName:"",storeName:"",phone:"",activeRole:"customer"};
+  profile.activeRole=profile.activeRole==="merchant"?"merchant":"customer";
+  S.profile=profile;
+  S.merchantProfile={name:profile.storeName||"",phone:profile.phone||"",area:S.merchantProfile?.area||""};
+  if(S.session?.role==="admin")return;
+  S.session=profile.activeRole==="merchant"
+    ?{role:"merchant",adminEmail:"",merchant:{name:profile.storeName||"",phone:profile.phone||""}}
+    :{role:"client",adminEmail:"",merchant:null};
+}
+
+let profileAfterSave=null;
+function openProfileEditor(options={}){
+  const profile=S.profile||{};
+  const form=$("#profileEditForm");
+  if(!form)return;
+  const mode=options.merchantSetup?"merchant-setup":options.initial?"initial":"edit";
+  form.dataset.mode=mode;
+  if(typeof options.afterSave==="function")profileAfterSave=options.afterSave;
+  $("#profileCustomerNameInput").value=profile.customerName||"";
+  $("#profileStoreNameInput").value=profile.storeName||"";
+  $("#profilePhoneInput").value=profile.phone||"";
+  const hasCustomer=!!(profile.customerName&&profile.phone);
+  $("#profileCustomerNameRow").hidden=mode==="merchant-setup"&&hasCustomer;
+  $("#profilePhoneRow").hidden=mode==="merchant-setup"&&!!profile.phone;
+  $("#profileStoreNameRow").hidden=mode==="initial"&&profile.activeRole!=="merchant";
+  if(mode==="edit"){
+    $("#profileCustomerNameRow").hidden=false;
+    $("#profilePhoneRow").hidden=false;
+    $("#profileStoreNameRow").hidden=false;
+  }
+  if(mode==="initial"){
+    $("#profileCustomerNameRow").hidden=!!profile.customerName;
+    $("#profilePhoneRow").hidden=!!profile.phone;
+    if(profile.activeRole==="merchant")$("#profileStoreNameRow").hidden=!!profile.storeName;
+  }
+  $("#profileEditError").textContent="";
+  $("#profileEditToggle").hidden=true;
+  form.hidden=false;
+  if(!$("#accountDlg").open)showDlg("#accountDlg");
+  const focus=mode==="merchant-setup"&&hasCustomer?$("#profileStoreNameInput"):
+    !profile.customerName?$("#profileCustomerNameInput"):
+    !profile.phone?$("#profilePhoneInput"):
+    profile.activeRole==="merchant"&&!profile.storeName?$("#profileStoreNameInput"):null;
+  if(focus)window.setTimeout(()=>focus.focus(),80);
+}
+
+function setProfileRole(role,options={}){
+  if(S.session?.role==="admin")return;
+  const nextRole=role==="merchant"?"merchant":"customer";
+  S.profile=S.profile||{customerName:"",storeName:"",phone:"",activeRole:"customer"};
+  S.profile.activeRole=nextRole;
+  S.onboarded=true;
+  syncProfileSession();
+  saveState();
+  syncRoleUI();
+  renderProfilePanel();
+  renderAddHub();
+  if(options.openEditor!==false){
+    if(nextRole==="merchant"&&!S.profile.storeName)openProfileEditor({merchantSetup:true});
+    else if(nextRole==="customer"&&(!S.profile.customerName||!S.profile.phone))openProfileEditor({initial:true});
+  }
+  if(options.toast!==false)toast(nextRole==="merchant"?"تم تفعيل صفة البائع":"تم التبديل إلى صفة العميل");
+}
+
+function saveProfileEditor(event){
+  event?.preventDefault();
+  const current=S.profile||{customerName:"",storeName:"",phone:"",activeRole:"customer"};
+  const customerName=$("#profileCustomerNameRow").hidden?current.customerName:$("#profileCustomerNameInput").value.trim();
+  const storeName=$("#profileStoreNameRow").hidden?current.storeName:$("#profileStoreNameInput").value.trim();
+  const phone=$("#profilePhoneRow").hidden?current.phone:$("#profilePhoneInput").value.trim();
+  if(!phone||phoneKey(phone).length<9){
+    $("#profileEditError").textContent="أدخل رقم جوال صحيحاً.";
+    if(!$("#profilePhoneRow").hidden)$("#profilePhoneInput").focus();
+    return;
+  }
+  if(current.activeRole==="customer"&&!customerName){
+    $("#profileEditError").textContent="أدخل اسم المستفيد.";
+    $("#profileCustomerNameInput").focus();
+    return;
+  }
+  if(current.activeRole==="merchant"&&!storeName){
+    $("#profileEditError").textContent="أدخل اسم المحل أو النشاط التجاري.";
+    $("#profileStoreNameInput").focus();
+    return;
+  }
+  S.profile={customerName,storeName,phone,activeRole:current.activeRole==="merchant"?"merchant":"customer"};
+  S.merchantProfile={name:storeName,phone,area:S.merchantProfile?.area||""};
+  syncProfileSession();
+  S.onboarded=true;
+  saveState();
+  $("#profileEditForm").hidden=true;
+  $("#profileEditToggle").hidden=false;
+  syncRoleUI();
+  renderProfilePanel();
+  renderAddHub();
+  closeDlg("#accountDlg");
+  const callback=profileAfterSave;
+  profileAfterSave=null;
+  toast("تم حفظ بيانات الملف الشخصي على هذا الجهاز");
+  if(callback)window.setTimeout(()=>callback(),90);
+}
+
+function renderAddHub(){
+  const profile=S.profile||{},merchant=profile.activeRole==="merchant";
+  const title=$("#addMerchantCardTitle"),hint=$("#addMerchantCardHint"),summary=$("#addHubSummary");
+  if(title)title.textContent=merchant?(curLang==="en"?"Add shop or service":"إضافة محل أو خدمة"):(curLang==="en"?"Become a seller and add a shop":"تفعيل صفة بائع وإضافة محل");
+  if(hint)hint.textContent=merchant
+    ?(profile.storeName?(curLang==="en"?"New listing will use "+profile.storeName+".":"سيظهر الإدراج باسم "+profile.storeName+"."):(curLang==="en"?"Add your store name to finish seller setup.":"أدخل اسم المحل لإكمال صفة البائع."))
+    :(curLang==="en"?"Switch to seller and add your shop without replacing your personal name.":"عند الاختيار تتحول الصفة إلى بائع مع الاحتفاظ باسمك ورقمك.");
+  if(summary)summary.textContent=merchant
+    ?(curLang==="en"?"Seller role is active. Choose an action or manage your shop listings.":"صفة البائع مفعّلة. اختر الإضافة المناسبة أو راجع إدراجات متجرك.")
+    :(curLang==="en"?"Post a free advert, open Jobs, or switch to seller to add a shop.":"أضف إعلاناً أو انتقل لبوابة الوظائف. يمكنك تفعيل صفة البائع عند إضافة محل.");
+  const setup=$("#addMerchantSetupHint");
+  if(setup)setup.hidden=!(merchant&&(!profile.storeName||!profile.phone));
+}
+
 function syncRoleUI(){
+  if(S.session?.role!=="admin")syncProfileSession();
   const btn=$("#accountBtn"),lbl=$("#accountLbl");
   btn.classList.remove("active-role","admin-on");
   if(S.session.role==="admin"){
     lbl.textContent=T("admin");btn.classList.add("admin-on");
     $("#adminPanel").hidden=false;
     $("#admRoleInfo").textContent="مسجل كـ: "+(curAdmin()?.name||S.session.adminEmail);
+    $("#v3RoleSwitcher").hidden=true;
+    $("#profileEditToggle").hidden=true;
+    $("#profileEditForm").hidden=true;
     renderAdminPanel();
-  }else if(S.session.role==="merchant"&&S.session.merchant){
+  }else if(S.profile.activeRole==="merchant"){
     lbl.textContent=T("merchant");btn.classList.add("active-role");
     $("#adminPanel").hidden=true;
+    $("#v3RoleSwitcher").hidden=false;
   }else{
     lbl.textContent=T("client");
     $("#adminPanel").hidden=true;
+    $("#v3RoleSwitcher").hidden=false;
   }
   renderMerchantTools();
+  renderAddHub();
 }
 
 function renderProfilePanel(){
- const english=curLang==="en",session=S.session||{},merchant=session.role==="merchant"?(session.merchant||S.merchantProfile||{}):{};
+ const english=curLang==="en",session=S.session||{},profile=S.profile||{customerName:"",storeName:"",phone:"",activeRole:"customer"};
  const admin=session.role==="admin"?curAdmin():null;
- const name=session.role==="admin"?(admin?.name||session.adminEmail||"Admin"):session.role==="merchant"?(merchant.name||"Merchant"):(english?"Visitor":"مستفيد");
- const contact=session.role==="admin"?(session.adminEmail||""):session.role==="merchant"?[merchant.phone,merchant.area].filter(Boolean).join(" · "):"";
+ const merchant=profile.activeRole==="merchant";
+ const displayName=admin?(admin.name||session.adminEmail||"Admin"):merchant?(profile.storeName||(english?"Store name not set":"اسم المحل غير مسجل")):(profile.customerName||(english?"Visitor":"مستفيد"));
+ const contact=admin?(session.adminEmail||""):(profile.phone||"");
  const remaining=Math.max(0,Math.ceil((60*86400000-(Date.now()-Number(S.installDate||Date.now())))/86400000));
- const ownsPhone=!!merchant.phone;
- const ownRecords=S.items.filter(item=>ownsPhone&&phoneKey(item.ownerPhone||item.phone)===phoneKey(merchant.phone));
+ const ownsPhone=!!(merchant&&profile.phone);
+ const ownRecords=S.items.filter(item=>ownsPhone&&phoneKey(item.ownerPhone||item.phone)===phoneKey(profile.phone));
  const owned=ownRecords.filter(item=>!["jobs","souq","land"].includes(item.cat));
  const marketplaceAds=ownRecords.filter(item=>["souq","land","jobs"].includes(item.cat));
- const ads=S.ads.filter(item=>ownsPhone&&phoneKey(item.phone)===phoneKey(merchant.phone));
+ const ads=S.ads.filter(item=>ownsPhone&&phoneKey(item.phone)===phoneKey(profile.phone));
  const favoriteIds=Array.isArray(S.favs)?S.favs:[];
  let marketplaceFavorites=[],jobFavorites=[];
  try{marketplaceFavorites=JSON.parse(localStorage.getItem("dalilna-marketplace-favs-v1")||"[]");}catch(_){}
@@ -3246,10 +3422,11 @@ function renderProfilePanel(){
  const favs=new Set([...favoriteIds,...marketplaceFavorites,...jobFavorites].map(String)).size;
  const favoriteItems=S.items.filter(item=>favoriteIds.includes(item.id));
  const set=(id,value)=>{const node=$("#"+id);if(node)node.textContent=String(value);};
- set("profileHeading",english?"My Profile":"ملفي الشخصي");
- set("profileBadge",english?"Not verified":"غير موثّق");
- set("profileName",name);
- set("profileContact",contact||(english?"No phone or email is linked to this local profile.":"لا يوجد رقم أو بريد مرتبط بالملف المحلي."));
+ set("profileHeading",admin?(english?"Administrator profile":"ملف المشرف"):(merchant?(english?"Store profile":"ملف المتجر"):(english?"My profile":"ملفي الشخصي")));
+ set("profileBadge",admin?(english?"Administrator":"مشرف"):(merchant?(english?"Merchant":"بائع"):(english?"Customer":"عميل")));
+ set("profileName",displayName);
+ set("profileContact",contact||(english?"No mobile number saved.":"لا يوجد رقم جوال محفوظ."));
+ set("profileRoleSummary",admin?(english?"Administrator access":"دخول المشرف"):(merchant?(english?"Active role: seller":"الصفة النشطة: بائع"):(english?"Active role: customer":"الصفة النشطة: عميل")));
  set("profileDaysLeft",english?remaining+" free advertising days remaining":"متبقي "+remaining+" يوماً من الإعلان المجاني");
  set("profileAdsCount",ads.length+marketplaceAds.length);
  set("profileShopsCount",owned.length);
@@ -3258,19 +3435,13 @@ function renderProfilePanel(){
  set("profileShopsLabel",english?"Shops I added":"محلات أضفتها");
  set("profileFavsLabel",english?"Saved favourites":"المفضلة");
  set("profileRegionLabel",english?"Default governorate":"المحافظة الافتراضية");
- set("profileLocalNote",english?"This profile is stored on this device. It is not a central verified account; adverts and shops appear only when this device has a matching merchant phone number.":"بيانات هذا الملف محفوظة على الجهاز. لا يستخدم دليلنا حالياً نظام مصادقة مركزي أو توثيق حسابات؛ ولا يمثل هذا الملف حساباً مركزياً موثقاً. تظهر الإعلانات والمحلات عندما يتطابق رقم التاجر مع البيانات المحفوظة على هذا الجهاز.");
- const list=$("#profileActivityList");
- if(list){
-  const section=(title,items,empty,clickable)=>'<section class="profile-activity-section"><b>'+esc(title)+'</b>'+(items.length
-    ?items.slice(0,8).map(item=>clickable
-      ?'<button type="button" class="profile-activity-item" data-profile-item-id="'+esc(item.id)+'">'+esc(item.name||item.title||"")+'</button>'
-      :'<div class="profile-activity-item">'+esc(item.title||item.name||"")+'</div>').join("")
-    :'<p class="where">'+esc(empty)+'</p>')+'</section>';
-  list.innerHTML=section(english?"My marketplace adverts":"إعلاناتي في السوق",marketplaceAds,english?"No marketplace adverts are linked to this phone.":"لا توجد إعلانات سوق مرتبطة برقم هذا التاجر.",true)
-   +section(english?"My other adverts":"إعلاناتي الأخرى",ads,english?"No other adverts are linked to this phone.":"لا توجد إعلانات أخرى مرتبطة بهذا الرقم.",false)
-   +section(english?"Shops I added":"محلات أضفتها",owned,english?"No shops are linked to this merchant phone on this device.":"لا توجد محلات مرتبطة برقم التاجر في هذا الجهاز.",true)
-   +section(english?"Saved directory places":"المحلات المحفوظة",favoriteItems,english?"No saved directory places on this device.":"لا توجد محلات محفوظة في مفضلة هذا الجهاز.",true);
- }
+ set("profileLocalNote",english?"Customer name, store name and the shared mobile number are stored locally on this device. They are not centrally verified.":"يُحفظ اسم المستفيد واسم المحل ورقم الجوال الموحد محلياً على هذا الجهاز، ولا تمثل هذه البيانات حساباً مركزياً موثقاً.");
+ const roleButtons=document.querySelectorAll("#v3RoleSwitcher [data-profile-role]");
+ roleButtons.forEach(button=>{
+   const active=button.dataset.profileRole===profile.activeRole;
+   button.setAttribute("aria-pressed",active?"true":"false");
+   button.classList.toggle("is-active",active);
+ });
  const select=$("#profileDefaultGovernorate");
  if(select){
    const current=S.defaultGovernorate||"";
@@ -3284,6 +3455,19 @@ function renderProfilePanel(){
   profileLogoutBtn:english?"Log out":"تسجيل الخروج"
  };
  for(const [id,label] of Object.entries(labels))set(id,label);
+ const list=$("#profileActivityList");
+ if(list){
+  const section=(title,items,empty,clickable)=>'<section class="profile-activity-section"><b>'+esc(title)+'</b>'+(items.length
+    ?items.slice(0,8).map(item=>clickable
+      ?'<button type="button" class="profile-activity-item" data-profile-item-id="'+esc(item.id)+'">'+esc(item.name||item.title||"")+'</button>'
+      :'<div class="profile-activity-item">'+esc(item.title||item.name||"")+'</div>').join("")
+    :'<p class="where">'+esc(empty)+'</p>')+'</section>';
+  list.innerHTML=section(english?"My marketplace adverts":"إعلاناتي في السوق",marketplaceAds,english?"No marketplace adverts are linked to this phone.":"لا توجد إعلانات سوق مرتبطة برقم هذا التاجر.",true)
+   +section(english?"My other adverts":"إعلاناتي الأخرى",ads,english?"No other adverts are linked to this phone.":"لا توجد إعلانات أخرى مرتبطة بهذا الرقم.",false)
+   +section(english?"Shops I added":"محلات أضفتها",owned,english?"No shops are linked to this merchant phone on this device.":"لا توجد محلات مرتبطة برقم التاجر في هذا الجهاز.",true)
+   +section(english?"Saved directory places":"المحلات المحفوظة",favoriteItems,english?"No saved directory places on this device.":"لا توجد محلات محفوظة في مفضلة هذا الجهاز.",true);
+ }
+ if($("#profileEditToggle"))$("#profileEditToggle").hidden=admin!==null||!$("#profileEditForm").hidden;
 }
 document.addEventListener("click",event=>{
  const button=event.target.closest("#profileActivityList [data-profile-item-id]");
@@ -3294,12 +3478,12 @@ document.addEventListener("click",event=>{
  openDetail(record);
 });
 $("#accountBtn").addEventListener("click",()=>{
-  $("#merchantBox").hidden=S.session.role!=="merchant";
   $("#adminLoginForm").hidden=true;
-  const mp=S.session.merchant||S.merchantProfile||{};
-  $("#merchName").value=mp.name||"";
-  $("#merchPhone").value=mp.phone||"";
-  if(typeof renderProfilePanel==="function")renderProfilePanel();
+  $("#adminAccessHint").hidden=true;
+  $("#profileEditForm").hidden=true;
+  $("#profileEditToggle").hidden=false;
+  syncProfileSession();
+  renderProfilePanel();
   showDlg("#accountDlg");
 });
 $("#accClose").addEventListener("click",()=>{S.onboarded=true;saveState();closeDlg("#accountDlg");});
@@ -3349,43 +3533,38 @@ $("#profileBlockedSellersBtn").addEventListener("click",()=>{
  toast("تم إلغاء حظر البائع على هذا الجهاز.");
 });
 $("#profileLogoutBtn").addEventListener("click",()=>{
- S.session={role:"client",adminEmail:"",merchant:null};
- S.onboarded=false;
- saveState();syncRoleUI();render();renderProfilePanel();closeDlg("#accountDlg");
- toast(curLang==="en"?"Signed out on this device.":"تم تسجيل الخروج من هذا الجهاز.");
+  syncProfileSession();
+  saveState();
+  syncRoleUI();render();renderProfilePanel();closeDlg("#accountDlg");
+  toast(curLang==="en"?"Your local profile remains saved on this device.":"بقي ملفك الشخصي محفوظاً على هذا الجهاز.");
 });
 
 $("#accountDlg").addEventListener("close",()=>{
   $("#adminAccessHint").hidden=true;
   $("#adminLoginForm").hidden=true;
   $("#roleAdminBtn").setAttribute("aria-expanded","false");
+  $("#profileEditForm").hidden=true;
+  $("#profileEditToggle").hidden=false;
 });
-$("#roleClientBtn").addEventListener("click",()=>{
-  S.onboarded=true;
-  S.session={role:"client",adminEmail:"",merchant:null};
-  saveState();syncRoleUI();render();closeDlg("#accountDlg");
-  toast("تم التبديل إلى حساب مستفيد / عميل");
+document.querySelectorAll("#v3RoleSwitcher [data-profile-role]").forEach(button=>{
+  button.addEventListener("click",()=>{
+    const role=button.dataset.profileRole==="merchant"?"merchant":"customer";
+    setProfileRole(role);
+    if(role==="customer"&&(!S.profile.customerName||!S.profile.phone))openProfileEditor({initial:true});
+  });
 });
-$("#roleMerchantBtn").addEventListener("click",()=>{
-  $("#merchantBox").hidden=false;$("#adminLoginForm").hidden=true;
-  $("#merchName").value=S.merchantProfile?.name||"";
-  $("#merchPhone").value=S.merchantProfile?.phone||"";
-});
-$("#merchSave").addEventListener("click",()=>{
-  const name=$("#merchName").value.trim(),phone=$("#merchPhone").value.trim();
-  if(!name||phoneKey(phone).length<9){toast("أدخل اسم المحل ورقم جوال صحيحاً");return;}
-  if(isPhoneBlocked(phone)){toast("هذا الرقم موقوف من الإدارة على هذا الجهاز. تواصل مع الإدارة للمراجعة.");return;}
-  S.onboarded=true;
-  S.merchantProfile={name,phone,area:S.merchantProfile?.area||""};
-  S.session={role:"merchant",adminEmail:"",merchant:{name,phone}};
-  saveState();syncRoleUI();render();closeDlg("#accountDlg");
-  toast("مرحباً "+name+"! تم تفعيل حساب التاجر");
+$("#profileEditToggle").addEventListener("click",()=>openProfileEditor({full:true}));
+$("#profileEditForm").addEventListener("submit",saveProfileEditor);
+$("#profileEditCancel").addEventListener("click",()=>{
+  $("#profileEditForm").hidden=true;
+  $("#profileEditToggle").hidden=false;
+  $("#profileEditError").textContent="";
+  renderProfilePanel();
 });
 $("#roleAdminBtn").addEventListener("click",()=>{
   $("#adminLoginForm").hidden=false;
   $("#adminAccessHint").hidden=false;
   $("#roleAdminBtn").setAttribute("aria-expanded","true");
-  $("#merchantBox").hidden=true;
   $("#admLoginErr").textContent="";
 });
 $("#adminLoginForm").addEventListener("submit",async e=>{
@@ -3423,6 +3602,7 @@ function go(v,c){
   if(v!=="cat"||c!=="pharmacy")flt.open24=false;
   view=v;curCat=c||"";
   $("#vHome").hidden=v!=="home";
+  $("#vAdd").hidden=v!=="add";
   $("#vCat").hidden=v!=="cat";
   $("#vJobs").hidden=v!=="jobs";
   $("#vSouq").hidden=v!=="souq";
@@ -3431,7 +3611,10 @@ function go(v,c){
   document.querySelectorAll(".bottom [data-go]").forEach(b=>{
     b.toggleAttribute("aria-current",b.dataset.go===(v==="cat"?"home":v));
   });
+  $("#navAdd").toggleAttribute("aria-current",v==="add");
   if(v==="cat"){$("#catT").textContent=catLabel(c);$("#area").value="";$("#areaLbl").textContent=curLang==="en"?"All Areas":"كل المناطق";}
+  renderMerchantTools();
+  renderAddHub();
   window.scrollTo(0,0);
   render();
 }
@@ -3891,12 +4074,13 @@ function canDelete(it){return (S.session.role==="admin"&&hasPerm("delete"))||isM
 function renderMerchantTools(){
   const box=$("#merchantToolsPanel");
   if(!box)return;
-  const active=S.session.role==="merchant"&&S.session.merchant;
+  const profile=S.profile||{};
+  const active=S.session.role==="merchant"&&profile.activeRole==="merchant"&&!!profile.storeName&&!!profile.phone;
   box.hidden=!active;
   if(!active)return;
   const owned=S.items.filter(isMerchantOwner);
-  $("#merchantToolsSummary").textContent=`${S.session.merchant.name} · ${owned.length} إدراج مرتبط برقم حسابك`;
-  $("#merchantOwnedItems").innerHTML=owned.length?owned.map(it=>`<div class="merchant-item"><div><b>${esc(it.name)}</b><div class="where">${esc(CN[it.cat]||it.cat)} · ${esc(it.area||"")}</div></div><div class="fbtn"><button type="button" class="ghost" data-edit="${esc(it.id)}" style="min-height:32px;font-size:12px">تعديل</button><button type="button" class="del" data-del="${esc(it.id)}" style="color:var(--danger)">حذف</button></div></div>`).join(""):`<div class="empty">لم تضف خدمات بعد. أضف أول محل أو خدمة من الزر أعلاه.</div>`;
+  $("#merchantToolsSummary").textContent=profile.storeName+" · "+owned.length+" إدراج مرتبط برقم حسابك";
+  $("#merchantOwnedItems").innerHTML=owned.length?owned.map(it=>'<div class="merchant-item"><div><b>'+esc(it.name)+'</b><div class="where">'+esc(CN[it.cat]||it.cat)+' · '+esc(it.area||"")+'</div></div><div class="fbtn"><button type="button" class="ghost" data-edit="'+esc(it.id)+'" style="min-height:32px;font-size:12px">تعديل</button><button type="button" class="del" data-del="'+esc(it.id)+'" style="color:var(--danger)">حذف</button></div></div>').join(""):'<div class="empty">لم تضف خدمات بعد. أضف أول محل أو خدمة من الزر أعلاه.</div>';
 }
 $("#merchantAddBtn").addEventListener("click",()=>openAdd("grocery"));
 $("#merchantPromoBtn").addEventListener("click",()=>showDlg("#promoReleaseDlg"));
@@ -4168,7 +4352,24 @@ function openEdit(id){
   $("#dlgTitle").textContent="تعديل البيانات";
   syncFormFields();showDlg("#dlg");
 }
-$("#navAdd").addEventListener("click",()=>openAdd(view==="cat"?curCat:view==="jobs"?"jobs":view==="souq"?"souq":"grocery"));
+$("#navAdd").addEventListener("click",()=>go("add"));
+$("#addFreeAdCard").addEventListener("click",()=>$("#openPromoRelease").click());
+$("#addMerchantListingCard").addEventListener("click",()=>{
+  if(S.session.role!=="merchant"||S.profile.activeRole!=="merchant")setProfileRole("merchant",{openEditor:false,toast:false});
+  if(!S.profile.storeName||!S.profile.phone){
+    showDlg("#accountDlg");
+    renderProfilePanel();
+    openProfileEditor({merchantSetup:true,afterSave:()=>openAdd("grocery")});
+    return;
+  }
+  openAdd("grocery");
+});
+$("#addJobPortalCard").addEventListener("click",()=>go("jobs"));
+$("#addMerchantSetupButton").addEventListener("click",()=>{
+  showDlg("#accountDlg");
+  renderProfilePanel();
+  openProfileEditor({merchantSetup:true});
+});
 $("#addJob").addEventListener("click",()=>openAdd("jobs"));
 $("#sqSell").addEventListener("click",()=>openAdd("souq"));
 $("#sqBuy").addEventListener("click",()=>{openAdd("souq");if($("#f").listingType)$("#f").listingType.value="wanted";});
@@ -6427,8 +6628,8 @@ function refreshPromoCountdown(){
 }
 $("#openPromoRelease").addEventListener("click",()=>{
   if(Date.now()-S.installDate>=60*86400000){toast("انتهت مدة العرض المجاني على هذا الجهاز.");return;}
-  if(S.session.merchant?.phone)$("#promoReleasePhone").value=S.session.merchant.phone;
-  else if(S.merchantProfile?.phone)$("#promoReleasePhone").value=S.merchantProfile.phone;
+  $("#promoReleasePhone").value=S.profile?.phone||S.session.merchant?.phone||S.merchantProfile?.phone||"";
+  if(!$("#promoReleaseName").value.trim())$("#promoReleaseName").value=S.profile?.storeName||S.profile?.customerName||"";
   showDlg("#promoReleaseDlg");
 });
 $("#promoReleaseClose").addEventListener("click",()=>closeDlg("#promoReleaseDlg"));
@@ -6450,8 +6651,9 @@ $("#promoReleaseWa").addEventListener("click",()=>{
 });
 $("#supportClose").addEventListener("click",()=>closeDlg("#supportDlg"));
 $("#openSupportTicket").addEventListener("click",()=>{
-  const p=S.session.merchant||S.merchantProfile||{};
-  $("#ticketName").value=p.name||"";$("#ticketPhone").value=p.phone||"";
+  const p=S.profile||{};
+  $("#ticketName").value=S.profile?.activeRole==="merchant"?(p.storeName||""):(p.customerName||"");
+  $("#ticketPhone").value=p.phone||"";
   showDlg("#supportDlg");
 });
 $("#ticketForm").addEventListener("submit",e=>{
@@ -6463,16 +6665,39 @@ $("#ticketForm").addEventListener("submit",e=>{
   $("#ticketForm").reset();$("#ticketErr").textContent="";closeDlg("#supportDlg");toast("تم إرسال الرسالة إلى صندوق المشرف.");
 });
 
-// The first-run screen is a role chooser, not a login wall.
+// First run opens the unified profile card and only its inline editor.
 if(!S.onboarded){
-  window.setTimeout(()=>showDlg("#accountDlg"),350);
+  window.setTimeout(()=>{
+    showDlg("#accountDlg");
+    renderProfilePanel();
+    if(!S.profile.customerName||!S.profile.phone)openProfileEditor({initial:true});
+  },350);
 }
 refreshPromoCountdown();
 window.setInterval(refreshPromoCountdown,60000);
 renderMerchantTools();
 
 window.DALILNA_V3_BRIDGE={
-  snapshot:()=>({role:S.session?.role||"client",merchant:S.session?.merchant||S.merchantProfile||null,onboarded:S.onboarded===true,directoryFavorites:(Array.isArray(S.favs)?S.favs:[]).map(id=>[...SEED_ITEMS,...S.items].find(item=>String(item.id)===String(id))).filter(Boolean).map(item=>({id:String(item.id),name:item.name||item.title||"",category:CN[item.cat]||item.cat||"خدمة",cat:item.cat||"other",governorate:item.gov||"",district:item.dist||"",area:item.area||item.village||"",phone:item.phone||"",lat:item.lat??item.latitude??null,lon:item.lng??item.lon??item.longitude??null,mapsUrl:item.mapsUrl||item.mapUrl||"",website:item.website||"",sourceUrl:item.sourceUrl||"",description:item.desc||""}))}),
+  profile:()=>({...S.profile}),
+  profileReady:()=>!!(S.profile?.phone&&(S.profile.activeRole==="merchant"?S.profile.storeName:S.profile.customerName)),
+  saveProfile:(patch={})=>{
+    const current=S.profile||{customerName:"",storeName:"",phone:"",activeRole:"customer"};
+    S.profile={
+      customerName:typeof patch.customerName==="string"?cleanText(patch.customerName,80):current.customerName,
+      storeName:typeof patch.storeName==="string"?cleanText(patch.storeName,80):current.storeName,
+      phone:typeof patch.phone==="string"?cleanText(patch.phone,40):current.phone,
+      activeRole:patch.activeRole==="merchant"?"merchant":patch.activeRole==="customer"?"customer":current.activeRole
+    };
+    S.merchantProfile={name:S.profile.storeName,phone:S.profile.phone,area:S.merchantProfile?.area||""};
+    syncProfileSession();S.onboarded=true;saveState();syncRoleUI();renderProfilePanel();renderAddHub();
+    return {...S.profile};
+  },
+  setActiveRole:(role)=>{setProfileRole(role,{toast:false});return {...S.profile};},
+  openProfileEditor:(options={})=>{
+    if(options.initial&&(!S.profile.customerName||!S.profile.phone))S.profile.activeRole="customer";
+    showDlg("#accountDlg");renderProfilePanel();openProfileEditor(options);
+  },
+  snapshot:()=>({role:S.session?.role||"client",activeRole:S.profile?.activeRole||"customer",profile:{...S.profile},merchant:S.session?.merchant||S.merchantProfile||null,onboarded:S.onboarded===true,directoryFavorites:(Array.isArray(S.favs)?S.favs:[]).map(id=>[...SEED_ITEMS,...S.items].find(item=>String(item.id)===String(id))).filter(Boolean).map(item=>({id:String(item.id),name:item.name||item.title||"",category:CN[item.cat]||item.cat||"خدمة",cat:item.cat||"other",governorate:item.gov||"",district:item.dist||"",area:item.area||item.village||"",phone:item.phone||"",lat:item.lat??item.latitude??null,lon:item.lng??item.lon??item.longitude??null,mapsUrl:item.mapsUrl||item.mapUrl||"",website:item.website||"",sourceUrl:item.sourceUrl||"",description:item.desc||""}))}),
   setDirectoryFavorite:(id,shouldSave)=>{const key=String(id),items=Array.isArray(S.favs)?S.favs:(S.favs=[]),index=items.indexOf(key);if(shouldSave&&index<0)items.push(key);else if(!shouldSave&&index>=0)items.splice(index,1);saveState();if(typeof renderProfilePanel==="function")renderProfilePanel();render();return items.includes(key);}
 };
 window.DalilnaMarketplaceBridge={
@@ -6491,6 +6716,6 @@ window.DalilnaMarketplaceBridge={
 <script src="./market-price-guide.js?v=3.1.0" defer></script>
 <script src="./app-update.js?v=3.1.0-store-safe1" defer></script>
 <script src="./features-2.1.js?v=3.1.0" defer></script>
-<script src="./v3.0.0.js?v=3.1.0" defer></script>
+<script src="./v3.0.0.js?v=3.1.0-profile-identity1" defer></script>
 </body>
 </html>

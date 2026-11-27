@@ -58,7 +58,9 @@ test('account icon opens the dialog and discreet admin footer reveals the login 
   const accountBody = captureHandler('#accountBtn', 'click');
   assert.ok(accountBody, 'account button click handler exists');
   const openAccount = vm.runInNewContext('(()=>{' + accountBody + '})', {
-    $, S: { session: { role: 'client', merchant: null }, merchantProfile: {} },
+    $, S: { session: { role: 'client', merchant: null }, profile: { activeRole: 'customer' }, merchantProfile: {} },
+    syncProfileSession: () => {},
+    renderProfilePanel: () => {},
     showDlg: selector => shown.push(selector),
   });
   openAccount();
@@ -70,8 +72,8 @@ test('account icon opens the dialog and discreet admin footer reveals the login 
   revealAdmin();
   assert.equal($('#adminLoginForm').hidden, false);
   assert.equal($('#adminAccessHint').hidden, false);
-  assert.equal($('#merchantBox').hidden, true);
   assert.equal($('#roleAdminBtn').attributes['aria-expanded'], 'true');
+  assert.ok(!accountDialog.includes('id="merchantBox"'), 'legacy duplicate merchant registration panel is removed from the account dialog');
 });
 
 test('actual admin login handler accepts valid test credentials and rejects an invalid password', async () => {
@@ -124,5 +126,5 @@ test('root admin credential migration replaces the old hash exactly once', () =>
   assert.match(html, /const ADMIN_DEFAULT_HASH="6db22418f2f59943a783c05fd88fef28ce942a20e3656c4d1b4ef51426aae6fb";/);
   assert.match(html, /if\(raw\.adminCredentialVersion!==ADMIN_CREDENTIAL_VERSION\)root\.hash=base\.admins\[0\]\.hash;/);
   assert.match(html, /adminCredentialVersion:ADMIN_CREDENTIAL_VERSION,/);
-  assert.match(html, /if\(adminCredentialMigrationRequired\)saveState\(\);/);
+  assert.match(html, /if\(adminCredentialMigrationRequired\|\|legacyProfileMigrationRequired\)saveState\(\);/);
 });
