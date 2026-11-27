@@ -100,3 +100,8 @@ For each provider, classify the provider as a service provider or third party ac
 ## Release artifact status — 27 November 2026
 
 The current signed AAB in GitHub Release `v3.1.0` is versionCode `4128401`, SHA-256 `3fb668f1ba2d1dfb91a7613901ca2d85aa0485c509a4a5befc63214523254026`. The completed Google Play internal track remains `4100101`. This worksheet describes app data behavior; it is not evidence that the Play Data Safety form has been submitted or approved. The newest signed AAB has not been uploaded to Play as of this note.
+
+
+## Play Console submission status
+
+This Data Safety worksheet is derived from the project implementation and is not evidence of the Play Console questionnaire being submitted or approved. The latest signed AAB is versionCode `4128401`; the closed-testing track has a previous unsubmitted draft `3127701`. The latest AAB has not yet been committed to that draft. App content declarations and account-specific review requirements still require a Play Console read-back.
