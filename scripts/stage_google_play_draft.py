@@ -211,6 +211,38 @@ def stage_draft(api: PlayApi, aab_path: Path, metadata_path: Path) -> dict:
         )
         committed = True
 
+        # Read back the committed Closed Testing draft in a fresh, disposable edit.
+        verify_edit = api.request("POST", package_path + "/edits", body={})
+        verify_id = verify_edit.get("id")
+        if not verify_id:
+            raise RuntimeError("Draft was committed but read-back edit creation failed")
+        verify_path = package_path + f"/edits/{quote(str(verify_id), safe='')}"
+        try:
+            verified_tracks = api.request("GET", verify_path + "/tracks").get("tracks", []) or []
+            verified_track = next(
+                (item for item in verified_tracks if item.get("track") == TRACK_NAME),
+                None,
+            )
+            verified_releases = (verified_track or {}).get("releases", []) or []
+            match = [
+                item for item in verified_releases
+                if str(version_code) in {str(code) for code in item.get("versionCodes", [])}
+            ]
+            if len(match) != 1 or match[0].get("status") != "draft":
+                raise RuntimeError("The committed version did not read back as a Closed Testing draft")
+            verified_bundles = api.request("GET", verify_path + "/bundles").get("bundles", []) or []
+            verified_bundle = next(
+                (item for item in verified_bundles if int(item.get("versionCode", 0)) == version_code),
+                None,
+            )
+            if verified_bundle is None:
+                raise RuntimeError("The committed draft has no matching Play bundle")
+            verified_hash = str(verified_bundle.get("sha256", "")).lower()
+            if verified_hash and verified_hash != digest:
+                raise RuntimeError("Read-back bundle SHA-256 differs from the staged AAB")
+        finally:
+            api.request("DELETE", verify_path)
+
         return {
             "packageName": PACKAGE_NAME,
             "track": TRACK_NAME,
@@ -220,6 +252,7 @@ def stage_draft(api: PlayApi, aab_path: Path, metadata_path: Path) -> dict:
             "aabSha256": digest,
             "aabBytes": aab_path.stat().st_size,
             "draftAvailableToTesters": False,
+            "readBackVerified": True,
             "reviewSubmissionRequested": False,
             "productionTouched": False,
             "testerConfigurationChanged": False,
