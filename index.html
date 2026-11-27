@@ -3063,7 +3063,7 @@ function normalizeState(raw){
     customerName:cleanText(profileRaw.customerName||legacyCustomer.customerName||legacyCustomer.name||raw.customerName,80),
     storeName:cleanText(profileRaw.storeName||legacyMerchant.storeName||legacyMerchant.name||merchantRaw?.name,80),
     phone:cleanText(profileRaw.phone||legacyCustomer.phone||legacyMerchant.phone||merchantRaw?.phone,40),
-    activeRole:profileRaw.activeRole==="merchant"||raw.activeRole==="merchant"||sessionRaw.activeRole==="merchant"||sessionRaw.role==="merchant"?"merchant":"customer"
+    activeRole:profileRaw.activeRole==="merchant"||raw.activeRole==="merchant"||sessionRaw.activeRole==="merchant"||sessionRaw.role==="merchant"||(!profileRaw.activeRole&&!raw.activeRole&&!sessionRaw.activeRole&&!legacyCustomer.name&&!!legacyMerchant.name)?"merchant":"customer"
   };
   const ratesRaw=raw.rates&&typeof raw.rates==="object"?raw.rates:{};
   const rates={};
