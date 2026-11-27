@@ -147,6 +147,9 @@ jobs:
           set -euo pipefail
           python scripts/google_play_closed_testing_draft.py --inspect-only
 
+      # This promotion is safe to retry: validate blocks the transition while
+      # the app remains Draft or a conflicting review is active; no commit follows
+      # a validation error. The operation only updates Dalilna Closed Testing.
       - name: Promote the reviewed Dalilna Closed Testing draft only
         if: env.PLAY_MODE == 'PUBLISH_CLOSED_TESTING'
         shell: bash
