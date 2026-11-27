@@ -115,16 +115,15 @@ Grant **Admin (all permissions)** at the app scope for `ye.dalilna.app` only, ma
 
 If the owner later chooses a least-privilege alternative, the API roles required for this workflow are app-level `CAN_VIEW_NON_FINANCIAL_DATA`, `CAN_MANAGE_TRACK_APKS`, `CAN_MANAGE_TRACK_USERS`, and `CAN_MANAGE_PUBLIC_LISTING`. The explicit target for the current setup remains app-level Admin only on Dalilna, without any account-level permissions. Do not alter the separate `com.hubaish.guide` app or its tester lists.
 
-## 4. Add GitHub repository variables
+## 4. WIF values used by the workflow
 
-Open repository Settings → Secrets and variables → Actions → Variables. Add:
+The workflow uses the already-tested GitHub OIDC / Workload Identity Federation provider and dedicated service account directly. These identifiers are not private keys or access tokens:
 
-| Variable | Value |
-|---|---|
-| `GCP_WORKLOAD_IDENTITY_PROVIDER` | `projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github-dalilna/providers/github` |
-| `GCP_SERVICE_ACCOUNT` | `dalilna-play-automation@PROJECT_ID.iam.gserviceaccount.com` |
+- Provider: `projects/28058491662/locations/global/workloadIdentityPools/github-pool/providers/github-provider`
+- Service account: `dalilna-play-automation@dalilna-play-automation-516000.iam.gserviceaccount.com`
 
-No credential or private key is stored in GitHub.
+No service-account JSON key and no additional GitHub repository variables are required. The workflow uses GitHub OIDC with `id-token: write`, short-lived credentials and the existing provider binding scoped to `baraagpt6-droid/dalilna` on `main`.
+
 
 ## 5. Optional tester Google Group
 
