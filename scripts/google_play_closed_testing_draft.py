@@ -21,9 +21,6 @@ import sys
 from pathlib import Path
 from urllib.parse import quote
 
-import google.auth
-import requests
-from google.auth.transport.requests import Request
 
 
 PACKAGE_NAME = "ye.dalilna.app"
@@ -87,6 +84,13 @@ def validate_listing(listing: dict, language: str) -> None:
 
 class PlayApi:
     def __init__(self) -> None:
+        # Load network/auth dependencies only when a live API client is created.
+        # Pure validation tests can import this module without Google credentials.
+        import google.auth
+        import requests
+        from google.auth.transport.requests import Request
+
+        self.Request = Request
         credentials, _ = google.auth.default(scopes=[OAUTH_SCOPE])
         self.credentials = credentials
         self.session = requests.Session()
@@ -95,7 +99,7 @@ class PlayApi:
     def request(self, method: str, url: str, *, json_body=None, data=None,
                 content_type: str | None = None, params=None, timeout=(30, 600)):
         if not self.credentials.valid:
-            self.credentials.refresh(Request())
+            self.credentials.refresh(self.Request())
         headers = {"Authorization": f"Bearer {self.credentials.token}"}
         if content_type:
             headers["Content-Type"] = content_type
