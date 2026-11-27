@@ -1,8 +1,8 @@
 # GOOGLE PLAY DATA SAFETY — DALILNA 3.1.0
 
-Source review: 26 November 2026  
+Source review: 27 November 2026  
 Android application ID: `ye.dalilna.app`  
-Android version: `3.1.0` · versionCode `3127201` · target SDK 36  
+Android version: `3.1.0` · Google Play internal-track versionCode `4100101` (API read-back confirmed) · target SDK 36  
 Developer display name: `Dalilna Team` — the app owner's team/brand name  
 Support and privacy contact: `dalilnasupport@gmail.com`
 
@@ -24,13 +24,15 @@ This worksheet reflects the checked Android manifest, WebView bridge, JavaScript
 
 | Google Play data type | Collect? | Required? | Purpose | Sharing / detail |
 |---|---:|---|---|---|
-| Location — approximate | **Yes** | Optional; only when location-based features are used | App functionality | Area-based nearby search. The Ads SDK also collects IP address, which it may use to estimate general location. |
+| Location — approximate | **Yes** | Automatic when Google Mobile Ads operates; location feature itself is optional | App functionality; advertising/analytics/fraud prevention for SDK IP processing | Area-based nearby search. Google Mobile Ads collects IP address and may use it to estimate general location. |
 | Location — precise | **Yes** | Optional; only after the user grants location access | App functionality | GPS coordinates for nearby search or for a user-submitted business/listing location. |
 | Personal info — name | **Yes** | Optional form submission | App functionality | Seller, shop/contact or job-seeker name submitted with shared content. |
+| Personal info — address | **Yes** | Optional form submission | App functionality | User-submitted governorate, district and area details in a public business or job-seeker profile. |
 | Personal info — phone number | **Yes** | Optional form submission | App functionality | Contact number submitted with a listing or public job-seeker profile. |
 | Photos and videos — photos | **Yes** | Optional | App functionality | User-selected listing/profile image uploaded to the Dalilna API and stored with the submission. |
 | App activity — in-app search history | **Yes** | Optional search | App functionality | Search text, selected place/area and category are sent to the search API. The server writes structured search-start events containing the query, place, category and request origin to its operational logs. |
 | App activity — app interactions | **Yes** | Automatic when Google Mobile Ads operates | Advertising, analytics and fraud prevention | Google Mobile Ads collects and shares app/ad interactions such as launches, taps and ad views. |
+| App info and performance — crash logs | **Yes** | Automatic when Google Mobile Ads operates | Analytics, service improvement and fraud prevention | Google Mobile Ads disclosure includes crash-related diagnostic data. |
 | App info and performance — diagnostics | **Yes** | Automatic when Google Mobile Ads operates | Analytics, service improvement and fraud prevention | Google Mobile Ads collects diagnostic and performance information such as app launch time, hang rate and energy use. |
 | Device or other IDs | **Yes** | SDK-dependent; automatically collected by Google Mobile Ads | Advertising, analytics and fraud prevention | Android Advertising ID, App Set ID and applicable device/account identifiers. |
 | Audio files — voice or sound recordings | **Yes** | Optional; after microphone action, disclosure and Android permission | App functionality | Android WebView grants audio capture to the Web Speech API. The app does not send raw audio to the Dalilna API, but the WebView/system speech-recognition provider may process audio on-device or transmit it to its service. Declare voice audio conservatively as collected/shared with the speech-recognition provider. |
@@ -38,7 +40,7 @@ This worksheet reflects the checked Android manifest, WebView bridge, JavaScript
 
 ## Third-party services and data flow
 
-1. **Google Mobile Ads SDK 25.5.0 / Google UMP 4.0.0** — the SDK automatically collects and shares IP address, user product interactions, diagnostic/performance information and device/account identifiers for advertising, analytics and fraud prevention. Google states this SDK data is encrypted in transit with TLS.
+1. **Google Mobile Ads SDK 25.5.0 / Google UMP 4.0.0** — the SDK automatically collects and shares IP address, user product interactions, crash/diagnostic/performance information and device/account identifiers for advertising, analytics and fraud prevention. Google states this SDK data is encrypted in transit with TLS. IP address may be used to estimate general location.
 2. **Android WebView / system speech-recognition service** — the microphone is granted to WebView only after a user action and Android runtime permission. The page uses `window.SpeechRecognition` or `window.webkitSpeechRecognition`. The app itself does not use Android's native `SpeechRecognizer` API and does not upload raw audio to Dalilna's server. The system/WebView speech provider controls whether audio is processed locally or remotely; disclose voice audio as collected and shared with that provider.
 3. **Google Gemini** — only when the user explicitly enables the cloud assistant. The question and relevant general directory context are sent through Dalilna's API to Gemini for response generation. The API request sets `store: false`.
 4. **Live places/search providers** — the local index is searched first. Server fallback can use Geoapify when `GEOAPIFY_API_KEY` is configured; otherwise or for fallback routes it uses OpenStreetMap Nominatim, Photon by Komoot, and Overpass instances at `overpass-api.de`, `overpass.private.coffee` and `maps.mail.ru`. Requests may include the search text, selected place/area, category, coordinates and radius.
@@ -81,6 +83,13 @@ For each provider, classify the provider as a service provider or third party ac
 - **Government app:** No, unless the operator is an authorized government entity.
 - **Financial features:** No; indicative prices and exchange information are not payment or financial services.
 - **Content rating:** Complete the IARC questionnaire truthfully. Google Play assigns the final regional rating; do not guess a rating in advance.
+
+## Import file and revision note
+
+- The repository includes [`data-safety.csv`](./data-safety.csv), a 782-row, five-column Google Play Data safety import worksheet. It selects the data types supported by the checked source code and SDK disclosure, including name, phone, submitted address, approximate and precise location, photos, optional voice audio, ad SDK interactions/diagnostics/identifiers, search history and user-generated content.
+- The CSV is prepared from the published Google Play import schema and source inspection; it has not been imported into this app's Play Console. Review every selected category and the service-provider/third-party classification against the operator's actual contracts before importing. Google warns that importing a CSV replaces the existing Data safety form responses.
+- Deletion request URL: `https://baraagpt6-droid.github.io/dalilna/data-deletion.html`. Privacy policy URL: `https://baraagpt6-droid.github.io/dalilna/privacy.html`.
+- The Play internal track is exempt from the Data safety form while distribution remains exclusive to internal testing. This CSV is prepared for closed/open testing or production when required.
 
 ## Official references
 
