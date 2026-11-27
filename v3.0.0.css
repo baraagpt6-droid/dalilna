@@ -32,7 +32,6 @@
 .assistant-origin-badge{display:inline-flex;align-items:center;width:max-content;max-width:100%;margin:0 0 8px;padding:4px 10px;border-radius:999px;background:rgba(56,182,166,.13);border:1px solid rgba(56,182,166,.45);color:var(--acc);font-size:10.5px;font-weight:700}
 .v3-gate .dlg-body{width:min(100%,560px);max-height:90vh;padding:clamp(18px,4vw,28px);margin:0 auto;align-content:start}
 .v3-gate .role-opt{border:1px solid var(--line);border-radius:15px;padding:13px;background:var(--bg);animation:v3GateEnter .42s both}
-.v3-gate #roleClientBtn{animation-delay:.04s}.v3-gate #roleMerchantBtn{animation-delay:.12s}.v3-gate #roleAdminBtn{animation-delay:.2s}
 @keyframes v3GateEnter{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(max-width:480px){.v3-favorite-trigger .lbl{display:none}.jobs-feed-controls{grid-template-columns:1fr}.v3-saved-dialog{width:96vw}}
 @media(prefers-reduced-motion:reduce){.v3-fly-item,.v3-gate .role-opt,.v3-favorite-trigger.v3-pulse{animation:none!important;transition:none!important}}
