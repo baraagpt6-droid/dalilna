@@ -3,7 +3,7 @@
 
 Hard safety scope:
 - package: ye.dalilna.app
-- version: 3.1.0 / versionCode 4128601
+- version: 3.1.0 / versionCode 4128701
 - custom Closed Testing track: Dalilna Closed Testing
 - release status: draft
 - inspection-only is supported and does not modify the app state
@@ -26,14 +26,14 @@ from urllib.parse import quote
 
 PACKAGE_NAME = "ye.dalilna.app"
 VERSION_NAME = "3.1.0"
-VERSION_CODE = 4128601
+VERSION_CODE = 4128701
 TRACK_NAME = "Dalilna Closed Testing"
 SUPPORT_EMAIL = "dalilnasupport@gmail.com"
 WEBSITE = "https://baraagpt6-droid.github.io/dalilna/store/"
 OAUTH_SCOPE = "https://www.googleapis.com/auth/androidpublisher"
 API_ROOT = "https://androidpublisher.googleapis.com/androidpublisher/v3"
 UPLOAD_ROOT = "https://androidpublisher.googleapis.com/upload/androidpublisher/v3"
-AAB_SHA256 = "5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a"
+AAB_SHA256 = "6e70daa8cdbdd93f9ce069223514bfb5129e2b462e9ff278f9cd91ef7ae24ca0"
 
 RELEASE_NOTES = {
     "ar": "• تحديث دليل الأماكن والبحث في المحافظات والمديريات.\n"
@@ -250,6 +250,12 @@ def inspect_play_state(api: PlayApi, existing_edit_id: str | None = None) -> dic
     edit_path = f"{package_path}/edits/{quote(edit_id, safe='')}"
     result: dict = {"packageName": PACKAGE_NAME, "editId": edit_id}
     try:
+        edit_info = api.api("GET", edit_path)
+        result["edit"] = {
+            "id": edit_info.get("id", edit_id),
+            "expiryTimeSeconds": edit_info.get("expiryTimeSeconds"),
+            "existingEditReused": not created_edit,
+        }
         tracks = api.api("GET", f"{edit_path}/tracks").get("tracks", [])
         all_codes = [
             int(code)
@@ -297,10 +303,20 @@ def inspect_play_state(api: PlayApi, existing_edit_id: str | None = None) -> dic
             result["testers"] = {"readError": str(exc)[:500]}
 
         details = api.api("GET", f"{edit_path}/details")
-        result["appDetails"] = {
+        expected_details = {
+            "defaultLanguage": "ar",
+            "contactWebsite": WEBSITE,
+            "contactEmail": SUPPORT_EMAIL,
+        }
+        details_comparable = {
             "defaultLanguage": details.get("defaultLanguage"),
             "contactWebsite": details.get("contactWebsite"),
+            "contactEmail": details.get("contactEmail"),
+        }
+        result["appDetails"] = {
+            **details_comparable,
             "contactEmailConfigured": bool(details.get("contactEmail")),
+            "matchesRepository": details_comparable == expected_details,
         }
 
         image_types = ("icon", "featureGraphic", "phoneScreenshots", "tenInchScreenshots")
@@ -311,10 +327,29 @@ def inspect_play_state(api: PlayApi, existing_edit_id: str | None = None) -> dic
                     "GET",
                     f"{edit_path}/listings/{quote(locale, safe='')}"
                 )
+                actual_fields = {
+                    "title": listing.get("title"),
+                    "shortDescription": listing.get("shortDescription"),
+                    "fullDescription": listing.get("fullDescription"),
+                }
+                expected_listing = read_listing(Path(__file__).resolve().parents[1], locale)
+                expected_fields = {
+                    "title": expected_listing.get("title"),
+                    "shortDescription": expected_listing.get("shortDescription"),
+                    "fullDescription": expected_listing.get("fullDescription"),
+                }
+                def fingerprint(value: dict) -> str:
+                    serialized = json.dumps(
+                        value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+                    ).encode("utf-8")
+                    return hashlib.sha256(serialized).hexdigest()
                 listing_state[locale] = {
                     "title": listing.get("title"),
                     "shortDescriptionLength": len(listing.get("shortDescription", "")),
                     "fullDescriptionLength": len(listing.get("fullDescription", "")),
+                    "metadataSha256": fingerprint(actual_fields),
+                    "repositoryMetadataSha256": fingerprint(expected_fields),
+                    "matchesRepository": actual_fields == expected_fields,
                 }
             except Exception as exc:
                 listing_state[locale] = {"readError": str(exc)[:500]}
@@ -335,6 +370,13 @@ def inspect_play_state(api: PlayApi, existing_edit_id: str | None = None) -> dic
                         "readError": str(exc)[:500]
                     }
         result["listings"] = listing_state
+        result["editMetadataMatchesRepository"] = bool(
+            result["appDetails"].get("matchesRepository")
+            and all(
+                listing_state.get(locale, {}).get("matchesRepository") is True
+                for locale in ("ar", "en-US")
+            )
+        )
 
         result["inspectionOnly"] = True
         result["existingEditReused"] = not created_edit
