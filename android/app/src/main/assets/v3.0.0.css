@@ -68,3 +68,11 @@
 .add-merchant-setup button{min-height:34px;font-size:12px}
 #merchantToolsPanel[hidden]{display:none!important}
 @media(min-width:620px){.add-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.add-hub-card{min-height:94px}}
+
+/* Keep Arabic glyph descenders visible in profile and submission headings. */
+#accountDlg .dlg-body > h2,
+#accountDlg .dlg-body > .panel h3 {
+  line-height: 1.55;
+  padding-bottom: 4px;
+  overflow: visible;
+}
