@@ -56,7 +56,7 @@ jobs:
     timeout-minutes: 30
     env:
       PACKAGE_NAME: ye.dalilna.app
-      EXPECTED_VERSION_CODE: "4128601"
+      EXPECTED_VERSION_CODE: "4128701"
       PLAY_TRACK_NAME: Dalilna Closed Testing
       TESTERS_GOOGLE_GROUP: ${{ inputs.testers_google_group }}
       PLAY_MODE: ${{ inputs.mode || (contains(github.event.head_commit.message || '', '[stage-dalilna-play-edit]') && 'STAGE_ONLY') || 'INSPECT_ONLY' }}
@@ -79,7 +79,7 @@ jobs:
           [[ "$GITHUB_REPOSITORY" == "baraagpt6-droid/dalilna" ]]
           [[ "$GITHUB_REF" == "refs/heads/main" ]]
           [[ "$PACKAGE_NAME" == "ye.dalilna.app" ]]
-          [[ "$EXPECTED_VERSION_CODE" == "4128601" ]]
+          [[ "$EXPECTED_VERSION_CODE" == "4128701" ]]
           [[ "$PLAY_TRACK_NAME" == "Dalilna Closed Testing" ]]
           [[ -n "$WIF_PROVIDER" && -n "$WIF_SERVICE_ACCOUNT" ]]
           if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
@@ -136,7 +136,7 @@ jobs:
           curl --fail --location --retry 3 --retry-delay 2 \
             "https://github.com/baraagpt6-droid/dalilna/releases/download/v3.1.0/app-release.aab" \
             --output dist/aab/app-release.aab
-          echo "5b12e80334bb534c094a200cac41366d02c3810aea9dddf32c5d838ebc64f70a  dist/aab/app-release.aab" | sha256sum --check
+          echo "6e70daa8cdbdd93f9ce069223514bfb5129e2b462e9ff278f9cd91ef7ae24ca0  dist/aab/app-release.aab" | sha256sum --check
 
       - name: Set up Node.js for fresh Play screenshots
         if: env.PLAY_MODE == 'STAGE_ONLY' || env.PLAY_MODE == 'SUBMIT_FOR_REVIEW'
@@ -205,14 +205,14 @@ jobs:
             elif [[ "$PLAY_MODE" == "STAGE_ONLY" ]]; then
               echo "- Mode: stage inside existing uncommitted edit"
               echo "- Package: `ye.dalilna.app`"
-              echo "- Closed Testing versionCode: `4128601`"
+              echo "- Closed Testing versionCode: `4128701`"
               echo "- App changes committed: **No**"
               echo "- Changes submitted for review: **No**"
               echo "- Production track touched: **No**"
             else
               echo "- Mode: submit for Google Play review"
               echo "- Package: `ye.dalilna.app`"
-              echo "- Closed Testing versionCode: `4128601`"
+              echo "- Closed Testing versionCode: `4128701`"
               echo "- Changes submitted for review: **Yes**"
               echo "- Production track touched: **No**"
             fi
