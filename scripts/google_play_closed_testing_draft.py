@@ -253,6 +253,23 @@ def main() -> None:
         else:
             current_releases = list(track.get("releases", []))
 
+        # Diagnostic read-back only. Keep this output limited to non-sensitive
+        # release metadata so an existing Console draft can be identified safely.
+        print("PLAY_CLOSED_TRACK_PRECHECK=" + json.dumps({
+            "packageName": PACKAGE_NAME,
+            "track": TRACK_NAME,
+            "trackExists": track is not None,
+            "highestVersionCodeAcrossTracks": highest_existing,
+            "releases": [
+                {
+                    "name": release.get("name"),
+                    "status": release.get("status"),
+                    "versionCodes": [str(code) for code in release.get("versionCodes", [])],
+                }
+                for release in current_releases
+            ],
+        }, ensure_ascii=False))
+
         existing_version_draft = None
         for release in current_releases:
             versions = {str(code) for code in release.get("versionCodes", [])}
@@ -265,7 +282,8 @@ def main() -> None:
                 existing_version_draft = release
             elif release.get("status") == "draft":
                 raise RuntimeError(
-                    "The target track already has a different draft release. Inspect it in Play Console first."
+                    "The target track already has a different draft release with versionCodes="
+                    f"{sorted(versions)}. No existing draft, bundle, listing image or tester setting was changed."
                 )
 
         # App metadata and localized store listings.
