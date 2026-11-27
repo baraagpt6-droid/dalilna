@@ -1,0 +1,26 @@
+name: Cancel accidental no-build release rebuild
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/cancel-accidental-android-build.yml"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  cancel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel the unintended Android build run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: "45926587858"
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh run cancel "$RUN_ID" --repo "$GITHUB_REPOSITORY"
+          echo "Cancellation requested for the unintended run $RUN_ID."
