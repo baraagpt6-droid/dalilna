@@ -50,8 +50,8 @@ RELEASE_NOTES = {
 
 
 def validate_stage_only_inputs(existing_edit_id: str, testers_google_group: str) -> None:
-    if not existing_edit_id.strip():
-        raise ValueError("--stage-only requires an existing Play edit ID")
+    # A fresh isolated edit is valid after the separate read-only preflight.
+    # An optional existing edit is reused only if Google confirms it is active.
     if testers_google_group.strip():
         raise ValueError("--stage-only must preserve the existing tester configuration")
 
@@ -239,18 +239,39 @@ def prepare_closed_track_releases(existing_releases: list[dict]) -> list[dict]:
 def inspect_play_state(api: PlayApi, existing_edit_id: str | None = None) -> dict:
     """Read Play state through an edit, without uploading or committing anything."""
     package_path = f"/applications/{quote(PACKAGE_NAME, safe='')}"
-    created_edit = not bool(existing_edit_id)
+    created_edit = False
+    expired_edit_replaced = False
+    edit_info = None
     if existing_edit_id:
         edit_id = existing_edit_id
-        api.api("GET", f"{package_path}/edits/{quote(edit_id, safe='')}")
+        try:
+            edit_info = api.api("GET", f"{package_path}/edits/{quote(edit_id, safe='')}")
+        except RuntimeError as exc:
+            if "This edit has expired" not in str(exc):
+                raise
+            expired_edit_replaced = True
+            print("PLAY_EXISTING_EDIT_EXPIRED=" + json.dumps({
+                "editId": edit_id,
+                "action": "create_temporary_read_only_edit",
+            }))
+            response = api.api("POST", f"{package_path}/edits", json_body={})
+            edit_id = response["id"]
+            created_edit = True
     else:
         response = api.api("POST", f"{package_path}/edits", json_body={})
         edit_id = response["id"]
+        created_edit = True
 
     edit_path = f"{package_path}/edits/{quote(edit_id, safe='')}"
-    result: dict = {"packageName": PACKAGE_NAME, "editId": edit_id}
+    result: dict = {
+        "packageName": PACKAGE_NAME,
+        "editId": edit_id,
+        "requestedEditId": existing_edit_id or None,
+        "expiredEditReplaced": expired_edit_replaced,
+    }
     try:
-        edit_info = api.api("GET", edit_path)
+        if edit_info is None:
+            edit_info = api.api("GET", edit_path)
         result["edit"] = {
             "id": edit_info.get("id", edit_id),
             "expiryTimeSeconds": edit_info.get("expiryTimeSeconds"),
@@ -422,11 +443,13 @@ def main() -> None:
         inspect_play_state(api, args.existing_edit_id.strip() or None)
         return
 
-    if args.aab is None or args.assets_dir is None:
-        parser.error("--stage-only and --submit-for-review require --aab and --assets-dir")
+    if args.aab is None:
+        parser.error("--stage-only and --submit-for-review require --aab")
     if not args.aab.is_file():
         raise FileNotFoundError(args.aab)
-    if not args.assets_dir.is_dir():
+    if not args.stage_only and args.assets_dir is None:
+        parser.error("--submit-for-review requires --assets-dir")
+    if not args.stage_only and not args.assets_dir.is_dir():
         raise FileNotFoundError(args.assets_dir)
 
     actual_hash = hashlib.sha256(args.aab.read_bytes()).hexdigest()
@@ -439,29 +462,48 @@ def main() -> None:
     if args.stage_only:
         validate_stage_only_inputs(args.existing_edit_id, google_group)
 
-    assets = {
-        "icon": [args.assets_dir / "icon.png"],
-        "featureGraphic": [args.assets_dir / "feature-graphic.png"],
-        "phoneScreenshots": sorted((args.assets_dir / "phone").glob("*.png")),
-        "tenInchScreenshots": sorted((args.assets_dir / "tablet").glob("*.png")),
-    }
-    if any(not paths for paths in assets.values()):
-        raise RuntimeError("One or more Play image groups are empty")
-    if len(assets["phoneScreenshots"]) != 4 or len(assets["tenInchScreenshots"]) != 4:
-        raise RuntimeError("Expected exactly four phone and four 10-inch tablet screenshots")
+    assets = {}
+    if not args.stage_only:
+        assets = {
+            "icon": [args.assets_dir / "icon.png"],
+            "featureGraphic": [args.assets_dir / "feature-graphic.png"],
+            "phoneScreenshots": sorted((args.assets_dir / "phone").glob("*.png")),
+            "tenInchScreenshots": sorted((args.assets_dir / "tablet").glob("*.png")),
+        }
+        if any(not paths for paths in assets.values()):
+            raise RuntimeError("One or more Play image groups are empty")
+        if len(assets["phoneScreenshots"]) != 4 or len(assets["tenInchScreenshots"]) != 4:
+            raise RuntimeError("Expected exactly four phone and four 10-inch tablet screenshots")
 
     api = PlayApi()
     package_path = f"/applications/{quote(PACKAGE_NAME, safe='')}"
 
-    # Stage-only must reuse the explicitly supplied active edit so the current
-    # Play draft remains isolated from any new edit that could supersede it.
-    if args.stage_only:
-        edit_id = args.existing_edit_id.strip()
-        api.api("GET", f"{package_path}/edits/{quote(edit_id, safe='')}")
+    # Stage-only uses a fresh isolated edit after the workflow's read-only
+    # preflight. An explicitly supplied edit is reused only while still active.
+    edit_reused = False
+    if args.stage_only and args.existing_edit_id.strip():
+        candidate_id = args.existing_edit_id.strip()
+        try:
+            api.api("GET", f"{package_path}/edits/{quote(candidate_id, safe='')}")
+            edit_id = candidate_id
+            edit_reused = True
+        except RuntimeError as exc:
+            if "This edit has expired" not in str(exc):
+                raise
+            print("PLAY_STAGE_OLD_EDIT_EXPIRED=" + json.dumps({
+                "editId": candidate_id,
+                "action": "create_fresh_stage_edit",
+            }))
+            preflight = api.api("POST", f"{package_path}/edits", json_body={})
+            edit_id = preflight["id"]
     else:
-        # Submission mode gets its own isolated edit.
         preflight = api.api("POST", f"{package_path}/edits", json_body={})
         edit_id = preflight["id"]
+    print("PLAY_STAGE_EDIT=" + json.dumps({
+        "editId": edit_id,
+        "existingEditReused": edit_reused,
+        "newIsolatedEdit": not edit_reused,
+    }))
     committed = False
     try:
         tracks_path = f"{package_path}/edits/{quote(edit_id, safe='')}/tracks"
@@ -533,34 +575,36 @@ def main() -> None:
                         "No release was changed."
                     )
 
-        # App metadata and localized store listings.
-        api.api(
-            "PATCH",
-            f"{package_path}/edits/{quote(edit_id, safe='')}/details",
-            json_body={
-                "defaultLanguage": "ar",
-                "contactEmail": SUPPORT_EMAIL,
-                "contactWebsite": WEBSITE,
-            },
-        )
-
-        for locale in ("ar", "en-US"):
-            listing = read_listing(root, locale)
+        if not args.stage_only:
+            # Store metadata and artwork are excluded from STAGE_ONLY.
+            # This edit is limited to the bundle and target Closed Testing track.
             api.api(
-                "PUT",
-                f"{package_path}/edits/{quote(edit_id, safe='')}/listings/{quote(locale, safe='')}",
+                "PATCH",
+                f"{package_path}/edits/{quote(edit_id, safe='')}/details",
                 json_body={
-                    "language": locale,
-                    "title": listing["title"],
-                    "shortDescription": listing["shortDescription"],
-                    "fullDescription": listing["fullDescription"],
+                    "defaultLanguage": "ar",
+                    "contactEmail": SUPPORT_EMAIL,
+                    "contactWebsite": WEBSITE,
                 },
             )
 
-        # Preserve existing artwork; fill only image groups that are currently empty.
-        for locale in ("ar", "en-US"):
-            for image_type, image_paths in assets.items():
-                upload_image_group(api, package_path, edit_id, locale, image_type, image_paths)
+            for locale in ("ar", "en-US"):
+                listing = read_listing(root, locale)
+                api.api(
+                    "PUT",
+                    f"{package_path}/edits/{quote(edit_id, safe='')}/listings/{quote(locale, safe='')}",
+                    json_body={
+                        "language": locale,
+                        "title": listing["title"],
+                        "shortDescription": listing["shortDescription"],
+                        "fullDescription": listing["fullDescription"],
+                    },
+                )
+
+            # Preserve existing artwork; fill only image groups that are currently empty.
+            for locale in ("ar", "en-US"):
+                for image_type, image_paths in assets.items():
+                    upload_image_group(api, package_path, edit_id, locale, image_type, image_paths)
 
         # Reuse the bundle if the owner performed the one-time Console bootstrap.
         # Never upload a second copy of the same versionCode if Google already knows it.
@@ -636,6 +680,10 @@ def main() -> None:
                 "track": TRACK_NAME,
                 "releaseStatus": "draft",
                 "googleGroupCount": len(existing_groups),
+                "existingEditReused": edit_reused,
+                "storeListingMetadataChanged": False,
+                "storeArtworkChanged": False,
+                "testerConfigurationChanged": False,
                 "productionTouched": False,
                 "changesCommitted": False,
                 "changesSentForReview": False,
