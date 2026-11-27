@@ -21,6 +21,7 @@ on:
       - 'v3.0.0.css'
       - 'jobs-feed.json'
       - 'privacy.html'
+      - 'data-deletion.html'
       - 'store/**'
       - 'terms.html'
       - 'manifest.json'
@@ -60,7 +61,7 @@ jobs:
       - name: Prepare website files
         run: |
           mkdir -p _site/icons _site/regional-catalog _site/market-price-images _site/store
-          cp index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json regional-catalog-runtime.js marketplace-client.js market_items.json features-2.1.js features-2.1.css v3.0.0.js v3.0.0.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html terms.html app-ads.txt _site/
+          cp index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json regional-catalog-runtime.js marketplace-client.js market_items.json features-2.1.js features-2.1.css v3.0.0.js v3.0.0.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html data-deletion.html terms.html app-ads.txt _site/
           cp store/index.html _site/store/index.html
           cp icons/* _site/icons/
           cp market-price-images/*.svg _site/market-price-images/
@@ -106,9 +107,10 @@ jobs:
             }
             throw lastError;
           }
-          const [page, privacyResponse, css, js, v3jsResponse, v3cssResponse, swResponse, manifestResponse, pwaManifestResponse, versionResponse, marketItemsResponse, lightIndexResponse, priceGuideResponse, priceGuideJsResponse, nativeBridgeResponse, appUpdateResponse, jobsFeedResponse] = await Promise.all([
+          const [page, privacyResponse, deletionResponse, css, js, v3jsResponse, v3cssResponse, swResponse, manifestResponse, pwaManifestResponse, versionResponse, marketItemsResponse, lightIndexResponse, priceGuideResponse, priceGuideJsResponse, nativeBridgeResponse, appUpdateResponse, jobsFeedResponse] = await Promise.all([
             get("./index.html"),
             get("./privacy.html"),
+            get("./data-deletion.html"),
             get("./features-2.1.css?v=3.1.0"),
             get("./features-2.1.js?v=3.1.0"),
             get("./v3.0.0.js?v=3.1.0"),
@@ -127,10 +129,12 @@ jobs:
           ]);
           const html = await page.text();
           const privacy = await privacyResponse.text();
+          const deletion = await deletionResponse.text();
           const storeResponse = await get("./store/");
           const storePage = await storeResponse.text();
           if (!storePage.includes("دليلنا") || !storePage.includes("Dalilna Team") || !storePage.includes("dalilnasupport@gmail.com") || !storePage.includes("mailto:dalilnasupport@gmail.com")) throw new Error("The public Dalilna landing page is missing the official developer display name or support contact link.");
-          if (!privacy.includes("dalilnasupport@gmail.com") || !privacy.includes("mailto:dalilnasupport@gmail.com")) throw new Error("The public privacy policy is missing the official support and data-removal email.");
+          if (!privacy.includes("dalilnasupport@gmail.com") || !privacy.includes("mailto:dalilnasupport@gmail.com") || !privacy.includes("./data-deletion.html")) throw new Error("The public privacy policy is missing the official support and data-removal links.");
+          if (!deletion.includes("dalilnasupport@gmail.com") || !deletion.includes("mailto:dalilnasupport@gmail.com") || !deletion.includes("طلب مراجعة أو حذف البيانات")) throw new Error("The public data-deletion page is missing its request instructions or support contact.");
           const termsResponse = await get("./terms.html");
           const terms = await termsResponse.text();
           if (!terms.includes("dalilnasupport@gmail.com") || !terms.includes("mailto:dalilnasupport@gmail.com")) throw new Error("The public terms page is missing the official support contact.");
