@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
-"""Stage the just-built Dalilna AAB as a non-live Closed Testing draft.
+"""Smart-publish a verified Dalilna AAB to Closed Testing, with draft fallback.
 
-Safety scope:
-- package is pinned to ye.dalilna.app
-- track is pinned to Dalilna Closed Testing
-- release status is always draft
-- no Production, tester, listing, pricing, or account-level methods are called
-- commit uses ERROR_IF_IN_REVIEW so an existing Play review is never cancelled
+Safety scope: ye.dalilna.app and Dalilna Closed Testing only. Try completed with
+ERROR_IF_IN_REVIEW. If Google reports CHANGES_ALREADY_IN_REVIEW, save the same
+AAB as draft using that same guard. Never cancel an existing review or write
+Production, tester, listing, pricing, or account-level resources.
 """
 from __future__ import annotations
 import argparse
@@ -16,6 +14,8 @@ import os
 import sys
 from pathlib import Path
 from urllib.parse import quote
+
+from smart_publish_closed_testing import PlayApiError, commit_release_with_review_fallback
 
 PACKAGE_NAME = "ye.dalilna.app"
 TRACK_NAME = "Dalilna Closed Testing"
@@ -46,16 +46,16 @@ def parse_bundle_metadata(metadata: dict, expected_package: str = PACKAGE_NAME) 
 
 
 def validate_release_status(status: str) -> None:
-    if status != "draft":
-        raise ValueError("Automatic staging is restricted to release status 'draft'")
+    if status not in {"draft", "completed"}:
+        raise ValueError("Closed Testing release status must be draft or completed")
 
 
-def build_draft_release(version_code: int, version_name: str) -> dict:
-    validate_release_status("draft")
+def build_draft_release(version_code: int, version_name: str, status: str = "draft") -> dict:
+    validate_release_status(status)
     return {
         "name": f"Dalilna {version_name} preview {version_code}",
         "versionCodes": [str(version_code)],
-        "status": "draft",
+        "status": status,
     }
 
 
@@ -95,11 +95,8 @@ class PlayApi:
             try:
                 detail = response.json()
             except ValueError:
-                detail = response.text[:1600]
-            raise RuntimeError(
-                f"Google Play API {method} {path} returned "
-                f"HTTP {response.status_code}: {detail}"
-            )
+                detail = {"error": {"message": response.text[:1600]}}
+            raise PlayApiError(method, path, response.status_code, detail)
         return response.json() if response.content else {}
 
     def upload(self, edit_path: str, aab_path: Path) -> dict:
@@ -194,21 +191,11 @@ def stage_draft(api: PlayApi, aab_path: Path, metadata_path: Path) -> dict:
             if returned_hash and returned_hash != digest:
                 raise RuntimeError("Google Play upload SHA-256 did not match the local AAB")
 
-        releases.append(build_draft_release(version_code, version_name))
-        api.request(
-            "PUT",
-            edit_path + f"/tracks/{quote(TRACK_NAME, safe='')}",
-            body={"track": TRACK_NAME, "releases": releases},
+        releases.append(build_draft_release(version_code, version_name, "completed"))
+        publication = commit_release_with_review_fallback(
+            api, edit_path, tracks_path, TRACK_NAME, releases, version_code
         )
-        api.request("POST", edit_path + ":validate")
-
-        # This is the critical guard: Google must reject the commit if another
-        # review is in progress, rather than cancel or replace that review.
-        api.request(
-            "POST",
-            edit_path + ":commit",
-            params={"changesInReviewBehavior": "ERROR_IF_IN_REVIEW"},
-        )
+        release_status = publication["releaseStatus"]
         committed = True
 
         # Read back the committed Closed Testing draft in a fresh, disposable edit.
@@ -228,8 +215,8 @@ def stage_draft(api: PlayApi, aab_path: Path, metadata_path: Path) -> dict:
                 item for item in verified_releases
                 if str(version_code) in {str(code) for code in item.get("versionCodes", [])}
             ]
-            if len(match) != 1 or match[0].get("status") != "draft":
-                raise RuntimeError("The committed version did not read back as a Closed Testing draft")
+            if len(match) != 1 or match[0].get("status") != release_status:
+                raise RuntimeError(f"The committed version did not read back as {release_status}")
             verified_bundles = api.request("GET", verify_path + "/bundles").get("bundles", []) or []
             verified_bundle = next(
                 (item for item in verified_bundles if int(item.get("versionCode", 0)) == version_code),
@@ -248,12 +235,14 @@ def stage_draft(api: PlayApi, aab_path: Path, metadata_path: Path) -> dict:
             "track": TRACK_NAME,
             "versionName": version_name,
             "versionCode": version_code,
-            "releaseStatus": "draft",
+            "releaseStatus": release_status,
             "aabSha256": digest,
             "aabBytes": aab_path.stat().st_size,
-            "draftAvailableToTesters": False,
+            "availableToTesters": release_status == "completed",
             "readBackVerified": True,
-            "reviewSubmissionRequested": False,
+            "reviewInProgressFallback": publication["reviewInProgressFallback"],
+            "reviewConflictReason": publication["reviewConflictReason"],
+            "reviewSubmissionRequested": release_status == "completed",
             "productionTouched": False,
             "testerConfigurationChanged": False,
         }
@@ -274,16 +263,17 @@ def main() -> int:
         if os.environ.get("GITHUB_REF") not in (None, "refs/heads/main"):
             raise RuntimeError("Play draft staging is restricted to main")
         result = stage_draft(PlayApi(), args.aab, args.metadata)
-        print("DALILNA_PLAY_DRAFT_STAGED=" + json.dumps(result, ensure_ascii=False))
+        print("DALILNA_PLAY_SMART_PUBLISH=" + json.dumps(result, ensure_ascii=False))
         summary = [
-            "## Dalilna Google Play — Closed Testing draft",
+            "## Dalilna Google Play — Smart Closed Testing publication",
             "",
             f"- Package: {result['packageName']}",
             f"- Track: {result['track']}",
             f"- Version: {result['versionName']} ({result['versionCode']})",
-            "- Release status: draft",
-            "- Available to testers: no",
-            "- Review submission requested: no",
+            f"- Release status: {result['releaseStatus']}",
+            f"- Available to testers: {'yes' if result['availableToTesters'] else 'no — safely retained as draft'}",
+            f"- Active-review fallback: {'used' if result['reviewInProgressFallback'] else 'not needed'}",
+            f"- Review submission requested: {'yes' if result['reviewSubmissionRequested'] else 'no'}",
             "- Production modified: no",
             "- Tester configuration modified: no",
             f"- AAB SHA-256: {result['aabSha256']}",
@@ -294,12 +284,12 @@ def main() -> int:
                 handle.write("\n".join(summary) + "\n")
         return 0
     except Exception as exc:
-        print(f"Dalilna Play draft staging failed safely: {exc}", file=sys.stderr)
+        print(f"Dalilna smart Closed Testing publication stopped safely: {exc}", file=sys.stderr)
         summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
         if summary_path:
             with open(summary_path, "a", encoding="utf-8") as handle:
                 handle.write(
-                    "## Dalilna Google Play — Draft staging blocked\n\n"
+                    "## Dalilna Google Play — Smart publication blocked safely\n\n"
                     f"No unverified release was published.\n\n{str(exc)[:1500]}\n"
                 )
         return 1
