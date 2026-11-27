@@ -236,12 +236,12 @@ All public app features are available without signing in. Open Dalilna and brows
 - `targetSdk = 36`.
 - `minSdk = 24`.
 - `versionName = 3.1.0`.
-- رمز الإصدار الحالي في ملف البيانات `version.json` هو `3127201`. يولّد سير عمل الإصدار رمزاً متزايداً عند البناء.
+- رمز الإصدار الموجود في بيانات OTA الجذرية ليس مرجعاً لحزمة Google Play الداخلية. رمز الإصدار المؤكد في Play عبر API هو `4100101`؛ لا تغيّره ولا ترفع فوقه إصداراً جديداً في هذه المهمة.
 - سير CI يحتوي على خطوة `bundleRelease` لإنشاء AAB، ويستخدم مفتاح توقيع دائم.
 
 تم إنشاء ملف الإصدار والتحقق منه بالفعل:
 
-- الإصدار المنشور: `3.1.0`، versionCode `3127201`، package `ye.dalilna.app`.
+- إصدار Web/OTA المحفوظ في أصول GitHub Release التاريخية: `3.1.0`، وقد سُجل versionCode `3127401` لتلك الأصول. حزمة Google Play الداخلية مستقلة ورقمها المؤكد عبر API هو `4100101`.
 - ملف AAB موقع بمفتاح الإصدار الدائم، وقد اجتاز التحقق من التوقيع.
 - ملف APK موقع أيضاً، واجتاز التحقق من رقم الإصدار ومعرّف الحزمة.
 - GitHub Release: https://github.com/baraagpt6-droid/dalilna/releases/tag/v3.1.0
@@ -315,6 +315,10 @@ All public app features are available without signing in. Open Dalilna and brows
 - [x] إنشاء لقطات الهاتف والتابلت في ZIP عبر GitHub Actions. شغّل workflow run 45678040821، artifact id 15052333473؛ ينتهي الاحتفاظ به في 25 ديسمبر 2026.
 - [ ] تصدير أيقونة Play PNG بمقاس 512×512 وصورة مميزة بمقاس 1024×500.
 - [x] إنشاء AAB وAPK موقعين والتحقق من التوقيع والنسخة ورمز الإصدار. AAB الحالي versionCode 3127201.
+- [ ] إضافة حسابات المختبرين أو Google Group لمسار internal. قراءة API بتاريخ 27 نوفمبر 2026 أكدت أن عدد المجموعات وقوائم البريد الحالية يساوي صفراً؛ بعد الإضافة انسخ رابط opt-in الرسمي.
+- [ ] منح حساب الخدمة صلاحية Manage store presence على تطبيق Dalilna حتى تنجح عملية حفظ نصوص المتجر؛ آخر API recheck رجع HTTP 403.
+- [ ] رفع أيقونة 512×512 PNG ورسمة Feature Graphic ‏1024×500 ولقطات الشاشة من Artifact إلى Play Console.
+- [ ] إكمال إقرارات Ads وApp content وIARC داخل Play Console قبل أي مسار مغلق/مفتوح/إنتاجي.
 - [ ] إكمال الاختبار المغلق إذا كان مطلوباً للحساب.
 
 
