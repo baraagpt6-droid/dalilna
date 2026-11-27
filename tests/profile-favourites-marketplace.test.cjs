@@ -15,7 +15,7 @@ test("customer and merchant identities share a phone but persist separate names 
   assert.match(html, /activeRole:profileRaw\.activeRole==="merchant"/);
   assert.match(html, /S\.profile=\{customerName,storeName,phone,activeRole:current\.activeRole==="merchant"\?"merchant":"customer"\}/);
   assert.match(html, /S\.session=profile\.activeRole==="merchant"/);
-  assert.match(html, /profile\.activeRole==="merchant"\?profile\.storeName:profile\.customerName/);
+  assert.match(html, /const merchant=profile\.activeRole==="merchant"/);\n  assert.match(html, /merchant\?\(profile\.storeName/);
   assert.ok(html.includes('data-profile-role="customer"'));
   assert.ok(html.includes('data-profile-role="merchant"'));
   assert.ok(html.includes('id="profileEditForm"'));
