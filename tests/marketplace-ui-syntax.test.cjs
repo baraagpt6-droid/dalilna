@@ -15,7 +15,7 @@ test("smart search uses the local catalogue first and Nominatim as its live fall
  assert.ok(!html.includes("/api/geoapify/search"));
 });
 test("Android and PWA assets remain byte-for-byte aligned",()=>{
- for(const name of ["index.html","sw.js","marketplace-client.js","regional-catalog-runtime.js","features-2.1.js","features-2.1.css","jobs-feed.json"])assert.equal(fs.readFileSync("android/app/src/main/assets/"+name,"utf8"),fs.readFileSync(name,"utf8"),name+" mismatch");
+ for(const name of ["index.html","sw.js","v3.0.0.js","v3.0.0.css","marketplace-client.js","regional-catalog-runtime.js","features-2.1.js","features-2.1.css","jobs-feed.json"])assert.equal(fs.readFileSync("android/app/src/main/assets/"+name,"utf8"),fs.readFileSync(name,"utf8"),name+" mismatch");
 });
 test("marketplace form includes product and rental categories",()=>{
  for(const type of ["phone","car","motorcycle","land","property","apartment","house","honey","coffee","stationery","solar_equipment"])assert.ok(html.includes('value="'+type+'"'),type);
@@ -59,7 +59,7 @@ test("PWA version metadata and asset cache tags are 3.1.0",()=>{
  assert.ok(html.includes('content="3.1.0"'));
  assert.ok(html.includes('features-2.1.css?v=3.1.0'));
  assert.ok(html.includes('features-2.1.js?v=3.1.0'));
- assert.ok(sw.includes('CACHE_PREFIX + "v3.1.0-store-safe1"'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v3.1.0-profile-identity1"'));
  assert.ok(sw.includes('"./market_items.json"'));
 });
 test("main directory search loads regional data progressively and persists small chunks",()=>{
@@ -166,7 +166,7 @@ test("merchant feed SQL maps latitude, longitude and source metadata to distinct
  assert.ok(feed.includes("completeSnapshot&&skipped===0"));
 });
 test("Android 3.1.0 cache and version metadata remain synchronized",()=>{
- assert.ok(sw.includes('CACHE_PREFIX + "v3.1.0-store-safe1"'));
+ assert.ok(sw.includes('CACHE_PREFIX + "v3.1.0-profile-identity1"'));
  assert.ok(html.includes('content="3.1.0"'));
  const gradle=fs.readFileSync("android/app/build.gradle.kts","utf8");
  assert.ok(gradle.includes("versionCodeForBuild = 3_100_000 + (workflowRunNumber * 100)"));
@@ -205,12 +205,14 @@ test("regional catalogue manifest loads at first visit without warming all gover
  assert.ok(html.includes('districtCounts.length!==335'));
  assert.ok(!html.includes('loadRegionalCatalogManifest(false).then(()=>warmUnifiedSearchIndex(false))'));
 });
-test("service worker refreshes regional data and critical CSS/JS from the network",()=>{
- assert.ok(sw.includes('CACHE_PREFIX + "v3.1.0-store-safe1"'));
+test("service worker refreshes regional data and the profile/Add hub assets from the network",()=>{
+ assert.ok(sw.includes('CACHE_PREFIX + "v3.1.0-profile-identity1"'));
  assert.ok(sw.includes('url.pathname.includes("/regional-catalog/")'));
  assert.ok(sw.includes('url.pathname.endsWith("/app-update.js")'));
  assert.ok(sw.includes('fetch(request, { cache: "no-store" })'));
  assert.ok(sw.includes('app-update.js?v=3.1.0-store-safe1'));
+ assert.ok(sw.includes('v3.0.0.js?v=3.1.0-profile-identity1'));
+ assert.ok(sw.includes('v3.0.0.css?v=3.1.0-profile-identity1'));
  assert.ok(sw.includes('features-2.1.css?v=3.1.0'));
 });
 
