@@ -60,6 +60,12 @@ on:
       # Play status monitoring is read-only and must not trigger an Android release build.
       - '!scripts/play_status_monitor.py'
       - '!scripts/test_play_status_monitor.py'
+      # Play draft staging helpers execute inside this release workflow; editing them alone must not rebuild Android.
+      - '!scripts/stage_google_play_draft.py'
+      - '!scripts/test_stage_google_play_draft.py'
+      - '!scripts/publish_approved_release.py'
+      - '!scripts/test_publish_approved_release.py'
+      - '!.github/workflows/publish-approved-release.yml'
       - '!.github/workflows/play-status-monitor.yml'
       - '!google-play/**'
       - '!store-assets/**'
