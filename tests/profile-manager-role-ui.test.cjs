@@ -51,9 +51,9 @@ test("merchant setup requires store details and offers public-record lookup", ()
     "profileMerchantQuickActions", "profileAddShopButton", "profileAddAdButton"
   ]) assert.ok(dialog.includes('id="' + id + '"'), id);
   for (const id of ["profileCustomerCityInputButton","profileCustomerCityInputLabel","profileStoreCategoryInputButton","profileStoreCategoryInputLabel","profileStoreCityInputButton","profileStoreCityInputLabel"]) assert.ok(dialog.includes('id="' + id + '"'), id);
-  assert.match(dialog, /id="profileCustomerCityInput" type="hidden"/);
-  assert.match(dialog, /id="profileStoreCategoryInput" type="hidden"/);
-  assert.match(dialog, /id="profileStoreCityInput" type="hidden"/);
+  assert.match(dialog, /<input type="hidden" id="profileCustomerCityInput"/);
+  assert.match(dialog, /<input type="hidden" id="profileStoreCategoryInput"/);
+  assert.match(dialog, /<input type="hidden" id="profileStoreCityInput"/);
   assert.doesNotMatch(dialog, /<select[^>]+id="(?:profileCustomerCityInput|profileStoreCategoryInput|profileStoreCityInput)"/);
   const save = block(manager, "function save(event)", "function categoryFromRecord");
   assert.match(save, /if \(!patch\.storeName \|\| !patch\.storeCategory \|\| !patch\.storeCity\)/);

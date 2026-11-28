@@ -105,5 +105,6 @@ test("Google Play remains the only update destination and Service Worker cache i
   assert.equal(Object.hasOwn(version, "androidReleaseUrl"), false);
   assert.ok(updater.includes("window.location.assign(PLAY_STORE_URL)"));
   assert.doesNotMatch(updater, /github\.com|app-release\.apk|androidReleaseUrl/i);
-  assert.ok(sw.includes('CACHE_PREFIX + "v3.1.0-merchant-profile2"'));
+  assert.ok(sw.includes('CACHE_PREFIX + "v3.1.0-ui-unified1"'));
+  assert.ok(sw.includes("./profile-manager.js?v=3.1.0-ui-unified1"));
 });
