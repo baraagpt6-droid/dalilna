@@ -171,6 +171,7 @@ jobs:
           node - <<'NODE'
           const fs = require("node:fs");
           const file = "version.json";
+          const version = JSON.parse(fs.readFileSync(file, "utf8"));
           const versionCode = Number(version.androidVersionCode);
           if (!Number.isSafeInteger(versionCode) || versionCode !== 4129901 ||
               Number(version.versionCode) !== versionCode) {
@@ -184,7 +185,7 @@ jobs:
           version.androidVersion = "3.1.0";
           version.versionCode = versionCode;
           version.androidVersionCode = versionCode;
-          version.androidSigningMode = process.env.APK_SIGNING_MODE || "persistent";          version.androidSigningMode = process.env.APK_SIGNING_MODE || "persistent";
+          version.androidSigningMode = process.env.APK_SIGNING_MODE || "persistent";
           delete version.androidReleaseUrl;
           version.androidStoreUrl = "https://play.google.com/store/apps/details?id=ye.dalilna.app";
           version.officialWebUrl = "https://baraagpt6-droid.github.io/dalilna/";
