@@ -149,7 +149,7 @@ test("Android update notices and settings route only to the official Google Play
   assert.ok(update.includes("window.location.assign(PLAY_STORE_URL)"));
   assert.doesNotMatch(update, /github\.com|androidReleaseUrl|app-release\.apk/i);
   assert.ok(html.includes('id="profileStoreUpdateLink" href="https://play.google.com/store/apps/details?id=ye.dalilna.app"'));
-  assert.ok(html.includes("تُحفظ البيانات محلياً على هذا الجهاز دون تأكيد عبر البريد الإلكتروني."));
+  assert.ok(html.includes("يُحفظ اسم المستفيد واسم المحل ورقم الجوال الموحد محلياً على هذا الجهاز، ولا تمثل هذه البيانات حساباً مركزياً موثقاً."));
   assert.ok(html.includes('id="profileEditForm"'));
   assert.ok(customerScript.includes("api.openProfileEditor("));
   assert.doesNotMatch(customerScript, /v3CustomerDialog|v3CustomerRegisterBtn/);
