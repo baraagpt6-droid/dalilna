@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Independent post-release readback for Closed Testing versionCode 4129901.
 """Read-only Google Play status monitor for Dalilna.
 
 Creates a temporary Android Publisher edit, reads committed tracks/bundles and
