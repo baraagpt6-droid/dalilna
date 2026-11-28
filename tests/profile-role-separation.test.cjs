@@ -11,7 +11,7 @@ const html = read("index.html");
 const css = read("v3.0.0.css");
 
 test("the unified profile has distinct customerName and storeName fields", () => {
-  assert.match(html, /profile:\{customerName:"",storeName:"",phone:"",activeRole:"customer"\}/);
+  assert.match(html, /profile:\{customerName:"",customerCity:"",storeName:"",storeCategory:"",storeCity:"",storeArea:"",merchantCreatedAt:0,phone:"",activeRole:"customer"\}/);
   assert.match(html, /activeRole:profileRaw\.activeRole==="merchant"/);
   assert.match(html, /customerName:cleanText\(profileRaw\.customerName\|\|legacyCustomer\.customerName\|\|legacyCustomer\.name/);
   assert.match(html, /storeName:cleanText\(profileRaw\.storeName\|\|legacyMerchant\.storeName\|\|legacyMerchant\.name/);
@@ -24,7 +24,8 @@ test("active role determines the profile heading and merchant tools visibility",
   assert.match(html, /const merchant=profile\.activeRole==="merchant"/);
   assert.match(html, /merchant\?\(profile\.storeName/);
   assert.match(html, /S\.session=profile\.activeRole==="merchant"/);
-  assert.match(html, /const active=S\.session\.role==="merchant"&&profile\.activeRole==="merchant"&&!!profile\.storeName&&!!profile\.phone/);
+  assert.match(html, /S\.session=profile\.activeRole==="merchant"\s*\?\{role:"merchant"/);
+  assert.match(html, /function merchantProfileReady\(profile=S\.profile\)/);
   assert.match(html, /openProfileEditor\(\{merchantSetup:true\}\)/);
 });
 
@@ -44,7 +45,7 @@ test("account card has one role switcher and a deliberate profile editor, with n
   assert.ok(dialog.includes('data-profile-role="customer"'));
   assert.ok(dialog.includes('data-profile-role="merchant"'));
   assert.ok(dialog.includes('id="profileEditToggle"'));
-  assert.ok(dialog.includes("تعديل الاسم أو الرقم"));
+  assert.ok(dialog.includes("تعديل البيانات"));
   assert.ok(dialog.includes('id="profileEditForm"'));
   assert.ok(dialog.includes('id="profileStoreNameInput"'));
   assert.ok(!dialog.includes('id="roleClientBtn"'));

@@ -9,11 +9,15 @@ const read = file => fs.readFileSync(path.join(root, file), "utf8");
 
 test("customer and merchant identities share a phone but persist separate names and active role", () => {
   const html = read("index.html");
-  assert.match(html, /profile:\{customerName:"",storeName:"",phone:"",activeRole:"customer"\}/);
+  assert.match(html, /profile:\{customerName:"",customerCity:"",storeName:"",storeCategory:"",storeCity:"",storeArea:"",merchantCreatedAt:0,phone:"",activeRole:"customer"\}/);
   assert.match(html, /customerName:cleanText\(profileRaw\.customerName\|\|legacyCustomer\.customerName\|\|legacyCustomer\.name/);
   assert.match(html, /storeName:cleanText\(profileRaw\.storeName\|\|legacyMerchant\.storeName\|\|legacyMerchant\.name/);
   assert.match(html, /activeRole:profileRaw\.activeRole==="merchant"/);
-  assert.match(html, /S\.profile=\{customerName,storeName,phone,activeRole:current\.activeRole==="merchant"\?"merchant":"customer"\}/);
+  assert.match(html, /saveProfile:\(patch=\{\}\)=>/);
+  assert.match(html, /customerName:typeof patch\.customerName==="string"\?cleanText\(patch\.customerName,80\):current\.customerName/);
+  assert.match(html, /storeName:typeof patch\.storeName==="string"\?cleanText\(patch\.storeName,80\):current\.storeName/);
+  assert.match(html, /phone:typeof patch\.phone==="string"\?cleanText\(patch\.phone,40\):current\.phone/);
+  assert.match(html, /activeRole:patch\.activeRole==="merchant"\?"merchant":patch\.activeRole==="customer"\?"customer":current\.activeRole/);
   assert.match(html, /S\.session=profile\.activeRole==="merchant"/);
   assert.match(html, /const merchant=profile\.activeRole==="merchant"/);
   assert.match(html, /merchant\?\(profile\.storeName/);
@@ -31,7 +35,7 @@ test("customer and merchant identities share a phone but persist separate names 
 test("switching a customer to merchant asks for storeName and preserves customerName and phone", () => {
   const html = read("index.html");
   assert.match(html, /function setProfileRole\(role,options=\{\}\)/);
-  assert.match(html, /if\(nextRole==="merchant"&&!S\.profile\.storeName\)openProfileEditor\(\{merchantSetup:true\}\)/);
+  assert.match(html, /if\(nextRole==="merchant"&&!merchantProfileReady\(S\.profile\)\)openProfileEditor\(\{merchantSetup:true\}\)/);
   assert.match(html, /const hasCustomer=!!\(profile\.customerName&&profile\.phone\)/);
   assert.match(html, /\$\("#profileCustomerNameRow"\)\.hidden=mode==="merchant-setup"&&hasCustomer/);
   assert.match(html, /\$\("#profilePhoneRow"\)\.hidden=mode==="merchant-setup"&&!!profile\.phone/);
@@ -48,7 +52,7 @@ test("account dialog has one role card and an inline editor without duplicate re
     'id="profileEditForm"','id="profileStoreNameInput"','data-profile-role="customer"',
     'data-profile-role="merchant"'
   ]) assert.ok(dialog.includes(token), token);
-  assert.ok(dialog.includes("تعديل الاسم أو الرقم"));
+  assert.ok(dialog.includes("تعديل البيانات"));
   for (const legacy of ['id="roleClientBtn"','id="roleMerchantBtn"','id="merchantBox"','id="merchSave"','تسجيل الاسم ورقم الجوال','تفعيل حساب التاجر']) {
     assert.ok(!dialog.includes(legacy), legacy);
   }

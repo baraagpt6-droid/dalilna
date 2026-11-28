@@ -74,9 +74,11 @@ test("seller dashboard exposes its two direct actions and merchant sections", ()
 });
 
 test("Arabic profile messages avoid raw service and network error codes", () => {
-  assert.doesNotMatch(manager, /\bAPI\b|\bRender\b|\b503\b|\bTimeout\b/i);
-  assert.match(manager, /تعذر جلب الإعلانات الآن/);
-  assert.match(manager, /يمكنك إكمال بيانات المتجر يدوياً/);
+  const sync = block(manager, "async function syncMerchant()", "function init()");
+  assert.match(sync, /catch \(_\) \{\s*write\("merchantSyncStatus"/);
+  assert.match(sync, /تعذر جلب الإعلانات الآن/);
+  assert.match(sync, /يمكنك إكمال بيانات المتجر يدوياً/);
+  assert.doesNotMatch(sync, /write\("merchantSyncStatus"[^\n]*error/i);
   assert.ok(html.includes('id="roleAdminBtn"'));
   assert.ok(html.includes("دخول المشرف"));
 });
