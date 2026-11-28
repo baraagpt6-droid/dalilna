@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "fetchedAt": "2026-11-28T13:30:33.713Z",
+  "fetchedAt": "2026-11-28T19:25:24.864Z",
   "refreshedBy": "GitHub Actions six-hour jobs refresh",
   "sources": [
     {
@@ -55,14 +55,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-28T13:30:33.713Z",
+      "publishedAt": "2026-11-28T19:25:24.864Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/codeninjapk/j/42138757DF/",
       "applicationUrl": "https://apply.workable.com/codeninjapk/j/42138757DF/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-development-lead-full-stack-microservices-code-ninja-61bd325b",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-12T13:30:33.713Z"
+      "expiresAt": "2026-12-12T19:25:24.864Z"
     },
     {
       "id": "careers-sa:senior-business-improvement-specialist-johns-hopkins-aramco-healthcare-05737ea3",
@@ -72,14 +72,14 @@
       "city": "Dhahran",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-28T13:30:33.713Z",
+      "publishedAt": "2026-11-28T19:25:24.864Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.jhah.com/job/Dhahran-SENIOR-BUSINESS-IMPROVEMENT-SPECIALIST_/857142123/",
       "applicationUrl": "https://careers.jhah.com/job/Dhahran-SENIOR-BUSINESS-IMPROVEMENT-SPECIALIST_/857142123/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-business-improvement-specialist-johns-hopkins-aramco-healthcare-05737ea3",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-12T13:30:33.713Z"
+      "expiresAt": "2026-12-12T19:25:24.864Z"
     },
     {
       "id": "careers-sa:lead-procurement-engineer-elegancia-arabia-trading-3281f722",
@@ -89,14 +89,14 @@
       "city": "KSA",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-28T13:30:33.713Z",
+      "publishedAt": "2026-11-28T19:25:24.864Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Lead-Procurement-Engineer/1373704957/",
       "applicationUrl": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Lead-Procurement-Engineer/1373704957/",
       "sourceUrl": "https://www.careers.sa/en/jobs/lead-procurement-engineer-elegancia-arabia-trading-3281f722",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-12T13:30:33.713Z"
+      "expiresAt": "2026-12-12T19:25:24.864Z"
     },
     {
       "id": "careers-sa:lead-quantity-surveyor-elegancia-arabia-trading-e4c320f8",
@@ -106,14 +106,14 @@
       "city": "KSA",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-28T13:30:33.713Z",
+      "publishedAt": "2026-11-28T19:25:24.864Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Lead-Quantity-Surveyor/1373704857/",
       "applicationUrl": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Lead-Quantity-Surveyor/1373704857/",
       "sourceUrl": "https://www.careers.sa/en/jobs/lead-quantity-surveyor-elegancia-arabia-trading-e4c320f8",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-12T13:30:33.713Z"
+      "expiresAt": "2026-12-12T19:25:24.864Z"
     },
     {
       "id": "careers-sa:planning-manager-elegancia-arabia-trading-b7be216a",
@@ -123,14 +123,14 @@
       "city": "KSA",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-28T13:30:33.713Z",
+      "publishedAt": "2026-11-28T19:25:24.864Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Planning-Manager/1378733057/",
       "applicationUrl": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Planning-Manager/1378733057/",
       "sourceUrl": "https://www.careers.sa/en/jobs/planning-manager-elegancia-arabia-trading-b7be216a",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-12T13:30:33.713Z"
+      "expiresAt": "2026-12-12T19:25:24.864Z"
     },
     {
       "id": "careers-sa:senior-technical-engineer-elegancia-arabia-trading-ab2dd911",
@@ -140,14 +140,14 @@
       "city": "KSA",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-28T13:30:33.713Z",
+      "publishedAt": "2026-11-28T19:25:24.864Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Senior-Technical-Engineer/1373705057/",
       "applicationUrl": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Senior-Technical-Engineer/1373705057/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-technical-engineer-elegancia-arabia-trading-ab2dd911",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-12T13:30:33.713Z"
+      "expiresAt": "2026-12-12T19:25:24.864Z"
     },
     {
       "id": "careers-sa:senior-technical-engineer-elegancia-arabia-trading-511cacdb",
@@ -157,14 +157,14 @@
       "city": "KSA",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-28T13:30:33.713Z",
+      "publishedAt": "2026-11-28T19:25:24.864Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Senior-Technical-Engineer/1373705257/",
       "applicationUrl": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Senior-Technical-Engineer/1373705257/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-technical-engineer-elegancia-arabia-trading-511cacdb",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-12T13:30:33.713Z"
+      "expiresAt": "2026-12-12T19:25:24.864Z"
     },
     {
       "id": "careers-sa:senior-specialist-purchasing-red-sea-global-0ef2b387",
@@ -174,14 +174,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-28T13:30:33.713Z",
+      "publishedAt": "2026-11-28T19:25:24.864Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.theredsea.sa/job/Riyadh-Senior-Specialist-Purchasing-Al-R/1368460123/",
       "applicationUrl": "https://careers.theredsea.sa/job/Riyadh-Senior-Specialist-Purchasing-Al-R/1368460123/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-specialist-purchasing-red-sea-global-0ef2b387",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-12T13:30:33.713Z"
+      "expiresAt": "2026-12-12T19:25:24.864Z"
     },
     {
       "id": "careers-sa:tamayyaz-guest-service-agent-saudis-only-accor-ksa-166b7b06",
@@ -191,14 +191,14 @@
       "city": "Saudi Arabia",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-28T13:30:33.713Z",
+      "publishedAt": "2026-11-28T19:25:24.864Z",
       "source": "Careers.sa employer listing",
       "url": "https://jobs.smartrecruiters.com/AccorHotel/744000164125879",
       "applicationUrl": "https://jobs.smartrecruiters.com/AccorHotel/744000164125879",
       "sourceUrl": "https://www.careers.sa/en/jobs/tamayyaz-guest-service-agent-saudis-only-accor-ksa-166b7b06",
       "eligibility": "Saudi nationals",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-12T13:30:33.713Z"
+      "expiresAt": "2026-12-12T19:25:24.864Z"
     },
     {
       "id": "careers-sa:senior-finance-project-manager-alula-tramway-project-alstom-74c573cc",
@@ -208,14 +208,14 @@
       "city": "AlUla",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-28T13:30:33.713Z",
+      "publishedAt": "2026-11-28T19:25:24.864Z",
       "source": "Careers.sa employer listing",
       "url": "https://jobsearch.alstom.com/job/AlUla-Senior-Finance-Project-Manager-AlUla-Tramway-Project-03/1452755533/",
       "applicationUrl": "https://jobsearch.alstom.com/job/AlUla-Senior-Finance-Project-Manager-AlUla-Tramway-Project-03/1452755533/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-finance-project-manager-alula-tramway-project-alstom-74c573cc",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-12T13:30:33.713Z"
+      "expiresAt": "2026-12-12T19:25:24.864Z"
     },
     {
       "id": "careers-sa:project-planning-manager-alula-alstom-4ae48917",
@@ -225,14 +225,14 @@
       "city": "Madinah",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-28T13:30:33.713Z",
+      "publishedAt": "2026-11-28T19:25:24.864Z",
       "source": "Careers.sa employer listing",
       "url": "https://jobsearch.alstom.com/job/Madinah-Project-Planning-Manager-AlUla/1452756033/",
       "applicationUrl": "https://jobsearch.alstom.com/job/Madinah-Project-Planning-Manager-AlUla/1452756033/",
       "sourceUrl": "https://www.careers.sa/en/jobs/project-planning-manager-alula-alstom-4ae48917",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-12T13:30:33.713Z"
+      "expiresAt": "2026-12-12T19:25:24.864Z"
     },
     {
       "id": "careers-sa:project-quality-and-safety-managers-leader-alstom-a8b8b44b",
@@ -242,14 +242,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-28T13:30:33.713Z",
+      "publishedAt": "2026-11-28T19:25:24.864Z",
       "source": "Careers.sa employer listing",
       "url": "https://jobsearch.alstom.com/job/Riyadh-Project-Quality-and-Safety-Managers-Leader/1443073533/",
       "applicationUrl": "https://jobsearch.alstom.com/job/Riyadh-Project-Quality-and-Safety-Managers-Leader/1443073533/",
       "sourceUrl": "https://www.careers.sa/en/jobs/project-quality-and-safety-managers-leader-alstom-a8b8b44b",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-12T13:30:33.713Z"
+      "expiresAt": "2026-12-12T19:25:24.864Z"
     },
     {
       "id": "careers-sa:electrical-technical-engineer-elegancia-arabia-trading-fd7ac32d",
