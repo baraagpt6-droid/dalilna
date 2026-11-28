@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "fetchedAt": "2026-11-27T19:27:09.856Z",
+  "fetchedAt": "2026-11-28T01:47:20.907Z",
   "refreshedBy": "GitHub Actions six-hour jobs refresh",
   "sources": [
     {
@@ -38,14 +38,14 @@
       "city": "Riyadh",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://apply.workable.com/codeninjapk/j/42138757DF/",
       "applicationUrl": "https://apply.workable.com/codeninjapk/j/42138757DF/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-development-lead-full-stack-microservices-code-ninja-61bd325b",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:senior-business-improvement-specialist-johns-hopkins-aramco-healthcare-05737ea3",
@@ -55,14 +55,14 @@
       "city": "Dhahran",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.jhah.com/job/Dhahran-SENIOR-BUSINESS-IMPROVEMENT-SPECIALIST_/857142123/",
       "applicationUrl": "https://careers.jhah.com/job/Dhahran-SENIOR-BUSINESS-IMPROVEMENT-SPECIALIST_/857142123/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-business-improvement-specialist-johns-hopkins-aramco-healthcare-05737ea3",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:electrical-technical-engineer-elegancia-arabia-trading-fd7ac32d",
@@ -72,14 +72,14 @@
       "city": "KSA",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Electrical-Technical-Engineer/1373545457/",
       "applicationUrl": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Electrical-Technical-Engineer/1373545457/",
       "sourceUrl": "https://www.careers.sa/en/jobs/electrical-technical-engineer-elegancia-arabia-trading-fd7ac32d",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:employee-relations-officer-elegancia-arabia-trading-0aeac3a3",
@@ -89,14 +89,14 @@
       "city": "KSA",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Employee-Relations-Officer/1373595057/",
       "applicationUrl": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Employee-Relations-Officer/1373595057/",
       "sourceUrl": "https://www.careers.sa/en/jobs/employee-relations-officer-elegancia-arabia-trading-0aeac3a3",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:senior-project-engineer-elegancia-arabia-trading-07c3ea06",
@@ -106,14 +106,14 @@
       "city": "KSA",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Senior-Project-Engineer/1376146357/",
       "applicationUrl": "https://careers.powerholding-intl.com/Estithmar-Careers/job/KSA-Senior-Project-Engineer/1376146357/",
       "sourceUrl": "https://www.careers.sa/en/jobs/senior-project-engineer-elegancia-arabia-trading-07c3ea06",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:hse-coordinator-urbacon-saudi-company-e2cef5fb",
@@ -123,14 +123,14 @@
       "city": "KSA",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.powerholding-intl.com/job/KSA-HSE-Coordinator/1376152657/",
       "applicationUrl": "https://careers.powerholding-intl.com/job/KSA-HSE-Coordinator/1376152657/",
       "sourceUrl": "https://www.careers.sa/en/jobs/hse-coordinator-urbacon-saudi-company-e2cef5fb",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:hse-manager-urbacon-saudi-company-01068ff9",
@@ -140,14 +140,14 @@
       "city": "KSA",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.powerholding-intl.com/job/KSA-HSE-Manager/1376152957/",
       "applicationUrl": "https://careers.powerholding-intl.com/job/KSA-HSE-Manager/1376152957/",
       "sourceUrl": "https://www.careers.sa/en/jobs/hse-manager-urbacon-saudi-company-01068ff9",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:qa-qc-engineer-urbacon-saudi-company-d2ff075b",
@@ -157,14 +157,14 @@
       "city": "KSA",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.powerholding-intl.com/job/KSA-QAQC-Engineer/1376141157/",
       "applicationUrl": "https://careers.powerholding-intl.com/job/KSA-QAQC-Engineer/1376141157/",
       "sourceUrl": "https://www.careers.sa/en/jobs/qa-qc-engineer-urbacon-saudi-company-d2ff075b",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:site-engineer-urbacon-saudi-company-678a6074",
@@ -174,14 +174,14 @@
       "city": "KSA",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.powerholding-intl.com/job/KSA-Site-Engineer/1376153257/",
       "applicationUrl": "https://careers.powerholding-intl.com/job/KSA-Site-Engineer/1376153257/",
       "sourceUrl": "https://www.careers.sa/en/jobs/site-engineer-urbacon-saudi-company-678a6074",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:associate-director-residential-marketing-red-sea-global-77b6d4ca",
@@ -191,14 +191,14 @@
       "city": "ctor - Residential Marketing at Red Sea Global",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.theredsea.sa/job/Associate-Director-Residential-Marketing/857328223/",
       "applicationUrl": "https://careers.theredsea.sa/job/Associate-Director-Residential-Marketing/857328223/",
       "sourceUrl": "https://www.careers.sa/en/jobs/associate-director-residential-marketing-red-sea-global-77b6d4ca",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:divemaster-red-sea-global-027c8e4c",
@@ -208,14 +208,14 @@
       "city": "Divemaster at Red Sea Global",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.theredsea.sa/job/Divemaster/857339723/",
       "applicationUrl": "https://careers.theredsea.sa/job/Divemaster/857339723/",
       "sourceUrl": "https://www.careers.sa/en/jobs/divemaster-red-sea-global-027c8e4c",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:marine-biologist-red-sea-global-0705de86",
@@ -225,14 +225,14 @@
       "city": "Marine Biologist at Red Sea Global",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.theredsea.sa/job/Marine-Biologist/857338323/",
       "applicationUrl": "https://careers.theredsea.sa/job/Marine-Biologist/857338323/",
       "sourceUrl": "https://www.careers.sa/en/jobs/marine-biologist-red-sea-global-0705de86",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:specialist-reception-and-retail-red-sea-global-bfaba112",
@@ -242,14 +242,14 @@
       "city": "alist - Reception and Retail at Red Sea Global",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.theredsea.sa/job/Specialist-Reception-and-Retail/857334523/",
       "applicationUrl": "https://careers.theredsea.sa/job/Specialist-Reception-and-Retail/857334523/",
       "sourceUrl": "https://www.careers.sa/en/jobs/specialist-reception-and-retail-red-sea-global-bfaba112",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:specialist-reception-and-retail-red-sea-global-5f7b0cc2",
@@ -259,14 +259,14 @@
       "city": "alist - Reception and Retail at Red Sea Global",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.theredsea.sa/job/Specialist-Reception-and-Retail/857339223/",
       "applicationUrl": "https://careers.theredsea.sa/job/Specialist-Reception-and-Retail/857339223/",
       "sourceUrl": "https://www.careers.sa/en/jobs/specialist-reception-and-retail-red-sea-global-5f7b0cc2",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:specialist-retail-red-sea-global-280dcd13",
@@ -276,14 +276,99 @@
       "city": "Specialist - Retail at Red Sea Global",
       "country": "Saudi Arabia",
       "countryCode": "SA",
-      "publishedAt": "2026-11-27T19:27:09.856Z",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
       "source": "Careers.sa employer listing",
       "url": "https://careers.theredsea.sa/job/Specialist-Retail/1368455423/",
       "applicationUrl": "https://careers.theredsea.sa/job/Specialist-Retail/1368455423/",
       "sourceUrl": "https://www.careers.sa/en/jobs/specialist-retail-red-sea-global-280dcd13",
       "eligibility": "",
       "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
-      "expiresAt": "2026-12-11T19:27:09.856Z"
+      "expiresAt": "2026-12-12T01:47:20.907Z"
+    },
+    {
+      "id": "careers-sa:senior-solution-architect-salesforce-538b1912",
+      "title": "Senior Solution Architect",
+      "organization": "Salesforce    Salesforce",
+      "location": "Senior Solution Architect at Salesforce, Saudi Arabia",
+      "city": "Senior Solution Architect at Salesforce",
+      "country": "Saudi Arabia",
+      "countryCode": "SA",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
+      "source": "Careers.sa employer listing",
+      "url": "https://salesforce.wd12.myworkdayjobs.com/en-US/External_Career_Site/job/Saudi-Arabia---Riyadh/Senior-Solution-Architect_JR359402",
+      "applicationUrl": "https://salesforce.wd12.myworkdayjobs.com/en-US/External_Career_Site/job/Saudi-Arabia---Riyadh/Senior-Solution-Architect_JR359402",
+      "sourceUrl": "https://www.careers.sa/en/jobs/senior-solution-architect-salesforce-538b1912",
+      "eligibility": "",
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-12T01:47:20.907Z"
+    },
+    {
+      "id": "careers-sa:technical-architect-salesforce-3633530c",
+      "title": "Technical Architect",
+      "organization": "Salesforce    Salesforce",
+      "location": "Technical Architect at Salesforce, Saudi Arabia",
+      "city": "Technical Architect at Salesforce",
+      "country": "Saudi Arabia",
+      "countryCode": "SA",
+      "publishedAt": "2026-11-28T01:47:20.907Z",
+      "source": "Careers.sa employer listing",
+      "url": "https://salesforce.wd12.myworkdayjobs.com/en-US/External_Career_Site/job/Saudi-Arabia---Riyadh/Technical-Architect_JR359403",
+      "applicationUrl": "https://salesforce.wd12.myworkdayjobs.com/en-US/External_Career_Site/job/Saudi-Arabia---Riyadh/Technical-Architect_JR359403",
+      "sourceUrl": "https://www.careers.sa/en/jobs/technical-architect-salesforce-3633530c",
+      "eligibility": "",
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-12T01:47:20.907Z"
+    },
+    {
+      "id": "careers-sa:architect-building-parsons-corporation-e0d16770",
+      "title": "Architect - Building",
+      "organization": "Parsons Corporation    Parsons Corporation",
+      "location": "Riyadh, Saudi Arabia",
+      "city": "Riyadh",
+      "country": "Saudi Arabia",
+      "countryCode": "SA",
+      "publishedAt": "2026-11-28T00:00:00.000Z",
+      "source": "Careers.sa employer listing",
+      "url": "https://parsons.wd5.myworkdayjobs.com/en-US/Search/job/SA---Riyadh/Architect---Building_R189063",
+      "applicationUrl": "https://parsons.wd5.myworkdayjobs.com/en-US/Search/job/SA---Riyadh/Architect---Building_R189063",
+      "sourceUrl": "https://www.careers.sa/en/jobs/architect-building-parsons-corporation-e0d16770",
+      "eligibility": "Saudi nationals",
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-12T01:47:20.907Z"
+    },
+    {
+      "id": "careers-sa:architect-engineer-fa-ade-envelope-parsons-corporation-a1463de3",
+      "title": "Architect Engineer - Façade & Envelope",
+      "organization": "Parsons Corporation    Parsons Corporation",
+      "location": "Riyadh, Saudi Arabia",
+      "city": "Riyadh",
+      "country": "Saudi Arabia",
+      "countryCode": "SA",
+      "publishedAt": "2026-11-28T00:00:00.000Z",
+      "source": "Careers.sa employer listing",
+      "url": "https://parsons.wd5.myworkdayjobs.com/en-US/Search/job/SA---Riyadh/Architect-Engineer---Faade---Envelope_R189062",
+      "applicationUrl": "https://parsons.wd5.myworkdayjobs.com/en-US/Search/job/SA---Riyadh/Architect-Engineer---Faade---Envelope_R189062",
+      "sourceUrl": "https://www.careers.sa/en/jobs/architect-engineer-fa-ade-envelope-parsons-corporation-a1463de3",
+      "eligibility": "Saudi nationals",
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-12T01:47:20.907Z"
+    },
+    {
+      "id": "careers-sa:planning-manager-parsons-corporation-43408e6a",
+      "title": "Planning Manager",
+      "organization": "Parsons Corporation    Parsons Corporation",
+      "location": "Riyadh, Saudi Arabia",
+      "city": "Riyadh",
+      "country": "Saudi Arabia",
+      "countryCode": "SA",
+      "publishedAt": "2026-11-28T00:00:00.000Z",
+      "source": "Careers.sa employer listing",
+      "url": "https://parsons.wd5.myworkdayjobs.com/en-US/Search/job/SA---Riyadh/Planning-Manager_R189077",
+      "applicationUrl": "https://parsons.wd5.myworkdayjobs.com/en-US/Search/job/SA---Riyadh/Planning-Manager_R189077",
+      "sourceUrl": "https://www.careers.sa/en/jobs/planning-manager-parsons-corporation-43408e6a",
+      "eligibility": "Saudi nationals",
+      "summary": "(self.__next_s=self.__next_s||[]).push([0,{\"type\":\"application/ld+json\",\"children\":\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Organization\\\",\\\"name\\\":\\\"كاريرز\\\",\\\"alternateName\\\":[\\\"Careers\\\",\\\"careers.sa\\\"],\\\"url\\\":\\\"https://www.careers.sa\\\",\\\"logo\\\":\\\"https://www.careers.sa/icon-512.png\\\",\\\"description\\\":\\\"وكيلك المهني يفحص وظائف الشركات التي توظّف في السعودية من مصادرها الرسمية كل يوم، ويقارنها بخبرتك، ويرتّب أقرب الفرص لك، ويخبرك عند ظهور وظيفة تستحق وقتك.\\\",\\\"contactPoint\\\":{\\\"@type\\\":\\\"ContactPoint\\\",\\\"url\\\":\\\"https://www.careers.sa/contact\\\",\\\"contactType\\\":\\\"customer service\\\",\\\"areaServed\\\":\\\"SA\\\",\\\"availableLanguage\\\":[\\\"Arabic\\\",\\\"English\\\"]}}\",\"id\":\"organization-jsonld\"}])",
+      "expiresAt": "2026-12-12T01:47:20.907Z"
     },
     {
       "id": "careers-sa:project-security-manager-saudi-national-parsons-corporation-e1169a24",
@@ -3837,6 +3922,23 @@
       "sourceUrl": "https://t.me/hr_yemen/5040",
       "summaryAr": "",
       "expiresAt": "2026-12-02T23:59:59.000Z"
+    },
+    {
+      "id": "yemenhr:5086",
+      "title": "Psychiatrist",
+      "organization": "Medecine Sans Frontiers",
+      "location": "حجة, Yemen",
+      "city": "حجة",
+      "country": "Yemen",
+      "countryCode": "YE",
+      "publishedAt": "2026-04-04T23:59:59.000Z",
+      "deadline": "31 ديسمبر 2026",
+      "source": "YemenHR public jobs channel",
+      "url": "https://eoi-ye.com/jobs/21486/",
+      "applicationUrl": "https://eoi-ye.com/jobs/21486/",
+      "sourceUrl": "https://t.me/hr_yemen/5086",
+      "summaryAr": "",
+      "expiresAt": "2026-12-31T23:59:59.000Z"
     }
   ]
 }
