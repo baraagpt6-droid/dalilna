@@ -49,6 +49,7 @@ android {
     namespace = "ye.dalilna.app"
     compileSdk = 36
 
+    // version.json is the single source of truth for the binary and embedded OTA update.
     val versionMetadataText = rootProject.file("version.json").readText(Charsets.UTF_8)
     fun versionMetadataInt(key: String): Int {
         val value = Regex("\"$key\"\\s*:\\s*(\\d+)")

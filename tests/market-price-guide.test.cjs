@@ -55,9 +55,11 @@ test("Android APK build prepares matching OTA metadata before asset sync and ver
  const build=workflow.indexOf("Build signed Release APK and AAB");
  const verify=workflow.indexOf("Verify APK version and signature");
  assert.ok(prepare>=0&&prepare<sync&&sync<build&&build<verify);
- assert.match(workflow,/DALILNA_VERSION_CODE_OFFSET: "1000000"/);
- assert.match(workflow,/3100000 \+ runNumber \* 100 \+ attempt \+ versionCodeOffset/);
- assert.match(workflow,/3100000 \+ GITHUB_RUN_NUMBER \* 100 \+ GITHUB_RUN_ATTEMPT \+ DALILNA_VERSION_CODE_OFFSET/);
+ assert.match(workflow,/const version = JSON\.parse\(fs\.readFileSync\(file, "utf8"\)\)/);
+ assert.match(workflow,/versionCode = Number\(version\.androidVersionCode\)/);
+ assert.match(workflow,/versionCode !== 4129901/);
+ assert.match(workflow,/VERSION_CODE.*4129901/);
+ assert.doesNotMatch(workflow,/DALILNA_VERSION_CODE_OFFSET|3100000/);
  assert.ok(workflow.includes('unzip -p "$APK" assets/version.json'));
  assert.ok(workflow.includes('EMBEDDED_VERSION_CODE'));
 });

@@ -33,4 +33,3 @@ test("Android Gradle and both OTA metadata files share version 3.1.0 and code 41
   assert.match(gradle, /versionCodeForBuild = versionMetadataInt\("androidVersionCode"\)/);
   assert.match(gradle, /versionMetadataInt\("versionCode"\) == versionCodeForBuild/);
 });
-});
