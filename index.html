@@ -1108,22 +1108,22 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
             <input id="merchantSyncPhoneInput" type="tel" inputmode="tel" dir="ltr" maxlength="24" autocomplete="tel" placeholder="77xxxxxxx" aria-label="رقم جوال المتجر للاستعادة">
             <button type="button" class="add" id="merchantSyncButton">جلب بيانات متجري</button>
           </div>
-          <p id="merchantSyncStatus" class="dialog-hint" role="status" aria-live="polite">تُستعاد الإعلانات المنشورة للعامة فقط. لا يثبت رقم الجوال وحده ملكية المتجر.</p>
+          <p id="merchantSyncStatus" class="dialog-hint" role="status" aria-live="polite">يتم عرض بيانات المتجر المرتبطة برقمك للمعاينة السريعة، وتخضع التعديلات المنشورة لمراجعة الإدارة لحماية حسابات التجار.</p>
         </section>
         <div id="profileCustomerNameRow">
           <label>الاسم الكامل<input id="profileCustomerNameInput" maxlength="80" autocomplete="name" placeholder="اسمك الشخصي"></label>
         </div>
         <div id="profileCustomerCityRow">
-          <label>المحافظة / المدينة<select id="profileCustomerCityInput" autocomplete="address-level1"><option value="">اختر المحافظة / المدينة</option></select></label>
+          <label>المحافظة / المدينة<input type="hidden" id="profileCustomerCityInput" value=""><button type="button" class="picker-btn" id="profileCustomerCityInputButton" aria-haspopup="dialog" aria-controls="pickerDlg"><span id="profileCustomerCityInputLabel">اختر المحافظة / المدينة</span><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></label>
         </div>
         <div id="profileStoreNameRow" hidden>
           <label>اسم المحل أو النشاط التجاري<input id="profileStoreNameInput" maxlength="80" autocomplete="organization" placeholder="مثلاً: محلات الناهي"></label>
         </div>
         <div id="profileStoreCategoryRow" hidden>
-          <label>تصنيف النشاط<select id="profileStoreCategoryInput"><option value="">اختر تصنيف النشاط</option></select></label>
+          <label>تصنيف النشاط<input type="hidden" id="profileStoreCategoryInput" value=""><button type="button" class="picker-btn" id="profileStoreCategoryInputButton" aria-haspopup="dialog" aria-controls="pickerDlg"><span id="profileStoreCategoryInputLabel">اختر تصنيف النشاط</span><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></label>
         </div>
         <div id="profileStoreCityRow" hidden>
-          <label>المحافظة<select id="profileStoreCityInput"><option value="">اختر المحافظة</option></select></label>
+          <label>المحافظة<input type="hidden" id="profileStoreCityInput" value=""><button type="button" class="picker-btn" id="profileStoreCityInputButton" aria-haspopup="dialog" aria-controls="pickerDlg"><span id="profileStoreCityInputLabel">اختر المحافظة</span><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></label>
         </div>
         <div id="profileStoreAreaRow" hidden>
           <label>المنطقة / المديرية<input id="profileStoreAreaInput" maxlength="120" placeholder="اسم المنطقة أو المديرية"></label>
@@ -1147,7 +1147,7 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       </div>
       <div id="profileActivityList" class="profile-activity" aria-live="polite"></div>
       <label id="profileRegionLabel" style="display:block;margin-top:10px">المحافظة الافتراضية
-        <select id="profileDefaultGovernorate" style="width:100%;margin-top:5px"><option value="">كل اليمن</option></select>
+        <input type="hidden" id="profileDefaultGovernorate" value=""><button type="button" class="picker-btn" id="profileDefaultGovernorateBtn" aria-haspopup="dialog" aria-controls="pickerDlg"><span id="profileDefaultGovernorateLabel">كل اليمن</span><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
       </label>
       <div class="profile-actions">
         <button type="button" class="ghost" id="profileLanguageBtn">تغيير اللغة</button>
@@ -3488,11 +3488,21 @@ function renderProfilePanel(){
    button.setAttribute("aria-pressed",active?"true":"false");
    button.classList.toggle("is-active",active);
  });
- const select=$("#profileDefaultGovernorate");
- if(select){
+ const select=$("#profileDefaultGovernorate"),pickerButton=$("#profileDefaultGovernorateBtn"),pickerLabel=$("#profileDefaultGovernorateLabel");
+ if(select&&pickerButton&&pickerLabel){
    const current=S.defaultGovernorate||"";
-   select.innerHTML='<option value="">'+(english?"All Yemen":"كل اليمن")+'</option>'+GOVS.map((g,index)=>'<option value="'+esc(g)+'">'+esc(english?GOVS_EN[index]:g)+'</option>').join("");
    select.value=current;
+   const selectedIndex=GOVS.indexOf(current);
+   pickerLabel.textContent=selectedIndex<0?(english?"All Yemen":"كل اليمن"):(english?GOVS_EN[selectedIndex]:current);
+   if(!pickerButton.dataset.profilePickerBound){
+     pickerButton.addEventListener("click",()=>openCustomPicker({
+       title:curLang==="en"?"Choose the default governorate":"اختر المحافظة الافتراضية",searchable:true,
+       options:[{val:"",label:curLang==="en"?"All Yemen":"كل اليمن",icon:"⌖"},...GOVS.map((g,index)=>({val:g,label:curLang==="en"?GOVS_EN[index]:g,icon:"⌖"}))],
+       selected:select.value,
+       onSelect:value=>{select.value=value;select.dispatchEvent(new Event("change",{bubbles:true}));}
+     }));
+     pickerButton.dataset.profilePickerBound="true";
+   }
  }
  const labels={
   profileLanguageBtn:english?"Change language":"تغيير اللغة",
@@ -3902,13 +3912,16 @@ function openCustomPicker({title,searchable,options,selected,onSelect}){
   renderPickerOptions(options,selected);
   showDlg("#pickerDlg");
 }
+window.DalilnaOpenCustomPicker=openCustomPicker;
 function renderPickerOptions(opts,selected){
   let lastGrp="",html="";
   for(const o of opts){
     if(o.group&&o.group!==lastGrp){lastGrp=o.group;html+=`<div class="sheet-grp">${esc(o.group)}</div>`;}
     html+=`<button type="button" class="sheet-opt" data-pval="${esc(o.val)}" aria-selected="${o.val===selected}">
-      <span>${esc(o.label)}</span>
+      ${o.icon?`<span class="sheet-opt-icon" aria-hidden="true">${esc(o.icon)}</span>`:""}
+      <span class="sheet-opt-label">${esc(o.label)}</span>
       ${o.count!==undefined?`<span class="cnt">${o.count}</span>`:""}
+      ${o.val===selected?`<span class="sheet-opt-check" aria-hidden="true">✓</span>`:""}
     </button>`;
   }
   $("#pickerList").innerHTML=html||`<div class="empty">لا توجد نتائج مطابقة</div>`;
@@ -6778,7 +6791,7 @@ window.DalilnaMarketplaceBridge={
 <script src="./app-update.js?v=3.1.0-store-safe1" defer></script>
 <script src="./features-2.1.js?v=3.1.0" defer></script>
 <script src="./v3.0.0.js?v=3.1.0-profile-identity1" defer></script>
-<script src="./profile-manager.js?v=3.1.0-merchant-profile2" defer></script>
+<script src="./profile-manager.js?v=3.1.0-ui-unified1" defer></script>
 <style>
 .profile-merchant-card{display:grid;gap:7px;margin:10px 0;padding:12px;border:1px solid var(--acc);border-radius:14px;background:linear-gradient(120deg,rgba(56,182,166,.12),transparent),var(--bg)}
 .profile-merchant-card[hidden],.profile-merchant-actions[hidden],.profile-sync-panel[hidden]{display:none!important}

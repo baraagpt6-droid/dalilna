@@ -39,27 +39,38 @@
     const entry = CATEGORIES.find(item => item[0] === value);
     return entry ? (english() ? CATEGORY_EN[value] : entry[1]) : (value || (english() ? "Not specified" : "غير محدد"));
   };
+  const CATEGORY_ICONS = {restaurants:"☷",pharmacies:"✚",electronics:"▦",clothing:"◈",groceries:"▤",services:"⚒","real-estate":"⌂",other:"◇"};
   function fillSelect(id,values,placeholder,selected,isCategory) {
-    const select = $(id);
-    if (!select) return;
-    const key = id + "-" + (english() ? "en" : "ar");
-    if (select.dataset.profileOptions !== key) {
-      select.replaceChildren();
-      const first = document.createElement("option");
-      first.value = "";
-      first.textContent = placeholder;
-      select.appendChild(first);
-      values.forEach((item,index) => {
-        const value = Array.isArray(item) ? item[0] : item;
-        const arabic = Array.isArray(item) ? item[1] : item;
-        const option = document.createElement("option");
-        option.value = value;
-        option.textContent = isCategory ? (english() ? CATEGORY_EN[value] : arabic) : (english() ? GOVS_EN[index] : arabic);
-        select.appendChild(option);
+    const input = $(id), button = $(id + "Button"), label = $(id + "Label");
+    if (!input || !button || !label) return;
+    const options = () => values.map((item,index) => {
+      const value = Array.isArray(item) ? item[0] : item;
+      const arabic = Array.isArray(item) ? item[1] : item;
+      return {val:value,label:isCategory ? (english() ? CATEGORY_EN[value] : arabic) : (english() ? GOVS_EN[index] : arabic),icon:isCategory ? (CATEGORY_ICONS[value] || "◇") : "⌖"};
+    });
+    input.value = selected || "";
+    const updateLabel = () => {
+      const item = options().find(option => option.val === input.value);
+      label.textContent = item ? item.label : placeholder;
+      button.setAttribute("aria-label",placeholder + ": " + label.textContent);
+    };
+    updateLabel();
+    button._dalilnaProfilePickerConfig = () => ({
+      title:placeholder,searchable:true,options:options(),selected:input.value,
+      onSelect:value => {
+        input.value = value;
+        updateLabel();
+        input.dispatchEvent(new Event("change",{bubbles:true}));
+        render();
+      }
+    });
+    if (!button.dataset.profilePickerBound) {
+      button.addEventListener("click",() => {
+        if (typeof window.DalilnaOpenCustomPicker === "function") window.DalilnaOpenCustomPicker(button._dalilnaProfilePickerConfig());
+        else write("profileEditError",english()?"Selection is unavailable right now.":"قائمة الاختيار غير متاحة حالياً.");
       });
-      select.dataset.profileOptions = key;
+      button.dataset.profilePickerBound = "true";
     }
-    select.value = selected || "";
   }
   function applyRole(selectedRole) {
     const merchant = selectedRole === "merchant";
@@ -72,7 +83,7 @@
     show("profileStoreAreaRow",merchant);
     write("profilePhoneLabel",merchant ? (english() ? "Store phone / WhatsApp" : "رقم جوال / واتساب المتجر") : (english() ? "Mobile number" : "رقم الجوال"));
     write("profileEditHint",merchant
-      ? (english() ? "Store details are saved on this device. Public listing lookup does not verify phone ownership." : "تُحفظ بيانات المتجر على هذا الجهاز. جلب الإعلانات العامة لا يثبت ملكية رقم الجوال.")
+      ? (english() ? "Store details are saved on this device. Public listing lookup Store details linked to your number are shown for a quick preview. Published changes are reviewed by the administration to protect merchants’ accounts." : "تُحفظ بيانات المتجر على هذا الجهاز. جلب الإعلانات العامة يتم عرض بيانات المتجر المرتبطة برقمك للمعاينة السريعة، وتخضع التعديلات المنشورة لمراجعة الإدارة لحماية حسابات التجار.")
       : (english() ? "Customer details are saved on this device." : "تُحفظ بيانات العميل على هذا الجهاز."));
     write("profileEditSave",merchant ? (english() ? "Save store" : "حفظ بيانات المتجر") : (english() ? "Save profile" : "حفظ بيانات العميل"));
     fillSelect("profileCustomerCityInput",GOVS,english()?"Choose a governorate / city":"اختر المحافظة / المدينة",profile().customerCity,false);
@@ -93,8 +104,8 @@
     $("profilePhoneInput").value = p.phone || "";
     $("merchantSyncPhoneInput").value = p.phone || "";
     write("merchantSyncStatus",english()
-      ? "Only publicly approved listings are searched. A phone number alone does not prove store ownership."
-      : "يُبحث في الإعلانات المنشورة للعامة فقط. رقم الجوال وحده لا يثبت ملكية المتجر.");
+      ? "Only publicly approved listings are searched. Store details linked to your number are shown for a quick preview. Published changes are reviewed by the administration to protect merchants’ accounts."
+      : "يُبحث في الإعلانات المنشورة للعامة فقط. يتم عرض بيانات المتجر المرتبطة برقمك للمعاينة السريعة، وتخضع التعديلات المنشورة لمراجعة الإدارة لحماية حسابات التجار.");
     write("profileEditError","");
     applyRole(form.dataset.profileRole);
     form.hidden = false;
@@ -170,7 +181,7 @@
     if (adsCount) adsCount.textContent = String(merchant ? local.marketplaceAds.length + local.otherAds.length + publicAds : local.marketplaceAds.length);
     if (shopsCount) shopsCount.textContent = String(local.shops.length + publicShops);
     write("profileLocalNote",merchant
-      ? (english()?"Store details are saved on this device. Public listing lookup does not confirm ownership or provide edit access." : "بيانات المتجر محفوظة على هذا الجهاز. جلب الإعلانات العامة لا يؤكد الملكية ولا يمنح صلاحية تعديلها.")
+      ? (english()?"Store details are saved on this device. Public listing lookup Store details linked to your number are shown for a quick preview. Published changes are reviewed by the administration to protect merchants’ accounts." : "بيانات المتجر محفوظة على هذا الجهاز. جلب الإعلانات العامة يتم عرض بيانات المتجر المرتبطة برقمك للمعاينة السريعة، وتخضع التعديلات المنشورة لمراجعة الإدارة لحماية حسابات التجار.")
       : (english()?"Customer details are saved on this device." : "بيانات العميل محفوظة على هذا الجهاز."));
     renderPublicRecords();
   }
@@ -266,13 +277,15 @@
       $("profileStoreCategoryInput").value = values.storeCategory;
       $("profileStoreCityInput").value = values.storeCity;
       $("profileStoreAreaInput").value = values.storeArea;
+      fillSelect("profileStoreCategoryInput",CATEGORIES,english()?"Choose a category":"اختر تصنيف النشاط",values.storeCategory,true);
+      fillSelect("profileStoreCityInput",GOVS,english()?"Choose a governorate":"اختر المحافظة",values.storeCity,false);
       $("profilePhoneInput").value = phone;
       const partial = result.complete ? "" : (english()
         ? " Only the first " + result.scanned + " of " + result.total + " public records could be checked."
         : " تم فحص " + result.scanned + " من أصل " + result.total + " سجلاً عاماً فقط.");
       write("merchantSyncStatus",english()
-        ? "Found " + remoteRecords.length + " public records for this number and filled the available fields. Review the details and save them. This does not verify ownership or grant editing access." + partial
-        : "عثرنا على " + remoteRecords.length + " سجلاً عاماً لهذا الرقم وعبّأنا الحقول المتاحة. راجع البيانات واحفظها. هذا لا يثبت ملكية المتجر ولا يمنح صلاحية تعديل الإعلانات." + partial);
+        ? "Found " + remoteRecords.length + " public records for this number and filled the available fields. Review the details and save them. Store details linked to your number are shown for a quick preview. Published changes are reviewed by the administration to protect merchants’ accounts." + partial
+        : "عثرنا على " + remoteRecords.length + " سجلاً عاماً لهذا الرقم وعبّأنا الحقول المتاحة. راجع البيانات واحفظها. يتم عرض بيانات المتجر المرتبطة برقمك للمعاينة السريعة، وتخضع التعديلات المنشورة لمراجعة الإدارة لحماية حسابات التجار." + partial);
       render();
     } catch (_) {
       write("merchantSyncStatus",english()

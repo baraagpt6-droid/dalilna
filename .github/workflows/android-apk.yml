@@ -197,13 +197,13 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p android/app/src/main/assets/icons android/app/src/main/assets/regional-catalog android/app/src/main/assets/market-price-images
-          cp index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json regional-catalog-runtime.js marketplace-client.js market_items.json features-2.1.js features-2.1.css v3.0.0.js v3.0.0.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html data-deletion.html terms.html android/app/src/main/assets/
+          cp index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json regional-catalog-runtime.js marketplace-client.js profile-manager.js market_items.json features-2.1.js features-2.1.css v3.0.0.js v3.0.0.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html data-deletion.html terms.html android/app/src/main/assets/
           cp icons/* android/app/src/main/assets/icons/
           cp market-price-images/*.svg android/app/src/main/assets/market-price-images/
           cp regional-catalog/*.json android/app/src/main/assets/regional-catalog/
           cmp -s privacy.html android/app/src/main/assets/privacy.html || { echo "Privacy policy differs from the Android WebView asset"; exit 1; }
           cmp -s data-deletion.html android/app/src/main/assets/data-deletion.html || { echo "Data deletion page differs from the Android WebView asset"; exit 1; }
-          for name in index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json regional-catalog-runtime.js sw.js marketplace-client.js market_items.json features-2.1.js features-2.1.css v3.0.0.js v3.0.0.css jobs-feed.json manifest.json version.json; do
+          for name in index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json regional-catalog-runtime.js sw.js marketplace-client.js profile-manager.js market_items.json features-2.1.js features-2.1.css v3.0.0.js v3.0.0.css jobs-feed.json manifest.json version.json; do
             cmp -s "$name" "android/app/src/main/assets/$name" || { echo "$name differs from the Android WebView asset"; exit 1; }
           done
           cmp -s v3.0.0.js android/app/src/main/assets/v3.0.0.js

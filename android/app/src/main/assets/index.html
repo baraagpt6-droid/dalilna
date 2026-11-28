@@ -1078,8 +1078,19 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       <div style="display:grid;gap:4px;margin:10px 0">
         <b id="profileName">مستفيد</b>
         <span id="profileContact" class="where">لا يوجد رقم جوال محفوظ.</span>
+        <span id="profileLocation" class="where">المحافظة / المدينة غير محددة.</span>
         <span id="profileRoleSummary" class="where">الصفة النشطة: عميل</span>
-        <span id="profileDaysLeft" class="where">متبقي 60 يوماً من عرض الإعلانات المجاني</span>
+      </div>
+      <section id="profileMerchantCard" class="profile-merchant-card" hidden>
+        <div class="profile-merchant-card-head"><b>بيانات المتجر</b><span class="tag">ملف البائع</span></div>
+        <p><span>التصنيف</span><b id="merchantStoreCategory">غير محدد</b></p>
+        <p><span>المحافظة والمنطقة</span><b id="merchantStoreCity">غير محددة</b></p>
+        <p><span>رقم التواصل</span><b id="merchantStorePhone" dir="ltr">—</b></p>
+        <p id="profileDaysLeft" class="profile-merchant-days">متبقي 60 يوماً من الإعلان المجاني</p>
+      </section>
+      <div id="profileMerchantQuickActions" class="profile-merchant-actions" hidden>
+        <button type="button" class="add" id="profileAddShopButton">+ إضافة محل للدليل</button>
+        <button type="button" class="ghost" id="profileAddAdButton">+ نشر إعلان في السوق</button>
       </div>
       <div id="v3RoleSwitcher" class="v3-role-switcher" aria-label="تبديل صفة الحساب">
         <span>صفة الاستخدام</span>
@@ -1088,18 +1099,39 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
           <button type="button" data-profile-role="merchant" aria-pressed="false">بائع</button>
         </div>
       </div>
-      <button type="button" class="ghost profile-edit-toggle" id="profileEditToggle">تعديل الاسم أو الرقم</button>
+      <button type="button" class="ghost profile-edit-toggle" id="profileEditToggle">تعديل البيانات</button>
       <form id="profileEditForm" class="profile-edit-form" hidden>
+        <section id="merchantSyncPanel" class="profile-sync-panel" hidden>
+          <h4>استعادة بيانات متجر منشور</h4>
+          <p>أدخل رقم الجوال المستخدم في الإعلانات المنشورة، وسنبحث عن السجلات العامة المرتبطة به.</p>
+          <div class="profile-sync-controls">
+            <input id="merchantSyncPhoneInput" type="tel" inputmode="tel" dir="ltr" maxlength="24" autocomplete="tel" placeholder="77xxxxxxx" aria-label="رقم جوال المتجر للاستعادة">
+            <button type="button" class="add" id="merchantSyncButton">جلب بيانات متجري</button>
+          </div>
+          <p id="merchantSyncStatus" class="dialog-hint" role="status" aria-live="polite">يتم عرض بيانات المتجر المرتبطة برقمك للمعاينة السريعة، وتخضع التعديلات المنشورة لمراجعة الإدارة لحماية حسابات التجار.</p>
+        </section>
         <div id="profileCustomerNameRow">
-          <label>اسم المستفيد<input id="profileCustomerNameInput" maxlength="80" autocomplete="name" placeholder="اسمك الشخصي"></label>
+          <label>الاسم الكامل<input id="profileCustomerNameInput" maxlength="80" autocomplete="name" placeholder="اسمك الشخصي"></label>
+        </div>
+        <div id="profileCustomerCityRow">
+          <label>المحافظة / المدينة<input type="hidden" id="profileCustomerCityInput" value=""><button type="button" class="picker-btn" id="profileCustomerCityInputButton" aria-haspopup="dialog" aria-controls="pickerDlg"><span id="profileCustomerCityInputLabel">اختر المحافظة / المدينة</span><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></label>
         </div>
         <div id="profileStoreNameRow" hidden>
-          <label>اسم المحل أو النشاط<input id="profileStoreNameInput" maxlength="80" autocomplete="organization" placeholder="مثلاً: محلات الناهي"></label>
+          <label>اسم المحل أو النشاط التجاري<input id="profileStoreNameInput" maxlength="80" autocomplete="organization" placeholder="مثلاً: محلات الناهي"></label>
+        </div>
+        <div id="profileStoreCategoryRow" hidden>
+          <label>تصنيف النشاط<input type="hidden" id="profileStoreCategoryInput" value=""><button type="button" class="picker-btn" id="profileStoreCategoryInputButton" aria-haspopup="dialog" aria-controls="pickerDlg"><span id="profileStoreCategoryInputLabel">اختر تصنيف النشاط</span><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></label>
+        </div>
+        <div id="profileStoreCityRow" hidden>
+          <label>المحافظة<input type="hidden" id="profileStoreCityInput" value=""><button type="button" class="picker-btn" id="profileStoreCityInputButton" aria-haspopup="dialog" aria-controls="pickerDlg"><span id="profileStoreCityInputLabel">اختر المحافظة</span><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></label>
+        </div>
+        <div id="profileStoreAreaRow" hidden>
+          <label>المنطقة / المديرية<input id="profileStoreAreaInput" maxlength="120" placeholder="اسم المنطقة أو المديرية"></label>
         </div>
         <div id="profilePhoneRow">
-          <label>رقم الجوال الموحد<input id="profilePhoneInput" type="tel" inputmode="tel" dir="ltr" maxlength="24" autocomplete="tel" placeholder="77xxxxxxx"></label>
+          <label><span id="profilePhoneLabel">رقم الجوال</span><input id="profilePhoneInput" type="tel" inputmode="tel" dir="ltr" maxlength="24" autocomplete="tel" placeholder="77xxxxxxx"></label>
         </div>
-        <p class="dialog-hint" id="profileEditHint">تُحفظ البيانات محلياً على هذا الجهاز دون تأكيد عبر البريد الإلكتروني.</p>
+        <p class="dialog-hint" id="profileEditHint">تُحفظ بيانات الملف على هذا الجهاز.</p>
         <p class="err" id="profileEditError"></p>
         <div class="fbtn">
           <button type="submit" class="add" id="profileEditSave">حفظ التعديلات</button>
@@ -1108,14 +1140,14 @@ label{display:grid;gap:4px;font-size:13.5px;font-weight:500}
       </form>
       <button type="button" class="v3-profile-saved" id="profileSavedHub">♥ المفضلة والمحفوظات <span id="profileSavedHubCount">0</span></button>
       <button type="button" class="ghost" id="profileBlockedSellersBtn">إدارة البائعين المحظورين على هذا الجهاز</button>
-      <div class="profile-metrics">
-        <div><b id="profileAdsCount">0</b><span id="profileAdsLabel">إعلاناتي</span></div>
-        <div><b id="profileShopsCount">0</b><span id="profileShopsLabel">محلات أضفتها</span></div>
-        <div><b id="profileFavsCount">0</b><span id="profileFavsLabel">المفضلة</span></div>
+      <div class="profile-metrics" id="profileMetrics">
+        <div id="profileAdsMetric"><b id="profileAdsCount">0</b><span id="profileAdsLabel">إعلاناتي</span></div>
+        <div id="profileShopsMetric"><b id="profileShopsCount">0</b><span id="profileShopsLabel">محلاتي</span></div>
+        <div id="profileFavsMetric"><b id="profileFavsCount">0</b><span id="profileFavsLabel">المفضلة</span></div>
       </div>
       <div id="profileActivityList" class="profile-activity" aria-live="polite"></div>
       <label id="profileRegionLabel" style="display:block;margin-top:10px">المحافظة الافتراضية
-        <select id="profileDefaultGovernorate" style="width:100%;margin-top:5px"><option value="">كل اليمن</option></select>
+        <input type="hidden" id="profileDefaultGovernorate" value=""><button type="button" class="picker-btn" id="profileDefaultGovernorateBtn" aria-haspopup="dialog" aria-controls="pickerDlg"><span id="profileDefaultGovernorateLabel">كل اليمن</span><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
       </label>
       <div class="profile-actions">
         <button type="button" class="ghost" id="profileLanguageBtn">تغيير اللغة</button>
@@ -2983,7 +3015,7 @@ const DEFAULT_STATE={
   admins:[
     {email:"admin@dalilna.ye",name:"المشرف العام",hash:ADMIN_DEFAULT_HASH,perms:["add","edit","delete","verify","review","ads","fx","perms","logs","backup","block"]}
   ],
-  profile:{customerName:"",storeName:"",phone:"",activeRole:"customer"},
+  profile:{customerName:"",customerCity:"",storeName:"",storeCategory:"",storeCity:"",storeArea:"",merchantCreatedAt:0,phone:"",activeRole:"customer"},
   session:{role:"client",adminEmail:"",merchant:null},
   merchantProfile:{name:"",phone:"",area:""},
   tickets:[],
@@ -3062,7 +3094,12 @@ function normalizeState(raw){
   }catch(_){}
   const profile={
     customerName:cleanText(profileRaw.customerName||legacyCustomer.customerName||legacyCustomer.name||raw.customerName,80),
+    customerCity:cleanText(profileRaw.customerCity||raw.customerCity||"",80),
     storeName:cleanText(profileRaw.storeName||legacyMerchant.storeName||legacyMerchant.name||merchantRaw?.name,80),
+    storeCategory:cleanText(profileRaw.storeCategory||"",40),
+    storeCity:cleanText(profileRaw.storeCity||"",80),
+    storeArea:cleanText(profileRaw.storeArea||"",120),
+    merchantCreatedAt:cleanNumber(profileRaw.merchantCreatedAt,0,0,Number.MAX_SAFE_INTEGER),
     phone:cleanText(profileRaw.phone||legacyCustomer.phone||legacyMerchant.phone||merchantRaw?.phone,40),
     activeRole:profileRaw.activeRole==="merchant"||raw.activeRole==="merchant"||sessionRaw.activeRole==="merchant"||sessionRaw.role==="merchant"||(!profileRaw.activeRole&&!raw.activeRole&&!sessionRaw.activeRole&&!legacyCustomer.name&&!!legacyMerchant.name)?"merchant":"customer"
   };
@@ -3260,11 +3297,14 @@ $("#themeBtn").addEventListener("click",()=>{
 function curAdmin(){return S.session.role==="admin"?S.admins.find(a=>a.email===S.session.adminEmail)||S.admins[0]:null;}
 function hasPerm(p){const a=curAdmin();return !!(a&&Array.isArray(a.perms)&&a.perms.includes(p));}
 
+function merchantProfileReady(profile=S.profile){
+  return !!(profile&&profile.storeName&&profile.storeCategory&&profile.storeCity&&profile.phone&&phoneKey(profile.phone).length>=9);
+}
 function syncProfileSession(){
-  const profile=S.profile||{customerName:"",storeName:"",phone:"",activeRole:"customer"};
+  const profile=S.profile||{customerName:"",customerCity:"",storeName:"",storeCategory:"",storeCity:"",storeArea:"",phone:"",activeRole:"customer"};
   profile.activeRole=profile.activeRole==="merchant"?"merchant":"customer";
   S.profile=profile;
-  S.merchantProfile={name:profile.storeName||"",phone:profile.phone||"",area:S.merchantProfile?.area||""};
+  S.merchantProfile={name:profile.storeName||"",phone:profile.phone||"",category:profile.storeCategory||"",city:profile.storeCity||"",area:profile.storeArea||S.merchantProfile?.area||""};
   if(S.session?.role==="admin")return;
   S.session=profile.activeRole==="merchant"
     ?{role:"merchant",adminEmail:"",merchant:{name:profile.storeName||"",phone:profile.phone||""}}
@@ -3273,6 +3313,10 @@ function syncProfileSession(){
 
 let profileAfterSave=null;
 function openProfileEditor(options={}){
+  if(window.DalilnaProfileUI&&typeof window.DalilnaProfileUI.open==="function"){
+    window.DalilnaProfileUI.open(options);
+    return;
+  }
   const profile=S.profile||{};
   const form=$("#profileEditForm");
   if(!form)return;
@@ -3319,7 +3363,7 @@ function setProfileRole(role,options={}){
   renderProfilePanel();
   renderAddHub();
   if(options.openEditor!==false){
-    if(nextRole==="merchant"&&!S.profile.storeName)openProfileEditor({merchantSetup:true});
+    if(nextRole==="merchant"&&!merchantProfileReady(S.profile))openProfileEditor({merchantSetup:true});
     else if(nextRole==="customer"&&(!S.profile.customerName||!S.profile.phone))openProfileEditor({initial:true});
   }
   if(options.toast!==false)toast(nextRole==="merchant"?"تم تفعيل صفة البائع":"تم التبديل إلى صفة العميل");
@@ -3374,7 +3418,7 @@ function renderAddHub(){
     ?(curLang==="en"?"Seller role is active. Choose an action or manage your shop listings.":"صفة البائع مفعّلة. اختر الإضافة المناسبة أو راجع إدراجات متجرك.")
     :(curLang==="en"?"Post a free advert, open Jobs, or switch to seller to add a shop.":"أضف إعلاناً أو انتقل لبوابة الوظائف. يمكنك تفعيل صفة البائع عند إضافة محل.");
   const setup=$("#addMerchantSetupHint");
-  if(setup)setup.hidden=!(merchant&&(!profile.storeName||!profile.phone));
+  if(setup)setup.hidden=!(merchant&&!merchantProfileReady(profile));
 }
 
 function syncRoleUI(){
@@ -3408,8 +3452,8 @@ function renderProfilePanel(){
  const merchant=profile.activeRole==="merchant";
  const displayName=admin?(admin.name||session.adminEmail||"Admin"):merchant?(profile.storeName||(english?"Store name not set":"اسم المحل غير مسجل")):(profile.customerName||(english?"Visitor":"مستفيد"));
  const contact=admin?(session.adminEmail||""):(profile.phone||"");
- const remaining=Math.max(0,Math.ceil((60*86400000-(Date.now()-Number(S.installDate||Date.now())))/86400000));
- const ownsPhone=!!(merchant&&profile.phone);
+ const remaining=Math.max(0,Math.ceil((60*86400000-(Date.now()-Number(profile.merchantCreatedAt||S.installDate||Date.now())))/86400000));
+ const ownsPhone=!!profile.phone;
  const ownRecords=S.items.filter(item=>ownsPhone&&phoneKey(item.ownerPhone||item.phone)===phoneKey(profile.phone));
  const owned=ownRecords.filter(item=>!["jobs","souq","land"].includes(item.cat));
  const marketplaceAds=ownRecords.filter(item=>["souq","land","jobs"].includes(item.cat));
@@ -3427,6 +3471,7 @@ function renderProfilePanel(){
  set("profileBadge",admin?(english?"Administrator":"مشرف"):(merchant?(english?"Merchant":"بائع"):(english?"Customer":"عميل")));
  set("profileName",displayName);
  set("profileContact",contact||(english?"No mobile number saved.":"لا يوجد رقم جوال محفوظ."));
+ set("profileLocation",merchant?(english?"Store location: ":"موقع المتجر: ")+[profile.storeCity,profile.storeArea].filter(Boolean).join("، "):(profile.customerCity?(english?"Governorate: ":"المحافظة: ")+profile.customerCity:(english?"Governorate / city not set.":"المحافظة / المدينة غير محددة.")));
  set("profileRoleSummary",admin?(english?"Administrator access":"دخول المشرف"):(merchant?(english?"Active role: seller":"الصفة النشطة: بائع"):(english?"Active role: customer":"الصفة النشطة: عميل")));
  set("profileDaysLeft",english?remaining+" free advertising days remaining":"متبقي "+remaining+" يوماً من الإعلان المجاني");
  set("profileAdsCount",ads.length+marketplaceAds.length);
@@ -3443,11 +3488,21 @@ function renderProfilePanel(){
    button.setAttribute("aria-pressed",active?"true":"false");
    button.classList.toggle("is-active",active);
  });
- const select=$("#profileDefaultGovernorate");
- if(select){
+ const select=$("#profileDefaultGovernorate"),pickerButton=$("#profileDefaultGovernorateBtn"),pickerLabel=$("#profileDefaultGovernorateLabel");
+ if(select&&pickerButton&&pickerLabel){
    const current=S.defaultGovernorate||"";
-   select.innerHTML='<option value="">'+(english?"All Yemen":"كل اليمن")+'</option>'+GOVS.map((g,index)=>'<option value="'+esc(g)+'">'+esc(english?GOVS_EN[index]:g)+'</option>').join("");
    select.value=current;
+   const selectedIndex=GOVS.indexOf(current);
+   pickerLabel.textContent=selectedIndex<0?(english?"All Yemen":"كل اليمن"):(english?GOVS_EN[selectedIndex]:current);
+   if(!pickerButton.dataset.profilePickerBound){
+     pickerButton.addEventListener("click",()=>openCustomPicker({
+       title:curLang==="en"?"Choose the default governorate":"اختر المحافظة الافتراضية",searchable:true,
+       options:[{val:"",label:curLang==="en"?"All Yemen":"كل اليمن",icon:"⌖"},...GOVS.map((g,index)=>({val:g,label:curLang==="en"?GOVS_EN[index]:g,icon:"⌖"}))],
+       selected:select.value,
+       onSelect:value=>{select.value=value;select.dispatchEvent(new Event("change",{bubbles:true}));}
+     }));
+     pickerButton.dataset.profilePickerBound="true";
+   }
  }
  const labels={
   profileLanguageBtn:english?"Change language":"تغيير اللغة",
@@ -3463,10 +3518,13 @@ function renderProfilePanel(){
       ?'<button type="button" class="profile-activity-item" data-profile-item-id="'+esc(item.id)+'">'+esc(item.name||item.title||"")+'</button>'
       :'<div class="profile-activity-item">'+esc(item.title||item.name||"")+'</div>').join("")
     :'<p class="where">'+esc(empty)+'</p>')+'</section>';
-  list.innerHTML=section(english?"My marketplace adverts":"إعلاناتي في السوق",marketplaceAds,english?"No marketplace adverts are linked to this phone.":"لا توجد إعلانات سوق مرتبطة برقم هذا الحساب.",true)
-   +section(english?"My other adverts":"إعلاناتي الأخرى",ads,english?"No other adverts are linked to this phone.":"لا توجد إعلانات أخرى مرتبطة بهذا الرقم.",false)
-   +section(english?"Shops I added":"محلات أضفتها",owned,english?"No shops are linked to this merchant phone on this device.":"لا توجد محلات مرتبطة برقم التاجر في هذا الجهاز.",true)
-   +section(english?"Saved directory places":"المحلات المحفوظة",favoriteItems,english?"No saved directory places on this device.":"لا توجد محلات محفوظة في مفضلة هذا الجهاز.",true);
+  list.innerHTML=merchant
+   ?section(english?"My shops":"محلاتي",owned,english?"No shops are linked to this phone on this device.":"لا توجد محلات مرتبطة برقم التاجر في هذا الجهاز.",true)
+    +section(english?"My marketplace adverts":"إعلاناتي في السوق",marketplaceAds,english?"No marketplace adverts are linked to this phone.":"لا توجد إعلانات سوق مرتبطة برقم هذا الحساب.",true)
+    +section(english?"My other adverts":"إعلاناتي الأخرى",ads,english?"No other adverts are linked to this phone.":"لا توجد إعلانات أخرى مرتبطة بهذا الرقم.",false)
+    +section(english?"Saved directory places":"المحلات المحفوظة",favoriteItems,english?"No saved directory places on this device.":"لا توجد محلات محفوظة في مفضلة هذا الجهاز.",true)
+   :section(english?"My marketplace adverts":"إعلاناتي في السوق",marketplaceAds,english?"No marketplace adverts are linked to this phone.":"لا توجد إعلانات سوق مرتبطة برقم هذا الحساب.",true)
+    +section(english?"Saved directory places":"المحلات المحفوظة",favoriteItems,english?"No saved directory places on this device.":"لا توجد محلات محفوظة في مفضلة هذا الجهاز.",true);
  }
  if($("#profileEditToggle"))$("#profileEditToggle").hidden=admin!==null||!$("#profileEditForm").hidden;
 }
@@ -3854,13 +3912,16 @@ function openCustomPicker({title,searchable,options,selected,onSelect}){
   renderPickerOptions(options,selected);
   showDlg("#pickerDlg");
 }
+window.DalilnaOpenCustomPicker=openCustomPicker;
 function renderPickerOptions(opts,selected){
   let lastGrp="",html="";
   for(const o of opts){
     if(o.group&&o.group!==lastGrp){lastGrp=o.group;html+=`<div class="sheet-grp">${esc(o.group)}</div>`;}
     html+=`<button type="button" class="sheet-opt" data-pval="${esc(o.val)}" aria-selected="${o.val===selected}">
-      <span>${esc(o.label)}</span>
+      ${o.icon?`<span class="sheet-opt-icon" aria-hidden="true">${esc(o.icon)}</span>`:""}
+      <span class="sheet-opt-label">${esc(o.label)}</span>
       ${o.count!==undefined?`<span class="cnt">${o.count}</span>`:""}
+      ${o.val===selected?`<span class="sheet-opt-check" aria-hidden="true">✓</span>`:""}
     </button>`;
   }
   $("#pickerList").innerHTML=html||`<div class="empty">لا توجد نتائج مطابقة</div>`;
@@ -4081,7 +4142,7 @@ function renderMerchantTools(){
   const box=$("#merchantToolsPanel");
   if(!box)return;
   const profile=S.profile||{};
-  const active=S.session.role==="merchant"&&profile.activeRole==="merchant"&&!!profile.storeName&&!!profile.phone;
+  const active=S.session.role==="merchant"&&profile.activeRole==="merchant"&&merchantProfileReady(profile);
   box.hidden=!active;
   if(!active)return;
   const owned=S.items.filter(isMerchantOwner);
@@ -4362,7 +4423,7 @@ $("#navAdd").addEventListener("click",()=>go("add"));
 $("#addFreeAdCard").addEventListener("click",()=>$("#openPromoRelease").click());
 $("#addMerchantListingCard").addEventListener("click",()=>{
   if(S.session.role!=="merchant"||S.profile.activeRole!=="merchant")setProfileRole("merchant",{openEditor:false,toast:false});
-  if(!S.profile.storeName||!S.profile.phone){
+  if(!merchantProfileReady(S.profile)){
     showDlg("#accountDlg");
     renderProfilePanel();
     openProfileEditor({merchantSetup:true,afterSave:()=>openAdd("grocery")});
@@ -6685,16 +6746,22 @@ renderMerchantTools();
 
 window.DALILNA_V3_BRIDGE={
   profile:()=>({...S.profile}),
-  profileReady:()=>!!(S.profile?.phone&&(S.profile.activeRole==="merchant"?S.profile.storeName:S.profile.customerName)),
+  profileReady:()=>!!(S.profile?.phone&&(S.profile.activeRole==="merchant"?merchantProfileReady(S.profile):S.profile.customerName)),
   saveProfile:(patch={})=>{
     const current=S.profile||{customerName:"",storeName:"",phone:"",activeRole:"customer"};
     S.profile={
       customerName:typeof patch.customerName==="string"?cleanText(patch.customerName,80):current.customerName,
+      customerCity:typeof patch.customerCity==="string"?cleanText(patch.customerCity,80):current.customerCity||"",
       storeName:typeof patch.storeName==="string"?cleanText(patch.storeName,80):current.storeName,
+      storeCategory:typeof patch.storeCategory==="string"?cleanText(patch.storeCategory,40):current.storeCategory||"",
+      storeCity:typeof patch.storeCity==="string"?cleanText(patch.storeCity,80):current.storeCity||"",
+      storeArea:typeof patch.storeArea==="string"?cleanText(patch.storeArea,120):current.storeArea||"",
+      merchantCreatedAt:cleanNumber(patch.merchantCreatedAt,current.merchantCreatedAt||0,0,Number.MAX_SAFE_INTEGER),
       phone:typeof patch.phone==="string"?cleanText(patch.phone,40):current.phone,
       activeRole:patch.activeRole==="merchant"?"merchant":patch.activeRole==="customer"?"customer":current.activeRole
     };
-    S.merchantProfile={name:S.profile.storeName,phone:S.profile.phone,area:S.merchantProfile?.area||""};
+    if(S.profile.activeRole==="merchant"&&S.profile.storeName&&!S.profile.merchantCreatedAt)S.profile.merchantCreatedAt=Date.now();
+    S.merchantProfile={name:S.profile.storeName,phone:S.profile.phone,category:S.profile.storeCategory,city:S.profile.storeCity,area:S.profile.storeArea||S.merchantProfile?.area||""};
     syncProfileSession();S.onboarded=true;saveState();syncRoleUI();renderProfilePanel();renderAddHub();
     return {...S.profile};
   },
@@ -6703,7 +6770,8 @@ window.DALILNA_V3_BRIDGE={
     if(options.initial&&(!S.profile.customerName||!S.profile.phone))S.profile.activeRole="customer";
     showDlg("#accountDlg");renderProfilePanel();openProfileEditor(options);
   },
-  snapshot:()=>({role:S.session?.role||"client",activeRole:S.profile?.activeRole||"customer",profile:{...S.profile},merchant:S.session?.merchant||S.merchantProfile||null,onboarded:S.onboarded===true,directoryFavorites:(Array.isArray(S.favs)?S.favs:[]).map(id=>[...SEED_ITEMS,...S.items].find(item=>String(item.id)===String(id))).filter(Boolean).map(item=>({id:String(item.id),name:item.name||item.title||"",category:CN[item.cat]||item.cat||"خدمة",cat:item.cat||"other",governorate:item.gov||"",district:item.dist||"",area:item.area||item.village||"",phone:item.phone||"",lat:item.lat??item.latitude??null,lon:item.lng??item.lon??item.longitude??null,mapsUrl:item.mapsUrl||item.mapUrl||"",website:item.website||"",sourceUrl:item.sourceUrl||"",description:item.desc||""}))}),
+  profileRecords:()=>{const phone=S.profile?.phone?phoneKey(S.profile.phone):"";const records=phone?S.items.filter(item=>phoneKey(item.ownerPhone||item.phone)===phone):[];return {shops:records.filter(item=>!["jobs","souq","land"].includes(item.cat)),marketplaceAds:records.filter(item=>["jobs","souq","land"].includes(item.cat)),otherAds:(S.ads||[]).filter(item=>phone&&phoneKey(item.phone)===phone)};},
+  snapshot:()=>({role:S.session?.role||"client",activeRole:S.profile?.activeRole||"customer",profile:{...S.profile},merchant:S.session?.merchant||S.merchantProfile||null,onboarded:S.onboarded===true,installDate:S.installDate,directoryFavorites:(Array.isArray(S.favs)?S.favs:[]).map(id=>[...SEED_ITEMS,...S.items].find(item=>String(item.id)===String(id))).filter(Boolean).map(item=>({id:String(item.id),name:item.name||item.title||"",category:CN[item.cat]||item.cat||"خدمة",cat:item.cat||"other",governorate:item.gov||"",district:item.dist||"",area:item.area||item.village||"",phone:item.phone||"",lat:item.lat??item.latitude??null,lon:item.lng??item.lon??item.longitude??null,mapsUrl:item.mapsUrl||item.mapUrl||"",website:item.website||"",sourceUrl:item.sourceUrl||"",description:item.desc||""}))}),
   setDirectoryFavorite:(id,shouldSave)=>{const key=String(id),items=Array.isArray(S.favs)?S.favs:(S.favs=[]),index=items.indexOf(key);if(shouldSave&&index<0)items.push(key);else if(!shouldSave&&index>=0)items.splice(index,1);saveState();if(typeof renderProfilePanel==="function")renderProfilePanel();render();return items.includes(key);}
 };
 window.DalilnaMarketplaceBridge={
@@ -6723,5 +6791,27 @@ window.DalilnaMarketplaceBridge={
 <script src="./app-update.js?v=3.1.0-store-safe1" defer></script>
 <script src="./features-2.1.js?v=3.1.0" defer></script>
 <script src="./v3.0.0.js?v=3.1.0-profile-identity1" defer></script>
+<script src="./profile-manager.js?v=3.1.0-ui-unified1" defer></script>
+<style>
+.profile-merchant-card{display:grid;gap:7px;margin:10px 0;padding:12px;border:1px solid var(--acc);border-radius:14px;background:linear-gradient(120deg,rgba(56,182,166,.12),transparent),var(--bg)}
+.profile-merchant-card[hidden],.profile-merchant-actions[hidden],.profile-sync-panel[hidden]{display:none!important}
+.profile-merchant-card-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.profile-merchant-card p{display:flex;justify-content:space-between;gap:12px;margin:0;font-size:12px}
+.profile-merchant-card p span{color:var(--mute)}
+.profile-merchant-card p b{max-width:65%;text-align:end;overflow-wrap:anywhere}
+.profile-merchant-days{padding-top:7px;border-top:1px solid var(--line);color:var(--gold);font-weight:700}
+.profile-merchant-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:8px 0}
+.profile-merchant-actions button{min-height:40px;padding:7px;font-size:12px}
+.profile-sync-panel{display:grid;gap:8px;padding:11px;border:1px solid var(--acc);border-radius:12px;background:var(--card)}
+.profile-sync-panel h4{margin:0;font-size:14px}
+.profile-sync-panel p{margin:0;line-height:1.7;font-size:11px;color:var(--mute)}
+.profile-sync-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px}
+.profile-sync-controls input{min-width:0}
+.profile-sync-controls button{padding:0 12px;font-size:12px;white-space:nowrap}
+.profile-metrics[data-role="customer"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+#profileShopsMetric[hidden]{display:none!important}
+.profile-remote-records{border-color:var(--acc)}
+@media(max-width:390px){.profile-merchant-actions{grid-template-columns:1fr}.profile-sync-controls{grid-template-columns:1fr}}
+</style>
 </body>
 </html>

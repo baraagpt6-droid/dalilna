@@ -50,6 +50,11 @@ test("merchant setup requires store details and offers public-record lookup", ()
     "profileStoreAreaInput", "profilePhoneInput", "profileMerchantCard",
     "profileMerchantQuickActions", "profileAddShopButton", "profileAddAdButton"
   ]) assert.ok(dialog.includes('id="' + id + '"'), id);
+  for (const id of ["profileCustomerCityInputButton","profileCustomerCityInputLabel","profileStoreCategoryInputButton","profileStoreCategoryInputLabel","profileStoreCityInputButton","profileStoreCityInputLabel"]) assert.ok(dialog.includes('id="' + id + '"'), id);
+  assert.match(dialog, /id="profileCustomerCityInput" type="hidden"/);
+  assert.match(dialog, /id="profileStoreCategoryInput" type="hidden"/);
+  assert.match(dialog, /id="profileStoreCityInput" type="hidden"/);
+  assert.doesNotMatch(dialog, /<select[^>]+id="(?:profileCustomerCityInput|profileStoreCategoryInput|profileStoreCityInput)"/);
   const save = block(manager, "function save(event)", "function categoryFromRecord");
   assert.match(save, /if \(!patch\.storeName \|\| !patch\.storeCategory \|\| !patch\.storeCity\)/);
   assert.match(save, /patch\.merchantCreatedAt = current\.merchantCreatedAt \|\| Date\.now\(\)/);
@@ -60,7 +65,7 @@ test("merchant setup requires store details and offers public-record lookup", ()
   assert.match(sync, /storeCity:first\.governorate/);
   assert.match(sync, /\$\("profilePhoneInput"\)\.value = phone/);
   assert.doesNotMatch(sync, /saveProfile|updateListing|method:\s*["']PATCH/i);
-  assert.match(sync, /لا يثبت ملكية المتجر ولا يمنح صلاحية تعديل الإعلانات/);
+  assert.match(sync, /يتم عرض بيانات المتجر المرتبطة برقمك للمعاينة السريعة، وتخضع التعديلات المنشورة لمراجعة الإدارة لحماية حسابات التجار/);
 });
 
 test("seller dashboard exposes its two direct actions and merchant sections", () => {
@@ -81,10 +86,13 @@ test("Arabic profile messages avoid raw service and network error codes", () => 
   assert.doesNotMatch(sync, /write\("merchantSyncStatus"[^\n]*error/i);
   assert.ok(html.includes('id="roleAdminBtn"'));
   assert.ok(html.includes("دخول المشرف"));
+  assert.ok(html.includes("window.DalilnaOpenCustomPicker=openCustomPicker"));
+  assert.ok(html.includes("sheet-opt-icon"));
+  assert.ok(html.includes("profileDefaultGovernorateBtn"));
 });
 
 test("the service worker cache is versioned for the published profile manager", () => {
-  assert.match(sw, /const CACHE_NAME = CACHE_PREFIX \+ "v3\.1\.0-merchant-profile2"/);
-  assert.ok(sw.includes("./profile-manager.js?v=3.1.0-merchant-profile2"));
+  assert.match(sw, /const CACHE_NAME = CACHE_PREFIX \+ "v3\.1\.0-ui-unified1"/);
+  assert.ok(sw.includes("./profile-manager.js?v=3.1.0-ui-unified1"));
   assert.ok(sw.includes('url.pathname.endsWith("/profile-manager.js")'));
 });

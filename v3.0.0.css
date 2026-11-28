@@ -76,3 +76,18 @@
   padding-bottom: 4px;
   overflow: visible;
 }
+ 
+/* Unified bottom-sheet picker: follows the active Dalilna light/dark theme. */
+#pickerDlg{position:fixed;inset:auto 0 0;margin:0 auto;width:min(100vw,620px);max-width:620px;max-height:min(78dvh,680px);border-radius:22px 22px 0 0;border-bottom:0;transform:translateY(0);overflow:hidden}
+#pickerDlg .dlg-body{max-height:min(78dvh,680px);overflow:hidden;padding:16px 15px calc(18px + env(safe-area-inset-bottom,0px))}
+#pickerDlg .sheet-list{max-height:min(56dvh,520px);overflow-y:auto;overscroll-behavior:contain;padding:3px 2px 5px}
+#pickerDlg .sheet-opt{min-height:48px;gap:10px;transition:background .16s,border-color .16s,color .16s}
+#pickerDlg .sheet-opt-label{flex:1;min-width:0}
+#pickerDlg .sheet-opt-icon{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:9px;background:var(--chip);color:var(--acc);font-size:17px;font-weight:800}
+#pickerDlg .sheet-opt[aria-selected=true] .sheet-opt-icon{background:rgba(56,182,166,.2);color:var(--acc)}
+#pickerDlg .sheet-opt-check{display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;background:var(--acc);color:#10201c;font-weight:900}
+#pickerDlg::backdrop{background:rgba(7,12,11,.58);backdrop-filter:blur(5px)}
+#pickerDlg[open]{animation:dalilna-picker-rise .18s ease-out}
+@keyframes dalilna-picker-rise{from{transform:translateY(24px);opacity:.7}to{transform:translateY(0);opacity:1}}
+@media(min-width:700px){#pickerDlg{border:1px solid var(--line);border-radius:22px;inset:50% auto auto 50%;margin:0;transform:translate(-50%,-50%);width:min(92vw,620px);max-height:78vh}#pickerDlg[open]{animation:dalilna-picker-fade .15s ease-out}#pickerDlg .dlg-body{max-height:78vh;padding:18px}}
+@keyframes dalilna-picker-fade{from{opacity:.7}to{opacity:1}}
