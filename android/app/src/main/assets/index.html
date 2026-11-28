@@ -4295,12 +4295,12 @@ function updateFormPickerLabels(){
 }
 $("#fcatBtn").addEventListener("click",()=>openCustomPicker({
   title:curLang==="en"?"Select Category":"اختر القسم",searchable:true,
-  options:CATS.map(([val,label])=>({val,label:curLang==="en"?(CN_EN[val]||label):label})),
+  options:CATS.map(([val,label])=>({val,label:curLang==="en"?(CN_EN[val]||label):label,icon:({grocery:"▤",food:"☷",cafe:"♨",edu:"▣",health:"✚",pharmacy:"✚",gov:"▧",money:"◉",jobs:"▤",land:"⌂",vehicles:"◇",build:"⚒",parts:"⚙",craft:"⚒",transport:"⇄",telecom:"▣",utility:"◉",farm:"♧",mosque:"⌂",gold:"◇",wedding:"◈",hotel:"⌂",market:"▦",solar:"☼",elec:"▦",clothes:"◈",home:"⌂",books:"▤",beauty:"◇",delivery:"⇢",salon:"◈",laundry:"◉",souq:"▣",other:"◇"})[val]||"◇"})),
   selected:$("#fcat").value,onSelect:val=>{$("#fcat").value=val;updateFormPickerLabels();syncFormFields();}
 }));
 $("#fgovBtn").addEventListener("click",()=>openCustomPicker({
   title:curLang==="en"?"Select Governorate":"اختر المحافظة",searchable:true,
-  options:GOVS.map(label=>({val:label,label})),selected:$("#fgov").value,
+  options:GOVS.map(label=>({val:label,label,icon:"⌖"})),selected:$("#fgov").value,
   onSelect:val=>{$("#fgov").value=val;$("#fdist").value="";updateFormPickerLabels();}
 }));
 $("#fdistBtn").addEventListener("click",()=>{
@@ -4308,7 +4308,7 @@ $("#fdistBtn").addEventListener("click",()=>{
  if(!rows.length){toast("لا توجد قائمة مديريات للمحافظة المختارة.");return;}
  openCustomPicker({
   title:"اختر المديرية — "+gov,searchable:true,
-  options:rows.map(label=>({val:label,label})),
+  options:rows.map(label=>({val:label,label,icon:"⌖"})),
   selected:$("#fdist").value,
   onSelect:val=>{$("#fdist").value=val;updateFormPickerLabels();}
  });

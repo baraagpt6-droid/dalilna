@@ -218,8 +218,8 @@
       if (!patch.storeName || !patch.storeCategory || !patch.storeCity) {
         write("profileEditError",english()?"Complete the store name, category and governorate.":"أكمل اسم المتجر والتصنيف والمحافظة.");
         if (!patch.storeName) $("profileStoreNameInput").focus();
-        else if (!patch.storeCategory) $("profileStoreCategoryInput").focus();
-        else $("profileStoreCityInput").focus();
+        else if (!patch.storeCategory) $("profileStoreCategoryInputButton").focus();
+        else $("profileStoreCityInputButton").focus();
         return;
       }
       patch.merchantCreatedAt = current.merchantCreatedAt || Date.now();

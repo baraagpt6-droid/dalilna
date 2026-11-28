@@ -103,7 +103,7 @@ test("merchant public lookup is read-only and never claims verified ownership", 
   const manager = read("profile-manager.js");
   assert.ok(client.includes("findPublicSellerRecords"));
   assert.ok(manager.includes("merchantSyncButton"));
-  assert.ok(manager.includes("لا يثبت ملكية المتجر ولا يمنح صلاحية تعديل الإعلانات"));
+  assert.ok(manager.includes("يتم عرض بيانات المتجر المرتبطة برقمك للمعاينة السريعة، وتخضع التعديلات المنشورة لمراجعة الإدارة لحماية حسابات التجار."));
   assert.ok(client.includes("/api/marketplace/listings?limit=24&offset=0"));
   assert.doesNotMatch(manager, /(?:e|error)[.]message/);
 });
@@ -118,8 +118,8 @@ test("Android WebView source assets remain present in this web-only release", ()
 });
 
 test("service worker cache revision is raised for the profile release", () => {
-  assert.ok(read("sw.js").includes("v3.1.0-merchant-profile2"));
-  assert.ok(read("sw.js").includes("./profile-manager.js?v=3.1.0-merchant-profile2"));
+  assert.ok(read("sw.js").includes("v3.1.0-ui-unified1"));
+  assert.ok(read("sw.js").includes("./profile-manager.js?v=3.1.0-ui-unified1"));
 });
 
 test("Android public WebView assets contain no known credentials or database URLs", () => {
