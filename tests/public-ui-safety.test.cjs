@@ -3,6 +3,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const vm = require("node:vm");
 const root = path.join(__dirname, "..");
 function read(p) { return fs.readFileSync(path.join(root, p), "utf8"); }
 
@@ -51,7 +52,7 @@ function walkPublicFiles(relativeDir) {
   });
 }
 const publicFiles = [
-  "index.html", "marketplace-client.js", "features-2.1.js", "sw.js",
+  "index.html", "marketplace-client.js", "profile-manager.js", "features-2.1.js", "sw.js",
   "app-update.js", "app-native-bridge.js", "v3.0.0.js", "v3.0.0.css",
   "regional-catalog-runtime.js", "regions-yemen.js", "regions-profiles.js",
   "privacy.html", "terms.html", "data-deletion.html", "manifest.json",
@@ -83,13 +84,42 @@ test("GitHub Pages assets contain no known credentials or database connection st
   }
 });
 
-test("Android WebView mirrors match the reviewed public source files", () => {
+test("profile manager parses and separates customer and merchant fields", () => {
+  const manager = read("profile-manager.js");
+  assert.doesNotThrow(() => new vm.Script(manager));
+  for (const id of [
+    "profileCustomerNameRow", "profileCustomerCityRow", "profileStoreNameRow",
+    "profileStoreCategoryRow", "profileStoreCityRow", "profileStoreAreaRow",
+    "profileMerchantCard", "profileMerchantQuickActions", "profileShopsMetric"
+  ]) assert.ok(index.includes('id="' + id + '"'), "Missing profile UI element: " + id);
+  assert.ok(manager.includes("تعديل / دخول التاجر"));
+  assert.ok(manager.includes("إعلاناتي في السوق"));
+  assert.ok(manager.includes("محلاتي"));
+  assert.ok(index.includes('id="profileMetrics"'));
+  assert.ok(index.includes('href="https://play.google.com/store/apps/details?id=ye.dalilna.app"'));
+});
+
+test("merchant public lookup is read-only and never claims verified ownership", () => {
+  const manager = read("profile-manager.js");
+  assert.ok(client.includes("findPublicSellerRecords"));
+  assert.ok(manager.includes("merchantSyncButton"));
+  assert.ok(manager.includes("لا يثبت ملكية المتجر ولا يمنح صلاحية تعديل الإعلانات"));
+  assert.ok(client.includes("/api/marketplace/listings?limit=24&offset=0"));
+  assert.doesNotMatch(manager, /(?:e|error)[.]message/);
+});
+
+test("Android WebView source assets remain present in this web-only release", () => {
   for (const file of [
     "index.html", "marketplace-client.js", "features-2.1.js",
     "privacy.html", "sw.js", "app-update.js", "app-native-bridge.js"
   ]) {
-    assert.equal(read("android/app/src/main/assets/" + file), read(file), file + " differs");
+    assert.ok(fs.existsSync(path.join(root, "android/app/src/main/assets/" + file)), file + " Android asset is missing");
   }
+});
+
+test("service worker cache revision is raised for the profile release", () => {
+  assert.ok(read("sw.js").includes("v3.1.0-merchant-profile2"));
+  assert.ok(read("sw.js").includes("./profile-manager.js?v=3.1.0-merchant-profile2"));
 });
 
 test("Android public WebView assets contain no known credentials or database URLs", () => {

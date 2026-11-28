@@ -1,6 +1,6 @@
 const CACHE_PREFIX = "dalilna-pwa-";
-const CACHE_NAME = CACHE_PREFIX + "v3.1.0-store-safe1" + "-profile-polish1";
-const APP_SHELL = ["./", "./index.html", "./manifest.json", "./app-native-bridge.js?v=3.1.0", "./app-update.js?v=3.1.0-store-safe1", "./market-price-guide.js?v=3.1.0", "./market-price-guide.css?v=3.1.0", "./market_prices_yemen.json", "./regions-yemen.js", "./regions-profiles.js", "./regional-catalog-runtime.js", "./marketplace-client.js", "./features-2.1.js?v=3.1.0", "./features-2.1.css?v=3.1.0", "./v3.0.0.js?v=3.1.0-profile-identity1", "./v3.0.0.css?v=3.1.0-profile-polish1", "./jobs-feed.json", "./version.json", "./market_items.json", "./regional-catalog/manifest.json?v=3.1.0", "./privacy.html", "./terms.html", "./icons/icon.svg", "./market-price-images/solar-panel.svg", "./market-price-images/solar-inverter.svg", "./market-price-images/solar-battery.svg", "./market-price-images/gel-battery.svg", "./market-price-images/phone-samsung.svg", "./market-price-images/phone-xiaomi.svg", "./market-price-images/phone-iphone.svg", "./market-price-images/vehicle-hilux.svg", "./market-price-images/property-apartment.svg", "./market-price-images/property-shop.svg", "./market-price-images/laptop.svg"];
+const CACHE_NAME = CACHE_PREFIX + "v3.1.0-merchant-profile2";
+const APP_SHELL = ["./", "./index.html", "./manifest.json", "./app-native-bridge.js?v=3.1.0", "./app-update.js?v=3.1.0-store-safe1", "./market-price-guide.js?v=3.1.0", "./market-price-guide.css?v=3.1.0", "./market_prices_yemen.json", "./regions-yemen.js", "./regions-profiles.js", "./regional-catalog-runtime.js", "./marketplace-client.js", "./profile-manager.js?v=3.1.0-merchant-profile2", "./features-2.1.js?v=3.1.0", "./features-2.1.css?v=3.1.0", "./v3.0.0.js?v=3.1.0-profile-identity1", "./v3.0.0.css?v=3.1.0-profile-polish1", "./jobs-feed.json", "./version.json", "./market_items.json", "./regional-catalog/manifest.json?v=3.1.0", "./privacy.html", "./terms.html", "./icons/icon.svg", "./market-price-images/solar-panel.svg", "./market-price-images/solar-inverter.svg", "./market-price-images/solar-battery.svg", "./market-price-images/gel-battery.svg", "./market-price-images/phone-samsung.svg", "./market-price-images/phone-xiaomi.svg", "./market-price-images/phone-iphone.svg", "./market-price-images/vehicle-hilux.svg", "./market-price-images/property-apartment.svg", "./market-price-images/property-shop.svg", "./market-price-images/laptop.svg"];
 
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
@@ -29,6 +29,7 @@ self.addEventListener("fetch", event => {
   // Network-first for mutable catalogue JSON and critical UI assets.
   const freshnessSensitive = url.pathname.includes("/regional-catalog/")
     || url.pathname.endsWith("/features-2.1.css")
+    || url.pathname.endsWith("/profile-manager.js")
     || url.pathname.endsWith("/features-2.1.js")
     || url.pathname.endsWith("/v3.0.0.js")
     || url.pathname.endsWith("/v3.0.0.css")

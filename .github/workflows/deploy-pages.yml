@@ -34,7 +34,7 @@ jobs:
       - name: Prepare website files
         run: |
           mkdir -p _site/icons _site/regional-catalog _site/market-price-images _site/store
-          cp index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json regional-catalog-runtime.js marketplace-client.js market_items.json features-2.1.js features-2.1.css v3.0.0.js v3.0.0.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html data-deletion.html terms.html app-ads.txt _site/
+          cp index.html app-native-bridge.js app-update.js market-price-guide.js market-price-guide.css market_prices_yemen.json regional-catalog-runtime.js marketplace-client.js profile-manager.js market_items.json features-2.1.js features-2.1.css v3.0.0.js v3.0.0.css jobs-feed.json manifest.json version.json sw.js regions-yemen.js regions-profiles.js privacy.html data-deletion.html terms.html app-ads.txt _site/
           cp store/index.html _site/store/index.html
           cp icons/* _site/icons/
           cp market-price-images/*.svg _site/market-price-images/
@@ -44,6 +44,7 @@ jobs:
           test -s _site/store/index.html
           test -s _site/app-ads.txt
           test -s _site/marketplace-client.js
+          test -s _site/profile-manager.js
           test -s _site/features-2.1.js
           test -s _site/v3.0.0.js
           test -s _site/v3.0.0.css
@@ -80,12 +81,13 @@ jobs:
             }
             throw lastError;
           }
-          const [page, privacyResponse, deletionResponse, css, js, v3jsResponse, v3cssResponse, swResponse, manifestResponse, pwaManifestResponse, versionResponse, marketItemsResponse, lightIndexResponse, priceGuideResponse, priceGuideJsResponse, nativeBridgeResponse, appUpdateResponse, jobsFeedResponse] = await Promise.all([
+          const [page, privacyResponse, deletionResponse, css, js, profileManagerResponse, v3jsResponse, v3cssResponse, swResponse, manifestResponse, pwaManifestResponse, versionResponse, marketItemsResponse, lightIndexResponse, priceGuideResponse, priceGuideJsResponse, nativeBridgeResponse, appUpdateResponse, jobsFeedResponse] = await Promise.all([
             get("./index.html"),
             get("./privacy.html"),
             get("./data-deletion.html"),
             get("./features-2.1.css?v=3.1.0"),
             get("./features-2.1.js?v=3.1.0"),
+            get("./profile-manager.js?v=3.1.0-merchant-profile2"),
             get("./v3.0.0.js?v=3.1.0"),
             get("./v3.0.0.css?v=3.1.0"),
             get("./sw.js"),
@@ -120,6 +122,7 @@ jobs:
           const nativeBridge = await nativeBridgeResponse.text();
           const appUpdate = await appUpdateResponse.text();
           const featureJsText = await js.text();
+          const profileManager = await profileManagerResponse.text();
           const v3js = await v3jsResponse.text(), v3css = await v3cssResponse.text();
           const jobsFeed = await jobsFeedResponse.json();
           const lightBytes = await lightIndexResponse.arrayBuffer();
@@ -135,6 +138,7 @@ jobs:
           if (!html.includes('id="profilePrivacyLink"') || !html.includes('href="./privacy.html"')) throw new Error("The application does not link to its published privacy policy.");
           if (!(await css.text()).includes(".quick-jump-btn")) throw new Error("Quick-access stylesheet was not published.");
           if (!featureJsText.includes("officialApplicationUrl")) throw new Error("Feature JavaScript is incomplete.");
+          if (!profileManager.includes("DALILNA_ROLE_PROFILE_MANAGER") || !profileManager.includes("merchantSyncButton") || !profileManager.includes("profileStoreCategoryInput")) throw new Error("Role-based profile manager was not published.");
           if (!(await swResponse.text()).includes("v3.1.0")) throw new Error("Updated service worker was not published.");
           if (!v3js.includes("dalilna:favorite-change") || !v3js.includes("cubic-bezier") || !v3css.includes(".v3-favorite-trigger")) throw new Error("Saved hub and fly-to-favorites assets are incomplete.");
           if (!Array.isArray(jobsFeed.items) || !featureJsText.includes("jobsInlineSearch") || !featureJsText.includes("jobsSavedFilter")) throw new Error("Job search, saved filter or local jobs feed is unavailable.");

@@ -690,6 +690,32 @@
       return result && result.counts || null;
     } catch (_) { return null; }
   }
+  async function findPublicSellerRecords(phoneValue) {
+    const phone = normalizeSellerPhone(phoneValue);
+    if (!phone) throw new Error("PHONE_INVALID");
+    const first = await api("/api/marketplace/listings?limit=24&offset=0");
+    const total = Math.max(0, Number(first.count) || (Array.isArray(first.items) ? first.items.length : 0));
+    let all = Array.isArray(first.items) ? first.items.slice() : [];
+    const highestOffset = Math.min(500, Math.max(0, Math.floor(Math.max(0, total - 1) / 24) * 24));
+    const offsets = [];
+    for (let offset = 24; offset <= Math.min(480, highestOffset); offset += 24) offsets.push(offset);
+    if (highestOffset >= 500) offsets.push(500);
+    for (let i = 0; i < offsets.length; i += 3) {
+      const pages = await Promise.all(offsets.slice(i,i+3).map(offset =>
+        api("/api/marketplace/listings?limit=24&offset=" + offset)
+      ));
+      for (const page of pages) if (Array.isArray(page.items)) all.push(...page.items);
+    }
+    const seen = new Set();
+    const matches = all.filter(item => {
+      const id = String(item && item.id || "");
+      if (!item || normalizeSellerPhone(item.phone) !== phone || !id || seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+    return {items:matches,total:total,scanned:all.length,complete:total<=524};
+  }
+
   function bind() {
     fillSelect($("sharedDirectoryCategory"),CATS,label("كل الأقسام"));
     fillSelect($("sharedDirectoryGovernorate"),GOVS.map(x=>[x,x]),label("كل المحافظات"));
@@ -725,7 +751,7 @@
     loadTimer=window.setInterval(()=>{if(document.hidden)return;loadHome();if($("vSouq")&&!$("vSouq").hidden)loadSouq();if($("vJobs")&&!$("vJobs").hidden)loadJobs();},6*60*60*1000);
     document.addEventListener("click",event=>{if(event.target.closest("[data-go='jobs']"))window.setTimeout(loadJobs,120);if(event.target.closest("[data-go='souq']"))window.setTimeout(loadSouq,120);});
   }
-  window.DalilnaShared = { submitListing, loadHome, loadSouq, loadJobs, loadAdminQueue, loadAdminReports, loadCategoryCounts, reportAssistant, reportCandidate, blockSeller };
+  window.DalilnaShared = { submitListing, loadHome, loadSouq, loadJobs, loadAdminQueue, loadAdminReports, loadCategoryCounts, reportAssistant, reportCandidate, blockSeller, findPublicSellerRecords };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",bind);
   else bind();
 })();
