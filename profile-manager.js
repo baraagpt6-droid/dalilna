@@ -157,7 +157,7 @@
     write("merchantStoreCategory",categoryLabel(p.storeCategory));
     write("merchantStoreCity",[govLabel(p.storeCity),p.storeArea].filter(Boolean).join("، ") || (english()?"Not specified":"غير محددة"));
     write("merchantStorePhone",p.phone || "—");
-    const created = Number(p.merchantCreatedAt || Date.now());
+    const created = Number(p.merchantCreatedAt || bridge()?.snapshot?.()?.installDate || Date.now());
     const remaining = Math.max(0,Math.ceil((60*86400000-(Date.now()-created))/86400000));
     write("profileDaysLeft",english()?remaining+" free advertising days remaining":"متبقي "+remaining+" يوماً من الإعلان المجاني");
     write("profileEditToggle",merchant?(english()?"Edit / merchant access":"تعديل / دخول التاجر"):(english()?"Edit details":"تعديل البيانات"));
