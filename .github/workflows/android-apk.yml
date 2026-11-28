@@ -94,8 +94,6 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message || '', '[complete-play-internal-4100101]') }}
     runs-on: ubuntu-latest
     env:
-      # Keep generated Play versionCodes above the existing internal-track ceiling.
-      DALILNA_VERSION_CODE_OFFSET: "1000000"
       ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
       ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
       ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
@@ -173,18 +171,20 @@ jobs:
           node - <<'NODE'
           const fs = require("node:fs");
           const file = "version.json";
-          const runNumber = Number(process.env.GITHUB_RUN_NUMBER);
-          const attempt = Number(process.env.GITHUB_RUN_ATTEMPT || 1);
-          const versionCodeOffset = Number(process.env.DALILNA_VERSION_CODE_OFFSET || 0);
-          const versionCode = 3100000 + runNumber * 100 + attempt + versionCodeOffset;
-          if (!Number.isSafeInteger(versionCode) || versionCode <= 0) throw new Error("Invalid Android OTA versionCode");
-          const version = JSON.parse(fs.readFileSync(file, "utf8"));
+          const versionCode = Number(version.androidVersionCode);
+          if (!Number.isSafeInteger(versionCode) || versionCode !== 4129901 ||
+              Number(version.versionCode) !== versionCode) {
+            throw new Error("version.json must declare matching versionCode and androidVersionCode 4129901.");
+          }
+          if (version.version !== "3.1.0" || version.androidVersion !== "3.1.0") {
+            throw new Error("Android versionName must remain 3.1.0.");
+          }
           version.version = "3.1.0";
           version.webVersion = "3.1.0";
           version.androidVersion = "3.1.0";
           version.versionCode = versionCode;
           version.androidVersionCode = versionCode;
-          version.androidSigningMode = process.env.APK_SIGNING_MODE || "persistent";
+          version.androidSigningMode = process.env.APK_SIGNING_MODE || "persistent";          version.androidSigningMode = process.env.APK_SIGNING_MODE || "persistent";
           delete version.androidReleaseUrl;
           version.androidStoreUrl = "https://play.google.com/store/apps/details?id=ye.dalilna.app";
           version.officialWebUrl = "https://baraagpt6-droid.github.io/dalilna/";
@@ -261,7 +261,11 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="$(sed -n 's/^[[:space:]]*versionName = "\([^"]*\)".*/\1/p' android/app/build.gradle.kts | head -n 1)"
-          VERSION_CODE="$((3100000 + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT + DALILNA_VERSION_CODE_OFFSET))"
+          VERSION_CODE="$(node -e 'const v=JSON.parse(require("node:fs").readFileSync("version.json","utf8")); if(Number(v.versionCode)!==Number(v.androidVersionCode)) throw new Error("version.json code fields differ"); process.stdout.write(String(v.androidVersionCode));')"
+          if [[ "$VERSION_CODE" != "4129901" ]]; then
+            echo "Expected requested versionCode 4129901, got $VERSION_CODE"
+            exit 1
+          fi
           APK="android/app/build/outputs/apk/release/app-release.apk"
           if [[ "$VERSION" != "3.1.0" ]]; then
             echo "Expected versionName 3.1.0, got $VERSION"

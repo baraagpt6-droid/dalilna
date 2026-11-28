@@ -49,10 +49,17 @@ android {
     namespace = "ye.dalilna.app"
     compileSdk = 36
 
-    val workflowRunNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 0
-    val workflowAttempt = System.getenv("GITHUB_RUN_ATTEMPT")?.toIntOrNull() ?: 1
-    val versionCodeOffset = System.getenv("DALILNA_VERSION_CODE_OFFSET")?.toIntOrNull() ?: 0
-    val versionCodeForBuild = 3_100_000 + (workflowRunNumber * 100) + workflowAttempt + versionCodeOffset
+    val versionMetadataText = rootProject.file("version.json").readText(Charsets.UTF_8)
+    fun versionMetadataInt(key: String): Int {
+        val value = Regex("\"$key\"\\s*:\\s*(\\d+)")
+            .find(versionMetadataText)?.groupValues?.get(1)
+            ?: error("version.json must declare numeric $key")
+        return value.toInt()
+    }
+    val versionCodeForBuild = versionMetadataInt("androidVersionCode")
+    check(versionMetadataInt("versionCode") == versionCodeForBuild) {
+        "versionCode and androidVersionCode in version.json must match."
+    }
 
     val persistentSigning = if (persistentSigningConfigured) {
         signingConfigs.create("persistent") {
