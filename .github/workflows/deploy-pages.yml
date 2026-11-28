@@ -3,7 +3,7 @@ name: Deploy Dalilna PWA
 on:
   workflow_dispatch:
   push:
-    branches: [main, pages-release]
+    branches: [main]
 
 permissions:
   contents: read
