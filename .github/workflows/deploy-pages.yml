@@ -25,6 +25,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Verify public UI error handling and public asset secrets
         run: node --test tests/public-ui-safety.test.cjs
+      - name: Run customer and merchant profile regression tests
+        run: node --test tests/profile-role-separation.test.cjs tests/profile-favourites-marketplace.test.cjs tests/profile-manager-role-ui.test.cjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
