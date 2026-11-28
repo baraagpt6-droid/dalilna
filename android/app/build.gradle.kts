@@ -56,6 +56,15 @@ android {
             ?: error("version.json must declare numeric $key")
         return value.toInt()
     }
+    fun versionMetadataString(key: String): String {
+        return Regex("\"$key\"\\s*:\\s*\"([^\"]+)\"")
+            .find(versionMetadataText)?.groupValues?.get(1)
+            ?: error("version.json must declare string $key")
+    }
+    check(versionMetadataString("version") == "3.1.0" &&
+        versionMetadataString("androidVersion") == "3.1.0") {
+        "version.json must keep web and Android versionName at 3.1.0."
+    }
     val versionCodeForBuild = versionMetadataInt("androidVersionCode")
     check(versionMetadataInt("versionCode") == versionCodeForBuild) {
         "versionCode and androidVersionCode in version.json must match."
